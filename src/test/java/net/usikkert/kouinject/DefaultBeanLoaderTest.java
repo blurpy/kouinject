@@ -57,257 +57,238 @@ import org.junit.Test;
  *
  * @author Christian Ihle
  */
-public class DefaultBeanLoaderTest
-{
-	private DefaultBeanLoader beanLoader;
+public class DefaultBeanLoaderTest {
 
-	@Before
-	public void setupBeanLoader()
-	{
-		final ClassLocator classLocator = new ClassPathScanner();
-		final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler(
-				"net.usikkert.kouinject.testbeans.scanned", classLocator );
-		beanLoader = new DefaultBeanLoader( beanDataHandler );
-	}
+    private DefaultBeanLoader beanLoader;
 
-	@Test
-	public void checkAbstractBean()
-	{
-		beanLoader.loadBeans();
+    @Before
+    public void setupBeanLoader() {
+        final ClassLocator classLocator = new ClassPathScanner();
+        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler(
+                "net.usikkert.kouinject.testbeans.scanned", classLocator);
+        beanLoader = new DefaultBeanLoader(beanDataHandler);
+    }
 
-		final AbstractBean abstractBean = beanLoader.getBean( AbstractBean.class );
-		assertNotNull( abstractBean );
+    @Test
+    public void checkAbstractBean() {
+        beanLoader.loadBeans();
 
-		final AbstractBeanImpl abstractBeanImpl = beanLoader.getBean( AbstractBeanImpl.class );
-		assertNotNull( abstractBeanImpl );
-	}
+        final AbstractBean abstractBean = beanLoader.getBean(AbstractBean.class);
+        assertNotNull(abstractBean);
 
-	@Test
-	public void checkCoffeeBean()
-	{
-		beanLoader.loadBeans();
+        final AbstractBeanImpl abstractBeanImpl = beanLoader.getBean(AbstractBeanImpl.class);
+        assertNotNull(abstractBeanImpl);
+    }
 
-		final CoffeeBean coffeeBean = beanLoader.getBean( CoffeeBean.class );
+    @Test
+    public void checkCoffeeBean() {
+        beanLoader.loadBeans();
 
-		assertNotNull( coffeeBean.getHelloBean() );
-		assertNotNull( coffeeBean.getJavaBean() );
-	}
+        final CoffeeBean coffeeBean = beanLoader.getBean(CoffeeBean.class);
 
-	@Test
-	public void checkConstructorBean()
-	{
-		beanLoader.loadBeans();
+        assertNotNull(coffeeBean.getHelloBean());
+        assertNotNull(coffeeBean.getJavaBean());
+    }
 
-		final ConstructorBean constructorBean = beanLoader.getBean( ConstructorBean.class );
+    @Test
+    public void checkConstructorBean() {
+        beanLoader.loadBeans();
 
-		assertNotNull( constructorBean.getHelloBean() );
-		assertNotNull( constructorBean.getSetterBean() );
-	}
+        final ConstructorBean constructorBean = beanLoader.getBean(ConstructorBean.class);
 
-	@Test
-	public void checkEverythingBean()
-	{
-		beanLoader.loadBeans();
+        assertNotNull(constructorBean.getHelloBean());
+        assertNotNull(constructorBean.getSetterBean());
+    }
 
-		final EverythingBean everythingBean = beanLoader.getBean( EverythingBean.class );
+    @Test
+    public void checkEverythingBean() {
+        beanLoader.loadBeans();
 
-		assertNotNull( everythingBean.getCoffeeBean() );
-		assertNotNull( everythingBean.getConstructorBean() );
-		assertNotNull( everythingBean.getFieldBean() );
-		assertNotNull( everythingBean.getHelloBean() );
-		assertNotNull( everythingBean.getJavaBean() );
-		assertNotNull( everythingBean.getSetterBean() );
-		assertNotNull( everythingBean.getInterfaceBeanImpl() );
-		assertNotNull( everythingBean.getAbstractBeanImpl() );
-	}
+        final EverythingBean everythingBean = beanLoader.getBean(EverythingBean.class);
 
-	@Test
-	public void checkFieldBean()
-	{
-		beanLoader.loadBeans();
+        assertNotNull(everythingBean.getCoffeeBean());
+        assertNotNull(everythingBean.getConstructorBean());
+        assertNotNull(everythingBean.getFieldBean());
+        assertNotNull(everythingBean.getHelloBean());
+        assertNotNull(everythingBean.getJavaBean());
+        assertNotNull(everythingBean.getSetterBean());
+        assertNotNull(everythingBean.getInterfaceBeanImpl());
+        assertNotNull(everythingBean.getAbstractBeanImpl());
+    }
 
-		final FieldBean fieldBean = beanLoader.getBean( FieldBean.class );
+    @Test
+    public void checkFieldBean() {
+        beanLoader.loadBeans();
 
-		assertNotNull( fieldBean.getHelloBean() );
-		assertNotNull( fieldBean.getAbstractBean() );
-		assertNotNull( fieldBean.getInterfaceBean() );
-	}
+        final FieldBean fieldBean = beanLoader.getBean(FieldBean.class);
 
-	@Test
-	public void checkHelloBean()
-	{
-		beanLoader.loadBeans();
+        assertNotNull(fieldBean.getHelloBean());
+        assertNotNull(fieldBean.getAbstractBean());
+        assertNotNull(fieldBean.getInterfaceBean());
+    }
 
-		final HelloBean helloBean = beanLoader.getBean( HelloBean.class );
-		assertNotNull( helloBean );
-	}
+    @Test
+    public void checkHelloBean() {
+        beanLoader.loadBeans();
 
-	@Test
-	public void checkInterfaceBean()
-	{
-		beanLoader.loadBeans();
+        final HelloBean helloBean = beanLoader.getBean(HelloBean.class);
+        assertNotNull(helloBean);
+    }
 
-		final InterfaceBean interfaceBean = beanLoader.getBean( InterfaceBean.class );
-		assertNotNull( interfaceBean );
+    @Test
+    public void checkInterfaceBean() {
+        beanLoader.loadBeans();
 
-		final InterfaceBeanImpl interfaceBeanImpl = beanLoader.getBean( InterfaceBeanImpl.class );
-		assertNotNull( interfaceBeanImpl );
-	}
+        final InterfaceBean interfaceBean = beanLoader.getBean(InterfaceBean.class);
+        assertNotNull(interfaceBean);
 
-	@Test
-	public void checkJavaBean()
-	{
-		beanLoader.loadBeans();
+        final InterfaceBeanImpl interfaceBeanImpl = beanLoader.getBean(InterfaceBeanImpl.class);
+        assertNotNull(interfaceBeanImpl);
+    }
 
-		final JavaBean javaBean = beanLoader.getBean( JavaBean.class );
+    @Test
+    public void checkJavaBean() {
+        beanLoader.loadBeans();
 
-		assertNotNull( javaBean.getFieldBean() );
-		assertNotNull( javaBean.getHelloBean() );
-	}
+        final JavaBean javaBean = beanLoader.getBean(JavaBean.class);
 
-	@Test
-	public void checkLastBean()
-	{
-		beanLoader.loadBeans();
+        assertNotNull(javaBean.getFieldBean());
+        assertNotNull(javaBean.getHelloBean());
+    }
 
-		final LastBean lastBean = beanLoader.getBean( LastBean.class );
+    @Test
+    public void checkLastBean() {
+        beanLoader.loadBeans();
 
-		assertNotNull( lastBean.getEverythingBean() );
-	}
+        final LastBean lastBean = beanLoader.getBean(LastBean.class);
 
-	@Test( expected = IllegalArgumentException.class )
-	public void checkNoBean()
-	{
-		beanLoader.loadBeans();
+        assertNotNull(lastBean.getEverythingBean());
+    }
 
-		beanLoader.getBean( NoBean.class );
-	}
+    @Test(expected = IllegalArgumentException.class)
+    public void checkNoBean() {
+        beanLoader.loadBeans();
 
-	@Test
-	public void checkSetterBean()
-	{
-		beanLoader.loadBeans();
+        beanLoader.getBean(NoBean.class);
+    }
 
-		final SetterBean setterBean = beanLoader.getBean( SetterBean.class );
+    @Test
+    public void checkSetterBean() {
+        beanLoader.loadBeans();
 
-		assertNotNull( setterBean.getFieldBean() );
-	}
+        final SetterBean setterBean = beanLoader.getBean(SetterBean.class);
 
-	@Test
-	public void addBeanShouldMakeBeanAvailableButNotAutowire()
-	{
-		beanLoader.loadBeans();
+        assertNotNull(setterBean.getFieldBean());
+    }
 
-		final NoBean noBean = new NoBean();
-		beanLoader.addBean( noBean );
+    @Test
+    public void addBeanShouldMakeBeanAvailableButNotAutowire() {
+        beanLoader.loadBeans();
 
-		final NoBean noBeanFromBeanLoader = beanLoader.getBean( NoBean.class );
-		assertNotNull( noBeanFromBeanLoader );
-		assertNull( noBeanFromBeanLoader.getHelloBean() );
-		assertNull( noBeanFromBeanLoader.getCoffeeBean() );
-	}
+        final NoBean noBean = new NoBean();
+        beanLoader.addBean(noBean);
 
-	@Test
-	public void autowireShouldInjectFieldsInBean()
-	{
-		beanLoader.loadBeans();
+        final NoBean noBeanFromBeanLoader = beanLoader.getBean(NoBean.class);
+        assertNotNull(noBeanFromBeanLoader);
+        assertNull(noBeanFromBeanLoader.getHelloBean());
+        assertNull(noBeanFromBeanLoader.getCoffeeBean());
+    }
 
-		final NoBean noBean = new NoBean();
-		beanLoader.autowire( noBean );
+    @Test
+    public void autowireShouldInjectFieldsInBean() {
+        beanLoader.loadBeans();
 
-		assertNotNull( noBean.getHelloBean() );
-		assertNotNull( noBean.getCoffeeBean() );
-	}
+        final NoBean noBean = new NoBean();
+        beanLoader.autowire(noBean);
 
-	@Test
-	public void beanLoaderShouldHandleMocks()
-	{
-		final HelloBean helloBean = mock( HelloBean.class );
-		beanLoader.addBean( helloBean );
+        assertNotNull(noBean.getHelloBean());
+        assertNotNull(noBean.getCoffeeBean());
+    }
 
-		final AbstractBeanImpl abstractBean = mock( AbstractBeanImpl.class );
-		beanLoader.addBean( abstractBean );
+    @Test
+    public void beanLoaderShouldHandleMocks() {
+        final HelloBean helloBean = mock(HelloBean.class);
+        beanLoader.addBean(helloBean);
 
-		final InterfaceBean interfaceBean = mock( InterfaceBean.class );
-		beanLoader.addBean( interfaceBean );
+        final AbstractBeanImpl abstractBean = mock(AbstractBeanImpl.class);
+        beanLoader.addBean(abstractBean);
 
-		final FieldBean fieldBean = new FieldBean();
-		beanLoader.autowire( fieldBean );
+        final InterfaceBean interfaceBean = mock(InterfaceBean.class);
+        beanLoader.addBean(interfaceBean);
 
-		assertSame( helloBean, fieldBean.getHelloBean() );
-		assertSame( abstractBean, fieldBean.getAbstractBean() );
-		assertSame( interfaceBean, fieldBean.getInterfaceBean() );
-	}
+        final FieldBean fieldBean = new FieldBean();
+        beanLoader.autowire(fieldBean);
 
-	@Test( expected = IllegalStateException.class )
-	public void circularDependenciesShouldBeDetected()
-	{
-		final ClassLocator classLocator = mock( ClassLocator.class );
-		final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler( "some.package", classLocator );
-		final DefaultBeanLoader loader = new DefaultBeanLoader( beanDataHandler );
+        assertSame(helloBean, fieldBean.getHelloBean());
+        assertSame(abstractBean, fieldBean.getAbstractBean());
+        assertSame(interfaceBean, fieldBean.getInterfaceBean());
+    }
 
-		final Set<Class<?>> classes = new HashSet<Class<?>>();
-		classes.add( FirstCircularBean.class );
-		classes.add( SecondCircularBean.class );
+    @Test(expected = IllegalStateException.class)
+    public void circularDependenciesShouldBeDetected() {
+        final ClassLocator classLocator = mock(ClassLocator.class);
+        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler("some.package", classLocator);
+        final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler);
 
-		when( classLocator.findClasses( "some.package" ) ).thenReturn( classes );
+        final Set<Class<?>> classes = new HashSet<Class<?>>();
+        classes.add(FirstCircularBean.class);
+        classes.add(SecondCircularBean.class);
 
-		loader.loadBeans();
-	}
+        when(classLocator.findClasses("some.package")).thenReturn(classes);
 
-	@Test( expected = IllegalStateException.class )
-	public void tooManyMatchesForADependencyShouldBeDetected()
-	{
-		final ClassLocator classLocator = mock( ClassLocator.class );
-		final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler( "some.package", classLocator );
-		final DefaultBeanLoader loader = new DefaultBeanLoader( beanDataHandler );
+        loader.loadBeans();
+    }
 
-		final Set<Class<?>> classes = new HashSet<Class<?>>();
-		classes.add( FirstInterfaceImpl.class );
-		classes.add( SecondInterfaceImpl.class );
+    @Test(expected = IllegalStateException.class)
+    public void tooManyMatchesForADependencyShouldBeDetected() {
+        final ClassLocator classLocator = mock(ClassLocator.class);
+        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler("some.package", classLocator);
+        final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler);
 
-		when( classLocator.findClasses( "some.package" ) ).thenReturn( classes );
+        final Set<Class<?>> classes = new HashSet<Class<?>>();
+        classes.add(FirstInterfaceImpl.class);
+        classes.add(SecondInterfaceImpl.class);
 
-		loader.loadBeans();
+        when(classLocator.findClasses("some.package")).thenReturn(classes);
 
-		final TheInterfaceUser theInterfaceUser = new TheInterfaceUser();
-		loader.autowire( theInterfaceUser );
-	}
+        loader.loadBeans();
 
-	@Test
-	public void severalBeansForAnInterfaceIsOKIfACloserMatchToImplIsRequested()
-	{
-		final ClassLocator classLocator = mock( ClassLocator.class );
-		final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler( "some.package", classLocator );
-		final DefaultBeanLoader loader = new DefaultBeanLoader( beanDataHandler );
+        final TheInterfaceUser theInterfaceUser = new TheInterfaceUser();
+        loader.autowire(theInterfaceUser);
+    }
 
-		final Set<Class<?>> classes = new HashSet<Class<?>>();
-		classes.add( FirstInterfaceImpl.class );
-		classes.add( SecondInterfaceImpl.class );
+    @Test
+    public void severalBeansForAnInterfaceIsOKIfACloserMatchToImplIsRequested() {
+        final ClassLocator classLocator = mock(ClassLocator.class);
+        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler("some.package", classLocator);
+        final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler);
 
-		when( classLocator.findClasses( "some.package" ) ).thenReturn( classes );
+        final Set<Class<?>> classes = new HashSet<Class<?>>();
+        classes.add(FirstInterfaceImpl.class);
+        classes.add(SecondInterfaceImpl.class);
 
-		loader.loadBeans();
+        when(classLocator.findClasses("some.package")).thenReturn(classes);
 
-		final ACloserMatchOfImplementationUser aCloserMatch = new ACloserMatchOfImplementationUser();
-		loader.autowire( aCloserMatch );
+        loader.loadBeans();
 
-		assertTrue( aCloserMatch.getFirstInterfaceImplInterface() instanceof TheInterface );
-		assertTrue( aCloserMatch.getSecondInterfaceImpl() instanceof TheInterface );
-	}
+        final ACloserMatchOfImplementationUser aCloserMatch = new ACloserMatchOfImplementationUser();
+        loader.autowire(aCloserMatch);
 
-	@Test( expected = IllegalArgumentException.class )
-	public void noMatchesForADependencyShouldBeDetected()
-	{
-		final ClassLocator classLocator = mock( ClassLocator.class );
-		final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler( "some.package", classLocator );
-		final DefaultBeanLoader loader = new DefaultBeanLoader( beanDataHandler );
+        assertTrue(aCloserMatch.getFirstInterfaceImplInterface() instanceof TheInterface);
+        assertTrue(aCloserMatch.getSecondInterfaceImpl() instanceof TheInterface);
+    }
 
-		final Set<Class<?>> classes = new HashSet<Class<?>>();
-		classes.add( TheInterfaceUser.class );
+    @Test(expected = IllegalArgumentException.class)
+    public void noMatchesForADependencyShouldBeDetected() {
+        final ClassLocator classLocator = mock(ClassLocator.class);
+        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler("some.package", classLocator);
+        final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler);
 
-		when( classLocator.findClasses( "some.package" ) ).thenReturn( classes );
+        final Set<Class<?>> classes = new HashSet<Class<?>>();
+        classes.add(TheInterfaceUser.class);
 
-		loader.loadBeans();
-	}
+        when(classLocator.findClasses("some.package")).thenReturn(classes);
+
+        loader.loadBeans();
+    }
 }

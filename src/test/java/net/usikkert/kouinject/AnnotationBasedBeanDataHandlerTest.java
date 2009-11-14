@@ -49,211 +49,190 @@ import org.junit.Test;
  *
  * @author Christian Ihle
  */
-public class AnnotationBasedBeanDataHandlerTest
-{
-	private AnnotationBasedBeanDataHandler handler;
+public class AnnotationBasedBeanDataHandlerTest {
 
-	@Before
-	public void createHandler()
-	{
-		final ClassLocator classLocator = new ClassPathScanner();
-		handler = new AnnotationBasedBeanDataHandler( "net.usikkert.kouinject", classLocator );
-	}
+    private AnnotationBasedBeanDataHandler handler;
 
-	@Test
-	public void findBeansShouldOnlyReturnComponents()
-	{
-		final Set<Class<?>> beans = handler.findBeans();
+    @Before
+    public void createHandler() {
+        final ClassLocator classLocator = new ClassPathScanner();
+        handler = new AnnotationBasedBeanDataHandler("net.usikkert.kouinject", classLocator);
+    }
 
-		assertTrue( beans.size() >= 10 );
+    @Test
+    public void findBeansShouldOnlyReturnComponents() {
+        final Set<Class<?>> beans = handler.findBeans();
 
-		for ( final Class<?> bean : beans )
-		{
-			assertTrue( bean.isAnnotationPresent( Component.class ) );
-		}
-	}
+        assertTrue(beans.size() >= 10);
 
-	@Test
-	public void getBeanDataShouldDetectFieldsAndDependenciesForInjection()
-	{
-		final BeanData beanData = handler.getBeanData( FieldBean.class, false );
+        for (final Class<?> bean : beans) {
+            assertTrue(bean.isAnnotationPresent(Component.class));
+        }
+    }
 
-		assertEquals( FieldBean.class, beanData.getBeanClass() );
+    @Test
+    public void getBeanDataShouldDetectFieldsAndDependenciesForInjection() {
+        final BeanData beanData = handler.getBeanData(FieldBean.class, false);
 
-		final List<Class<?>> dependencies = beanData.getDependencies();
-		assertEquals( 3, dependencies.size() );
+        assertEquals(FieldBean.class, beanData.getBeanClass());
 
-		assertTrue( containsDependency( dependencies, HelloBean.class ) );
-		assertTrue( containsDependency( dependencies, AbstractBean.class ) );
-		assertTrue( containsDependency( dependencies, InterfaceBean.class ) );
+        final List<Class<?>> dependencies = beanData.getDependencies();
+        assertEquals(3, dependencies.size());
 
-		final List<Field> fields = beanData.getFields();
-		assertEquals( 3, fields.size() );
+        assertTrue(containsDependency(dependencies, HelloBean.class));
+        assertTrue(containsDependency(dependencies, AbstractBean.class));
+        assertTrue(containsDependency(dependencies, InterfaceBean.class));
 
-		for ( final Field field : fields )
-		{
-			assertTrue( field.isAnnotationPresent( Inject.class ) );
-		}
+        final List<Field> fields = beanData.getFields();
+        assertEquals(3, fields.size());
 
-		assertTrue( containsField( fields, HelloBean.class ) );
-		assertTrue( containsField( fields, AbstractBean.class ) );
-		assertTrue( containsField( fields, InterfaceBean.class ) );
-	}
+        for (final Field field : fields) {
+            assertTrue(field.isAnnotationPresent(Inject.class));
+        }
 
-	@Test
-	public void getBeanDataShouldDetectMethodsAndDependenciesForInjection()
-	{
-		final BeanData beanData = handler.getBeanData( JavaBean.class, false );
+        assertTrue(containsField(fields, HelloBean.class));
+        assertTrue(containsField(fields, AbstractBean.class));
+        assertTrue(containsField(fields, InterfaceBean.class));
+    }
 
-		assertEquals( JavaBean.class, beanData.getBeanClass() );
+    @Test
+    public void getBeanDataShouldDetectMethodsAndDependenciesForInjection() {
+        final BeanData beanData = handler.getBeanData(JavaBean.class, false);
 
-		final List<Class<?>> dependencies = beanData.getDependencies();
-		assertEquals( 2, dependencies.size() );
+        assertEquals(JavaBean.class, beanData.getBeanClass());
 
-		assertTrue( containsDependency( dependencies, HelloBean.class ) );
-		assertTrue( containsDependency( dependencies, FieldBean.class ) );
+        final List<Class<?>> dependencies = beanData.getDependencies();
+        assertEquals(2, dependencies.size());
 
-		final List<Method> methods = beanData.getMethods();
-		assertEquals( 1, methods.size() );
+        assertTrue(containsDependency(dependencies, HelloBean.class));
+        assertTrue(containsDependency(dependencies, FieldBean.class));
 
-		for ( final Method method : methods )
-		{
-			assertTrue( method.isAnnotationPresent( Inject.class ) );
-			assertTrue( containsMethodParameter( method, HelloBean.class ) );
-			assertTrue( containsMethodParameter( method, FieldBean.class ) );
-		}
-	}
+        final List<Method> methods = beanData.getMethods();
+        assertEquals(1, methods.size());
 
-	@Test
-	public void getBeanDataShouldDetectCorrectConstuctorAndDependenciesForInjection()
-	{
-		final BeanData beanData = handler.getBeanData( ConstructorBean.class, false );
+        for (final Method method : methods) {
+            assertTrue(method.isAnnotationPresent(Inject.class));
+            assertTrue(containsMethodParameter(method, HelloBean.class));
+            assertTrue(containsMethodParameter(method, FieldBean.class));
+        }
+    }
 
-		assertEquals( ConstructorBean.class, beanData.getBeanClass() );
+    @Test
+    public void getBeanDataShouldDetectCorrectConstuctorAndDependenciesForInjection() {
+        final BeanData beanData = handler.getBeanData(ConstructorBean.class, false);
 
-		final List<Class<?>> dependencies = beanData.getDependencies();
-		assertEquals( 2, dependencies.size() );
+        assertEquals(ConstructorBean.class, beanData.getBeanClass());
 
-		assertTrue( containsDependency( dependencies, HelloBean.class ) );
-		assertTrue( containsDependency( dependencies, SetterBean.class ) );
+        final List<Class<?>> dependencies = beanData.getDependencies();
+        assertEquals(2, dependencies.size());
 
-		final Constructor<?> constructor = beanData.getConstructor();
-		assertTrue( constructor.isAnnotationPresent( Inject.class ) );
+        assertTrue(containsDependency(dependencies, HelloBean.class));
+        assertTrue(containsDependency(dependencies, SetterBean.class));
 
-		assertTrue( containsConstructorParameter( constructor, HelloBean.class ) );
-		assertTrue( containsConstructorParameter( constructor, SetterBean.class ) );
-	}
+        final Constructor<?> constructor = beanData.getConstructor();
+        assertTrue(constructor.isAnnotationPresent(Inject.class));
 
-	@Test
-	public void getBeanDataShouldDetectConstructorAndFieldsAndMethodsAtTheSameTime()
-	{
-		final BeanData beanData = handler.getBeanData( EverythingBean.class, false );
+        assertTrue(containsConstructorParameter(constructor, HelloBean.class));
+        assertTrue(containsConstructorParameter(constructor, SetterBean.class));
+    }
 
-		assertEquals( EverythingBean.class, beanData.getBeanClass() );
+    @Test
+    public void getBeanDataShouldDetectConstructorAndFieldsAndMethodsAtTheSameTime() {
+        final BeanData beanData = handler.getBeanData(EverythingBean.class, false);
 
-		final List<Class<?>> dependencies = beanData.getDependencies();
-		assertEquals( 8, dependencies.size() );
+        assertEquals(EverythingBean.class, beanData.getBeanClass());
 
-		final Constructor<?> constructor = beanData.getConstructor();
-		assertTrue( constructor.isAnnotationPresent( Inject.class ) );
-		assertEquals( 5, constructor.getParameterTypes().length );
+        final List<Class<?>> dependencies = beanData.getDependencies();
+        assertEquals(8, dependencies.size());
 
-		final List<Field> fields = beanData.getFields();
-		assertEquals( 1, fields.size() );
+        final Constructor<?> constructor = beanData.getConstructor();
+        assertTrue(constructor.isAnnotationPresent(Inject.class));
+        assertEquals(5, constructor.getParameterTypes().length);
 
-		for ( final Field field : fields )
-		{
-			assertTrue( field.isAnnotationPresent( Inject.class ) );
-		}
+        final List<Field> fields = beanData.getFields();
+        assertEquals(1, fields.size());
 
-		final List<Method> methods = beanData.getMethods();
-		assertEquals( 2, methods.size() );
+        for (final Field field : fields) {
+            assertTrue(field.isAnnotationPresent(Inject.class));
+        }
 
-		for ( final Method method : methods )
-		{
-			assertTrue( method.isAnnotationPresent( Inject.class ) );
-		}
-	}
+        final List<Method> methods = beanData.getMethods();
+        assertEquals(2, methods.size());
 
-	@Test
-	public void getBeanDataShouldSupportIgnoringConstructor()
-	{
-		final BeanData beanData = handler.getBeanData( ConstructorBean.class, true );
+        for (final Method method : methods) {
+            assertTrue(method.isAnnotationPresent(Inject.class));
+        }
+    }
 
-		assertEquals( ConstructorBean.class, beanData.getBeanClass() );
+    @Test
+    public void getBeanDataShouldSupportIgnoringConstructor() {
+        final BeanData beanData = handler.getBeanData(ConstructorBean.class, true);
 
-		final List<Class<?>> dependencies = beanData.getDependencies();
-		assertEquals( 0, dependencies.size() );
+        assertEquals(ConstructorBean.class, beanData.getBeanClass());
 
-		final Constructor<?> constructor = beanData.getConstructor();
-		assertNull( constructor );
-	}
+        final List<Class<?>> dependencies = beanData.getDependencies();
+        assertEquals(0, dependencies.size());
 
-	@Test
-	public void getBeanDataShouldHandleClassesWithoutAnnotations()
-	{
-		final BeanData beanData = handler.getBeanData( ClassPathScanner.class, false );
+        final Constructor<?> constructor = beanData.getConstructor();
+        assertNull(constructor);
+    }
 
-		assertEquals( ClassPathScanner.class, beanData.getBeanClass() );
+    @Test
+    public void getBeanDataShouldHandleClassesWithoutAnnotations() {
+        final BeanData beanData = handler.getBeanData(ClassPathScanner.class, false);
 
-		final List<Class<?>> dependencies = beanData.getDependencies();
-		assertEquals( 0, dependencies.size() );
+        assertEquals(ClassPathScanner.class, beanData.getBeanClass());
 
-		final Constructor<?> constructor = beanData.getConstructor();
-		assertNotNull( constructor );
+        final List<Class<?>> dependencies = beanData.getDependencies();
+        assertEquals(0, dependencies.size());
 
-		final List<Field> fields = beanData.getFields();
-		assertEquals( 0, fields.size() );
+        final Constructor<?> constructor = beanData.getConstructor();
+        assertNotNull(constructor);
 
-		final List<Method> methods = beanData.getMethods();
-		assertEquals( 0, methods.size() );
-	}
+        final List<Field> fields = beanData.getFields();
+        assertEquals(0, fields.size());
 
-	private boolean containsConstructorParameter( final Constructor<?> constructor, final Class<?> beanClass )
-	{
-		for ( final Class<?> parameter : constructor.getParameterTypes() )
-		{
-			if ( parameter.equals( beanClass ) ) {
+        final List<Method> methods = beanData.getMethods();
+        assertEquals(0, methods.size());
+    }
+
+    private boolean containsConstructorParameter(final Constructor<?> constructor, final Class<?> beanClass) {
+        for (final Class<?> parameter : constructor.getParameterTypes()) {
+            if (parameter.equals(beanClass)) {
                 return true;
             }
-		}
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	private boolean containsMethodParameter( final Method method, final Class<?> beanClass )
-	{
-		for ( final Class<?> parameter : method.getParameterTypes() )
-		{
-			if ( parameter.equals( beanClass ) ) {
+    private boolean containsMethodParameter(final Method method, final Class<?> beanClass) {
+        for (final Class<?> parameter : method.getParameterTypes()) {
+            if (parameter.equals(beanClass)) {
                 return true;
             }
-		}
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	private boolean containsDependency( final List<Class<?>> dependencies, final Class<?> beanClass )
-	{
-		for ( final Class<?> dependency : dependencies )
-		{
-			if ( dependency.equals( beanClass ) ) {
+    private boolean containsDependency(final List<Class<?>> dependencies, final Class<?> beanClass) {
+        for (final Class<?> dependency : dependencies) {
+            if (dependency.equals(beanClass)) {
                 return true;
             }
-		}
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	private boolean containsField( final List<Field> fields, final Class<?> beanClass )
-	{
-		for ( final Field field : fields )
-		{
-			if ( field.getType().equals( beanClass ) ) {
+    private boolean containsField(final List<Field> fields, final Class<?> beanClass) {
+        for (final Field field : fields) {
+            if (field.getType().equals(beanClass)) {
                 return true;
             }
-		}
+        }
 
-		return false;
-	}
+        return false;
+    }
 }

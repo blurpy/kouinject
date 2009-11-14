@@ -39,91 +39,77 @@ import org.junit.Test;
  *
  * @author Christian Ihle
  */
-public class ClassPathScannerTest
-{
+public class ClassPathScannerTest {
+
     private static final String ALL = "net.usikkert.kouinject";
-	private static final String SCANNED = "net.usikkert.kouinject.testbeans.scanned";
+    private static final String SCANNED = "net.usikkert.kouinject.testbeans.scanned";
 
-	private ClassPathScanner scanner;
+    private ClassPathScanner scanner;
 
-	@Before
-	public void createScanner()
-	{
-		scanner = new ClassPathScanner();
-	}
+    @Before
+    public void createScanner() {
+        scanner = new ClassPathScanner();
+    }
 
-	@Test
-	public void findClassesShouldDetectClassesInScannedPackage()
-	{
-		final Set<Class<?>> classes = scanner.findClasses( SCANNED );
+    @Test
+    public void findClassesShouldDetectClassesInScannedPackage() {
+        final Set<Class<?>> classes = scanner.findClasses(SCANNED);
 
-		assertTrue( classes.contains( LastBean.class ) );
-		assertFalse( classes.contains( TheInterfaceUser.class ) );
-	}
+        assertTrue(classes.contains(LastBean.class));
+        assertFalse(classes.contains(TheInterfaceUser.class));
+    }
 
-	@Test
-	public void findClassesShouldNotIncludeInterfaces()
-	{
-		final Set<Class<?>> classes = scanner.findClasses( ALL );
+    @Test
+    public void findClassesShouldNotIncludeInterfaces() {
+        final Set<Class<?>> classes = scanner.findClasses(ALL);
 
-		for ( final Class<?> class1 : classes )
-		{
-			assertFalse( class1.isInterface() );
-		}
-	}
+        for (final Class<?> class1 : classes) {
+            assertFalse(class1.isInterface());
+        }
+    }
 
-	@Test
-	public void findClassesShouldNotIncludeAnnotations()
-	{
-		final Set<Class<?>> classes = scanner.findClasses( ALL );
+    @Test
+    public void findClassesShouldNotIncludeAnnotations() {
+        final Set<Class<?>> classes = scanner.findClasses(ALL);
 
-		for ( final Class<?> class1 : classes )
-		{
-			assertFalse( class1.isAnnotation() );
-		}
-	}
+        for (final Class<?> class1 : classes) {
+            assertFalse(class1.isAnnotation());
+        }
+    }
 
-	@Test
-	public void findClassesShouldNotIncludeEnums()
-	{
-		final Set<Class<?>> classes = scanner.findClasses( ALL );
+    @Test
+    public void findClassesShouldNotIncludeEnums() {
+        final Set<Class<?>> classes = scanner.findClasses(ALL);
 
-		for ( final Class<?> class1 : classes )
-		{
-			assertFalse( class1.isEnum() );
-		}
-	}
+        for (final Class<?> class1 : classes) {
+            assertFalse(class1.isEnum());
+        }
+    }
 
-	@Test
-	public void findClassesShouldNotIncludeSyntheticClasses()
-	{
-		final Set<Class<?>> classes = scanner.findClasses( ALL );
+    @Test
+    public void findClassesShouldNotIncludeSyntheticClasses() {
+        final Set<Class<?>> classes = scanner.findClasses(ALL);
 
-		for ( final Class<?> class1 : classes )
-		{
-			assertFalse( class1.isSynthetic() );
-		}
-	}
+        for (final Class<?> class1 : classes) {
+            assertFalse(class1.isSynthetic());
+        }
+    }
 
-	@Test
-	public void findClassesShouldNotIncludeAnonymousClasses()
-	{
-		final Set<Class<?>> classes = scanner.findClasses( ALL );
+    @Test
+    public void findClassesShouldNotIncludeAnonymousClasses() {
+        final Set<Class<?>> classes = scanner.findClasses(ALL);
 
-		for ( final Class<?> class1 : classes )
-		{
-			assertFalse( class1.isAnonymousClass() );
-		}
-	}
+        for (final Class<?> class1 : classes) {
+            assertFalse(class1.isAnonymousClass());
+        }
+    }
 
-	@Test
-	public void findClassesShouldNotIncludeInnerClasses()
-	{
-		final Set<Class<?>> classes = scanner.findClasses( ALL );
+    @Test
+    public void findClassesShouldNotIncludeInnerClasses() {
+        final Set<Class<?>> classes = scanner.findClasses(ALL);
 
-		for ( final Class<?> class1 : classes )
-		{
-			assertFalse( class1.isMemberClass() );
-		}
-	}
+        for (final Class<?> class1 : classes) {
+            assertFalse(class1.isMemberClass());
+        }
+    }
 }
