@@ -103,4 +103,7 @@
     <property name="severity" value="error"/>
     <property name="headerFile" value="${basedir}/header.txt"/>
   </module>
+  <module name="SuppressionFilter">
+    <property name="file" value="${basedir}/checkstyle-suppression.xml"/>
+  </module>
 </module>
