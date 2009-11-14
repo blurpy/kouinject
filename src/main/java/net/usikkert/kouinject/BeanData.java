@@ -29,108 +29,89 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class describes the bean meta-data needed to instantiate a new bean
- * to a consistent state.
+ * This class describes the bean meta-data needed to instantiate a new bean to a consistent state.
  *
  * @author Christian Ihle
  */
-public class BeanData
-{
-	private final Class<?> beanClass;
+public class BeanData {
 
-	private Constructor<?> constructor;
+    private final Class<?> beanClass;
 
-	private List<Field> fields;
+    private Constructor<?> constructor;
 
-	private List<Method> methods;
+    private List<Field> fields;
 
-	private final List<Class<?>> dependencies;
+    private List<Method> methods;
 
-	public BeanData( final Class<?> beanClass )
-	{
-		this.beanClass = beanClass;
-		dependencies = new ArrayList<Class<?>>();
-	}
+    private final List<Class<?>> dependencies;
 
-	public Class<?> getBeanClass()
-	{
-		return beanClass;
-	}
+    public BeanData(final Class<?> beanClass) {
+        this.beanClass = beanClass;
+        dependencies = new ArrayList<Class<?>>();
+    }
 
-	public Constructor<?> getConstructor()
-	{
-		return constructor;
-	}
+    public Class<?> getBeanClass() {
+        return beanClass;
+    }
 
-	public void setConstructor( final Constructor<?> constructor )
-	{
-		this.constructor = constructor;
-	}
+    public Constructor<?> getConstructor() {
+        return constructor;
+    }
 
-	public List<Field> getFields()
-	{
-		return fields;
-	}
+    public void setConstructor(final Constructor<?> constructor) {
+        this.constructor = constructor;
+    }
 
-	public void setFields( final List<Field> fields )
-	{
-		this.fields = fields;
-	}
+    public List<Field> getFields() {
+        return fields;
+    }
 
-	public List<Method> getMethods()
-	{
-		return methods;
-	}
+    public void setFields(final List<Field> fields) {
+        this.fields = fields;
+    }
 
-	public void setMethods( final List<Method> methods )
-	{
-		this.methods = methods;
-	}
+    public List<Method> getMethods() {
+        return methods;
+    }
 
-	public void mapDependencies()
-	{
-		if ( constructor != null )
-		{
-			mapConstructorDependencies();
-		}
+    public void setMethods(final List<Method> methods) {
+        this.methods = methods;
+    }
 
-		mapFieldDependencies();
-		mapMethodDependencies();
-	}
+    public void mapDependencies() {
+        if (constructor != null) {
+            mapConstructorDependencies();
+        }
 
-	private void mapConstructorDependencies()
-	{
-		final Class<?>[] parameterTypes = constructor.getParameterTypes();
+        mapFieldDependencies();
+        mapMethodDependencies();
+    }
 
-		for ( final Class<?> class1 : parameterTypes )
-		{
-			dependencies.add( class1 );
-		}
-	}
+    private void mapConstructorDependencies() {
+        final Class<?>[] parameterTypes = constructor.getParameterTypes();
 
-	private void mapFieldDependencies()
-	{
-		for ( final Field field : fields )
-		{
-			dependencies.add( field.getType() );
-		}
-	}
+        for (final Class<?> class1 : parameterTypes) {
+            dependencies.add(class1);
+        }
+    }
 
-	private void mapMethodDependencies()
-	{
-		for ( final Method method : methods )
-		{
-			final Class<?>[] parameterTypes = method.getParameterTypes();
+    private void mapFieldDependencies() {
+        for (final Field field : fields) {
+            dependencies.add(field.getType());
+        }
+    }
 
-			for ( final Class<?> class1 : parameterTypes )
-			{
-				dependencies.add( class1 );
-			}
-		}
-	}
+    private void mapMethodDependencies() {
+        for (final Method method : methods) {
+            final Class<?>[] parameterTypes = method.getParameterTypes();
 
-	public List<Class<?>> getDependencies()
-	{
-		return dependencies;
-	}
+            for (final Class<?> class1 : parameterTypes) {
+                dependencies.add(class1);
+            }
+        }
+    }
+
+    public List<Class<?>> getDependencies() {
+        return dependencies;
+    }
 }

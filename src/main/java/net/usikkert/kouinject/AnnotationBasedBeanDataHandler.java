@@ -38,154 +38,131 @@ import net.usikkert.kouinject.annotation.Inject;
  *
  * @author Christian Ihle
  */
-public class AnnotationBasedBeanDataHandler implements BeanDataHandler
-{
-	private static final Class<Inject> INJECTION_ANNOTATION = Inject.class;
-	private static final Class<Component> COMPONENT_ANNOTATION = Component.class;
+public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
 
-	private final ClassLocator classLocator;
+    private static final Class<Inject> INJECTION_ANNOTATION = Inject.class;
+    private static final Class<Component> COMPONENT_ANNOTATION = Component.class;
 
-	private final String basePackage;
+    private final ClassLocator classLocator;
 
-	public AnnotationBasedBeanDataHandler( final String basePackage, final ClassLocator classLocator )
-	{
-		this.basePackage = basePackage;
-		this.classLocator = classLocator;
-	}
+    private final String basePackage;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Set<Class<?>> findBeans()
-	{
-		final Set<Class<?>> allClasses = classLocator.findClasses( basePackage );
-		final Set<Class<?>> detectedBeans = new HashSet<Class<?>>();
+    public AnnotationBasedBeanDataHandler(final String basePackage, final ClassLocator classLocator) {
+        this.basePackage = basePackage;
+        this.classLocator = classLocator;
+    }
 
-		for ( final Class<?> clazz : allClasses )
-		{
-			if ( classIsBean( clazz ) )
-			{
-				detectedBeans.add( clazz );
-			}
-		}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<Class<?>> findBeans() {
+        final Set<Class<?>> allClasses = classLocator.findClasses(basePackage);
+        final Set<Class<?>> detectedBeans = new HashSet<Class<?>>();
 
-		return detectedBeans;
-	}
+        for (final Class<?> clazz : allClasses) {
+            if (classIsBean(clazz)) {
+                detectedBeans.add(clazz);
+            }
+        }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public BeanData getBeanData( final Class<?> beanClass, final boolean skipConstructor )
-	{
-		final BeanData beanData = new BeanData( beanClass );
+        return detectedBeans;
+    }
 
-		if ( !skipConstructor )
-		{
-			final Constructor<?> constructor = findConstructor( beanClass );
-			beanData.setConstructor( constructor );
-		}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public BeanData getBeanData(final Class<?> beanClass, final boolean skipConstructor) {
+        final BeanData beanData = new BeanData(beanClass);
 
-		final List<Field> fields = findFields( beanClass );
-		beanData.setFields( fields );
+        if (!skipConstructor) {
+            final Constructor<?> constructor = findConstructor(beanClass);
+            beanData.setConstructor(constructor);
+        }
 
-		final List<Method> methods = findMethods( beanClass );
-		beanData.setMethods( methods );
+        final List<Field> fields = findFields(beanClass);
+        beanData.setFields(fields);
 
-		beanData.mapDependencies();
+        final List<Method> methods = findMethods(beanClass);
+        beanData.setMethods(methods);
 
-		return beanData;
-	}
+        beanData.mapDependencies();
 
-	private boolean classIsBean( final Class<?> clazz )
-	{
-		return clazz.isAnnotationPresent( COMPONENT_ANNOTATION );
-	}
+        return beanData;
+    }
 
-	private List<Field> findFields( final Class<?> beanClass )
-	{
-		final Field[] declaredFields = beanClass.getDeclaredFields();
-		final List<Field> fields = new ArrayList<Field>();
+    private boolean classIsBean(final Class<?> clazz) {
+        return clazz.isAnnotationPresent(COMPONENT_ANNOTATION);
+    }
 
-		for ( final Field field : declaredFields )
-		{
-			if ( fieldNeedsInjection( field ) )
-			{
-				fields.add( field );
-			}
-		}
+    private List<Field> findFields(final Class<?> beanClass) {
+        final Field[] declaredFields = beanClass.getDeclaredFields();
+        final List<Field> fields = new ArrayList<Field>();
 
-		return fields;
-	}
+        for (final Field field : declaredFields) {
+            if (fieldNeedsInjection(field)) {
+                fields.add(field);
+            }
+        }
 
-	private boolean fieldNeedsInjection(  final Field field )
-	{
-		return field.isAnnotationPresent( INJECTION_ANNOTATION );
-	}
+        return fields;
+    }
 
-	private List<Method> findMethods( final Class<?> beanClass )
-	{
-		final Method[] declaredMethods = beanClass.getDeclaredMethods();
-		final List<Method> methods = new ArrayList<Method>();
+    private boolean fieldNeedsInjection(final Field field) {
+        return field.isAnnotationPresent(INJECTION_ANNOTATION);
+    }
 
-		for ( final Method method : declaredMethods )
-		{
-			if ( methodNeedsInjection( method ) )
-			{
-				methods.add( method );
-			}
-		}
+    private List<Method> findMethods(final Class<?> beanClass) {
+        final Method[] declaredMethods = beanClass.getDeclaredMethods();
+        final List<Method> methods = new ArrayList<Method>();
 
-		return methods;
-	}
+        for (final Method method : declaredMethods) {
+            if (methodNeedsInjection(method)) {
+                methods.add(method);
+            }
+        }
 
-	private boolean methodNeedsInjection(  final Method method )
-	{
-		return method.isAnnotationPresent( INJECTION_ANNOTATION );
-	}
+        return methods;
+    }
 
-	private Constructor<?> findConstructor( final Class<?> beanClass )
-	{
-		final Constructor<?>[] declaredConstructors = beanClass.getDeclaredConstructors();
-		final List<Constructor<?>> matches = new ArrayList<Constructor<?>>();
+    private boolean methodNeedsInjection(final Method method) {
+        return method.isAnnotationPresent(INJECTION_ANNOTATION);
+    }
 
-		for ( final Constructor<?> constructor : declaredConstructors )
-		{
-			if ( constructorNeedsInjection( constructor ) )
-			{
-				matches.add( constructor );
-			}
-		}
+    private Constructor<?> findConstructor(final Class<?> beanClass) {
+        final Constructor<?>[] declaredConstructors = beanClass.getDeclaredConstructors();
+        final List<Constructor<?>> matches = new ArrayList<Constructor<?>>();
 
-		if ( matches.size() == 0 )
-		{
-			try
-			{
-				return beanClass.getDeclaredConstructor();
-			}
+        for (final Constructor<?> constructor : declaredConstructors) {
+            if (constructorNeedsInjection(constructor)) {
+                matches.add(constructor);
+            }
+        }
 
-			catch ( final SecurityException e )
-			{
-				throw new RuntimeException( e );
-			}
+        if (matches.size() == 0) {
+            try {
+                return beanClass.getDeclaredConstructor();
+            }
 
-			catch ( final NoSuchMethodException e )
-			{
-				throw new RuntimeException( e );
-			}
-		}
+            catch (final SecurityException e) {
+                throw new RuntimeException(e);
+            }
 
-		else if ( matches.size() > 1 )
-		{
-			throw new UnsupportedOperationException( "Wrong number of constructors found for autowiring " + beanClass + " " + matches );
-		}
+            catch (final NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
-		return matches.get( 0 );
-	}
+        else if (matches.size() > 1) {
+            throw new UnsupportedOperationException(
+                    "Wrong number of constructors found for autowiring " + beanClass + " " + matches);
+        }
 
-	private boolean constructorNeedsInjection(  final Constructor<?> constructor )
-	{
-		return constructor.isAnnotationPresent( INJECTION_ANNOTATION );
-	}
+        return matches.get(0);
+    }
+
+    private boolean constructorNeedsInjection(final Constructor<?> constructor) {
+        return constructor.isAnnotationPresent(INJECTION_ANNOTATION);
+    }
 }

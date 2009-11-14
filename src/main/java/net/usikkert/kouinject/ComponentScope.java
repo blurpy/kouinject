@@ -27,16 +27,15 @@ package net.usikkert.kouinject;
  *
  * @author Christian Ihle
  */
-public enum ComponentScope
-{
-	/**
-	 * A component is only instantiated once, and the same instance is injected
-	 * every time it is requested.
-	 */
-	SINGLETON,
+public enum ComponentScope {
 
-	/**
-	 * A new component is instantiated every time it is requested.
-	 */
-	PROTOTYPE
+    /**
+     * A component is only instantiated once, and the same instance is injected every time it is requested.
+     */
+    SINGLETON,
+
+    /**
+     * A new component is instantiated every time it is requested.
+     */
+    PROTOTYPE
 }

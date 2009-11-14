@@ -34,9 +34,8 @@ import java.lang.annotation.Target;
  * @author Christian Ihle
  */
 @Documented
-@Retention( RetentionPolicy.RUNTIME )
-@Target( ElementType.METHOD )
-public @interface Initializer
-{
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface Initializer {
 
 }

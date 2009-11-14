@@ -34,222 +34,191 @@ import java.util.jar.JarInputStream;
 import java.util.logging.Logger;
 
 /**
- * Finds classes by scanning the classpath. Classes are searched for in the file system
- * and in jar-files.
+ * Finds classes by scanning the classpath. Classes are searched for in the file system and in
+ * jar-files.
  *
  * @author Christian Ihle
  */
-public class ClassPathScanner implements ClassLocator
-{
-	private static final Logger LOG = Logger.getLogger( ClassPathScanner.class.getName() );
+public class ClassPathScanner implements ClassLocator {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Set<Class<?>> findClasses( final String basePackage )
-	{
-		final ClassLoader loader = getClassLoader();
+    private static final Logger LOG = Logger.getLogger(ClassPathScanner.class.getName());
 
-		try
-		{
-			final long start = System.currentTimeMillis();
-			final Set<Class<?>> classes = findClasses( loader, basePackage );
-			final long stop = System.currentTimeMillis();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<Class<?>> findClasses(final String basePackage) {
+        final ClassLoader loader = getClassLoader();
 
-			LOG.info( "Time spent scanning classpath: " + ( stop - start ) + " ms" );
-			LOG.info( "Classes found: " + classes.size() );
+        try {
+            final long start = System.currentTimeMillis();
+            final Set<Class<?>> classes = findClasses(loader, basePackage);
+            final long stop = System.currentTimeMillis();
 
-			return classes;
-		}
+            LOG.info("Time spent scanning classpath: " + (stop - start) + " ms");
+            LOG.info("Classes found: " + classes.size());
 
-		catch ( final IOException e )
-		{
-			throw new RuntimeException( e );
-		}
+            return classes;
+        }
 
-		catch ( final ClassNotFoundException e )
-		{
-			throw new RuntimeException( e );
-		}
-	}
+        catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
 
-	private Set<Class<?>> findClasses( final ClassLoader loader, final String basePackage ) throws IOException, ClassNotFoundException
-	{
-		final Set<Class<?>> classes = new HashSet<Class<?>>();
-		final String path = basePackage.replace( '.', '/' );
-		final Enumeration<URL> resources = loader.getResources( path );
+        catch (final ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-		if ( resources != null )
-		{
-			while ( resources.hasMoreElements() )
-			{
-				final String filePath = getFilePath( resources.nextElement() );
+    private Set<Class<?>> findClasses(final ClassLoader loader, final String basePackage) throws IOException, ClassNotFoundException {
+        final Set<Class<?>> classes = new HashSet<Class<?>>();
+        final String path = basePackage.replace('.', '/');
+        final Enumeration<URL> resources = loader.getResources(path);
 
-				if ( filePath != null )
-				{
-					if ( isJarFilePath( filePath ) )
-					{
-						final String jarPath = getJarPath( filePath );
-						classes.addAll( getFromJARFile( jarPath, path ) );
-					}
+        if (resources != null) {
+            while (resources.hasMoreElements()) {
+                final String filePath = getFilePath(resources.nextElement());
 
-					else
-					{
-						classes.addAll( getFromDirectory( new File( filePath ), basePackage ) );
-					}
-				}
-			}
-		}
+                if (filePath != null) {
+                    if (isJarFilePath(filePath)) {
+                        final String jarPath = getJarPath(filePath);
+                        classes.addAll(getFromJARFile(jarPath, path));
+                    }
 
-		return classes;
-	}
+                    else {
+                        classes.addAll(getFromDirectory(new File(filePath), basePackage));
+                    }
+                }
+            }
+        }
 
-	private Set<Class<?>> getFromDirectory( final File directory, final String packageName ) throws ClassNotFoundException
-	{
-		final Set<Class<?>> classes = new HashSet<Class<?>>();
+        return classes;
+    }
 
-		if ( directory.exists() )
-		{
-			final File[] files = directory.listFiles();
+    private Set<Class<?>> getFromDirectory(final File directory, final String packageName) throws ClassNotFoundException {
+        final Set<Class<?>> classes = new HashSet<Class<?>>();
 
-			for ( final File file : files )
-			{
-				if ( file.isDirectory() )
-				{
-					classes.addAll( getFromDirectory( file, packageName + "." + file.getName() ) );
-				}
+        if (directory.exists()) {
+            final File[] files = directory.listFiles();
 
-				else if ( isClass( file.getName() ) )
-				{
-					final String className = packageName + '.' + stripFilenameExtension( file.getName() );
-					final Class<?> clazz = Class.forName( className );
-					addClass( clazz, classes );
-				}
-			}
-		}
+            for (final File file : files) {
+                if (file.isDirectory()) {
+                    classes.addAll(getFromDirectory(file, packageName + "." + file.getName()));
+                }
 
-		return classes;
-	}
+                else if (isClass(file.getName())) {
+                    final String className = packageName + '.' + stripFilenameExtension(file.getName());
+                    final Class<?> clazz = Class.forName(className);
+                    addClass(clazz, classes);
+                }
+            }
+        }
 
-	private Set<Class<?>> getFromJARFile( final String jar, final String packageName ) throws IOException, ClassNotFoundException
-	{
-		final Set<Class<?>> classes = new HashSet<Class<?>>();
-		final JarInputStream jarFile = new JarInputStream( new FileInputStream( jar ) );
-		JarEntry jarEntry;
+        return classes;
+    }
 
-		do
-		{
-			jarEntry = jarFile.getNextJarEntry();
+    private Set<Class<?>> getFromJARFile(final String jar, final String packageName) throws IOException, ClassNotFoundException {
+        final Set<Class<?>> classes = new HashSet<Class<?>>();
+        final JarInputStream jarFile = new JarInputStream(new FileInputStream(jar));
+        JarEntry jarEntry;
 
-			if ( jarEntry != null )
-			{
-				final String fileName = jarEntry.getName();
+        do {
+            jarEntry = jarFile.getNextJarEntry();
 
-				if ( isClass( fileName ) )
-				{
-					final String className = stripFilenameExtension( fileName );
+            if (jarEntry != null) {
+                final String fileName = jarEntry.getName();
 
-					if ( className.startsWith( packageName ) )
-					{
-						final Class<?> clazz = Class.forName( className.replace( '/', '.' ) );
-						addClass( clazz, classes );
+                if (isClass(fileName)) {
+                    final String className = stripFilenameExtension(fileName);
 
-					}
-				}
-			}
-		} while ( jarEntry != null );
+                    if (className.startsWith(packageName)) {
+                        final Class<?> clazz = Class.forName(className.replace('/', '.'));
+                        addClass(clazz, classes);
 
-		return classes;
-	}
+                    }
+                }
+            }
+        } while (jarEntry != null);
 
-	/**
-	 * Gets the best possible classloader for scanning after classes. Usually it's
-	 * the current thread's context classloader, but if that's not available then the
-	 * classloader for this class is used instead.
-	 *
-	 * @return A usable classloader.
-	 */
-	private ClassLoader getClassLoader()
-	{
-		final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        return classes;
+    }
 
-		if ( contextClassLoader != null ) {
+    /**
+     * Gets the best possible classloader for scanning after classes. Usually it's the current
+     * thread's context classloader, but if that's not available then the classloader for this class
+     * is used instead.
+     *
+     * @return A usable classloader.
+     */
+    private ClassLoader getClassLoader() {
+        final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+
+        if (contextClassLoader != null) {
             return contextClassLoader;
-        } else {
+        }
+
+        else {
             return getClass().getClassLoader();
         }
-	}
+    }
 
-	private String getFilePath( final URL url )
-	{
-		final String filePath = url.getFile();
+    private String getFilePath(final URL url) {
+        final String filePath = url.getFile();
 
-		if ( filePath != null )
-		{
-			return fixWindowsSpace( filePath );
-		}
+        if (filePath != null) {
+            return fixWindowsSpace(filePath);
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	private boolean isJarFilePath( final String filePath )
-	{
-		return ( filePath.indexOf( "!" ) > 0 ) && ( filePath.indexOf( ".jar" ) > 0 );
-	}
+    private boolean isJarFilePath(final String filePath) {
+        return (filePath.indexOf("!") > 0) && (filePath.indexOf(".jar") > 0);
+    }
 
-	private String fixWindowsSpace( final String filePath )
-	{
-		if ( filePath.indexOf( "%20" ) > 0 )
-		{
-			return filePath.replaceAll( "%20", " " );
-		}
+    private String fixWindowsSpace(final String filePath) {
+        if (filePath.indexOf("%20") > 0) {
+            return filePath.replaceAll("%20", " ");
+        }
 
-		return filePath;
-	}
+        return filePath;
+    }
 
-	private String getJarPath( final String filePath )
-	{
-		final String jarPath = filePath.substring( 0, filePath.indexOf( "!" ) ).substring( filePath.indexOf( ":" ) + 1 );
-		return fixWindowsJarPath( jarPath );
-	}
+    private String getJarPath(final String filePath) {
+        final String jarPath = filePath.substring(0, filePath.indexOf("!")).substring(filePath.indexOf(":") + 1);
+        return fixWindowsJarPath(jarPath);
+    }
 
-	private String fixWindowsJarPath( final String jarPath )
-	{
-		if ( jarPath.indexOf( ":" ) >= 0 )
-		{
-			return jarPath.substring( 1 );
-		}
+    private String fixWindowsJarPath(final String jarPath) {
+        if (jarPath.indexOf(":") >= 0) {
+            return jarPath.substring(1);
+        }
 
-		return jarPath;
-	}
+        return jarPath;
+    }
 
-	private static String stripFilenameExtension( final String filename )
-	{
-	    if ( filename == null ) {
+    private static String stripFilenameExtension(final String filename) {
+        if (filename == null) {
             return null;
         }
 
-        final int dotIndex = filename.lastIndexOf( "." );
+        final int dotIndex = filename.lastIndexOf(".");
 
-        if ( dotIndex == -1 ) {
+        if (dotIndex == -1) {
             return filename;
         }
 
-        return filename.substring( 0, dotIndex );
-	}
+        return filename.substring(0, dotIndex);
+    }
 
-	private boolean isClass( final String fileName )
-	{
-		return fileName.endsWith( ".class" );
-	}
+    private boolean isClass(final String fileName) {
+        return fileName.endsWith(".class");
+    }
 
-	private void addClass( final Class<?> clazz, final Set<Class<?>> classes )
-	{
-		if ( !clazz.isAnonymousClass() && !clazz.isMemberClass() && !clazz.isSynthetic()
-				&& !clazz.isAnnotation() && !clazz.isEnum() && !clazz.isInterface() )
-		{
-			classes.add( clazz );
-		}
-	}
+    private void addClass(final Class<?> clazz, final Set<Class<?>> classes) {
+        if (!clazz.isAnonymousClass() && !clazz.isMemberClass() && !clazz.isSynthetic() && !clazz.isAnnotation()
+                && !clazz.isEnum() && !clazz.isInterface()) {
+            classes.add(clazz);
+        }
+    }
 }

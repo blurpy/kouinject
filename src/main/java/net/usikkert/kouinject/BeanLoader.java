@@ -23,36 +23,35 @@
 package net.usikkert.kouinject;
 
 /**
- * Interface for the main IoC component, the component that loads beans and
- * autowires the dependencies.
+ * Interface for the main IoC component, the component that loads beans and autowires the
+ * dependencies.
  *
  * @author Christian Ihle
  */
-public interface BeanLoader
-{
-	/**
-	 * Loads and autowires all the beans setup in the container.
-	 *
-	 * @throws RuntimeException If the beans can not be instantiated
-	 * or dependencies can not be satisfied.
-	 */
-	void loadBeans();
+public interface BeanLoader {
 
-	/**
-	 * Autowires dependencies in an already instantiated object.
-	 *
-	 * @param objectToAutowire The object to autowire.
-	 * @throws RuntimeException If not all dependencies could be satisfied.
-	 */
-	void autowire( Object objectToAutowire );
+    /**
+     * Loads and autowires all the beans setup in the container.
+     *
+     * @throws RuntimeException If the beans can not be instantiated or dependencies can not be satisfied.
+     */
+    void loadBeans();
 
-	/**
-	 * Gets a bean from the container for the given class.
-	 *
-	 * @param <T> The bean will be cast to the type specified.
-	 * @param beanClass The class to get a bean for.
-	 * @return An object satisfying the specified class.
-	 * @throws RuntimeException If no bean is found.
-	 */
-	<T extends Object> T getBean( Class<T> beanClass );
+    /**
+     * Autowires dependencies in an already instantiated object.
+     *
+     * @param objectToAutowire The object to autowire.
+     * @throws RuntimeException If not all dependencies could be satisfied.
+     */
+    void autowire(Object objectToAutowire);
+
+    /**
+     * Gets a bean from the container for the given class.
+     *
+     * @param <T> The bean will be cast to the type specified.
+     * @param beanClass The class to get a bean for.
+     * @return An object satisfying the specified class.
+     * @throws RuntimeException If no bean is found.
+     */
+    <T extends Object> T getBean(Class<T> beanClass);
 }
