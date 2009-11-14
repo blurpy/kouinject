@@ -27,25 +27,22 @@ import net.usikkert.kouinject.annotation.Inject;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 
 /**
- *
  * @author Christian Ihle
  */
 @Component
-public class CoffeeBean
-{
-	@Inject
-	private JavaBean javaBean;
+public class CoffeeBean {
 
-	@Inject
-	private HelloBean helloBean;
+    @Inject
+    private JavaBean javaBean;
 
-	public JavaBean getJavaBean()
-	{
-		return javaBean;
-	}
+    @Inject
+    private HelloBean helloBean;
 
-	public HelloBean getHelloBean()
-	{
-		return helloBean;
-	}
+    public JavaBean getJavaBean() {
+        return javaBean;
+    }
+
+    public HelloBean getHelloBean() {
+        return helloBean;
+    }
 }

@@ -25,11 +25,9 @@ package net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean;
 import net.usikkert.kouinject.annotation.Component;
 
 /**
- *
  * @author Christian Ihle
  */
 @Component
-public class AbstractBeanImpl extends AbstractBean
-{
+public class AbstractBeanImpl extends AbstractBean {
 
 }

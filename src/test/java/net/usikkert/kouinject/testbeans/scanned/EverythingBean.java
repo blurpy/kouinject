@@ -30,90 +30,77 @@ import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractB
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.interfacebean.InterfaceBeanImpl;
 
 /**
- *
  * @author Christian Ihle
  */
 @Component
-public class EverythingBean
-{
-	private final ConstructorBean constructorBean;
+public class EverythingBean {
 
-	private final SetterBean setterBean;
+    private final ConstructorBean constructorBean;
 
-	private final FieldBean fieldBean;
+    private final SetterBean setterBean;
 
-	private final HelloBean helloBean;
+    private final FieldBean fieldBean;
 
-	@Inject
-	private CoffeeBean coffeeBean;
+    private final HelloBean helloBean;
 
-	private JavaBean javaBean;
+    @Inject
+    private CoffeeBean coffeeBean;
 
-	private final InterfaceBeanImpl interfaceBeanImpl;
+    private JavaBean javaBean;
 
-	private AbstractBeanImpl abstractBeanImpl;
+    private final InterfaceBeanImpl interfaceBeanImpl;
 
-	@Inject
-	public EverythingBean( final ConstructorBean constructorBean, final SetterBean setterBean,
-			final FieldBean fieldBean, final HelloBean helloBean,
-			final InterfaceBeanImpl interfaceBeanImpl )
-	{
-		this.constructorBean = constructorBean;
-		this.setterBean = setterBean;
-		this.fieldBean = fieldBean;
-		this.helloBean = helloBean;
-		this.interfaceBeanImpl = interfaceBeanImpl;
-	}
+    private AbstractBeanImpl abstractBeanImpl;
 
-	@Inject
-	public void setJavaBean( final JavaBean javaBean )
-	{
-		this.javaBean = javaBean;
-	}
+    @Inject
+    public EverythingBean(final ConstructorBean constructorBean, final SetterBean setterBean,
+            final FieldBean fieldBean, final HelloBean helloBean, final InterfaceBeanImpl interfaceBeanImpl) {
+        this.constructorBean = constructorBean;
+        this.setterBean = setterBean;
+        this.fieldBean = fieldBean;
+        this.helloBean = helloBean;
+        this.interfaceBeanImpl = interfaceBeanImpl;
+    }
 
-	public ConstructorBean getConstructorBean()
-	{
-		return constructorBean;
-	}
+    @Inject
+    public void setJavaBean(final JavaBean javaBean) {
+        this.javaBean = javaBean;
+    }
 
-	public SetterBean getSetterBean()
-	{
-		return setterBean;
-	}
+    public ConstructorBean getConstructorBean() {
+        return constructorBean;
+    }
 
-	public FieldBean getFieldBean()
-	{
-		return fieldBean;
-	}
+    public SetterBean getSetterBean() {
+        return setterBean;
+    }
 
-	public HelloBean getHelloBean()
-	{
-		return helloBean;
-	}
+    public FieldBean getFieldBean() {
+        return fieldBean;
+    }
 
-	public CoffeeBean getCoffeeBean()
-	{
-		return coffeeBean;
-	}
+    public HelloBean getHelloBean() {
+        return helloBean;
+    }
 
-	public JavaBean getJavaBean()
-	{
-		return javaBean;
-	}
+    public CoffeeBean getCoffeeBean() {
+        return coffeeBean;
+    }
 
-	public AbstractBeanImpl getAbstractBeanImpl()
-	{
-		return abstractBeanImpl;
-	}
+    public JavaBean getJavaBean() {
+        return javaBean;
+    }
 
-	@Inject
-	public void setAbstractBeanImpl( final AbstractBeanImpl abstractBeanImpl )
-	{
-		this.abstractBeanImpl = abstractBeanImpl;
-	}
+    public AbstractBeanImpl getAbstractBeanImpl() {
+        return abstractBeanImpl;
+    }
 
-	public InterfaceBeanImpl getInterfaceBeanImpl()
-	{
-		return interfaceBeanImpl;
-	}
+    @Inject
+    public void setAbstractBeanImpl(final AbstractBeanImpl abstractBeanImpl) {
+        this.abstractBeanImpl = abstractBeanImpl;
+    }
+
+    public InterfaceBeanImpl getInterfaceBeanImpl() {
+        return interfaceBeanImpl;
+    }
 }

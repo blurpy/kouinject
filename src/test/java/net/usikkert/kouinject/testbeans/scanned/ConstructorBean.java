@@ -26,36 +26,31 @@ import net.usikkert.kouinject.annotation.Component;
 import net.usikkert.kouinject.annotation.Inject;
 
 /**
- *
  * @author Christian Ihle
  */
 @Component
-public class ConstructorBean
-{
-	private final SetterBean setterBean;
+public class ConstructorBean {
 
-	private final HelloBean helloBean;
+    private final SetterBean setterBean;
 
-	@Inject
-	public ConstructorBean( final SetterBean setterBean, final HelloBean helloBean )
-	{
-		this.setterBean = setterBean;
-		this.helloBean = helloBean;
-	}
+    private final HelloBean helloBean;
 
-	public ConstructorBean()
-	{
-		setterBean = null;
-		helloBean = null;
-	}
+    @Inject
+    public ConstructorBean(final SetterBean setterBean, final HelloBean helloBean) {
+        this.setterBean = setterBean;
+        this.helloBean = helloBean;
+    }
 
-	public HelloBean getHelloBean()
-	{
-		return helloBean;
-	}
+    public ConstructorBean() {
+        setterBean = null;
+        helloBean = null;
+    }
 
-	public SetterBean getSetterBean()
-	{
-		return setterBean;
-	}
+    public HelloBean getHelloBean() {
+        return helloBean;
+    }
+
+    public SetterBean getSetterBean() {
+        return setterBean;
+    }
 }

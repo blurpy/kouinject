@@ -30,7 +30,6 @@ import net.usikkert.kouinject.annotation.Component;
  * @author Christian Ihle
  */
 @Component
-public class SecondInterfaceImpl implements SecondInterfaceImplInterface
-{
+public class SecondInterfaceImpl implements SecondInterfaceImplInterface {
 
 }

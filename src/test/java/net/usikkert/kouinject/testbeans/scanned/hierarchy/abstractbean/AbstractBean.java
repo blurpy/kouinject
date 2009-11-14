@@ -23,10 +23,8 @@
 package net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean;
 
 /**
- *
  * @author Christian Ihle
  */
-public abstract class AbstractBean
-{
+public abstract class AbstractBean {
 
 }

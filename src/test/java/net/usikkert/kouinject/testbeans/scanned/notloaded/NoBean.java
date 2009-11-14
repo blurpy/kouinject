@@ -27,29 +27,25 @@ import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
 
 /**
- *
  * @author Christian Ihle
  */
-public class NoBean
-{
-	@Inject
-	private HelloBean helloBean;
+public class NoBean {
 
-	private CoffeeBean coffeeBean;
+    @Inject
+    private HelloBean helloBean;
 
-	public HelloBean getHelloBean()
-	{
-		return helloBean;
-	}
+    private CoffeeBean coffeeBean;
 
-	public CoffeeBean getCoffeeBean()
-	{
-		return coffeeBean;
-	}
+    public HelloBean getHelloBean() {
+        return helloBean;
+    }
 
-	@Inject
-	public void setCoffeeBean( final CoffeeBean coffeeBean )
-	{
-		this.coffeeBean = coffeeBean;
-	}
+    public CoffeeBean getCoffeeBean() {
+        return coffeeBean;
+    }
+
+    @Inject
+    public void setCoffeeBean(final CoffeeBean coffeeBean) {
+        this.coffeeBean = coffeeBean;
+    }
 }

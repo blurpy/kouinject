@@ -25,11 +25,9 @@ package net.usikkert.kouinject.testbeans.scanned;
 import net.usikkert.kouinject.annotation.Component;
 
 /**
- *
  * @author Christian Ihle
  */
 @Component
-public class HelloBean
-{
+public class HelloBean {
 
 }

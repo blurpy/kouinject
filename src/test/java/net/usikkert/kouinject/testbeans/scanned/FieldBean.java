@@ -28,33 +28,29 @@ import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractB
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.interfacebean.InterfaceBean;
 
 /**
- *
  * @author Christian Ihle
  */
 @Component
-public class FieldBean
-{
-	@Inject
-	private HelloBean helloBean;
+public class FieldBean {
 
-	@Inject
-	private AbstractBean abstractBean;
+    @Inject
+    private HelloBean helloBean;
 
-	@Inject
-	private InterfaceBean interfaceBean;
+    @Inject
+    private AbstractBean abstractBean;
 
-	public HelloBean getHelloBean()
-	{
-		return helloBean;
-	}
+    @Inject
+    private InterfaceBean interfaceBean;
 
-	public AbstractBean getAbstractBean()
-	{
-		return abstractBean;
-	}
+    public HelloBean getHelloBean() {
+        return helloBean;
+    }
 
-	public InterfaceBean getInterfaceBean()
-	{
-		return interfaceBean;
-	}
+    public AbstractBean getAbstractBean() {
+        return abstractBean;
+    }
+
+    public InterfaceBean getInterfaceBean() {
+        return interfaceBean;
+    }
 }

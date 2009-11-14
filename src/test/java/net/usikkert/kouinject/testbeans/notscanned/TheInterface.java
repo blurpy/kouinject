@@ -27,7 +27,6 @@ package net.usikkert.kouinject.testbeans.notscanned;
  *
  * @author Christian Ihle
  */
-public interface TheInterface
-{
+public interface TheInterface {
 
 }

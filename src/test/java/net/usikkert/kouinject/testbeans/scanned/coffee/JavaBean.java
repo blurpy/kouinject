@@ -28,30 +28,26 @@ import net.usikkert.kouinject.testbeans.scanned.FieldBean;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 
 /**
- *
  * @author Christian Ihle
  */
 @Component
-public class JavaBean
-{
-	private FieldBean fieldBean;
+public class JavaBean {
 
-	private HelloBean helloBean;
+    private FieldBean fieldBean;
 
-	@Inject
-	public void setFields( final FieldBean fieldBean, final HelloBean helloBean )
-	{
-		this.fieldBean = fieldBean;
-		this.helloBean = helloBean;
-	}
+    private HelloBean helloBean;
 
-	public FieldBean getFieldBean()
-	{
-		return fieldBean;
-	}
+    @Inject
+    public void setFields(final FieldBean fieldBean, final HelloBean helloBean) {
+        this.fieldBean = fieldBean;
+        this.helloBean = helloBean;
+    }
 
-	public HelloBean getHelloBean()
-	{
-		return helloBean;
-	}
+    public FieldBean getFieldBean() {
+        return fieldBean;
+    }
+
+    public HelloBean getHelloBean() {
+        return helloBean;
+    }
 }

@@ -23,10 +23,8 @@
 package net.usikkert.kouinject.testbeans.scanned.hierarchy.interfacebean;
 
 /**
- *
  * @author Christian Ihle
  */
-public interface InterfaceBean
-{
+public interface InterfaceBean {
 
 }

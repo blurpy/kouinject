@@ -27,7 +27,6 @@ package net.usikkert.kouinject.testbeans.notscanned;
  *
  * @author Christian Ihle
  */
-public interface FirstInterfaceImplInterface extends TheInterface
-{
+public interface FirstInterfaceImplInterface extends TheInterface {
 
 }

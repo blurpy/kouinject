@@ -26,22 +26,19 @@ import net.usikkert.kouinject.annotation.Component;
 import net.usikkert.kouinject.annotation.Inject;
 
 /**
- *
  * @author Christian Ihle
  */
 @Component
-public class LastBean
-{
-	private EverythingBean everythingBean;
+public class LastBean {
 
-	@Inject
-	public void setEverythingBean( final EverythingBean everythingBean )
-	{
-		this.everythingBean = everythingBean;
-	}
+    private EverythingBean everythingBean;
 
-	public EverythingBean getEverythingBean()
-	{
-		return everythingBean;
-	}
+    @Inject
+    public void setEverythingBean(final EverythingBean everythingBean) {
+        this.everythingBean = everythingBean;
+    }
+
+    public EverythingBean getEverythingBean() {
+        return everythingBean;
+    }
 }

@@ -31,18 +31,16 @@ import net.usikkert.kouinject.annotation.Inject;
  * @author Christian Ihle
  */
 @Component
-public class TheInterfaceUser
-{
-	private TheInterface theInterface;
+public class TheInterfaceUser {
 
-	public TheInterface getTheInterface()
-	{
-		return theInterface;
-	}
+    private TheInterface theInterface;
 
-	@Inject
-	public void setTheInterface( final TheInterface theInterface )
-	{
-		this.theInterface = theInterface;
-	}
+    public TheInterface getTheInterface() {
+        return theInterface;
+    }
+
+    @Inject
+    public void setTheInterface(final TheInterface theInterface) {
+        this.theInterface = theInterface;
+    }
 }

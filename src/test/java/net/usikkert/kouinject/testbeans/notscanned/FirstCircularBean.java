@@ -31,13 +31,12 @@ import net.usikkert.kouinject.annotation.Inject;
  * @author Christian Ihle
  */
 @Component
-public class FirstCircularBean
-{
-	@Inject
-	private SecondCircularBean secondCircularBean;
+public class FirstCircularBean {
 
-	public SecondCircularBean getSecondCircularBean()
-	{
-		return secondCircularBean;
-	}
+    @Inject
+    private SecondCircularBean secondCircularBean;
+
+    public SecondCircularBean getSecondCircularBean() {
+        return secondCircularBean;
+    }
 }
