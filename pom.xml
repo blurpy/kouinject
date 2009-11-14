@@ -11,6 +11,17 @@
   <description>Simple dependency injection framework.</description>
 
   <build>
+    <resources>
+      <resource>
+        <directory>.</directory>
+        <includes>
+          <include>COPYING</include>
+          <include>COPYING.LESSER</include>
+          <include>README</include>
+          <include>CHANGES</include>
+        </includes>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
