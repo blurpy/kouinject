@@ -1,2 +1,9 @@
 
 - KouInject CHANGES
+
+* Version 0.5 (15.11.2009):
+ - Imported code from KouChat
+ - Changed license from GPLv2 to LGPLv3
+ - Fixed Checkstyle issues
+ - Turned off logging by default
+ - Added some validation of input parameters
