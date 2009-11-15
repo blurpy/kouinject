@@ -32,6 +32,7 @@ import java.util.Set;
 
 import net.usikkert.kouinject.annotation.Component;
 import net.usikkert.kouinject.annotation.Inject;
+import net.usikkert.kouinject.util.Validate;
 
 /**
  * This bean-data handler uses annotations to find beans and extract their meta-data.
@@ -60,6 +61,9 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
      * that are bean candidates.
      */
     public AnnotationBasedBeanDataHandler(final String basePackage, final ClassLocator classLocator) {
+        Validate.notNull(basePackage, "Base package can not be null");
+        Validate.notNull(classLocator, "Class locator can not be null");
+
         this.basePackage = basePackage;
         this.classLocator = classLocator;
     }
@@ -86,6 +90,8 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
      */
     @Override
     public BeanData getBeanData(final Class<?> beanClass, final boolean skipConstructor) {
+        Validate.notNull(beanClass, "Bean class can not be null");
+
         final BeanData beanData = new BeanData(beanClass, skipConstructor);
 
         if (!skipConstructor) {

@@ -36,6 +36,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import net.usikkert.kouinject.util.Validate;
+
 /**
  * Default implementation of the {@link BeanLoader}.
  *
@@ -67,6 +69,8 @@ public class DefaultBeanLoader implements BeanLoader {
      * required to instantiate them.
      */
     public DefaultBeanLoader(final BeanDataHandler beanDataHandler) {
+        Validate.notNull(beanDataHandler, "Bean-data handler can not be null");
+
         this.beanDataHandler = beanDataHandler;
         this.beanMap = Collections.synchronizedMap(new HashMap<Class<?>, Object>());
         this.beansInCreation = Collections.synchronizedCollection(new ArrayList<Class<?>>());
@@ -99,6 +103,8 @@ public class DefaultBeanLoader implements BeanLoader {
      */
     @Override
     public void autowire(final Object objectToAutowire) {
+        Validate.notNull(objectToAutowire, "Object to autowire can not be null");
+
         final BeanData beanData = beanDataHandler.getBeanData(objectToAutowire.getClass(), true);
         final List<Class<?>> missingDependencies = findMissingDependencies(beanData);
 
@@ -127,6 +133,8 @@ public class DefaultBeanLoader implements BeanLoader {
      */
     @Override
     public <T extends Object> T getBean(final Class<T> beanClass) {
+        Validate.notNull(beanClass, "Bean class can not be null");
+
         return findBean(beanClass, true);
     }
 
@@ -142,6 +150,8 @@ public class DefaultBeanLoader implements BeanLoader {
      * @param beanToAdd The fully instantiated and ready to use bean to add to the container.
      */
     protected void addBean(final Object beanToAdd) {
+        Validate.notNull(beanToAdd, "Bean can not be null");
+
         final Class<?> beanClass = beanToAdd.getClass();
 
         if (beanAlreadyExists(beanClass)) {

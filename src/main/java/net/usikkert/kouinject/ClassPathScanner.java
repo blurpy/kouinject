@@ -33,6 +33,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.logging.Logger;
 
+import net.usikkert.kouinject.util.Validate;
+
 /**
  * Finds classes by scanning the classpath. Classes are searched for in the file system and in
  * jar-files.
@@ -48,6 +50,8 @@ public class ClassPathScanner implements ClassLocator {
      */
     @Override
     public Set<Class<?>> findClasses(final String basePackage) {
+        Validate.notNull(basePackage, "Base package can not be null");
+
         final ClassLoader loader = getClassLoader();
 
         try {

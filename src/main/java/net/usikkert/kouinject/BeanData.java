@@ -28,6 +28,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.usikkert.kouinject.util.Validate;
+
 /**
  * This class describes the bean meta-data needed to instantiate a new bean to a consistent state.
  *
@@ -49,6 +51,8 @@ public class BeanData {
      * @param skipConstructor If mapping dependencies for the constructor should be skipped.
      */
     public BeanData(final Class<?> beanClass, final boolean skipConstructor) {
+        Validate.notNull(beanClass, "Bean class can not be null");
+
         this.beanClass = beanClass;
         this.skipConstructor = skipConstructor;
         dependencies = new ArrayList<Class<?>>();
@@ -80,6 +84,9 @@ public class BeanData {
      * @param constructor The constructor to invoke.
      */
     public void setConstructor(final Constructor<?> constructor) {
+        Validate.isFalse(skipConstructor, "Can not set constructor when skipConstructor is active");
+        Validate.notNull(constructor, "Constructor can not be null");
+
         this.constructor = constructor;
     }
 
@@ -98,6 +105,8 @@ public class BeanData {
      * @param fields The fields that needs dependency injection.
      */
     public void setFields(final List<Field> fields) {
+        Validate.notNull(fields, "Fields can not be null");
+
         this.fields = fields;
     }
 
@@ -116,6 +125,8 @@ public class BeanData {
      * @param methods The methods that needs dependency injection.
      */
     public void setMethods(final List<Method> methods) {
+        Validate.notNull(methods, "Methods can not be null");
+
         this.methods = methods;
     }
 
