@@ -40,14 +40,17 @@ public class BeanData {
     private List<Field> fields;
     private List<Method> methods;
     private final List<Class<?>> dependencies;
+    private final boolean skipConstructor;
 
     /**
      * Constructs a new BeanData instance for describing the defined class.
      *
      * @param beanClass The class this BeanData will describe.
+     * @param skipConstructor If mapping dependencies for the constructor should be skipped.
      */
-    public BeanData(final Class<?> beanClass) {
+    public BeanData(final Class<?> beanClass, final boolean skipConstructor) {
         this.beanClass = beanClass;
+        this.skipConstructor = skipConstructor;
         dependencies = new ArrayList<Class<?>>();
     }
 
@@ -130,7 +133,7 @@ public class BeanData {
      * <p>The result will be available in {@link #getDependencies()}.</p>
      */
     public void mapDependencies() {
-        if (constructor != null) {
+        if (!skipConstructor) {
             mapConstructorDependencies();
         }
 

@@ -86,7 +86,7 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
      */
     @Override
     public BeanData getBeanData(final Class<?> beanClass, final boolean skipConstructor) {
-        final BeanData beanData = new BeanData(beanClass);
+        final BeanData beanData = new BeanData(beanClass, skipConstructor);
 
         if (!skipConstructor) {
             final Constructor<?> constructor = findConstructor(beanClass);
