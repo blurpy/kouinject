@@ -4,7 +4,7 @@
   <groupId>net.usikkert.kouinject</groupId>
   <artifactId>kouinject</artifactId>
   <packaging>jar</packaging>
-  <version>0.5</version>
+  <version>0.6-SNAPSHOT</version>
   <name>KouInject</name>
   <url>http://kouinject.googlecode.com/</url>
   <description>Simple dependency injection framework for Java.</description>
@@ -55,9 +55,9 @@
   </developers>
 
   <scm>
-    <connection>scm:svn:http://kouinject.googlecode.com/svn/tags/kouinject-0.5</connection>
-    <developerConnection>scm:svn:https://kouinject.googlecode.com/svn/tags/kouinject-0.5</developerConnection>
-    <url>http://kouinject.googlecode.com/svn/tags/kouinject-0.5</url>
+    <connection>scm:svn:http://kouinject.googlecode.com/svn/trunk/</connection>
+    <developerConnection>scm:svn:https://kouinject.googlecode.com/svn/trunk/</developerConnection>
+    <url>http://kouinject.googlecode.com/svn/</url>
   </scm>
 
   <issueManagement>
