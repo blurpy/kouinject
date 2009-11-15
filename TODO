@@ -1,2 +1,11 @@
 
 - KouInject TODO
+
+ * Add scope support
+ * Add child contexts?
+ * Run initializer method
+ * Run destroyer method
+ * Allow circular deps in fields and methods?
+ * Validate input
+ * Add skipConstructor parameter to mapDependencies in BeanData?
+ 

@@ -38,9 +38,9 @@ public class JavaBean {
     private HelloBean helloBean;
 
     @Inject
-    public void setFields(final FieldBean fieldBean, final HelloBean helloBean) {
-        this.fieldBean = fieldBean;
-        this.helloBean = helloBean;
+    public void setFields(final FieldBean field, final HelloBean hello) {
+        this.fieldBean = field;
+        this.helloBean = hello;
     }
 
     public FieldBean getFieldBean() {

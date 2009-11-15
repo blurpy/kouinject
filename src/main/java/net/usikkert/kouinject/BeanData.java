@@ -36,48 +36,99 @@ import java.util.List;
 public class BeanData {
 
     private final Class<?> beanClass;
-
     private Constructor<?> constructor;
-
     private List<Field> fields;
-
     private List<Method> methods;
-
     private final List<Class<?>> dependencies;
 
+    /**
+     * Constructs a new BeanData instance for describing the defined class.
+     *
+     * @param beanClass The class this BeanData will describe.
+     */
     public BeanData(final Class<?> beanClass) {
         this.beanClass = beanClass;
         dependencies = new ArrayList<Class<?>>();
     }
 
+    /**
+     * The class this BeanData describes the meta-data of.
+     *
+     * @return The class this BeanData describes.
+     */
     public Class<?> getBeanClass() {
         return beanClass;
     }
 
+    /**
+     * Gets the constructor to invoke to create a new instance of the class
+     * defined in {@link #getBeanClass()}.
+     *
+     * @return The constructor to invoke.
+     */
     public Constructor<?> getConstructor() {
         return constructor;
     }
 
+    /**
+     * Sets the constructor to invoke to create a new instance of the class
+     * defined in {@link #getBeanClass()}.
+     *
+     * @param constructor The constructor to invoke.
+     */
     public void setConstructor(final Constructor<?> constructor) {
         this.constructor = constructor;
     }
 
+    /**
+     * Gets the fields in {@link #getBeanClass()} marked for dependency injection.
+     *
+     * @return The fields marked for dependency injection.
+     */
     public List<Field> getFields() {
         return fields;
     }
 
+    /**
+     * Sets the fields in {@link #getBeanClass()} that needs dependency injection.
+     *
+     * @param fields The fields that needs dependency injection.
+     */
     public void setFields(final List<Field> fields) {
         this.fields = fields;
     }
 
+    /**
+     * Gets the methods in {@link #getBeanClass()} marked for dependency injection.
+     *
+     * @return The methods marked for dependency injection.
+     */
     public List<Method> getMethods() {
         return methods;
     }
 
+    /**
+     * Sets the methods in {@link #getBeanClass()} that needs dependency injection.
+     *
+     * @param methods The methods that needs dependency injection.
+     */
     public void setMethods(final List<Method> methods) {
         this.methods = methods;
     }
 
+    /**
+     * Finds required class dependencies in the constructor, in fields and in methods.
+     *
+     * <p>This method cannot be run before:</p>
+     *
+     * <ul>
+     *   <li>{@link #setConstructor(Constructor)} (optional)</li>
+     *   <li>{@link #setFields(List)}</li>
+     *   <li>{@link #setMethods(List)}</li>
+     * </ul>
+     *
+     * <p>The result will be available in {@link #getDependencies()}.</p>
+     */
     public void mapDependencies() {
         if (constructor != null) {
             mapConstructorDependencies();
@@ -111,6 +162,11 @@ public class BeanData {
         }
     }
 
+    /**
+     * All required class dependencies will be in this list after {@link #mapDependencies()} has been run.
+     *
+     * @return All class dependencies for {@link #getBeanClass()}.
+     */
     public List<Class<?>> getDependencies() {
         return dependencies;
     }

@@ -14,6 +14,7 @@
     <module name="JavadocMethod">
       <property name="severity" value="info"/>
       <property name="scope" value="protected"/>
+      <property name="allowUndeclaredRTE" value="true"/>
       <property name="logLoadErrors" value="true"/>
       <property name="suppressLoadErrors" value="true"/>
     </module>
@@ -25,7 +26,10 @@
       <property name="severity" value="ignore"/>
       <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
     </module>
-    <module name="JavadocStyle"/>
+    <module name="JavadocStyle">
+      <property name="severity" value="info"/>
+      <property name="checkEmptyJavadoc" value="true"/>
+    </module>
     <module name="ConstantName"/>
     <module name="LocalFinalVariableName"/>
     <module name="LocalVariableName"/>

@@ -39,13 +39,6 @@ import java.util.logging.Logger;
 /**
  * Default implementation of the {@link BeanLoader}.
  *
- * TODO
- * Add scope support
- * Add child contexts?
- * Run initializer method
- * Run destroyer method
- * Allow circular deps in fields and methods?
- *
  * @author Christian Ihle
  */
 public class DefaultBeanLoader implements BeanLoader {
@@ -122,6 +115,17 @@ public class DefaultBeanLoader implements BeanLoader {
         return findBean(beanClass, true);
     }
 
+    /**
+     * Adds a new bean to the container. The bean must be ready to use, and will be available
+     * for dependency injection in other beans.
+     *
+     * <p>Do <strong>NOT</strong> depend on manually invoking this method from outside
+     * the framework to get all the required beans in the container. The beans will
+     * be instantiated in random order, and dependencies not instantiated by the container is
+     * not guaranteed to be available at the right moment.</p>
+     *
+     * @param beanToAdd The fully instantiated and ready to use bean to add to the container.
+     */
     protected void addBean(final Object beanToAdd) {
         final Class<?> beanClass = beanToAdd.getClass();
 
