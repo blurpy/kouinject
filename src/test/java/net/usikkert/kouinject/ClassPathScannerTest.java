@@ -35,8 +35,6 @@ import org.junit.Test;
 /**
  * Test of {@link ClassPathScanner}.
  *
- * TODO Add enums, anonymous classes and so on for this test.
- *
  * @author Christian Ihle
  */
 public class ClassPathScannerTest {
