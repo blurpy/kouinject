@@ -27,6 +27,8 @@ import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
 
 /**
+ * Bean used for testing correct dependency injection.
+ *
  * @author Christian Ihle
  */
 public class NoBean {

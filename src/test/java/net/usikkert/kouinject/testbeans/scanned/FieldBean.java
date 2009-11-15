@@ -28,6 +28,8 @@ import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractB
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.interfacebean.InterfaceBean;
 
 /**
+ * Bean used for testing correct dependency injection.
+ *
  * @author Christian Ihle
  */
 @Component

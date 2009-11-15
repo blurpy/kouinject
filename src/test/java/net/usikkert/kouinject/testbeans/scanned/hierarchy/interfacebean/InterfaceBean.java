@@ -23,6 +23,8 @@
 package net.usikkert.kouinject.testbeans.scanned.hierarchy.interfacebean;
 
 /**
+ * Bean used for testing correct dependency injection.
+ *
  * @author Christian Ihle
  */
 public interface InterfaceBean {

@@ -28,6 +28,8 @@ import net.usikkert.kouinject.testbeans.scanned.FieldBean;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 
 /**
+ * Bean used for testing correct dependency injection.
+ *
  * @author Christian Ihle
  */
 @Component

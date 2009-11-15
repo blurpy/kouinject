@@ -23,6 +23,8 @@
 package net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean;
 
 /**
+ * Bean used for testing correct dependency injection.
+ *
  * @author Christian Ihle
  */
 public abstract class AbstractBean {

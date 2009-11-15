@@ -25,6 +25,8 @@ package net.usikkert.kouinject.testbeans.scanned;
 import net.usikkert.kouinject.annotation.Component;
 
 /**
+ * Bean used for testing correct dependency injection.
+ *
  * @author Christian Ihle
  */
 @Component

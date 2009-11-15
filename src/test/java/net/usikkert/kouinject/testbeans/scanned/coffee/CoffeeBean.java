@@ -27,6 +27,8 @@ import net.usikkert.kouinject.annotation.Inject;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 
 /**
+ * Bean used for testing correct dependency injection.
+ *
  * @author Christian Ihle
  */
 @Component
