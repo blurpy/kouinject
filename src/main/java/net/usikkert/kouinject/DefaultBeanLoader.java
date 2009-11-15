@@ -39,6 +39,15 @@ import java.util.logging.Logger;
 /**
  * Default implementation of the {@link BeanLoader}.
  *
+ * <p>Example of how to use:</p>
+ *
+ * <pre>
+ *   ClassLocator classLocator = new ClassPathScanner();
+ *   BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler("basepackage.to.scan", classLocator);
+ *   BeanLoader beanLoader = new DefaultBeanLoader(beanDataHandler);
+ *   beanLoader.loadBeans();
+ * </pre>
+ *
  * @author Christian Ihle
  */
 public class DefaultBeanLoader implements BeanLoader {
@@ -51,6 +60,12 @@ public class DefaultBeanLoader implements BeanLoader {
 
     private final BeanDataHandler beanDataHandler;
 
+    /**
+     * Constructs a new instance of this bean loader with the specified bean-data handler.
+     *
+     * @param beanDataHandler The handler to use for finding beans and the meta-data
+     * required to instantiate them.
+     */
     public DefaultBeanLoader(final BeanDataHandler beanDataHandler) {
         this.beanDataHandler = beanDataHandler;
         this.beanMap = Collections.synchronizedMap(new HashMap<Class<?>, Object>());

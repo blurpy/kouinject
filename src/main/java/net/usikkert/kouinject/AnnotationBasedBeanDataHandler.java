@@ -36,6 +36,10 @@ import net.usikkert.kouinject.annotation.Inject;
 /**
  * This bean-data handler uses annotations to find beans and extract their meta-data.
  *
+ * <p>Scans for beans having the {@link Component} annotation, and scans the
+ * beans for the {@link Inject} annotation to detect constructor, fields and methods
+ * for dependency injection.</p>
+ *
  * @author Christian Ihle
  */
 public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
@@ -47,6 +51,14 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
 
     private final String basePackage;
 
+    /**
+     * Constructs a new instance of this bean-data handler using a {@link ClassLocator} for
+     * autodetecting the beans in the specified base package.
+     *
+     * @param basePackage The package to start scanning for beans. All sub-packages will also be scanned.
+     * @param classLocator The instance of {@link ClassLocator} to use for finding the classes
+     * that are bean candidates.
+     */
     public AnnotationBasedBeanDataHandler(final String basePackage, final ClassLocator classLocator) {
         this.basePackage = basePackage;
         this.classLocator = classLocator;
