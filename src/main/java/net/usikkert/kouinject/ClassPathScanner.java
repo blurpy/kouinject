@@ -59,8 +59,8 @@ public class ClassPathScanner implements ClassLocator {
             final Set<Class<?>> classes = findClasses(loader, basePackage);
             final long stop = System.currentTimeMillis();
 
-            LOG.info("Time spent scanning classpath: " + (stop - start) + " ms");
-            LOG.info("Classes found: " + classes.size());
+            LOG.fine("Time spent scanning classpath: " + (stop - start) + " ms");
+            LOG.fine("Classes found: " + classes.size());
 
             return classes;
         }

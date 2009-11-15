@@ -6,5 +6,4 @@
  * Run initializer method
  * Run destroyer method
  * Allow circular deps in fields and methods?
- * Don't log anything to console by default
  

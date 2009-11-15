@@ -162,12 +162,12 @@ public class DefaultBeanLoader implements BeanLoader {
             beanMap.put(beanClass, beanToAdd);
         }
 
-        LOG.info("Bean added: " + beanClass.getName());
+        LOG.fine("Bean added: " + beanClass.getName());
     }
 
     private void loadAndAutowireBeans() throws IllegalAccessException, InvocationTargetException, InstantiationException {
         final Set<Class<?>> detectedBeans = beanDataHandler.findBeans();
-        LOG.info("Beans found: " + detectedBeans.size());
+        LOG.fine("Beans found: " + detectedBeans.size());
 
         final long start = System.currentTimeMillis();
 
@@ -176,7 +176,7 @@ public class DefaultBeanLoader implements BeanLoader {
 
         final long stop = System.currentTimeMillis();
 
-        LOG.info("All beans created in: " + (stop - start) + " ms");
+        LOG.fine("All beans created in: " + (stop - start) + " ms");
     }
 
     private Map<Class<?>, BeanData> getBeanDataMap(final Set<Class<?>> detectedBeans) {
@@ -202,10 +202,10 @@ public class DefaultBeanLoader implements BeanLoader {
 
     private void createBean(final Class<?> beanClass, final Map<Class<?>, BeanData> beanDataMap)
             throws IllegalAccessException, InvocationTargetException, InstantiationException {
-        LOG.info("Checking bean before creation: " + beanClass);
+        LOG.finer("Checking bean before creation: " + beanClass);
 
         if (beanAlreadyExists(beanClass)) {
-            LOG.info("Bean already added - skipping: " + beanClass);
+            LOG.finer("Bean already added - skipping: " + beanClass);
             return;
         }
 
@@ -216,7 +216,7 @@ public class DefaultBeanLoader implements BeanLoader {
         final List<Class<?>> missingDependencies = findMissingDependencies(beanData);
 
         for (final Class<?> dependency : missingDependencies) {
-            LOG.info("Checking bean " + beanClass + " for missing dependency: " + dependency);
+            LOG.finer("Checking bean " + beanClass + " for missing dependency: " + dependency);
             createBean(dependency, beanDataMap);
         }
 
@@ -280,7 +280,7 @@ public class DefaultBeanLoader implements BeanLoader {
             beansForConstructor[i] = bean;
         }
 
-        LOG.info("Invoking constructor: " + constructor);
+        LOG.finer("Invoking constructor: " + constructor);
         final Object newInstance = constructor.newInstance(beansForConstructor);
 
         return newInstance;
@@ -296,7 +296,7 @@ public class DefaultBeanLoader implements BeanLoader {
         final List<Field> fields = beanData.getFields();
 
         for (final Field field : fields) {
-            LOG.info("Autowiring field: " + field);
+            LOG.finer("Autowiring field: " + field);
             final boolean originalAccessible = field.isAccessible();
             field.setAccessible(true);
             final Object bean = findBean(field.getType(), true);
@@ -310,7 +310,7 @@ public class DefaultBeanLoader implements BeanLoader {
         final List<Method> methods = beanData.getMethods();
 
         for (final Method method : methods) {
-            LOG.info("Autowiring method: " + method);
+            LOG.finer("Autowiring method: " + method);
 
             final Class<?>[] parameterTypes = method.getParameterTypes();
             final Object[] beansForMethod = new Object[parameterTypes.length];
