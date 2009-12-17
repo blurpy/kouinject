@@ -22,8 +22,9 @@
 
 package net.usikkert.kouinject.testbeans.notscanned;
 
+import javax.inject.Inject;
+
 import net.usikkert.kouinject.annotation.Component;
-import net.usikkert.kouinject.annotation.Inject;
 
 /**
  * Bean for testing circular dependencies.

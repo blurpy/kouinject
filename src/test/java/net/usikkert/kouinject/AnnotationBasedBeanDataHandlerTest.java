@@ -29,7 +29,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import net.usikkert.kouinject.annotation.Inject;
+import javax.inject.Inject;
+
 import net.usikkert.kouinject.testbeans.scanned.ConstructorBean;
 import net.usikkert.kouinject.testbeans.scanned.EverythingBean;
 import net.usikkert.kouinject.testbeans.scanned.FieldBean;

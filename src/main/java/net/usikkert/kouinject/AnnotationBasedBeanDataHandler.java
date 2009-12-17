@@ -28,7 +28,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.usikkert.kouinject.annotation.Inject;
+import javax.inject.Inject;
+
 import net.usikkert.kouinject.util.Validate;
 
 /**

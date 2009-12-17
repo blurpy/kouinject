@@ -22,8 +22,9 @@
 
 package net.usikkert.kouinject.testbeans.scanned;
 
+import javax.inject.Inject;
+
 import net.usikkert.kouinject.annotation.Component;
-import net.usikkert.kouinject.annotation.Inject;
 import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractBeanImpl;

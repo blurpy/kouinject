@@ -22,8 +22,9 @@
 
 package net.usikkert.kouinject.testbeans.scanned;
 
+import javax.inject.Inject;
+
 import net.usikkert.kouinject.annotation.Component;
-import net.usikkert.kouinject.annotation.Inject;
 
 /**
  * Bean used for testing correct dependency injection.

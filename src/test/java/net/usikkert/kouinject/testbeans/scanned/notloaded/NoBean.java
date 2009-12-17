@@ -22,7 +22,8 @@
 
 package net.usikkert.kouinject.testbeans.scanned.notloaded;
 
-import net.usikkert.kouinject.annotation.Inject;
+import javax.inject.Inject;
+
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
 

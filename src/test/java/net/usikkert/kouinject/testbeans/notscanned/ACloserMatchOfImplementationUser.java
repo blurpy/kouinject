@@ -22,8 +22,9 @@
 
 package net.usikkert.kouinject.testbeans.notscanned;
 
+import javax.inject.Inject;
+
 import net.usikkert.kouinject.annotation.Component;
-import net.usikkert.kouinject.annotation.Inject;
 
 /**
  * Bean for testing that it's OK to have two implementations of the same interface loaded as long as
