@@ -64,9 +64,10 @@ public class DefaultBeanLoaderTest {
     @Before
     public void setupBeanLoader() {
         final ClassLocator classLocator = new ClassPathScanner();
-        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler(
+        final BeanLocator beanLocator = new AnnotationBasedBeanLocator(
                 "net.usikkert.kouinject.testbeans.scanned", classLocator);
-        beanLoader = new DefaultBeanLoader(beanDataHandler);
+        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
+        beanLoader = new DefaultBeanLoader(beanDataHandler, beanLocator);
     }
 
     @Test
@@ -226,30 +227,30 @@ public class DefaultBeanLoaderTest {
 
     @Test(expected = IllegalStateException.class)
     public void circularDependenciesShouldBeDetected() {
-        final ClassLocator classLocator = mock(ClassLocator.class);
-        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler("some.package", classLocator);
-        final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler);
+        final BeanLocator beanLocator = mock(BeanLocator.class);
+        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
+        final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler, beanLocator);
 
         final Set<Class<?>> classes = new HashSet<Class<?>>();
         classes.add(FirstCircularBean.class);
         classes.add(SecondCircularBean.class);
 
-        when(classLocator.findClasses("some.package")).thenReturn(classes);
+        when(beanLocator.findBeans()).thenReturn(classes);
 
         loader.loadBeans();
     }
 
     @Test(expected = IllegalStateException.class)
     public void tooManyMatchesForADependencyShouldBeDetected() {
-        final ClassLocator classLocator = mock(ClassLocator.class);
-        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler("some.package", classLocator);
-        final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler);
+        final BeanLocator beanLocator = mock(BeanLocator.class);
+        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
+        final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler, beanLocator);
 
         final Set<Class<?>> classes = new HashSet<Class<?>>();
         classes.add(FirstInterfaceImpl.class);
         classes.add(SecondInterfaceImpl.class);
 
-        when(classLocator.findClasses("some.package")).thenReturn(classes);
+        when(beanLocator.findBeans()).thenReturn(classes);
 
         loader.loadBeans();
 
@@ -259,15 +260,15 @@ public class DefaultBeanLoaderTest {
 
     @Test
     public void severalBeansForAnInterfaceIsOKIfACloserMatchToImplIsRequested() {
-        final ClassLocator classLocator = mock(ClassLocator.class);
-        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler("some.package", classLocator);
-        final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler);
+        final BeanLocator beanLocator = mock(BeanLocator.class);
+        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
+        final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler, beanLocator);
 
         final Set<Class<?>> classes = new HashSet<Class<?>>();
         classes.add(FirstInterfaceImpl.class);
         classes.add(SecondInterfaceImpl.class);
 
-        when(classLocator.findClasses("some.package")).thenReturn(classes);
+        when(beanLocator.findBeans()).thenReturn(classes);
 
         loader.loadBeans();
 
@@ -280,14 +281,14 @@ public class DefaultBeanLoaderTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void noMatchesForADependencyShouldBeDetected() {
-        final ClassLocator classLocator = mock(ClassLocator.class);
-        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler("some.package", classLocator);
-        final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler);
+        final BeanLocator beanLocator = mock(BeanLocator.class);
+        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
+        final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler, beanLocator);
 
         final Set<Class<?>> classes = new HashSet<Class<?>>();
         classes.add(TheInterfaceUser.class);
 
-        when(classLocator.findClasses("some.package")).thenReturn(classes);
+        when(beanLocator.findBeans()).thenReturn(classes);
 
         loader.loadBeans();
     }

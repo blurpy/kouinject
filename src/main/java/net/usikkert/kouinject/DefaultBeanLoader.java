@@ -45,8 +45,9 @@ import net.usikkert.kouinject.util.Validate;
  *
  * <pre>
  *   ClassLocator classLocator = new ClassPathScanner();
- *   BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler("basepackage.to.scan", classLocator);
- *   BeanLoader beanLoader = new DefaultBeanLoader(beanDataHandler);
+ *   final BeanLocator beanLocator = new AnnotationBasedBeanLocator("basepackage.to.scan", classLocator);
+ *   BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
+ *   BeanLoader beanLoader = new DefaultBeanLoader(beanDataHandler, beanLocator);
  *   beanLoader.loadBeans();
  * </pre>
  *
@@ -62,16 +63,21 @@ public class DefaultBeanLoader implements BeanLoader {
 
     private final BeanDataHandler beanDataHandler;
 
+    private final BeanLocator beanLocator;
+
     /**
-     * Constructs a new instance of this bean loader with the specified bean-data handler.
+     * Constructs a new instance of this {@link BeanLoader} with the specified {@link BeanDataHandler}
+     * and {@link BeanLocator}.
      *
-     * @param beanDataHandler The handler to use for finding beans and the meta-data
-     * required to instantiate them.
+     * @param beanDataHandler The handler to use for finding the meta-data required to instantiate beans.
+     * @param beanLocator The locator to use for getting the beans to load.
      */
-    public DefaultBeanLoader(final BeanDataHandler beanDataHandler) {
+    public DefaultBeanLoader(final BeanDataHandler beanDataHandler, final BeanLocator beanLocator) {
         Validate.notNull(beanDataHandler, "Bean-data handler can not be null");
+        Validate.notNull(beanLocator, "Bean locator can not be null");
 
         this.beanDataHandler = beanDataHandler;
+        this.beanLocator = beanLocator;
         this.beanMap = Collections.synchronizedMap(new HashMap<Class<?>, Object>());
         this.beansInCreation = Collections.synchronizedCollection(new ArrayList<Class<?>>());
     }
@@ -166,7 +172,7 @@ public class DefaultBeanLoader implements BeanLoader {
     }
 
     private void loadAndAutowireBeans() throws IllegalAccessException, InvocationTargetException, InstantiationException {
-        final Set<Class<?>> detectedBeans = beanDataHandler.findBeans();
+        final Set<Class<?>> detectedBeans = beanLocator.findBeans();
         LOG.fine("Beans found: " + detectedBeans.size());
 
         final long start = System.currentTimeMillis();

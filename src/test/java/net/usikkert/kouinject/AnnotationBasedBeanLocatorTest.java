@@ -22,21 +22,38 @@
 
 package net.usikkert.kouinject;
 
+import static org.junit.Assert.*;
+
+import java.util.Set;
+
+import net.usikkert.kouinject.annotation.Component;
+
+import org.junit.Before;
+import org.junit.Test;
+
 /**
- * Interface for getting meta-data from beans.
+ * Test of {@link AnnotationBasedBeanLocator}.
  *
  * @author Christian Ihle
  */
-public interface BeanDataHandler {
+public class AnnotationBasedBeanLocatorTest {
 
-    /**
-     * Gets meta-data for a bean with the given class. This meta-data contains information about
-     * constructors, methods and fields that are marked for dependency injection.
-     *
-     * @param beanClass The class to get meta-data from.
-     * @param skipConstructor If finding the correct constructor to use when creating an instance of
-     * this class should be skipped.
-     * @return Class meta-data.
-     */
-    BeanData getBeanData(Class<?> beanClass, boolean skipConstructor);
+    private AnnotationBasedBeanLocator beanLocator;
+
+    @Before
+    public void createBeanLocator() {
+        final ClassLocator classLocator = new ClassPathScanner();
+        beanLocator = new AnnotationBasedBeanLocator("net.usikkert.kouinject", classLocator);
+    }
+
+    @Test
+    public void findBeansShouldReturnAllComponents() {
+        final Set<Class<?>> beans = beanLocator.findBeans();
+
+        assertEquals(16, beans.size());
+
+        for (final Class<?> bean : beans) {
+            assertTrue(bean.isAnnotationPresent(Component.class));
+        }
+    }
 }

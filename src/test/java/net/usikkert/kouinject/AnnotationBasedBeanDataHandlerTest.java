@@ -28,9 +28,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.Set;
 
-import net.usikkert.kouinject.annotation.Component;
 import net.usikkert.kouinject.annotation.Inject;
 import net.usikkert.kouinject.testbeans.scanned.ConstructorBean;
 import net.usikkert.kouinject.testbeans.scanned.EverythingBean;
@@ -55,19 +53,7 @@ public class AnnotationBasedBeanDataHandlerTest {
 
     @Before
     public void createHandler() {
-        final ClassLocator classLocator = new ClassPathScanner();
-        handler = new AnnotationBasedBeanDataHandler("net.usikkert.kouinject", classLocator);
-    }
-
-    @Test
-    public void findBeansShouldOnlyReturnComponents() {
-        final Set<Class<?>> beans = handler.findBeans();
-
-        assertTrue(beans.size() >= 10);
-
-        for (final Class<?> bean : beans) {
-            assertTrue(bean.isAnnotationPresent(Component.class));
-        }
+        handler = new AnnotationBasedBeanDataHandler();
     }
 
     @Test

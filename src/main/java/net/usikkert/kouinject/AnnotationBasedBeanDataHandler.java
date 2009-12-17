@@ -26,19 +26,15 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import net.usikkert.kouinject.annotation.Component;
 import net.usikkert.kouinject.annotation.Inject;
 import net.usikkert.kouinject.util.Validate;
 
 /**
- * This bean-data handler uses annotations to find beans and extract their meta-data.
+ * Implementation of {@link BeanDataHandler} that uses annotations to extract meta-data from beans.
  *
- * <p>Scans for beans having the {@link Component} annotation, and scans the
- * beans for the {@link Inject} annotation to detect constructor, fields and methods
+ * <p>Scans beans for the {@link Inject} annotation to detect constructor, fields and methods
  * for dependency injection.</p>
  *
  * @author Christian Ihle
@@ -46,44 +42,6 @@ import net.usikkert.kouinject.util.Validate;
 public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
 
     private static final Class<Inject> INJECTION_ANNOTATION = Inject.class;
-    private static final Class<Component> COMPONENT_ANNOTATION = Component.class;
-
-    private final ClassLocator classLocator;
-
-    private final String basePackage;
-
-    /**
-     * Constructs a new instance of this bean-data handler using a {@link ClassLocator} for
-     * autodetecting the beans in the specified base package.
-     *
-     * @param basePackage The package to start scanning for beans. All sub-packages will also be scanned.
-     * @param classLocator The instance of {@link ClassLocator} to use for finding the classes
-     * that are bean candidates.
-     */
-    public AnnotationBasedBeanDataHandler(final String basePackage, final ClassLocator classLocator) {
-        Validate.notNull(basePackage, "Base package can not be null");
-        Validate.notNull(classLocator, "Class locator can not be null");
-
-        this.basePackage = basePackage;
-        this.classLocator = classLocator;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Set<Class<?>> findBeans() {
-        final Set<Class<?>> allClasses = classLocator.findClasses(basePackage);
-        final Set<Class<?>> detectedBeans = new HashSet<Class<?>>();
-
-        for (final Class<?> clazz : allClasses) {
-            if (classIsBean(clazz)) {
-                detectedBeans.add(clazz);
-            }
-        }
-
-        return detectedBeans;
-    }
 
     /**
      * {@inheritDoc}
@@ -108,10 +66,6 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
         beanData.mapDependencies();
 
         return beanData;
-    }
-
-    private boolean classIsBean(final Class<?> clazz) {
-        return clazz.isAnnotationPresent(COMPONENT_ANNOTATION);
     }
 
     private List<Field> findFields(final Class<?> beanClass) {

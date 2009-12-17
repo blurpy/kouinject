@@ -22,21 +22,19 @@
 
 package net.usikkert.kouinject;
 
+import java.util.Set;
+
 /**
- * Interface for getting meta-data from beans.
+ * Interface for finding beans.
  *
  * @author Christian Ihle
  */
-public interface BeanDataHandler {
+public interface BeanLocator {
 
     /**
-     * Gets meta-data for a bean with the given class. This meta-data contains information about
-     * constructors, methods and fields that are marked for dependency injection.
+     * Finds the beans registered in this IoC container, and returns them as class references.
      *
-     * @param beanClass The class to get meta-data from.
-     * @param skipConstructor If finding the correct constructor to use when creating an instance of
-     * this class should be skipped.
-     * @return Class meta-data.
+     * @return All registered beans as classes.
      */
-    BeanData getBeanData(Class<?> beanClass, boolean skipConstructor);
+    Set<Class<?>> findBeans();
 }
