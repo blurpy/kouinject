@@ -28,6 +28,8 @@ import static org.mockito.Mockito.*;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.inject.Provider;
+
 import net.usikkert.kouinject.testbeans.notscanned.ACloserMatchOfImplementationUser;
 import net.usikkert.kouinject.testbeans.notscanned.FirstCircularBean;
 import net.usikkert.kouinject.testbeans.notscanned.FirstInterfaceImpl;
@@ -38,8 +40,11 @@ import net.usikkert.kouinject.testbeans.notscanned.TheInterfaceUser;
 import net.usikkert.kouinject.testbeans.scanned.ConstructorBean;
 import net.usikkert.kouinject.testbeans.scanned.EverythingBean;
 import net.usikkert.kouinject.testbeans.scanned.FieldBean;
+import net.usikkert.kouinject.testbeans.scanned.FirstCircularDependencyBean;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.LastBean;
+import net.usikkert.kouinject.testbeans.scanned.ProviderBean;
+import net.usikkert.kouinject.testbeans.scanned.SecondCircularDependencyBean;
 import net.usikkert.kouinject.testbeans.scanned.SetterBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
@@ -129,6 +134,15 @@ public class DefaultBeanLoaderTest {
     }
 
     @Test
+    public void checkFirstCircularDependencyBean() {
+        beanLoader.loadBeans();
+
+        final FirstCircularDependencyBean firstCircularDependencyBean = beanLoader.getBean(FirstCircularDependencyBean.class);
+
+        assertNotNull(firstCircularDependencyBean.getSecondCircularDependencyBean());
+    }
+
+    @Test
     public void checkHelloBean() {
         beanLoader.loadBeans();
 
@@ -171,6 +185,37 @@ public class DefaultBeanLoaderTest {
         beanLoader.loadBeans();
 
         beanLoader.getBean(NoBean.class);
+    }
+
+    @Test
+    public void checkProviderBean() {
+        beanLoader.loadBeans();
+
+        final ProviderBean providerBean = beanLoader.getBean(ProviderBean.class);
+
+        final Provider<ConstructorBean> constructorBeanProvider = providerBean.getConstructorBeanProvider();
+        assertNotNull(constructorBeanProvider);
+        assertNotNull(constructorBeanProvider.get());
+
+        final Provider<FieldBean> fieldBeanProvider = providerBean.getFieldBeanProvider();
+        assertNotNull(fieldBeanProvider);
+        assertNotNull(fieldBeanProvider.get());
+
+        final Provider<SetterBean> setterBeanProvider = providerBean.getSetterBeanProvider();
+        assertNotNull(setterBeanProvider);
+        assertNotNull(setterBeanProvider.get());
+    }
+
+    @Test
+    public void checkSecondCircularDependencyBean() {
+        beanLoader.loadBeans();
+
+        final SecondCircularDependencyBean secondCircularDependencyBean = beanLoader.getBean(SecondCircularDependencyBean.class);
+
+        final Provider<FirstCircularDependencyBean> firstCircularDependencyBeanProvider
+            = secondCircularDependencyBean.getFirstCircularDependencyBeanProvider();
+        assertNotNull(firstCircularDependencyBeanProvider);
+        assertNotNull(firstCircularDependencyBeanProvider.get());
     }
 
     @Test

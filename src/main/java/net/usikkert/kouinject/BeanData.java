@@ -25,8 +25,12 @@ package net.usikkert.kouinject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Provider;
 
 import net.usikkert.kouinject.util.Validate;
 
@@ -41,7 +45,7 @@ public class BeanData {
     private Constructor<?> constructor;
     private List<Field> fields;
     private List<Method> methods;
-    private final List<Class<?>> dependencies;
+    private final List<Dependency> dependencies;
     private final boolean skipConstructor;
 
     /**
@@ -55,7 +59,7 @@ public class BeanData {
 
         this.beanClass = beanClass;
         this.skipConstructor = skipConstructor;
-        dependencies = new ArrayList<Class<?>>();
+        dependencies = new ArrayList<Dependency>();
     }
 
     /**
@@ -154,25 +158,100 @@ public class BeanData {
 
     private void mapConstructorDependencies() {
         final Class<?>[] parameterTypes = constructor.getParameterTypes();
+        final Type[] genericParameterTypes = constructor.getGenericParameterTypes();
 
-        for (final Class<?> class1 : parameterTypes) {
-            dependencies.add(class1);
+        for (int i = 0; i < parameterTypes.length; i++) {
+            final Class<?> constructorBeanClass = parameterTypes[i];
+
+            if (isProvider(constructorBeanClass)) {
+                final Type genericParameterType = genericParameterTypes[i];
+                final Class<?> beanClassFromProvider = getBeanClassFromProviderInConstructor(genericParameterType);
+                dependencies.add(new Dependency(beanClassFromProvider, true));
+            }
+
+            else {
+                dependencies.add(new Dependency(constructorBeanClass, false));
+            }
         }
     }
 
     private void mapFieldDependencies() {
         for (final Field field : fields) {
-            dependencies.add(field.getType());
+            final Class<?> fieldBeanClass = field.getType();
+
+            if (isProvider(fieldBeanClass)) {
+                final Class<?> beanClassFromProvider = getBeanClassFromProviderInField(field);
+                dependencies.add(new Dependency(beanClassFromProvider, true));
+            }
+
+            else {
+                dependencies.add(new Dependency(fieldBeanClass, false));
+            }
         }
     }
 
     private void mapMethodDependencies() {
         for (final Method method : methods) {
             final Class<?>[] parameterTypes = method.getParameterTypes();
+            final Type[] genericParameterTypes = method.getGenericParameterTypes();
 
-            for (final Class<?> class1 : parameterTypes) {
-                dependencies.add(class1);
+            for (int i = 0; i < parameterTypes.length; i++) {
+                final Class<?> methodBeanClass = parameterTypes[i];
+
+                if (isProvider(methodBeanClass)) {
+                    final Type genericParameterType = genericParameterTypes[i];
+                    final Class<?> beanClassFromProvider = getBeanClassFromProviderInMethod(method, genericParameterType);
+                    dependencies.add(new Dependency(beanClassFromProvider, true));
+                }
+
+                else {
+                    dependencies.add(new Dependency(methodBeanClass, false));
+                }
             }
+        }
+    }
+
+    private boolean isProvider(final Class<?> parameterType) {
+        return Provider.class.isAssignableFrom(parameterType);
+    }
+
+    private Class<?> getBeanClassFromProviderInConstructor(final Type genericParameterType) {
+        final Class<?> beanClassFromProvider = getBeanClassFromProvider(genericParameterType);
+        checkBeanClassFromProvider(constructor, beanClassFromProvider);
+
+        return beanClassFromProvider;
+    }
+
+    private Class<?> getBeanClassFromProviderInMethod(final Method method, final Type genericParameterType) {
+        final Class<?> beanClassFromProvider = getBeanClassFromProvider(genericParameterType);
+        checkBeanClassFromProvider(method, beanClassFromProvider);
+
+        return beanClassFromProvider;
+    }
+
+    private Class<?> getBeanClassFromProviderInField(final Field field) {
+        final Type genericType = field.getGenericType();
+        final Class<?> beanClassFromProvider = getBeanClassFromProvider(genericType);
+        checkBeanClassFromProvider(field, beanClassFromProvider);
+
+        return beanClassFromProvider;
+    }
+
+    private Class<?> getBeanClassFromProvider(final Type genericParameterType) {
+        if (genericParameterType instanceof ParameterizedType) {
+            final ParameterizedType parameterizedType = (ParameterizedType) genericParameterType;
+            final Type[] typeArguments = parameterizedType.getActualTypeArguments();
+            final Class<?> beanClassFromProvider = (Class<?>) typeArguments[0];
+
+            return beanClassFromProvider;
+        }
+
+        return null;
+    }
+
+    private void checkBeanClassFromProvider(final Object classMember, final Object beanClassFromProvider) {
+        if (beanClassFromProvider == null) {
+            throw new IllegalArgumentException("Provider used without generic argument: " + classMember);
         }
     }
 
@@ -181,7 +260,7 @@ public class BeanData {
      *
      * @return All class dependencies for {@link #getBeanClass()}.
      */
-    public List<Class<?>> getDependencies() {
+    public List<Dependency> getDependencies() {
         return dependencies;
     }
 }

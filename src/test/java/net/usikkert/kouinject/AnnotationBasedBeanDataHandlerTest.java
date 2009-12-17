@@ -30,11 +30,13 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import net.usikkert.kouinject.testbeans.scanned.ConstructorBean;
 import net.usikkert.kouinject.testbeans.scanned.EverythingBean;
 import net.usikkert.kouinject.testbeans.scanned.FieldBean;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
+import net.usikkert.kouinject.testbeans.scanned.ProviderBean;
 import net.usikkert.kouinject.testbeans.scanned.SetterBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractBean;
@@ -63,7 +65,7 @@ public class AnnotationBasedBeanDataHandlerTest {
 
         assertEquals(FieldBean.class, beanData.getBeanClass());
 
-        final List<Class<?>> dependencies = beanData.getDependencies();
+        final List<Dependency> dependencies = beanData.getDependencies();
         assertEquals(3, dependencies.size());
 
         assertTrue(containsDependency(dependencies, HelloBean.class));
@@ -88,7 +90,7 @@ public class AnnotationBasedBeanDataHandlerTest {
 
         assertEquals(JavaBean.class, beanData.getBeanClass());
 
-        final List<Class<?>> dependencies = beanData.getDependencies();
+        final List<Dependency> dependencies = beanData.getDependencies();
         assertEquals(2, dependencies.size());
 
         assertTrue(containsDependency(dependencies, HelloBean.class));
@@ -110,7 +112,7 @@ public class AnnotationBasedBeanDataHandlerTest {
 
         assertEquals(ConstructorBean.class, beanData.getBeanClass());
 
-        final List<Class<?>> dependencies = beanData.getDependencies();
+        final List<Dependency> dependencies = beanData.getDependencies();
         assertEquals(2, dependencies.size());
 
         assertTrue(containsDependency(dependencies, HelloBean.class));
@@ -129,8 +131,12 @@ public class AnnotationBasedBeanDataHandlerTest {
 
         assertEquals(EverythingBean.class, beanData.getBeanClass());
 
-        final List<Class<?>> dependencies = beanData.getDependencies();
+        final List<Dependency> dependencies = beanData.getDependencies();
         assertEquals(8, dependencies.size());
+
+        for (final Dependency dependency : dependencies) {
+            assertFalse(dependency.isProvider());
+        }
 
         final Constructor<?> constructor = beanData.getConstructor();
         assertTrue(constructor.isAnnotationPresent(Inject.class));
@@ -152,12 +158,34 @@ public class AnnotationBasedBeanDataHandlerTest {
     }
 
     @Test
+    public void getBeanDataShouldDetectDependenciesInProviders() {
+        final BeanData beanData = handler.getBeanData(ProviderBean.class, false);
+
+        assertEquals(ProviderBean.class, beanData.getBeanClass());
+
+        final List<Dependency> dependencies = beanData.getDependencies();
+        assertEquals(3, dependencies.size());
+
+        for (final Dependency dependency : dependencies) {
+            assertTrue(dependency.isProvider());
+        }
+
+        assertTrue(containsDependency(dependencies, ConstructorBean.class));
+        assertTrue(containsDependency(dependencies, FieldBean.class));
+        assertTrue(containsDependency(dependencies, SetterBean.class));
+
+        assertTrue(containsConstructorParameter(beanData.getConstructor(), Provider.class));
+        assertTrue(containsField(beanData.getFields(), Provider.class));
+        assertTrue(containsMethodParameter(beanData.getMethods().get(0), Provider.class));
+    }
+
+    @Test
     public void getBeanDataShouldSupportIgnoringConstructor() {
         final BeanData beanData = handler.getBeanData(ConstructorBean.class, true);
 
         assertEquals(ConstructorBean.class, beanData.getBeanClass());
 
-        final List<Class<?>> dependencies = beanData.getDependencies();
+        final List<Dependency> dependencies = beanData.getDependencies();
         assertEquals(0, dependencies.size());
 
         final Constructor<?> constructor = beanData.getConstructor();
@@ -170,7 +198,7 @@ public class AnnotationBasedBeanDataHandlerTest {
 
         assertEquals(ClassPathScanner.class, beanData.getBeanClass());
 
-        final List<Class<?>> dependencies = beanData.getDependencies();
+        final List<Dependency> dependencies = beanData.getDependencies();
         assertEquals(0, dependencies.size());
 
         final Constructor<?> constructor = beanData.getConstructor();
@@ -203,9 +231,9 @@ public class AnnotationBasedBeanDataHandlerTest {
         return false;
     }
 
-    private boolean containsDependency(final List<Class<?>> dependencies, final Class<?> beanClass) {
-        for (final Class<?> dependency : dependencies) {
-            if (dependency.equals(beanClass)) {
+    private boolean containsDependency(final List<Dependency> dependencies, final Class<?> beanClass) {
+        for (final Dependency dependency : dependencies) {
+            if (dependency.getBeanClass().equals(beanClass)) {
                 return true;
             }
         }

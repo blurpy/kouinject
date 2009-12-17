@@ -26,6 +26,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -35,6 +37,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
+
+import javax.inject.Provider;
 
 import net.usikkert.kouinject.util.Validate;
 
@@ -112,7 +116,7 @@ public class DefaultBeanLoader implements BeanLoader {
         Validate.notNull(objectToAutowire, "Object to autowire can not be null");
 
         final BeanData beanData = beanDataHandler.getBeanData(objectToAutowire.getClass(), true);
-        final List<Class<?>> missingDependencies = findMissingDependencies(beanData);
+        final List<Dependency> missingDependencies = findMissingDependencies(beanData);
 
         if (allDependenciesAreMet(missingDependencies)) {
             try {
@@ -202,34 +206,39 @@ public class DefaultBeanLoader implements BeanLoader {
 
         while (beanIterator.hasNext()) {
             final Class<?> beanClass = beanIterator.next();
-            createBean(beanClass, beanDataMap);
+            createBean(new Dependency(beanClass, false), beanDataMap);
         }
     }
 
-    private void createBean(final Class<?> beanClass, final Map<Class<?>, BeanData> beanDataMap)
+    private void createBean(final Dependency dependency, final Map<Class<?>, BeanData> beanDataMap)
             throws IllegalAccessException, InvocationTargetException, InstantiationException {
-        LOG.finer("Checking bean before creation: " + beanClass);
+        LOG.finer("Checking bean before creation: " + dependency);
 
-        if (beanAlreadyExists(beanClass)) {
-            LOG.finer("Bean already added - skipping: " + beanClass);
+        if (dependency.isProvider()) {
+            LOG.finer("Bean is provider - skipping: " + dependency);
             return;
         }
 
-        abortIfBeanCurrentlyInCreation(beanClass);
-        addBeanInCreation(beanClass);
+        if (beanAlreadyExists(dependency.getBeanClass())) {
+            LOG.finer("Bean already added - skipping: " + dependency);
+            return;
+        }
 
-        final BeanData beanData = findBeanData(beanClass, beanDataMap);
-        final List<Class<?>> missingDependencies = findMissingDependencies(beanData);
+        abortIfBeanCurrentlyInCreation(dependency.getBeanClass());
+        addBeanInCreation(dependency.getBeanClass());
 
-        for (final Class<?> dependency : missingDependencies) {
-            LOG.finer("Checking bean " + beanClass + " for missing dependency: " + dependency);
-            createBean(dependency, beanDataMap);
+        final BeanData beanData = findBeanData(dependency.getBeanClass(), beanDataMap);
+        final List<Dependency> missingDependencies = findMissingDependencies(beanData);
+
+        for (final Dependency missingDependency : missingDependencies) {
+            LOG.finer("Checking bean " + dependency + " for missing dependency: " + missingDependency);
+            createBean(missingDependency, beanDataMap);
         }
 
         final Object instance = instantiateBean(beanData);
         addBean(instance);
 
-        removeBeanInCreation(beanClass);
+        removeBeanInCreation(dependency.getBeanClass());
     }
 
     private void removeBeanInCreation(final Class<?> beanClass) {
@@ -278,18 +287,29 @@ public class DefaultBeanLoader implements BeanLoader {
             throws InstantiationException, IllegalAccessException, InvocationTargetException {
         final Constructor<?> constructor = beanData.getConstructor();
         final Class<?>[] parameterTypes = constructor.getParameterTypes();
+        final Type[] genericParameterTypes = constructor.getGenericParameterTypes();
         final Object[] beansForConstructor = new Object[parameterTypes.length];
 
         for (int i = 0; i < parameterTypes.length; i++) {
             final Class<?> beanClass = parameterTypes[i];
-            final Object bean = findBean(beanClass, true);
+            final Type genericParameterType = genericParameterTypes[i];
+            final Object bean = findBeanOrCreateProvider(beanClass, genericParameterType);
             beansForConstructor[i] = bean;
         }
 
-        LOG.finer("Invoking constructor: " + constructor);
-        final Object newInstance = constructor.newInstance(beansForConstructor);
+        LOG.finer("Invoking constructor: " + constructor.toGenericString());
 
-        return newInstance;
+        final boolean originalAccessible = constructor.isAccessible();
+        constructor.setAccessible(true);
+
+        try {
+            final Object newInstance = constructor.newInstance(beansForConstructor);
+            return newInstance;
+        }
+
+        finally {
+            constructor.setAccessible(originalAccessible);
+        }
     }
 
     private void autowireBean(final BeanData beanData, final Object instance)
@@ -302,12 +322,22 @@ public class DefaultBeanLoader implements BeanLoader {
         final List<Field> fields = beanData.getFields();
 
         for (final Field field : fields) {
-            LOG.finer("Autowiring field: " + field);
+            LOG.finer("Autowiring field: " + field.toGenericString());
+
+            final Class<?> beanClass = field.getType();
+            final Type genericType = field.getGenericType();
+            final Object bean = findBeanOrCreateProvider(beanClass, genericType);
+
             final boolean originalAccessible = field.isAccessible();
             field.setAccessible(true);
-            final Object bean = findBean(field.getType(), true);
-            field.set(objectToAutowire, bean);
-            field.setAccessible(originalAccessible);
+
+            try {
+                field.set(objectToAutowire, bean);
+            }
+
+            finally {
+                field.setAccessible(originalAccessible);
+            }
         }
     }
 
@@ -316,19 +346,57 @@ public class DefaultBeanLoader implements BeanLoader {
         final List<Method> methods = beanData.getMethods();
 
         for (final Method method : methods) {
-            LOG.finer("Autowiring method: " + method);
+            LOG.finer("Autowiring method: " + method.toGenericString());
 
             final Class<?>[] parameterTypes = method.getParameterTypes();
+            final Type[] genericParameterTypes = method.getGenericParameterTypes();
             final Object[] beansForMethod = new Object[parameterTypes.length];
 
             for (int i = 0; i < parameterTypes.length; i++) {
                 final Class<?> beanClass = parameterTypes[i];
-                final Object bean = findBean(beanClass, true);
+                final Type genericParameterType = genericParameterTypes[i];
+                final Object bean = findBeanOrCreateProvider(beanClass, genericParameterType);
                 beansForMethod[i] = bean;
             }
 
-            method.invoke(objectToAutowire, beansForMethod);
+            final boolean originalAccessible = method.isAccessible();
+            method.setAccessible(true);
+
+            try {
+                method.invoke(objectToAutowire, beansForMethod);
+            }
+
+            finally {
+                method.setAccessible(originalAccessible);
+            }
         }
+    }
+
+    private Object findBeanOrCreateProvider(final Class<?> beanNeeded, final Type genericParameterType) {
+        if (isProvider(beanNeeded)) {
+            final Class<?> beanClassFromProvider = getBeanClassFromProvider(genericParameterType);
+
+            return new Provider() {
+                @Override
+                public Object get() {
+                    return getBean(beanClassFromProvider);
+                }
+            };
+        }
+
+        return findBean(beanNeeded, true);
+    }
+
+    private boolean isProvider(final Class<?> beanClass) {
+        return Provider.class.isAssignableFrom(beanClass);
+    }
+
+    private Class<?> getBeanClassFromProvider(final Type genericParameterType) {
+        final ParameterizedType parameterizedType = (ParameterizedType) genericParameterType;
+        final Type[] typeArguments = parameterizedType.getActualTypeArguments();
+        final Class<?> beanClassFromProvider = (Class<?>) typeArguments[0];
+
+        return beanClassFromProvider;
     }
 
     @SuppressWarnings("unchecked")
@@ -368,18 +436,18 @@ public class DefaultBeanLoader implements BeanLoader {
         return matches.get(0);
     }
 
-    private boolean allDependenciesAreMet(final List<Class<?>> missingDependencies) {
+    private boolean allDependenciesAreMet(final List<Dependency> missingDependencies) {
         return missingDependencies.size() == 0;
     }
 
-    private List<Class<?>> findMissingDependencies(final BeanData beanData) {
-        final List<Class<?>> missingDeps = new ArrayList<Class<?>>();
+    private List<Dependency> findMissingDependencies(final BeanData beanData) {
+        final List<Dependency> missingDeps = new ArrayList<Dependency>();
 
-        for (final Class<?> beanClass : beanData.getDependencies()) {
-            final Object dependency = findBean(beanClass, false);
+        for (final Dependency dependency : beanData.getDependencies()) {
+            final Object bean = findBean(dependency.getBeanClass(), false);
 
-            if (dependency == null) {
-                missingDeps.add(beanClass);
+            if (bean == null) {
+                missingDeps.add(dependency);
             }
         }
 

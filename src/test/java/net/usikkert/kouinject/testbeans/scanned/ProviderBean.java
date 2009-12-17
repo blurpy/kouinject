@@ -20,40 +20,54 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject;
+package net.usikkert.kouinject.testbeans.scanned;
 
-import static org.junit.Assert.*;
-
-import java.util.Set;
+import javax.inject.Inject;
+import javax.inject.Provider;
 
 import net.usikkert.kouinject.annotation.Component;
 
-import org.junit.Before;
-import org.junit.Test;
-
 /**
- * Test of {@link AnnotationBasedBeanLocator}.
+ * Bean used for testing injection of other beans using a {@link Provider}.
+ * Also tests injection in private constructors and methods.
  *
  * @author Christian Ihle
  */
-public class AnnotationBasedBeanLocatorTest {
+@Component
+public class ProviderBean {
 
-    private AnnotationBasedBeanLocator beanLocator;
+    @Inject
+    private Provider<FieldBean> fieldBeanProvider;
 
-    @Before
-    public void createBeanLocator() {
-        final ClassLocator classLocator = new ClassPathScanner();
-        beanLocator = new AnnotationBasedBeanLocator("net.usikkert.kouinject", classLocator);
+    private Provider<SetterBean> setterBeanProvider;
+
+    private Provider<ConstructorBean> constructorBeanProvider;
+
+    public ProviderBean() {
+
     }
 
-    @Test
-    public void findBeansShouldReturnAllComponents() {
-        final Set<Class<?>> beans = beanLocator.findBeans();
+    @Inject
+    @SuppressWarnings("unused")
+    private ProviderBean(final Provider<ConstructorBean> constructorBeanProvider) {
+        this.constructorBeanProvider = constructorBeanProvider;
+    }
 
-        assertEquals(19, beans.size());
+    public Provider<SetterBean> getSetterBeanProvider() {
+        return setterBeanProvider;
+    }
 
-        for (final Class<?> bean : beans) {
-            assertTrue(bean.isAnnotationPresent(Component.class));
-        }
+    @Inject
+    @SuppressWarnings("unused")
+    private void setSetterBeanProvider(final Provider<SetterBean> setterBeanProvider) {
+        this.setterBeanProvider = setterBeanProvider;
+    }
+
+    public Provider<FieldBean> getFieldBeanProvider() {
+        return fieldBeanProvider;
+    }
+
+    public Provider<ConstructorBean> getConstructorBeanProvider() {
+        return constructorBeanProvider;
     }
 }

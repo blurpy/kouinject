@@ -20,40 +20,29 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject;
+package net.usikkert.kouinject.testbeans.scanned;
 
-import static org.junit.Assert.*;
-
-import java.util.Set;
+import javax.inject.Inject;
+import javax.inject.Provider;
 
 import net.usikkert.kouinject.annotation.Component;
 
-import org.junit.Before;
-import org.junit.Test;
-
 /**
- * Test of {@link AnnotationBasedBeanLocator}.
+ * Bean for testing circular dependencies in constructors using {@link Provider}.
  *
  * @author Christian Ihle
  */
-public class AnnotationBasedBeanLocatorTest {
+@Component
+public class SecondCircularDependencyBean {
 
-    private AnnotationBasedBeanLocator beanLocator;
+    private final Provider<FirstCircularDependencyBean> firstCircularDependencyBeanProvider;
 
-    @Before
-    public void createBeanLocator() {
-        final ClassLocator classLocator = new ClassPathScanner();
-        beanLocator = new AnnotationBasedBeanLocator("net.usikkert.kouinject", classLocator);
+    @Inject
+    public SecondCircularDependencyBean(final Provider<FirstCircularDependencyBean> firstCircularDependencyBeanProvider) {
+        this.firstCircularDependencyBeanProvider = firstCircularDependencyBeanProvider;
     }
 
-    @Test
-    public void findBeansShouldReturnAllComponents() {
-        final Set<Class<?>> beans = beanLocator.findBeans();
-
-        assertEquals(19, beans.size());
-
-        for (final Class<?> bean : beans) {
-            assertTrue(bean.isAnnotationPresent(Component.class));
-        }
+    public Provider<FirstCircularDependencyBean> getFirstCircularDependencyBeanProvider() {
+        return firstCircularDependencyBeanProvider;
     }
 }

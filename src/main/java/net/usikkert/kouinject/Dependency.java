@@ -22,38 +22,55 @@
 
 package net.usikkert.kouinject;
 
-import static org.junit.Assert.*;
-
-import java.util.Set;
-
-import net.usikkert.kouinject.annotation.Component;
-
-import org.junit.Before;
-import org.junit.Test;
-
 /**
- * Test of {@link AnnotationBasedBeanLocator}.
+ * Represents a dependency marked for injection.
  *
  * @author Christian Ihle
  */
-public class AnnotationBasedBeanLocatorTest {
+public class Dependency {
 
-    private AnnotationBasedBeanLocator beanLocator;
+    private final Class<?> beanClass;
 
-    @Before
-    public void createBeanLocator() {
-        final ClassLocator classLocator = new ClassPathScanner();
-        beanLocator = new AnnotationBasedBeanLocator("net.usikkert.kouinject", classLocator);
+    private final boolean isProvider;
+
+    /**
+     * Creates a new dependency for the specified bean class.
+     *
+     * @param beanClass The actual bean class dependency.
+     * @param isProvider If the actual bean class is for a provider.
+     */
+    public Dependency(final Class<?> beanClass, final boolean isProvider) {
+        this.beanClass = beanClass;
+        this.isProvider = isProvider;
     }
 
-    @Test
-    public void findBeansShouldReturnAllComponents() {
-        final Set<Class<?>> beans = beanLocator.findBeans();
+    /**
+     * Gets the actual bean class dependency. If this is a {@link Provider},
+     * then this bean class is the generic type argument of the provider.
+     *
+     * @return The bean class dependency.
+     */
+    public Class<?> getBeanClass() {
+        return beanClass;
+    }
 
-        assertEquals(19, beans.size());
+    /**
+     * If this dependency is for a {@link Provider}.
+     *
+     * @return If this is for a provider.
+     */
+    public boolean isProvider() {
+        return isProvider;
+    }
 
-        for (final Class<?> bean : beans) {
-            assertTrue(bean.isAnnotationPresent(Component.class));
+    @Override
+    public String toString() {
+        if (isProvider) {
+            return "[provider] " + beanClass;
+        }
+
+        else {
+            return beanClass.toString();
         }
     }
 }
