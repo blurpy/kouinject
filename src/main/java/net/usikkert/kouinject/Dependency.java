@@ -65,12 +65,14 @@ public class Dependency {
 
     @Override
     public String toString() {
+        final StringBuilder toStringBuilder = new StringBuilder();
+
         if (isProvider) {
-            return "[provider] " + beanClass;
+            toStringBuilder.append("[provider] ");
         }
 
-        else {
-            return beanClass.toString();
-        }
+        toStringBuilder.append(beanClass.toString());
+
+        return toStringBuilder.toString();
     }
 }
