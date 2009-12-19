@@ -171,7 +171,7 @@ public class DefaultBeanLoader implements BeanLoader {
 
         while (beanIterator.hasNext()) {
             final Class<?> beanClass = beanIterator.next();
-            createBean(new Dependency(beanClass, false), beanDataMap);
+            createBean(new Dependency(beanClass, false, null), beanDataMap);
         }
     }
 

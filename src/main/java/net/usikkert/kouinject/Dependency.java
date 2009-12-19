@@ -22,6 +22,8 @@
 
 package net.usikkert.kouinject;
 
+import net.usikkert.kouinject.util.Validate;
+
 /**
  * Represents a dependency marked for injection.
  *
@@ -33,15 +35,21 @@ public class Dependency {
 
     private final boolean isProvider;
 
+    private final String qualifier;
+
     /**
      * Creates a new dependency for the specified bean class.
      *
      * @param beanClass The actual bean class dependency.
      * @param isProvider If the actual bean class is for a provider.
+     * @param qualifier The required qualifier for this dependency.
      */
-    public Dependency(final Class<?> beanClass, final boolean isProvider) {
+    public Dependency(final Class<?> beanClass, final boolean isProvider, final String qualifier) {
+        Validate.notNull(beanClass, "Bean class can not be null");
+
         this.beanClass = beanClass;
         this.isProvider = isProvider;
+        this.qualifier = qualifier;
     }
 
     /**
@@ -63,12 +71,28 @@ public class Dependency {
         return isProvider;
     }
 
+    /**
+     * Gets the required qualifier for this dependency.
+     *
+     * <p>A qualifier combined with the type helps identify the implementation to inject.
+     * If the qualifier is null, then the injected bean must have a null qualifier as well.</p>
+     *
+     * @return The required qualifier.
+     */
+    public String getQualifier() {
+        return qualifier;
+    }
+
     @Override
     public String toString() {
         final StringBuilder toStringBuilder = new StringBuilder();
 
         if (isProvider) {
             toStringBuilder.append("[provider] ");
+        }
+
+        if (qualifier != null) {
+            toStringBuilder.append("[q=" + qualifier + "] ");
         }
 
         toStringBuilder.append(beanClass.toString());

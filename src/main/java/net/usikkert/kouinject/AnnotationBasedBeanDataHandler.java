@@ -22,6 +22,8 @@
 
 package net.usikkert.kouinject;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -31,7 +33,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Provider;
+import javax.inject.Qualifier;
 
 import net.usikkert.kouinject.util.Validate;
 
@@ -40,13 +44,16 @@ import net.usikkert.kouinject.util.Validate;
  * to extract meta-data from beans to find dependencies.
  *
  * <p>Scans beans for the {@link Inject} annotation to detect constructor, fields and methods
- * for dependency injection.</p>
+ * for dependency injection. They are then scanned for the {@link Qualifier} annotation to
+ * find the required qualifier for the dependency.</p>
  *
  * @author Christian Ihle
  */
 public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
 
     private static final Class<Inject> INJECTION_ANNOTATION = Inject.class;
+
+    private static final Class<Qualifier> QUALIFIER_ANNOTATION = Qualifier.class;
 
     /**
      * {@inheritDoc}
@@ -114,16 +121,17 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
 
     private Dependency findDependency(final Field field) {
         final Class<?> fieldBeanClass = field.getType();
+        final String qualifier = getQualifier(field);
 
         if (isProvider(fieldBeanClass)) {
             final Type genericType = field.getGenericType();
             final Class<?> beanClassFromProvider = getBeanClassFromProvider(field, genericType);
 
-            return new Dependency(beanClassFromProvider, true);
+            return new Dependency(beanClassFromProvider, true, qualifier);
         }
 
         else {
-            return new Dependency(fieldBeanClass, false);
+            return new Dependency(fieldBeanClass, false, qualifier);
         }
     }
 
@@ -219,7 +227,7 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
         return findDependencies(constructor, parameterTypes, genericParameterTypes);
     }
 
-    private List<Dependency> findDependencies(final Object parameterOwner,
+    private List<Dependency> findDependencies(final AnnotatedElement parameterOwner,
             final Class<?>[] parameterTypes, final Type[] genericParameterTypes) {
         final List<Dependency> dependencies = new ArrayList<Dependency>();
 
@@ -234,15 +242,59 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
         return dependencies;
     }
 
-    private Dependency findDependency(final Object parameterOwner, final Class<?> parameterClass, final Type parameterType) {
+    private Dependency findDependency(final AnnotatedElement parameterOwner, final Class<?> parameterClass, final Type parameterType) {
+        final String qualifier = getQualifier(parameterOwner);
+
         if (isProvider(parameterClass)) {
             final Class<?> beanClassFromProvider = getBeanClassFromProvider(parameterOwner, parameterType);
 
-            return new Dependency(beanClassFromProvider, true);
+            return new Dependency(beanClassFromProvider, true, qualifier);
         }
 
         else {
-            return new Dependency(parameterClass, false);
+            return new Dependency(parameterClass, false, qualifier);
+        }
+    }
+
+    private String getQualifier(final AnnotatedElement parameterOwner) {
+        final Annotation[] annotations = parameterOwner.getAnnotations();
+        final List<String> matches = new ArrayList<String>();
+
+        for (final Annotation annotation : annotations) {
+            if (annotation.annotationType().isAnnotationPresent(QUALIFIER_ANNOTATION)) {
+                matches.add(getQualifier(parameterOwner, annotation));
+            }
+        }
+
+        if (matches.size() == 0) {
+            return null;
+        }
+
+        else if (matches.size() > 1) {
+            // TODO add test
+            throw new UnsupportedOperationException(
+                    "Wrong number of qualifier annotations found on " + parameterOwner + " " + matches);
+        }
+
+        return matches.get(0);
+    }
+
+    private String getQualifier(final AnnotatedElement parameterOwner, final Annotation annotation) {
+        if (annotation instanceof Named) {
+            final Named named = (Named) annotation;
+            final String value = named.value();
+
+            if (value == null || value.trim().length() == 0) {
+                // TODO add test
+                throw new UnsupportedOperationException(
+                        "Named qualifier annotation used without a value on " + parameterOwner);
+            }
+
+            return value;
+        }
+
+        else {
+            return annotation.annotationType().getSimpleName();
         }
     }
 
