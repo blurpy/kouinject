@@ -22,15 +22,8 @@
 
 package net.usikkert.kouinject;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.inject.Provider;
 
 import net.usikkert.kouinject.util.Validate;
 
@@ -42,24 +35,45 @@ import net.usikkert.kouinject.util.Validate;
 public class BeanData {
 
     private final Class<?> beanClass;
-    private Constructor<?> constructor;
-    private List<Field> fields;
-    private List<Method> methods;
+    private final ConstructorData constructor;
+    private final List<FieldData> fields;
+    private final List<MethodData> methods;
     private final List<Dependency> dependencies;
-    private final boolean skipConstructor;
 
     /**
      * Constructs a new BeanData instance for describing the defined class.
      *
      * @param beanClass The class this BeanData will describe.
-     * @param skipConstructor If mapping dependencies for the constructor should be skipped.
+     * @param constructor Optional meta-data for the constructor to invoke on beanClass.
+     *                    If this is null then the bean can not be instantiated.
+     * @param fields Meta-data for the fields in beanClass that requires dependency injection.
+     * @param methods Meta-data for the methods in beanClass that requires dependency injection.
      */
-    public BeanData(final Class<?> beanClass, final boolean skipConstructor) {
+    public BeanData(final Class<?> beanClass, final ConstructorData constructor,
+            final List<FieldData> fields, final List<MethodData> methods) {
         Validate.notNull(beanClass, "Bean class can not be null");
+        Validate.notNull(fields, "Fields can not be null");
+        Validate.notNull(methods, "Methods can not be null");
 
         this.beanClass = beanClass;
-        this.skipConstructor = skipConstructor;
-        dependencies = new ArrayList<Dependency>();
+        this.constructor = constructor;
+        this.fields = fields;
+        this.methods = methods;
+        this.dependencies = new ArrayList<Dependency>();
+
+        mapDependencies();
+    }
+
+    /**
+     * Constructs a new BeanData instance for describing the defined class. This constructor
+     * does not take constructor meta-data, so the bean can not be instantiated.
+     *
+     * @param beanClass The class this BeanData will describe.
+     * @param fields Meta-data for the fields in beanClass that requires dependency injection.
+     * @param methods Meta-data for the methods in beanClass that requires dependency injection.
+     */
+    public BeanData(final Class<?> beanClass, final List<FieldData> fields, final List<MethodData> methods) {
+        this(beanClass, null, fields, methods);
     }
 
     /**
@@ -72,83 +86,45 @@ public class BeanData {
     }
 
     /**
-     * Gets the constructor to invoke to create a new instance of the class
+     * Gets the meta-data describing the constructor to invoke to create a new instance of the class
      * defined in {@link #getBeanClass()}.
      *
-     * @return The constructor to invoke.
+     * @return The constructor meta-data.
      */
-    public Constructor<?> getConstructor() {
+    public ConstructorData getConstructor() {
         return constructor;
     }
 
     /**
-     * Sets the constructor to invoke to create a new instance of the class
-     * defined in {@link #getBeanClass()}.
+     * Gets the meta-data describing the fields in {@link #getBeanClass()} requiring dependency injection.
      *
-     * @param constructor The constructor to invoke.
+     * @return The meta-data of the fields.
      */
-    public void setConstructor(final Constructor<?> constructor) {
-        Validate.isFalse(skipConstructor, "Can not set constructor when skipConstructor is active");
-        Validate.notNull(constructor, "Constructor can not be null");
-
-        this.constructor = constructor;
-    }
-
-    /**
-     * Gets the fields in {@link #getBeanClass()} marked for dependency injection.
-     *
-     * @return The fields marked for dependency injection.
-     */
-    public List<Field> getFields() {
+    public List<FieldData> getFields() {
         return fields;
     }
 
     /**
-     * Sets the fields in {@link #getBeanClass()} that needs dependency injection.
+     * Gets the meta-data describing the methods in {@link #getBeanClass()} requiring dependency injection.
      *
-     * @param fields The fields that needs dependency injection.
+     * @return The meta-data of the methods.
      */
-    public void setFields(final List<Field> fields) {
-        Validate.notNull(fields, "Fields can not be null");
-
-        this.fields = fields;
-    }
-
-    /**
-     * Gets the methods in {@link #getBeanClass()} marked for dependency injection.
-     *
-     * @return The methods marked for dependency injection.
-     */
-    public List<Method> getMethods() {
+    public List<MethodData> getMethods() {
         return methods;
     }
 
     /**
-     * Sets the methods in {@link #getBeanClass()} that needs dependency injection.
+     * Gets a list of all the required dependencies for dependency injection in the constructor,
+     * fields and methods of {@link #getBeanClass()}.
      *
-     * @param methods The methods that needs dependency injection.
+     * @return All required dependencies.
      */
-    public void setMethods(final List<Method> methods) {
-        Validate.notNull(methods, "Methods can not be null");
-
-        this.methods = methods;
+    public List<Dependency> getDependencies() {
+        return dependencies;
     }
 
-    /**
-     * Finds required class dependencies in the constructor, in fields and in methods.
-     *
-     * <p>This method cannot be run before:</p>
-     *
-     * <ul>
-     *   <li>{@link #setConstructor(Constructor)} (optional)</li>
-     *   <li>{@link #setFields(List)}</li>
-     *   <li>{@link #setMethods(List)}</li>
-     * </ul>
-     *
-     * <p>The result will be available in {@link #getDependencies()}.</p>
-     */
-    public void mapDependencies() {
-        if (!skipConstructor) {
+    private void mapDependencies() {
+        if (!skipConstructor()) {
             mapConstructorDependencies();
         }
 
@@ -157,110 +133,22 @@ public class BeanData {
     }
 
     private void mapConstructorDependencies() {
-        final Class<?>[] parameterTypes = constructor.getParameterTypes();
-        final Type[] genericParameterTypes = constructor.getGenericParameterTypes();
-
-        for (int i = 0; i < parameterTypes.length; i++) {
-            final Class<?> constructorBeanClass = parameterTypes[i];
-
-            if (isProvider(constructorBeanClass)) {
-                final Type genericParameterType = genericParameterTypes[i];
-                final Class<?> beanClassFromProvider = getBeanClassFromProviderInConstructor(genericParameterType);
-                dependencies.add(new Dependency(beanClassFromProvider, true));
-            }
-
-            else {
-                dependencies.add(new Dependency(constructorBeanClass, false));
-            }
-        }
+        dependencies.addAll(constructor.getDependencies());
     }
 
     private void mapFieldDependencies() {
-        for (final Field field : fields) {
-            final Class<?> fieldBeanClass = field.getType();
-
-            if (isProvider(fieldBeanClass)) {
-                final Class<?> beanClassFromProvider = getBeanClassFromProviderInField(field);
-                dependencies.add(new Dependency(beanClassFromProvider, true));
-            }
-
-            else {
-                dependencies.add(new Dependency(fieldBeanClass, false));
-            }
+        for (final FieldData field : fields) {
+            dependencies.add(field.getDependency());
         }
     }
 
     private void mapMethodDependencies() {
-        for (final Method method : methods) {
-            final Class<?>[] parameterTypes = method.getParameterTypes();
-            final Type[] genericParameterTypes = method.getGenericParameterTypes();
-
-            for (int i = 0; i < parameterTypes.length; i++) {
-                final Class<?> methodBeanClass = parameterTypes[i];
-
-                if (isProvider(methodBeanClass)) {
-                    final Type genericParameterType = genericParameterTypes[i];
-                    final Class<?> beanClassFromProvider = getBeanClassFromProviderInMethod(method, genericParameterType);
-                    dependencies.add(new Dependency(beanClassFromProvider, true));
-                }
-
-                else {
-                    dependencies.add(new Dependency(methodBeanClass, false));
-                }
-            }
+        for (final MethodData method : methods) {
+            dependencies.addAll(method.getDependencies());
         }
     }
 
-    private boolean isProvider(final Class<?> parameterType) {
-        return Provider.class.isAssignableFrom(parameterType);
-    }
-
-    private Class<?> getBeanClassFromProviderInConstructor(final Type genericParameterType) {
-        final Class<?> beanClassFromProvider = getBeanClassFromProvider(genericParameterType);
-        checkBeanClassFromProvider(constructor, beanClassFromProvider);
-
-        return beanClassFromProvider;
-    }
-
-    private Class<?> getBeanClassFromProviderInMethod(final Method method, final Type genericParameterType) {
-        final Class<?> beanClassFromProvider = getBeanClassFromProvider(genericParameterType);
-        checkBeanClassFromProvider(method, beanClassFromProvider);
-
-        return beanClassFromProvider;
-    }
-
-    private Class<?> getBeanClassFromProviderInField(final Field field) {
-        final Type genericType = field.getGenericType();
-        final Class<?> beanClassFromProvider = getBeanClassFromProvider(genericType);
-        checkBeanClassFromProvider(field, beanClassFromProvider);
-
-        return beanClassFromProvider;
-    }
-
-    private Class<?> getBeanClassFromProvider(final Type genericParameterType) {
-        if (genericParameterType instanceof ParameterizedType) {
-            final ParameterizedType parameterizedType = (ParameterizedType) genericParameterType;
-            final Type[] typeArguments = parameterizedType.getActualTypeArguments();
-            final Class<?> beanClassFromProvider = (Class<?>) typeArguments[0];
-
-            return beanClassFromProvider;
-        }
-
-        return null;
-    }
-
-    private void checkBeanClassFromProvider(final Object classMember, final Object beanClassFromProvider) {
-        if (beanClassFromProvider == null) {
-            throw new IllegalArgumentException("Provider used without generic argument: " + classMember);
-        }
-    }
-
-    /**
-     * All required class dependencies will be in this list after {@link #mapDependencies()} has been run.
-     *
-     * @return All class dependencies for {@link #getBeanClass()}.
-     */
-    public List<Dependency> getDependencies() {
-        return dependencies;
+    private boolean skipConstructor() {
+        return constructor == null;
     }
 }

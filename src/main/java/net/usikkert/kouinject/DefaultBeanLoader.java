@@ -22,12 +22,6 @@
 
 package net.usikkert.kouinject;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -91,21 +85,17 @@ public class DefaultBeanLoader implements BeanLoader {
      */
     @Override
     public void loadBeans() {
-        try {
-            loadAndAutowireBeans();
-        }
+        final Set<Class<?>> detectedBeans = beanLocator.findBeans();
+        LOG.fine("Beans found: " + detectedBeans.size());
 
-        catch (final IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        final long start = System.currentTimeMillis();
 
-        catch (final InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
+        final Map<Class<?>, BeanData> beanDataMap = getBeanDataMap(detectedBeans);
+        createBeans(beanDataMap);
 
-        catch (final InstantiationException e) {
-            throw new RuntimeException(e);
-        }
+        final long stop = System.currentTimeMillis();
+
+        LOG.fine("All beans created in: " + (stop - start) + " ms");
     }
 
     /**
@@ -119,17 +109,7 @@ public class DefaultBeanLoader implements BeanLoader {
         final List<Dependency> missingDependencies = findMissingDependencies(beanData);
 
         if (allDependenciesAreMet(missingDependencies)) {
-            try {
-                autowireBean(beanData, objectToAutowire);
-            }
-
-            catch (final IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-
-            catch (final InvocationTargetException e) {
-                throw new RuntimeException(e);
-            }
+            autowireBean(beanData, objectToAutowire);
         }
 
         else {
@@ -175,20 +155,6 @@ public class DefaultBeanLoader implements BeanLoader {
         LOG.fine("Bean added: " + beanClass.getName());
     }
 
-    private void loadAndAutowireBeans() throws IllegalAccessException, InvocationTargetException, InstantiationException {
-        final Set<Class<?>> detectedBeans = beanLocator.findBeans();
-        LOG.fine("Beans found: " + detectedBeans.size());
-
-        final long start = System.currentTimeMillis();
-
-        final Map<Class<?>, BeanData> beanDataMap = getBeanDataMap(detectedBeans);
-        createBeans(beanDataMap);
-
-        final long stop = System.currentTimeMillis();
-
-        LOG.fine("All beans created in: " + (stop - start) + " ms");
-    }
-
     private Map<Class<?>, BeanData> getBeanDataMap(final Set<Class<?>> detectedBeans) {
         final Map<Class<?>, BeanData> beanDataMap = new HashMap<Class<?>, BeanData>();
 
@@ -200,8 +166,7 @@ public class DefaultBeanLoader implements BeanLoader {
         return beanDataMap;
     }
 
-    private void createBeans(final Map<Class<?>, BeanData> beanDataMap)
-            throws IllegalAccessException, InvocationTargetException, InstantiationException {
+    private void createBeans(final Map<Class<?>, BeanData> beanDataMap) {
         final Iterator<Class<?>> beanIterator = beanDataMap.keySet().iterator();
 
         while (beanIterator.hasNext()) {
@@ -210,8 +175,7 @@ public class DefaultBeanLoader implements BeanLoader {
         }
     }
 
-    private void createBean(final Dependency dependency, final Map<Class<?>, BeanData> beanDataMap)
-            throws IllegalAccessException, InvocationTargetException, InstantiationException {
+    private void createBean(final Dependency dependency, final Map<Class<?>, BeanData> beanDataMap) {
         LOG.finer("Checking bean before creation: " + dependency);
 
         if (dependency.isProvider()) {
@@ -275,128 +239,78 @@ public class DefaultBeanLoader implements BeanLoader {
         return beanDataMap.get(matchingBean);
     }
 
-    private Object instantiateBean(final BeanData beanData)
-            throws IllegalAccessException, InvocationTargetException, InstantiationException {
+    private Object instantiateBean(final BeanData beanData) {
         final Object instance = instantiateConstructor(beanData);
         autowireBean(beanData, instance);
 
         return instance;
     }
 
-    private Object instantiateConstructor(final BeanData beanData)
-            throws InstantiationException, IllegalAccessException, InvocationTargetException {
-        final Constructor<?> constructor = beanData.getConstructor();
-        final Class<?>[] parameterTypes = constructor.getParameterTypes();
-        final Type[] genericParameterTypes = constructor.getGenericParameterTypes();
-        final Object[] beansForConstructor = new Object[parameterTypes.length];
+    private Object instantiateConstructor(final BeanData beanData) {
+        final ConstructorData constructor = beanData.getConstructor();
+        LOG.finer("Invoking constructor: " + constructor);
 
-        for (int i = 0; i < parameterTypes.length; i++) {
-            final Class<?> beanClass = parameterTypes[i];
-            final Type genericParameterType = genericParameterTypes[i];
-            final Object bean = findBeanOrCreateProvider(beanClass, genericParameterType);
+        final List<Dependency> dependencies = constructor.getDependencies();
+        final Object[] beansForConstructor = new Object[dependencies.size()];
+
+        for (int i = 0; i < dependencies.size(); i++) {
+            final Dependency dependency = dependencies.get(i);
+            final Object bean = findBeanOrCreateProvider(dependency);
             beansForConstructor[i] = bean;
         }
 
-        LOG.finer("Invoking constructor: " + constructor.toGenericString());
-
-        final boolean originalAccessible = constructor.isAccessible();
-        constructor.setAccessible(true);
-
-        try {
-            final Object newInstance = constructor.newInstance(beansForConstructor);
-            return newInstance;
-        }
-
-        finally {
-            constructor.setAccessible(originalAccessible);
-        }
+        return constructor.createInstance(beansForConstructor);
     }
 
-    private void autowireBean(final BeanData beanData, final Object instance)
-            throws IllegalAccessException,  InvocationTargetException {
+    private void autowireBean(final BeanData beanData, final Object instance) {
         autowireField(beanData, instance);
         autowireMethod(beanData, instance);
     }
 
-    private void autowireField(final BeanData beanData, final Object objectToAutowire) throws IllegalAccessException {
-        final List<Field> fields = beanData.getFields();
+    private void autowireField(final BeanData beanData, final Object objectToAutowire) {
+        final List<FieldData> fields = beanData.getFields();
 
-        for (final Field field : fields) {
-            LOG.finer("Autowiring field: " + field.toGenericString());
+        for (final FieldData field : fields) {
+            LOG.finer("Autowiring field: " + field);
 
-            final Class<?> beanClass = field.getType();
-            final Type genericType = field.getGenericType();
-            final Object bean = findBeanOrCreateProvider(beanClass, genericType);
+            final Dependency dependency = field.getDependency();
+            final Object bean = findBeanOrCreateProvider(dependency);
 
-            final boolean originalAccessible = field.isAccessible();
-            field.setAccessible(true);
-
-            try {
-                field.set(objectToAutowire, bean);
-            }
-
-            finally {
-                field.setAccessible(originalAccessible);
-            }
+            field.setFieldValue(objectToAutowire, bean);
         }
     }
 
-    private void autowireMethod(final BeanData beanData, final Object objectToAutowire)
-            throws IllegalAccessException, InvocationTargetException {
-        final List<Method> methods = beanData.getMethods();
+    private void autowireMethod(final BeanData beanData, final Object objectToAutowire) {
+        final List<MethodData> methods = beanData.getMethods();
 
-        for (final Method method : methods) {
-            LOG.finer("Autowiring method: " + method.toGenericString());
+        for (final MethodData method : methods) {
+            LOG.finer("Autowiring method: " + method);
 
-            final Class<?>[] parameterTypes = method.getParameterTypes();
-            final Type[] genericParameterTypes = method.getGenericParameterTypes();
-            final Object[] beansForMethod = new Object[parameterTypes.length];
+            final List<Dependency> dependencies = method.getDependencies();
+            final Object[] beansForMethod = new Object[dependencies.size()];
 
-            for (int i = 0; i < parameterTypes.length; i++) {
-                final Class<?> beanClass = parameterTypes[i];
-                final Type genericParameterType = genericParameterTypes[i];
-                final Object bean = findBeanOrCreateProvider(beanClass, genericParameterType);
+            for (int i = 0; i < dependencies.size(); i++) {
+                final Dependency dependency = dependencies.get(i);
+                final Object bean = findBeanOrCreateProvider(dependency);
                 beansForMethod[i] = bean;
             }
 
-            final boolean originalAccessible = method.isAccessible();
-            method.setAccessible(true);
-
-            try {
-                method.invoke(objectToAutowire, beansForMethod);
-            }
-
-            finally {
-                method.setAccessible(originalAccessible);
-            }
+            method.invokeMethod(objectToAutowire, beansForMethod);
         }
     }
 
-    private Object findBeanOrCreateProvider(final Class<?> beanNeeded, final Type genericParameterType) {
-        if (isProvider(beanNeeded)) {
-            final Class<?> beanClassFromProvider = getBeanClassFromProvider(genericParameterType);
-
+    @SuppressWarnings("unchecked")
+    private Object findBeanOrCreateProvider(final Dependency dependency) {
+        if (dependency.isProvider()) {
             return new Provider() {
                 @Override
                 public Object get() {
-                    return getBean(beanClassFromProvider);
+                    return getBean(dependency.getBeanClass());
                 }
             };
         }
 
-        return findBean(beanNeeded, true);
-    }
-
-    private boolean isProvider(final Class<?> beanClass) {
-        return Provider.class.isAssignableFrom(beanClass);
-    }
-
-    private Class<?> getBeanClassFromProvider(final Type genericParameterType) {
-        final ParameterizedType parameterizedType = (ParameterizedType) genericParameterType;
-        final Type[] typeArguments = parameterizedType.getActualTypeArguments();
-        final Class<?> beanClassFromProvider = (Class<?>) typeArguments[0];
-
-        return beanClassFromProvider;
+        return findBean(dependency.getBeanClass(), true);
     }
 
     @SuppressWarnings("unchecked")
