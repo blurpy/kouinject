@@ -28,8 +28,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import net.usikkert.kouinject.ComponentScope;
-
 /**
  * Indicates that the class using this annotation is a component to be handled by the container.
  *
@@ -40,6 +38,4 @@ import net.usikkert.kouinject.ComponentScope;
 @Target(ElementType.TYPE)
 public @interface Component {
 
-    /** The scope to use for the component. */
-    ComponentScope scope() default ComponentScope.SINGLETON;
 }
