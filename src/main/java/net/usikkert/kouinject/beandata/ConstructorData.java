@@ -20,7 +20,7 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject;
+package net.usikkert.kouinject.beandata;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

@@ -30,6 +30,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 
+import net.usikkert.kouinject.beandata.BeanData;
+import net.usikkert.kouinject.beandata.ConstructorData;
+import net.usikkert.kouinject.beandata.Dependency;
+import net.usikkert.kouinject.beandata.FieldData;
+import net.usikkert.kouinject.beandata.MethodData;
 import net.usikkert.kouinject.testbeans.notscanned.notloaded.NamedQualifierUsedWithoutNameBean;
 import net.usikkert.kouinject.testbeans.notscanned.notloaded.NoMatchingConstructorBean;
 import net.usikkert.kouinject.testbeans.notscanned.notloaded.TooManyMatchingConstructorsBean;

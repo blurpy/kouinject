@@ -20,25 +20,9 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject;
-
-import net.usikkert.kouinject.beandata.BeanData;
-
 /**
- * Interface for getting meta-data from beans.
+ * Contains classes describing the meta-data necessary to create and do injection in beans.
  *
  * @author Christian Ihle
  */
-public interface BeanDataHandler {
-
-    /**
-     * Gets meta-data for a bean with the given class. This meta-data contains information about
-     * constructors, methods and fields that are marked for dependency injection.
-     *
-     * @param beanClass The class to get meta-data from.
-     * @param skipConstructor If finding the correct constructor to use when creating an instance of
-     * this class should be skipped.
-     * @return Class meta-data.
-     */
-    BeanData getBeanData(Class<?> beanClass, boolean skipConstructor);
-}
+package net.usikkert.kouinject.beandata;

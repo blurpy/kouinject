@@ -34,6 +34,11 @@ import java.util.logging.Logger;
 
 import javax.inject.Provider;
 
+import net.usikkert.kouinject.beandata.BeanData;
+import net.usikkert.kouinject.beandata.ConstructorData;
+import net.usikkert.kouinject.beandata.Dependency;
+import net.usikkert.kouinject.beandata.FieldData;
+import net.usikkert.kouinject.beandata.MethodData;
 import net.usikkert.kouinject.util.Validate;
 
 /**

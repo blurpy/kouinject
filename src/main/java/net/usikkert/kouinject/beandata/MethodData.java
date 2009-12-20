@@ -20,83 +20,89 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject;
+package net.usikkert.kouinject.beandata;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
 
 import net.usikkert.kouinject.util.Validate;
 
 /**
- * Meta-data describing the dependency for a field.
+ * Meta-data describing the dependencies for a method.
  *
  * @author Christian Ihle
  */
-public class FieldData {
+public class MethodData {
 
-    private final Field field;
+    private final Method method;
 
-    private final Dependency dependency;
+    private final List<Dependency> dependencies;
 
     /**
-     * Creates a new instance of this field data.
+     * Creates a new instance of this method data.
      *
-     * @param field The field this meta-data is for.
-     * @param dependency The required dependency for this field.
+     * @param method The method this meta-data is for.
+     * @param dependencies The required dependencies for this method.
      */
-    public FieldData(final Field field, final Dependency dependency) {
-        Validate.notNull(field, "Field can not be null");
-        Validate.notNull(dependency, "Dependency can not be null");
+    public MethodData(final Method method, final List<Dependency> dependencies) {
+        Validate.notNull(method, "Method can not be null");
+        Validate.notNull(dependencies, "Dependencies can not be null");
 
-        this.field = field;
-        this.dependency = dependency;
+        this.method = method;
+        this.dependencies = dependencies;
     }
 
     /**
-     * Gets the field this meta-data is for.
+     * Gets the method this meta-data is for.
      *
-     * @return The field.
+     * @return The method.
      */
-    public Field getField() {
-        return field;
+    public Method getMethod() {
+        return method;
     }
 
     /**
-     * Gets the required dependency for this field.
+     * Gets the required dependencies for this method.
      *
-     * @return The required dependency.
+     * @return The required dependencies.
      */
-    public Dependency getDependency() {
-        return dependency;
+    public List<Dependency> getDependencies() {
+        return dependencies;
     }
 
     /**
-     * Sets a value for this field, on the object. Supports fields with any access modifier.
+     * Invokes this method on the object with the specified parameters. Supports method with any access modifier.
      *
-     * @param object The object to set the field value in.
-     * @param value The new value for this field in the object.
+     * @param object The object to invoke the method on.
+     * @param parameters The parameters for the method.
      */
-    public void setFieldValue(final Object object, final Object value) {
+    public void invokeMethod(final Object object, final Object[] parameters) {
         Validate.notNull(object, "Object can not be null");
-        Validate.notNull(value, "Value can not be null");
+        Validate.notNull(parameters, "Parameters can not be null");
 
-        final boolean originalAccessible = field.isAccessible();
-        field.setAccessible(true);
+        final boolean originalAccessible = method.isAccessible();
+        method.setAccessible(true);
 
         try {
-            field.set(object, value);
+            method.invoke(object, parameters);
         }
 
         catch (final IllegalAccessException e) {
             throw new RuntimeException(e);
         }
 
+        catch (final InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+
         finally {
-            field.setAccessible(originalAccessible);
+            method.setAccessible(originalAccessible);
         }
     }
 
     @Override
     public String toString() {
-        return field.toGenericString();
+        return method.toGenericString();
     }
 }
