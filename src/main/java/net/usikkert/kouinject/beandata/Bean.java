@@ -22,81 +22,47 @@
 
 package net.usikkert.kouinject.beandata;
 
-import net.usikkert.kouinject.util.Validate;
-
 /**
- * Represents a dependency marked for injection.
+ * Description of a unique bean.
  *
  * @author Christian Ihle
  */
-public class Dependency {
+public class Bean {
 
     private final Class<?> beanClass;
-
-    private final boolean isProvider;
 
     private final String qualifier;
 
     /**
-     * Creates a new dependency for the specified bean class.
+     * Creates a new bean for the given class with the given qualifier.
      *
-     * @param beanClass The actual bean class dependency.
-     * @param isProvider If the actual bean class is for a provider.
-     * @param qualifier The required qualifier for this dependency.
+     * @param beanClass The actual class this bean is for.
+     * @param qualifier The required qualifier for this bean.
      */
-    public Dependency(final Class<?> beanClass, final boolean isProvider, final String qualifier) {
-        Validate.notNull(beanClass, "Bean class can not be null");
-
+    public Bean(final Class<?> beanClass, final String qualifier) {
         this.beanClass = beanClass;
-        this.isProvider = isProvider;
         this.qualifier = qualifier;
     }
 
     /**
-     * Gets the actual bean class dependency. If this is a {@link Provider},
-     * then this bean class is the generic type argument of the provider.
+     * The actual class this bean is for.
      *
-     * @return The bean class dependency.
+     * @return The actual bean class.
      */
     public Class<?> getBeanClass() {
         return beanClass;
     }
 
     /**
-     * If this dependency is for a {@link Provider}.
+     * Gets the required qualifier for this bean.
      *
-     * @return If this is for a provider.
-     */
-    public boolean isProvider() {
-        return isProvider;
-    }
-
-    /**
-     * Gets the required qualifier for this dependency.
-     *
-     * <p>A qualifier combined with the class helps identify the bean to inject.
-     * If the qualifier is null, then the injected bean must have a null qualifier as well.</p>
+     * <p>A qualifier combined with the class helps identify if this is the correct bean to
+     * inject in a dependency. If the qualifier is null, then the dependency must have a null
+     * qualifier as well.</p>
      *
      * @return The required qualifier.
      */
     public String getQualifier() {
         return qualifier;
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder toStringBuilder = new StringBuilder();
-
-        if (isProvider) {
-            toStringBuilder.append("[provider] ");
-        }
-
-        if (qualifier != null) {
-            toStringBuilder.append("[q=" + qualifier + "] ");
-        }
-
-        toStringBuilder.append(beanClass.toString());
-
-        return toStringBuilder.toString();
     }
 }

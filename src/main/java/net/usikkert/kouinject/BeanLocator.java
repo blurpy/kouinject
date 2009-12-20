@@ -24,6 +24,8 @@ package net.usikkert.kouinject;
 
 import java.util.Set;
 
+import net.usikkert.kouinject.beandata.Bean;
+
 /**
  * Interface for finding beans.
  *
@@ -32,9 +34,9 @@ import java.util.Set;
 public interface BeanLocator {
 
     /**
-     * Finds the beans registered in this IoC container, and returns them as class references.
+     * Finds the beans registered in this IoC container, and returns them.
      *
-     * @return All registered beans as classes.
+     * @return All registered beans.
      */
-    Set<Class<?>> findBeans();
+    Set<Bean> findBeans();
 }

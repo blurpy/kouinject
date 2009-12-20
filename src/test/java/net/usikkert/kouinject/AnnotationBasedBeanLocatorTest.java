@@ -27,6 +27,7 @@ import static org.junit.Assert.*;
 import java.util.Set;
 
 import net.usikkert.kouinject.annotation.Component;
+import net.usikkert.kouinject.beandata.Bean;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -48,12 +49,14 @@ public class AnnotationBasedBeanLocatorTest {
 
     @Test
     public void findBeansShouldReturnAllComponents() {
-        final Set<Class<?>> beans = beanLocator.findBeans();
+        final Set<Bean> beans = beanLocator.findBeans();
 
         assertEquals(19, beans.size());
 
-        for (final Class<?> bean : beans) {
-            assertTrue(bean.isAnnotationPresent(Component.class));
+        for (final Bean bean : beans) {
+            final Class<?> beanClass = bean.getBeanClass();
+            assertNotNull(beanClass);
+            assertTrue(beanClass.isAnnotationPresent(Component.class));
         }
     }
 }

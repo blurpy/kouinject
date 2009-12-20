@@ -27,6 +27,8 @@ import java.util.Set;
 
 import junit.framework.Test;
 
+import net.usikkert.kouinject.beandata.Bean;
+
 import org.atinject.tck.Tck;
 import org.atinject.tck.auto.Car;
 import org.atinject.tck.auto.Convertible;
@@ -51,17 +53,17 @@ public class Jsr330TckSuite {
     public static Test suite() {
         final BeanLocator beanLocator = new BeanLocator() {
             @Override
-            public Set<Class<?>> findBeans() {
-                final HashSet<Class<?>> beans = new HashSet<Class<?>>();
+            public Set<Bean> findBeans() {
+                final HashSet<Bean> beans = new HashSet<Bean>();
 
-                beans.add(Convertible.class);
-                beans.add(V8Engine.class);
-                beans.add(Cupholder.class);
-                beans.add(Tire.class);
-                beans.add(SpareTire.class); // TODO qualifier = spare
-                beans.add(FuelTank.class);
-                beans.add(Seat.class);
-                beans.add(DriversSeat.class); // TODO qualifier = Drivers
+                beans.add(new Bean(Convertible.class, null));
+                beans.add(new Bean(V8Engine.class, null));
+                beans.add(new Bean(Cupholder.class, null));
+                beans.add(new Bean(Tire.class, null));
+                beans.add(new Bean(SpareTire.class, "spare"));
+                beans.add(new Bean(FuelTank.class, null));
+                beans.add(new Bean(Seat.class, null));
+                beans.add(new Bean(DriversSeat.class, "Drivers"));
 
                 return beans;
             }

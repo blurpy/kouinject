@@ -30,6 +30,7 @@ import java.util.Set;
 
 import javax.inject.Provider;
 
+import net.usikkert.kouinject.beandata.Bean;
 import net.usikkert.kouinject.testbeans.notscanned.ACloserMatchOfImplementationUser;
 import net.usikkert.kouinject.testbeans.notscanned.FirstCircularBean;
 import net.usikkert.kouinject.testbeans.notscanned.FirstInterfaceImpl;
@@ -276,11 +277,11 @@ public class DefaultBeanLoaderTest {
         final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
         final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler, beanLocator);
 
-        final Set<Class<?>> classes = new HashSet<Class<?>>();
-        classes.add(FirstCircularBean.class);
-        classes.add(SecondCircularBean.class);
+        final Set<Bean> beans = new HashSet<Bean>();
+        beans.add(new Bean(FirstCircularBean.class, null));
+        beans.add(new Bean(SecondCircularBean.class, null));
 
-        when(beanLocator.findBeans()).thenReturn(classes);
+        when(beanLocator.findBeans()).thenReturn(beans);
 
         loader.loadBeans();
     }
@@ -291,11 +292,11 @@ public class DefaultBeanLoaderTest {
         final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
         final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler, beanLocator);
 
-        final Set<Class<?>> classes = new HashSet<Class<?>>();
-        classes.add(FirstInterfaceImpl.class);
-        classes.add(SecondInterfaceImpl.class);
+        final Set<Bean> beans = new HashSet<Bean>();
+        beans.add(new Bean(FirstInterfaceImpl.class, null));
+        beans.add(new Bean(SecondInterfaceImpl.class, null));
 
-        when(beanLocator.findBeans()).thenReturn(classes);
+        when(beanLocator.findBeans()).thenReturn(beans);
 
         loader.loadBeans();
 
@@ -309,11 +310,11 @@ public class DefaultBeanLoaderTest {
         final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
         final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler, beanLocator);
 
-        final Set<Class<?>> classes = new HashSet<Class<?>>();
-        classes.add(FirstInterfaceImpl.class);
-        classes.add(SecondInterfaceImpl.class);
+        final Set<Bean> beans = new HashSet<Bean>();
+        beans.add(new Bean(FirstInterfaceImpl.class, null));
+        beans.add(new Bean(SecondInterfaceImpl.class, null));
 
-        when(beanLocator.findBeans()).thenReturn(classes);
+        when(beanLocator.findBeans()).thenReturn(beans);
 
         loader.loadBeans();
 
@@ -330,10 +331,10 @@ public class DefaultBeanLoaderTest {
         final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
         final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler, beanLocator);
 
-        final Set<Class<?>> classes = new HashSet<Class<?>>();
-        classes.add(TheInterfaceUser.class);
+        final Set<Bean> beans = new HashSet<Bean>();
+        beans.add(new Bean(TheInterfaceUser.class, null));
 
-        when(beanLocator.findBeans()).thenReturn(classes);
+        when(beanLocator.findBeans()).thenReturn(beans);
 
         loader.loadBeans();
     }
