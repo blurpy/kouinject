@@ -30,6 +30,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 
+import net.usikkert.kouinject.testbeans.notscanned.notloaded.NoMatchingConstructorBean;
+import net.usikkert.kouinject.testbeans.notscanned.notloaded.TooManyMatchingConstructorsBean;
 import net.usikkert.kouinject.testbeans.scanned.ConstructorBean;
 import net.usikkert.kouinject.testbeans.scanned.EverythingBean;
 import net.usikkert.kouinject.testbeans.scanned.FieldBean;
@@ -39,6 +41,7 @@ import net.usikkert.kouinject.testbeans.scanned.SetterBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.interfacebean.InterfaceBean;
+import net.usikkert.kouinject.testbeans.scanned.notloaded.Blue;
 import net.usikkert.kouinject.testbeans.scanned.notloaded.Green;
 import net.usikkert.kouinject.testbeans.scanned.notloaded.QualifierBean;
 import net.usikkert.kouinject.testbeans.scanned.notloaded.Yellow;
@@ -163,25 +166,67 @@ public class AnnotationBasedBeanDataHandlerTest {
     }
 
     @Test
-    public void getBeanDataShouldDetectQualifiers() {
+    public void getBeanDataShouldDetectQualifiersInConstructors() {
         final BeanData beanData = handler.getBeanData(QualifierBean.class, false);
 
         assertEquals(QualifierBean.class, beanData.getBeanClass());
 
-        final List<Dependency> dependencies = beanData.getDependencies();
-        assertEquals(3, dependencies.size());
-
         final ConstructorData constructor = beanData.getConstructor();
-        assertEquals("Green", constructor.getDependencies().get(0).getQualifier());
+        assertEquals(2, constructor.getDependencies().size());
+
         assertTrue(constructor.getConstructor().isAnnotationPresent(Green.class));
 
+        final Dependency constructorDependency = constructor.getDependencies().get(0);
+        assertEquals("Green", constructorDependency.getQualifier());
+        assertFalse(constructorDependency.isProvider());
+
+        final Dependency providerConstructorDependency = constructor.getDependencies().get(1);
+        assertEquals("Green", providerConstructorDependency.getQualifier());
+        assertTrue(providerConstructorDependency.isProvider());
+    }
+
+    @Test
+    public void getBeanDataShouldDetectQualifiersInFields() {
+        final BeanData beanData = handler.getBeanData(QualifierBean.class, false);
+
         final List<FieldData> fields = beanData.getFields();
-        assertEquals("red", fields.get(0).getDependency().getQualifier());
-        assertTrue(fields.get(0).getField().isAnnotationPresent(Named.class));
+        assertEquals(2, fields.size());
+
+        final FieldData field = fields.get(0);
+        assertTrue(field.getField().isAnnotationPresent(Named.class));
+
+        final Dependency fieldDependency = field.getDependency();
+        assertEquals("red", fieldDependency.getQualifier());
+        assertFalse(fieldDependency.isProvider());
+
+        final FieldData providerField = fields.get(1);
+        assertTrue(providerField.getField().isAnnotationPresent(Blue.class));
+
+        final Dependency providerFieldDependency = providerField.getDependency();
+        assertEquals("Blue", providerFieldDependency.getQualifier());
+        assertTrue(providerFieldDependency.isProvider());
+    }
+
+    @Test
+    public void getBeanDataShouldDetectQualifiersInMethods() {
+        final BeanData beanData = handler.getBeanData(QualifierBean.class, false);
 
         final List<MethodData> methods = beanData.getMethods();
-        assertEquals("Yellow", methods.get(0).getDependencies().get(0).getQualifier());
-        assertTrue(methods.get(0).getMethod().isAnnotationPresent(Yellow.class));
+        assertEquals(2, methods.size());
+
+        final MethodData method = methods.get(0);
+        assertTrue(method.getMethod().isAnnotationPresent(Yellow.class));
+
+        final Dependency methodDependency = method.getDependencies().get(0);
+        assertEquals("Yellow", methodDependency.getQualifier());
+        assertFalse(methodDependency.isProvider());
+
+        final MethodData providerMethod = methods.get(1);
+        assertTrue(providerMethod.getMethod().isAnnotationPresent(Blue.class));
+
+        final Dependency providerMethodDependency = providerMethod.getDependencies().get(0);
+        assertEquals("Blue", providerMethodDependency.getQualifier());
+        assertTrue(providerMethodDependency.isProvider());
     }
 
     @Test
@@ -237,6 +282,16 @@ public class AnnotationBasedBeanDataHandlerTest {
 
         final List<MethodData> methods = beanData.getMethods();
         assertEquals(0, methods.size());
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void getBeanDataShouldAbortIfNoMatchingConstructorIsFound() {
+        handler.getBeanData(NoMatchingConstructorBean.class, false);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void getBeanDataShouldAbortIfTooManyMatchingConstructorsAreFound() {
+        handler.getBeanData(TooManyMatchingConstructorsBean.class, false);
     }
 
     private void assertNoQualifiers(final List<Dependency> dependencies) {

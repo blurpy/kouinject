@@ -20,76 +20,25 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans.scanned.notloaded;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Provider;
+package net.usikkert.kouinject.testbeans.notscanned.notloaded;
 
 import net.usikkert.kouinject.testbeans.scanned.ConstructorBean;
-import net.usikkert.kouinject.testbeans.scanned.FieldBean;
-import net.usikkert.kouinject.testbeans.scanned.HelloBean;
-import net.usikkert.kouinject.testbeans.scanned.SetterBean;
-import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
 
 /**
- * Bean for testing qualifiers.
+ * Bean for testing what happens when no default constructor
+ * is available, and no constructor is marked for injection.
  *
  * @author Christian Ihle
  */
-public class QualifierBean {
-
-    @Inject @Named("red")
-    private FieldBean fieldBean;
-
-    @Inject @Blue
-    private Provider<FieldBean> fieldBeanProvider;
+public class NoMatchingConstructorBean {
 
     private final ConstructorBean constructorBean;
 
-    private final Provider<JavaBean> javaBeanProvider;
-
-    private SetterBean setterBean;
-
-    private Provider<HelloBean> helloBeanProvider;
-
-    @Inject @Green
-    public QualifierBean(final ConstructorBean constructorBean, final Provider<JavaBean> javaBeanProvider) {
+    public NoMatchingConstructorBean(final ConstructorBean constructorBean) {
         this.constructorBean = constructorBean;
-        this.javaBeanProvider = javaBeanProvider;
-    }
-
-    public SetterBean getSetterBean() {
-        return setterBean;
-    }
-
-    @Inject @Yellow
-    public void setSetterBean(final SetterBean setterBean) {
-        this.setterBean = setterBean;
-    }
-
-    public FieldBean getFieldBean() {
-        return fieldBean;
     }
 
     public ConstructorBean getConstructorBean() {
         return constructorBean;
-    }
-
-    public Provider<FieldBean> getFieldBeanProvider() {
-        return fieldBeanProvider;
-    }
-
-    public Provider<HelloBean> getHelloBeanProvider() {
-        return helloBeanProvider;
-    }
-
-    @Inject @Blue
-    public void setHelloBeanProvider(final Provider<HelloBean> helloBeanProvider) {
-        this.helloBeanProvider = helloBeanProvider;
-    }
-
-    public Provider<JavaBean> getJavaBeanProvider() {
-        return javaBeanProvider;
     }
 }

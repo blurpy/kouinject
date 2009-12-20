@@ -20,76 +20,41 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans.scanned.notloaded;
+package net.usikkert.kouinject.testbeans.notscanned.notloaded;
 
 import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Provider;
 
 import net.usikkert.kouinject.testbeans.scanned.ConstructorBean;
-import net.usikkert.kouinject.testbeans.scanned.FieldBean;
-import net.usikkert.kouinject.testbeans.scanned.HelloBean;
-import net.usikkert.kouinject.testbeans.scanned.SetterBean;
-import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
+import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
 
 /**
- * Bean for testing qualifiers.
+ * Bean for testing what happens when 2 constructors are marked for injection.
  *
  * @author Christian Ihle
  */
-public class QualifierBean {
-
-    @Inject @Named("red")
-    private FieldBean fieldBean;
-
-    @Inject @Blue
-    private Provider<FieldBean> fieldBeanProvider;
+public class TooManyMatchingConstructorsBean {
 
     private final ConstructorBean constructorBean;
 
-    private final Provider<JavaBean> javaBeanProvider;
+    private final CoffeeBean coffeeBean;
 
-    private SetterBean setterBean;
-
-    private Provider<HelloBean> helloBeanProvider;
-
-    @Inject @Green
-    public QualifierBean(final ConstructorBean constructorBean, final Provider<JavaBean> javaBeanProvider) {
+    @Inject
+    public TooManyMatchingConstructorsBean(final ConstructorBean constructorBean) {
         this.constructorBean = constructorBean;
-        this.javaBeanProvider = javaBeanProvider;
+        coffeeBean = null;
     }
 
-    public SetterBean getSetterBean() {
-        return setterBean;
-    }
-
-    @Inject @Yellow
-    public void setSetterBean(final SetterBean setterBean) {
-        this.setterBean = setterBean;
-    }
-
-    public FieldBean getFieldBean() {
-        return fieldBean;
+    @Inject
+    public TooManyMatchingConstructorsBean(final ConstructorBean constructorBean, final CoffeeBean coffeeBean) {
+        this.constructorBean = constructorBean;
+        this.coffeeBean = coffeeBean;
     }
 
     public ConstructorBean getConstructorBean() {
         return constructorBean;
     }
 
-    public Provider<FieldBean> getFieldBeanProvider() {
-        return fieldBeanProvider;
-    }
-
-    public Provider<HelloBean> getHelloBeanProvider() {
-        return helloBeanProvider;
-    }
-
-    @Inject @Blue
-    public void setHelloBeanProvider(final Provider<HelloBean> helloBeanProvider) {
-        this.helloBeanProvider = helloBeanProvider;
-    }
-
-    public Provider<JavaBean> getJavaBeanProvider() {
-        return javaBeanProvider;
+    public CoffeeBean getCoffeeBean() {
+        return coffeeBean;
     }
 }

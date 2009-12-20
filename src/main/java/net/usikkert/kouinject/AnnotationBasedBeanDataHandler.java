@@ -193,13 +193,11 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
             }
 
             catch (final NoSuchMethodException e) {
-                // TODO test
                 throw new RuntimeException(e);
             }
         }
 
         else if (matches.size() > 1) {
-            // TODO test
             throw new UnsupportedOperationException(
                     "Wrong number of constructors found for autowiring " + beanClass + " " + matches);
         }
