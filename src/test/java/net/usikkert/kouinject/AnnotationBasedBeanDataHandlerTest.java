@@ -44,9 +44,7 @@ import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.interfacebean.InterfaceBean;
 import net.usikkert.kouinject.testbeans.scanned.notloaded.Blue;
-import net.usikkert.kouinject.testbeans.scanned.notloaded.Green;
 import net.usikkert.kouinject.testbeans.scanned.notloaded.QualifierBean;
-import net.usikkert.kouinject.testbeans.scanned.notloaded.Yellow;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -176,15 +174,13 @@ public class AnnotationBasedBeanDataHandlerTest {
         final ConstructorData constructor = beanData.getConstructor();
         assertEquals(2, constructor.getDependencies().size());
 
-        assertTrue(constructor.getConstructor().isAnnotationPresent(Green.class));
+        final Dependency constructorBean = constructor.getDependencies().get(0);
+        assertEquals("Green", constructorBean.getQualifier());
+        assertFalse(constructorBean.isProvider());
 
-        final Dependency constructorDependency = constructor.getDependencies().get(0);
-        assertEquals("Green", constructorDependency.getQualifier());
-        assertFalse(constructorDependency.isProvider());
-
-        final Dependency providerConstructorDependency = constructor.getDependencies().get(1);
-        assertEquals("Green", providerConstructorDependency.getQualifier());
-        assertTrue(providerConstructorDependency.isProvider());
+        final Dependency constructorBeanProvider = constructor.getDependencies().get(1);
+        assertEquals("orange", constructorBeanProvider.getQualifier());
+        assertTrue(constructorBeanProvider.isProvider());
     }
 
     @Test
@@ -197,16 +193,16 @@ public class AnnotationBasedBeanDataHandlerTest {
         final FieldData field = fields.get(0);
         assertTrue(field.getField().isAnnotationPresent(Named.class));
 
-        final Dependency fieldDependency = field.getDependency();
-        assertEquals("red", fieldDependency.getQualifier());
-        assertFalse(fieldDependency.isProvider());
+        final Dependency fieldBean = field.getDependency();
+        assertEquals("red", fieldBean.getQualifier());
+        assertFalse(fieldBean.isProvider());
 
         final FieldData providerField = fields.get(1);
         assertTrue(providerField.getField().isAnnotationPresent(Blue.class));
 
-        final Dependency providerFieldDependency = providerField.getDependency();
-        assertEquals("Blue", providerFieldDependency.getQualifier());
-        assertTrue(providerFieldDependency.isProvider());
+        final Dependency fieldBeanProvider = providerField.getDependency();
+        assertEquals("Blue", fieldBeanProvider.getQualifier());
+        assertTrue(fieldBeanProvider.isProvider());
     }
 
     @Test
@@ -214,21 +210,17 @@ public class AnnotationBasedBeanDataHandlerTest {
         final BeanData beanData = handler.getBeanData(QualifierBean.class, false);
 
         final List<MethodData> methods = beanData.getMethods();
-        assertEquals(2, methods.size());
+        assertEquals(1, methods.size());
 
         final MethodData method = methods.get(0);
-        assertTrue(method.getMethod().isAnnotationPresent(Yellow.class));
 
-        final Dependency methodDependency = method.getDependencies().get(0);
-        assertEquals("Yellow", methodDependency.getQualifier());
-        assertFalse(methodDependency.isProvider());
+        final Dependency setterB = method.getDependencies().get(0);
+        assertEquals("Yellow", setterB.getQualifier());
+        assertFalse(setterB.isProvider());
 
-        final MethodData providerMethod = methods.get(1);
-        assertTrue(providerMethod.getMethod().isAnnotationPresent(Blue.class));
-
-        final Dependency providerMethodDependency = providerMethod.getDependencies().get(0);
-        assertEquals("Blue", providerMethodDependency.getQualifier());
-        assertTrue(providerMethodDependency.isProvider());
+        final Dependency setterBProvider =  method.getDependencies().get(1);
+        assertEquals("Blue", setterBProvider.getQualifier());
+        assertTrue(setterBProvider.isProvider());
     }
 
     @Test

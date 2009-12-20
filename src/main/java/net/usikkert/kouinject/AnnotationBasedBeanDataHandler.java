@@ -23,7 +23,6 @@
 package net.usikkert.kouinject;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -121,7 +120,7 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
 
     private Dependency findDependency(final Field field) {
         final Class<?> fieldBeanClass = field.getType();
-        final String qualifier = getQualifier(field);
+        final String qualifier = getQualifier(field, field.getAnnotations());
 
         if (isProvider(fieldBeanClass)) {
             final Type genericType = field.getGenericType();
@@ -173,8 +172,9 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
     private List<Dependency> findDependencies(final Method method) {
         final Class<?>[] parameterTypes = method.getParameterTypes();
         final Type[] genericParameterTypes = method.getGenericParameterTypes();
+        final Annotation[][] parameterAnnotations = method.getParameterAnnotations();
 
-        return findDependencies(method, parameterTypes, genericParameterTypes);
+        return findDependencies(method, parameterTypes, genericParameterTypes, parameterAnnotations);
     }
 
     private Constructor<?> findConstructor(final Class<?> beanClass) {
@@ -219,27 +219,29 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
     private List<Dependency> findDependencies(final Constructor<?> constructor) {
         final Class<?>[] parameterTypes = constructor.getParameterTypes();
         final Type[] genericParameterTypes = constructor.getGenericParameterTypes();
+        final Annotation[][] parameterAnnotations = constructor.getParameterAnnotations();
 
-        return findDependencies(constructor, parameterTypes, genericParameterTypes);
+        return findDependencies(constructor, parameterTypes, genericParameterTypes, parameterAnnotations);
     }
 
-    private List<Dependency> findDependencies(final AnnotatedElement parameterOwner,
-            final Class<?>[] parameterTypes, final Type[] genericParameterTypes) {
+    private List<Dependency> findDependencies(final Object parameterOwner, final Class<?>[] parameterTypes,
+            final Type[] genericParameterTypes, final Annotation[][] annotations) {
         final List<Dependency> dependencies = new ArrayList<Dependency>();
 
         for (int i = 0; i < parameterTypes.length; i++) {
             final Class<?> parameterClass = parameterTypes[i];
             final Type parameterType = genericParameterTypes[i];
 
-            final Dependency dependency = findDependency(parameterOwner, parameterClass, parameterType);
+            final Dependency dependency = findDependency(parameterOwner, parameterClass, parameterType, annotations[i]);
             dependencies.add(dependency);
         }
 
         return dependencies;
     }
 
-    private Dependency findDependency(final AnnotatedElement parameterOwner, final Class<?> parameterClass, final Type parameterType) {
-        final String qualifier = getQualifier(parameterOwner);
+    private Dependency findDependency(final Object parameterOwner, final Class<?> parameterClass,
+            final Type parameterType, final Annotation[] annotations) {
+        final String qualifier = getQualifier(parameterOwner, annotations);
 
         if (isProvider(parameterClass)) {
             final Class<?> beanClassFromProvider = getBeanClassFromProvider(parameterOwner, parameterType);
@@ -252,8 +254,7 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
         }
     }
 
-    private String getQualifier(final AnnotatedElement parameterOwner) {
-        final Annotation[] annotations = parameterOwner.getAnnotations();
+    private String getQualifier(final Object parameterOwner, final Annotation[] annotations) {
         final List<String> matches = new ArrayList<String>();
 
         for (final Annotation annotation : annotations) {
@@ -274,7 +275,7 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
         return matches.get(0);
     }
 
-    private String getQualifier(final AnnotatedElement parameterOwner, final Annotation annotation) {
+    private String getQualifier(final Object parameterOwner, final Annotation annotation) {
         if (annotation instanceof Named) {
             final Named named = (Named) annotation;
             final String value = named.value();

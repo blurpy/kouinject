@@ -28,9 +28,7 @@ import javax.inject.Provider;
 
 import net.usikkert.kouinject.testbeans.scanned.ConstructorBean;
 import net.usikkert.kouinject.testbeans.scanned.FieldBean;
-import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.SetterBean;
-import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
 
 /**
  * Bean for testing qualifiers.
@@ -47,49 +45,47 @@ public class QualifierBean {
 
     private final ConstructorBean constructorBean;
 
-    private final Provider<JavaBean> javaBeanProvider;
+    private final Provider<ConstructorBean> constructorBeanProvider;
 
     private SetterBean setterBean;
 
-    private Provider<HelloBean> helloBeanProvider;
+    private Provider<SetterBean> setterBeanProvider;
 
-    @Inject @Green
-    public QualifierBean(final ConstructorBean constructorBean, final Provider<JavaBean> javaBeanProvider) {
+    @Inject
+    public QualifierBean(@Green final ConstructorBean constructorBean,
+                         @Named("orange") final Provider<ConstructorBean> constructorBeanProvider) {
         this.constructorBean = constructorBean;
-        this.javaBeanProvider = javaBeanProvider;
+        this.constructorBeanProvider = constructorBeanProvider;
     }
 
-    public SetterBean getSetterBean() {
-        return setterBean;
-    }
-
-    @Inject @Yellow
-    public void setSetterBean(final SetterBean setterBean) {
-        this.setterBean = setterBean;
+    @Inject
+    public void setBeans(@Yellow final SetterBean setterB,
+                         @Blue final Provider<SetterBean> setterBProvider) {
+        this.setterBean = setterB;
+        this.setterBeanProvider = setterBProvider;
     }
 
     public FieldBean getFieldBean() {
         return fieldBean;
     }
 
-    public ConstructorBean getConstructorBean() {
-        return constructorBean;
-    }
-
     public Provider<FieldBean> getFieldBeanProvider() {
         return fieldBeanProvider;
     }
 
-    public Provider<HelloBean> getHelloBeanProvider() {
-        return helloBeanProvider;
+    public ConstructorBean getConstructorBean() {
+        return constructorBean;
     }
 
-    @Inject @Blue
-    public void setHelloBeanProvider(final Provider<HelloBean> helloBeanProvider) {
-        this.helloBeanProvider = helloBeanProvider;
+    public Provider<ConstructorBean> getConstructorBeanProvider() {
+        return constructorBeanProvider;
     }
 
-    public Provider<JavaBean> getJavaBeanProvider() {
-        return javaBeanProvider;
+    public SetterBean getSetterBean() {
+        return setterBean;
+    }
+
+    public Provider<SetterBean> getSetterBeanProvider() {
+        return setterBeanProvider;
     }
 }
