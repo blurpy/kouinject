@@ -30,6 +30,7 @@ import junit.framework.Test;
 import org.atinject.tck.Tck;
 import org.atinject.tck.auto.Car;
 import org.atinject.tck.auto.Convertible;
+import org.atinject.tck.auto.DriversSeat;
 import org.atinject.tck.auto.FuelTank;
 import org.atinject.tck.auto.Seat;
 import org.atinject.tck.auto.Tire;
@@ -55,11 +56,12 @@ public class Jsr330TckSuite {
 
                 beans.add(Convertible.class);
                 beans.add(V8Engine.class);
-                beans.add(SpareTire.class);
                 beans.add(Cupholder.class);
                 beans.add(Tire.class);
+                beans.add(SpareTire.class); // TODO qualifier = spare
                 beans.add(FuelTank.class);
                 beans.add(Seat.class);
+                beans.add(DriversSeat.class); // TODO qualifier = Drivers
 
                 return beans;
             }
