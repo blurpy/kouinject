@@ -79,6 +79,13 @@
       <version>1</version>
     </dependency>
     <dependency>
+      <groupId>javax.inject</groupId>
+      <artifactId>javax.inject-tck</artifactId>
+      <version>1</version>
+      <scope>system</scope>
+      <systemPath>${basedir}/src/test/lib/javax.inject-tck-1.jar</systemPath>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.7</version>
