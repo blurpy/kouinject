@@ -22,6 +22,7 @@
 
 package net.usikkert.kouinject;
 
+import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,7 +31,8 @@ import net.usikkert.kouinject.beandata.Bean;
 import net.usikkert.kouinject.util.Validate;
 
 /**
- * Implementation of {@link BeanLocator} using the {@link Component} annotation to detect beans.
+ * Implementation of {@link BeanLocator} using the {@link Component} annotation to detect beans,
+ * and the {@link Qualifier} annotation to get the qualifier.
  *
  * @author Christian Ihle
  */
@@ -39,8 +41,8 @@ public class AnnotationBasedBeanLocator implements BeanLocator {
     private static final Class<Component> COMPONENT_ANNOTATION = Component.class;
 
     private final ClassLocator classLocator;
-
     private final String basePackage;
+    private final AnnotationBasedQualifierHandler qualifierHandler;
 
     /**
      * Constructs a new instance of this {@link BeanLocator} using a {@link ClassLocator} for
@@ -56,6 +58,7 @@ public class AnnotationBasedBeanLocator implements BeanLocator {
 
         this.basePackage = basePackage;
         this.classLocator = classLocator;
+        this.qualifierHandler = new AnnotationBasedQualifierHandler();
     }
 
     /**
@@ -68,7 +71,9 @@ public class AnnotationBasedBeanLocator implements BeanLocator {
 
         for (final Class<?> clazz : allClasses) {
             if (classIsBean(clazz)) {
-                final Bean bean = new Bean(clazz, null);
+                final String qualifier = getQualifier(clazz);
+                final Bean bean = new Bean(clazz, qualifier);
+
                 detectedBeans.add(bean);
             }
         }
@@ -78,5 +83,12 @@ public class AnnotationBasedBeanLocator implements BeanLocator {
 
     private boolean classIsBean(final Class<?> clazz) {
         return clazz.isAnnotationPresent(COMPONENT_ANNOTATION);
+    }
+
+    private String getQualifier(final Class<?> clazz) {
+        final Annotation[] annotations = clazz.getAnnotations();
+        final String qualifier = qualifierHandler.getQualifier(clazz, annotations);
+
+        return qualifier;
     }
 }

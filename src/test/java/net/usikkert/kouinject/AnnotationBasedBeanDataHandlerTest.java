@@ -48,8 +48,8 @@ import net.usikkert.kouinject.testbeans.scanned.SetterBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.interfacebean.InterfaceBean;
-import net.usikkert.kouinject.testbeans.scanned.notloaded.Blue;
 import net.usikkert.kouinject.testbeans.scanned.notloaded.QualifierBean;
+import net.usikkert.kouinject.testbeans.scanned.qualifier.Blue;
 
 import org.junit.Before;
 import org.junit.Test;

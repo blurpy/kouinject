@@ -28,6 +28,12 @@ import java.util.Set;
 
 import net.usikkert.kouinject.annotation.Component;
 import net.usikkert.kouinject.beandata.Bean;
+import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
+import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
+import net.usikkert.kouinject.testbeans.scanned.qualifier.BlueBean;
+import net.usikkert.kouinject.testbeans.scanned.qualifier.GreenBean;
+import net.usikkert.kouinject.testbeans.scanned.qualifier.RedBean;
+import net.usikkert.kouinject.testbeans.scanned.qualifier.YellowBean;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -39,24 +45,64 @@ import org.junit.Test;
  */
 public class AnnotationBasedBeanLocatorTest {
 
-    private AnnotationBasedBeanLocator beanLocator;
+    private ClassLocator classLocator;
 
     @Before
-    public void createBeanLocator() {
-        final ClassLocator classLocator = new ClassPathScanner();
-        beanLocator = new AnnotationBasedBeanLocator("net.usikkert.kouinject", classLocator);
+    public void createClassLocator() {
+        classLocator = new ClassPathScanner();
     }
 
     @Test
     public void findBeansShouldReturnAllComponents() {
+        final BeanLocator beanLocator = new AnnotationBasedBeanLocator("net.usikkert.kouinject", classLocator);
         final Set<Bean> beans = beanLocator.findBeans();
 
-        assertEquals(19, beans.size());
+        assertEquals(23, beans.size());
 
         for (final Bean bean : beans) {
             final Class<?> beanClass = bean.getBeanClass();
             assertNotNull(beanClass);
             assertTrue(beanClass.isAnnotationPresent(Component.class));
         }
+    }
+
+    @Test
+    public void findBeansShouldDetectQualifiers() {
+        final BeanLocator beanLocator = new AnnotationBasedBeanLocator("net.usikkert.kouinject.testbeans.scanned.qualifier", classLocator);
+        final Set<Bean> beans = beanLocator.findBeans();
+
+        assertEquals(4, beans.size());
+
+        assertTrue(containsBean(beans, BlueBean.class, "Blue"));
+        assertTrue(containsBean(beans, GreenBean.class, "Green"));
+        assertTrue(containsBean(beans, RedBean.class, "red"));
+        assertTrue(containsBean(beans, YellowBean.class, "Yellow"));
+    }
+
+    @Test
+    public void findBeansShouldIgnoreMissingQualifiers() {
+        final BeanLocator beanLocator = new AnnotationBasedBeanLocator("net.usikkert.kouinject.testbeans.scanned.coffee", classLocator);
+        final Set<Bean> beans = beanLocator.findBeans();
+
+        assertEquals(2, beans.size());
+
+        assertTrue(containsBean(beans, CoffeeBean.class, null));
+        assertTrue(containsBean(beans, JavaBean.class, null));
+    }
+
+    private boolean containsBean(final Set<Bean> beans, final Class<?> beanClass, final String qualifier) {
+        for (final Bean bean : beans) {
+            if (bean.getBeanClass().equals(beanClass)) {
+                if (qualifier == null && bean.getQualifier() == null) {
+                    return true;
+                }
+
+                else if (qualifier != null && qualifier.equals(bean.getQualifier())) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

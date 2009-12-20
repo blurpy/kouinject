@@ -32,9 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Provider;
-import javax.inject.Qualifier;
 
 import net.usikkert.kouinject.beandata.BeanData;
 import net.usikkert.kouinject.beandata.ConstructorData;
@@ -57,7 +55,7 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
 
     private static final Class<Inject> INJECTION_ANNOTATION = Inject.class;
 
-    private static final Class<Qualifier> QUALIFIER_ANNOTATION = Qualifier.class;
+    private final AnnotationBasedQualifierHandler qualifierHandler = new AnnotationBasedQualifierHandler();
 
     /**
      * {@inheritDoc}
@@ -125,7 +123,7 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
 
     private Dependency findDependency(final Field field) {
         final Class<?> fieldBeanClass = field.getType();
-        final String qualifier = getQualifier(field, field.getAnnotations());
+        final String qualifier = qualifierHandler.getQualifier(field, field.getAnnotations());
 
         if (isProvider(fieldBeanClass)) {
             final Type genericType = field.getGenericType();
@@ -246,7 +244,7 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
 
     private Dependency findDependency(final Object parameterOwner, final Class<?> parameterClass,
             final Type parameterType, final Annotation[] annotations) {
-        final String qualifier = getQualifier(parameterOwner, annotations);
+        final String qualifier = qualifierHandler.getQualifier(parameterOwner, annotations);
 
         if (isProvider(parameterClass)) {
             final Class<?> beanClassFromProvider = getBeanClassFromProvider(parameterOwner, parameterType);
@@ -256,45 +254,6 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
 
         else {
             return new Dependency(parameterClass, false, qualifier);
-        }
-    }
-
-    private String getQualifier(final Object parameterOwner, final Annotation[] annotations) {
-        final List<String> matches = new ArrayList<String>();
-
-        for (final Annotation annotation : annotations) {
-            if (annotation.annotationType().isAnnotationPresent(QUALIFIER_ANNOTATION)) {
-                matches.add(getQualifier(parameterOwner, annotation));
-            }
-        }
-
-        if (matches.size() == 0) {
-            return null;
-        }
-
-        else if (matches.size() > 1) {
-            throw new UnsupportedOperationException(
-                    "Wrong number of qualifier annotations found on " + parameterOwner + " " + matches);
-        }
-
-        return matches.get(0);
-    }
-
-    private String getQualifier(final Object parameterOwner, final Annotation annotation) {
-        if (annotation instanceof Named) {
-            final Named named = (Named) annotation;
-            final String value = named.value();
-
-            if (value == null || value.trim().length() == 0) {
-                throw new UnsupportedOperationException(
-                        "Named qualifier annotation used without a value on " + parameterOwner);
-            }
-
-            return value;
-        }
-
-        else {
-            return annotation.annotationType().getSimpleName();
         }
     }
 

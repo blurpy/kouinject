@@ -20,25 +20,13 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans.notscanned.notloaded;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import net.usikkert.kouinject.testbeans.scanned.FieldBean;
-import net.usikkert.kouinject.testbeans.scanned.qualifier.Blue;
+package net.usikkert.kouinject.testbeans.scanned.qualifier;
 
 /**
- * Bean for testing what happens when more than 1 qualifier is used on the same field.
+ * Interface for testing qualifiers.
  *
  * @author Christian Ihle
  */
-public class TooManyQualifiersBean {
+public interface ColorBean {
 
-    @Inject @Blue @Named("pink")
-    private FieldBean fieldBean;
-
-    public FieldBean getFieldBean() {
-        return fieldBean;
-    }
 }

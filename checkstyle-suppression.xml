@@ -6,4 +6,5 @@
   <suppress checks="JavadocMethod" files="[/\\]test[/\\]java[/\\]"/>
   <suppress checks="JavadocPackage" files="[/\\]test[/\\]java[/\\]"/>
   <suppress checks="HideUtilityClassConstructor" files="[/\\]test[/\\]java[/\\]"/>
+  <suppress checks="VisibilityModifier" files="[/\\]test[/\\]java[/\\]"/>
 </suppressions>

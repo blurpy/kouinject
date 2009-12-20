@@ -29,6 +29,9 @@ import javax.inject.Provider;
 import net.usikkert.kouinject.testbeans.scanned.ConstructorBean;
 import net.usikkert.kouinject.testbeans.scanned.FieldBean;
 import net.usikkert.kouinject.testbeans.scanned.SetterBean;
+import net.usikkert.kouinject.testbeans.scanned.qualifier.Blue;
+import net.usikkert.kouinject.testbeans.scanned.qualifier.Green;
+import net.usikkert.kouinject.testbeans.scanned.qualifier.Yellow;
 
 /**
  * Bean for testing qualifiers.

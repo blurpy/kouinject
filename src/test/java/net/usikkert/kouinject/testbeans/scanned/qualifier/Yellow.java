@@ -20,25 +20,23 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans.notscanned.notloaded;
+package net.usikkert.kouinject.testbeans.scanned.qualifier;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import net.usikkert.kouinject.testbeans.scanned.FieldBean;
-import net.usikkert.kouinject.testbeans.scanned.qualifier.Blue;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+
+import javax.inject.Qualifier;
 
 /**
- * Bean for testing what happens when more than 1 qualifier is used on the same field.
+ * Qualifier annotation for test.
  *
  * @author Christian Ihle
  */
-public class TooManyQualifiersBean {
+@Qualifier
+@Documented
+@Retention(RUNTIME)
+public @interface Yellow {
 
-    @Inject @Blue @Named("pink")
-    private FieldBean fieldBean;
-
-    public FieldBean getFieldBean() {
-        return fieldBean;
-    }
 }

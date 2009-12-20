@@ -20,23 +20,17 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans.scanned.notloaded;
+package net.usikkert.kouinject.testbeans.scanned.qualifier;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-
-import javax.inject.Qualifier;
+import net.usikkert.kouinject.annotation.Component;
 
 /**
- * Qualifier annotation for test.
+ * Bean for testing qualifiers.
  *
  * @author Christian Ihle
  */
-@Qualifier
-@Documented
-@Retention(RUNTIME)
-public @interface Green {
+@Blue
+@Component
+public class BlueBean implements ColorBean {
 
 }

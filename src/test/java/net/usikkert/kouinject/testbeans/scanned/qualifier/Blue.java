@@ -20,7 +20,7 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans.scanned.notloaded;
+package net.usikkert.kouinject.testbeans.scanned.qualifier;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
@@ -37,6 +37,6 @@ import javax.inject.Qualifier;
 @Qualifier
 @Documented
 @Retention(RUNTIME)
-public @interface Yellow {
+public @interface Blue {
 
 }
