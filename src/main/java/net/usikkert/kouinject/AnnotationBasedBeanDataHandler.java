@@ -267,7 +267,6 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
         }
 
         else if (matches.size() > 1) {
-            // TODO add test
             throw new UnsupportedOperationException(
                     "Wrong number of qualifier annotations found on " + parameterOwner + " " + matches);
         }
@@ -281,7 +280,6 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
             final String value = named.value();
 
             if (value == null || value.trim().length() == 0) {
-                // TODO add test
                 throw new UnsupportedOperationException(
                         "Named qualifier annotation used without a value on " + parameterOwner);
             }

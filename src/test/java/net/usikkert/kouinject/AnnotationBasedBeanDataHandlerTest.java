@@ -30,8 +30,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 
+import net.usikkert.kouinject.testbeans.notscanned.notloaded.NamedQualifierUsedWithoutNameBean;
 import net.usikkert.kouinject.testbeans.notscanned.notloaded.NoMatchingConstructorBean;
 import net.usikkert.kouinject.testbeans.notscanned.notloaded.TooManyMatchingConstructorsBean;
+import net.usikkert.kouinject.testbeans.notscanned.notloaded.TooManyQualifiersBean;
 import net.usikkert.kouinject.testbeans.scanned.ConstructorBean;
 import net.usikkert.kouinject.testbeans.scanned.EverythingBean;
 import net.usikkert.kouinject.testbeans.scanned.FieldBean;
@@ -289,9 +291,19 @@ public class AnnotationBasedBeanDataHandlerTest {
         handler.getBeanData(NoMatchingConstructorBean.class, false);
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = UnsupportedOperationException.class)
     public void getBeanDataShouldAbortIfTooManyMatchingConstructorsAreFound() {
         handler.getBeanData(TooManyMatchingConstructorsBean.class, false);
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void getBeanDataShouldAbortIfTooManyQualifiersAreUsedOnTheSameField() {
+        handler.getBeanData(TooManyQualifiersBean.class, false);
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void getBeanDataShouldAbortIfNamedQualifierIsUsedWithoutName() {
+        handler.getBeanData(NamedQualifierUsedWithoutNameBean.class, false);
     }
 
     private void assertNoQualifiers(final List<Dependency> dependencies) {
