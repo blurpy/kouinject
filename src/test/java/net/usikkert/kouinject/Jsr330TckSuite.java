@@ -54,7 +54,7 @@ public class Jsr330TckSuite {
         final BeanLocator beanLocator = new BeanLocator() {
             @Override
             public Set<Dependency> findBeans() {
-                final HashSet<Dependency> beans = new HashSet<Dependency>();
+                final Set<Dependency> beans = new HashSet<Dependency>();
 
                 beans.add(new Dependency(Convertible.class));
                 beans.add(new Dependency(V8Engine.class));
