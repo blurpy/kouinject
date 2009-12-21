@@ -339,7 +339,7 @@ public class DefaultBeanLoader implements BeanLoader {
             return new Provider() {
                 @Override
                 public Object get() {
-                    return getBean(dependency.getBeanClass());
+                    return getBean(dependency.getBeanClass(), dependency.getQualifier());
                 }
             };
         }
