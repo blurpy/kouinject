@@ -56,13 +56,13 @@ public class Jsr330TckSuite {
             public Set<Dependency> findBeans() {
                 final HashSet<Dependency> beans = new HashSet<Dependency>();
 
-                beans.add(new Dependency(Convertible.class, null));
-                beans.add(new Dependency(V8Engine.class, null));
-                beans.add(new Dependency(Cupholder.class, null));
-                beans.add(new Dependency(Tire.class, null));
+                beans.add(new Dependency(Convertible.class));
+                beans.add(new Dependency(V8Engine.class));
+                beans.add(new Dependency(Cupholder.class));
+                beans.add(new Dependency(Tire.class));
                 beans.add(new Dependency(SpareTire.class, "spare"));
-                beans.add(new Dependency(FuelTank.class, null));
-                beans.add(new Dependency(Seat.class, null));
+                beans.add(new Dependency(FuelTank.class));
+                beans.add(new Dependency(Seat.class));
                 beans.add(new Dependency(DriversSeat.class, "Drivers"));
 
                 return beans;

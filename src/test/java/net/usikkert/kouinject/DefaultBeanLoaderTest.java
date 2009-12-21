@@ -384,8 +384,8 @@ public class DefaultBeanLoaderTest {
         final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler, beanLocator);
 
         final Set<Dependency> beans = new HashSet<Dependency>();
-        beans.add(new Dependency(FirstCircularBean.class, null));
-        beans.add(new Dependency(SecondCircularBean.class, null));
+        beans.add(new Dependency(FirstCircularBean.class));
+        beans.add(new Dependency(SecondCircularBean.class));
 
         when(beanLocator.findBeans()).thenReturn(beans);
 
@@ -399,8 +399,8 @@ public class DefaultBeanLoaderTest {
         final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler, beanLocator);
 
         final Set<Dependency> beans = new HashSet<Dependency>();
-        beans.add(new Dependency(FirstInterfaceImpl.class, null));
-        beans.add(new Dependency(SecondInterfaceImpl.class, null));
+        beans.add(new Dependency(FirstInterfaceImpl.class));
+        beans.add(new Dependency(SecondInterfaceImpl.class));
 
         when(beanLocator.findBeans()).thenReturn(beans);
 
@@ -417,8 +417,8 @@ public class DefaultBeanLoaderTest {
         final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler, beanLocator);
 
         final Set<Dependency> beans = new HashSet<Dependency>();
-        beans.add(new Dependency(FirstInterfaceImpl.class, null));
-        beans.add(new Dependency(SecondInterfaceImpl.class, null));
+        beans.add(new Dependency(FirstInterfaceImpl.class));
+        beans.add(new Dependency(SecondInterfaceImpl.class));
 
         when(beanLocator.findBeans()).thenReturn(beans);
 
@@ -438,7 +438,7 @@ public class DefaultBeanLoaderTest {
         final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler, beanLocator);
 
         final Set<Dependency> beans = new HashSet<Dependency>();
-        beans.add(new Dependency(TheInterfaceUser.class, null));
+        beans.add(new Dependency(TheInterfaceUser.class));
 
         when(beanLocator.findBeans()).thenReturn(beans);
 
