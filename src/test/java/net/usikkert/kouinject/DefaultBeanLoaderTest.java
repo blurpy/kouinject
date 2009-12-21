@@ -45,6 +45,7 @@ import net.usikkert.kouinject.testbeans.scanned.FirstCircularDependencyBean;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.LastBean;
 import net.usikkert.kouinject.testbeans.scanned.ProviderBean;
+import net.usikkert.kouinject.testbeans.scanned.RainbowBean;
 import net.usikkert.kouinject.testbeans.scanned.SecondCircularDependencyBean;
 import net.usikkert.kouinject.testbeans.scanned.SetterBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
@@ -54,6 +55,11 @@ import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractB
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.interfacebean.InterfaceBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.interfacebean.InterfaceBeanImpl;
 import net.usikkert.kouinject.testbeans.scanned.notloaded.NoBean;
+import net.usikkert.kouinject.testbeans.scanned.qualifier.BlueBean;
+import net.usikkert.kouinject.testbeans.scanned.qualifier.ColorBean;
+import net.usikkert.kouinject.testbeans.scanned.qualifier.GreenBean;
+import net.usikkert.kouinject.testbeans.scanned.qualifier.RedBean;
+import net.usikkert.kouinject.testbeans.scanned.qualifier.YellowBean;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -85,6 +91,20 @@ public class DefaultBeanLoaderTest {
 
         final AbstractBeanImpl abstractBeanImpl = beanLoader.getBean(AbstractBeanImpl.class);
         assertNotNull(abstractBeanImpl);
+    }
+
+    @Test
+    public void checkBlueBean() {
+        beanLoader.loadBeans();
+
+        final BlueBean blueBean1 = beanLoader.getBean(BlueBean.class);
+        assertNotNull(blueBean1);
+
+        final BlueBean blueBean2 = beanLoader.getBean(BlueBean.class, "Blue");
+        assertNotNull(blueBean2);
+
+        final ColorBean blueBean3 = beanLoader.getBean(ColorBean.class, "Blue");
+        assertTrue(blueBean3 instanceof BlueBean);
     }
 
     @Test
@@ -141,6 +161,20 @@ public class DefaultBeanLoaderTest {
         final FirstCircularDependencyBean firstCircularDependencyBean = beanLoader.getBean(FirstCircularDependencyBean.class);
 
         assertNotNull(firstCircularDependencyBean.getSecondCircularDependencyBean());
+    }
+
+    @Test
+    public void checkGreenBean() {
+        beanLoader.loadBeans();
+
+        final GreenBean greenBean1 = beanLoader.getBean(GreenBean.class);
+        assertNotNull(greenBean1);
+
+        final GreenBean greenBean2 = beanLoader.getBean(GreenBean.class, "Green");
+        assertNotNull(greenBean2);
+
+        final ColorBean greenBean3 = beanLoader.getBean(ColorBean.class, "Green");
+        assertTrue(greenBean3 instanceof GreenBean);
     }
 
     @Test
@@ -208,6 +242,32 @@ public class DefaultBeanLoaderTest {
     }
 
     @Test
+    public void checkRainbowBean() {
+        beanLoader.loadBeans();
+
+        final RainbowBean rainbowBean = beanLoader.getBean(RainbowBean.class);
+
+        assertTrue(rainbowBean.getBlueBean() instanceof BlueBean);
+        assertTrue(rainbowBean.getGreenBean() instanceof GreenBean);
+        assertTrue(rainbowBean.getRedBean() instanceof RedBean);
+        assertTrue(rainbowBean.getYellowBean() instanceof YellowBean);
+    }
+
+    @Test
+    public void checkRedBean() {
+        beanLoader.loadBeans();
+
+        final RedBean redBean1 = beanLoader.getBean(RedBean.class);
+        assertNotNull(redBean1);
+
+        final RedBean redBean2 = beanLoader.getBean(RedBean.class, "red");
+        assertNotNull(redBean2);
+
+        final ColorBean redBean3 = beanLoader.getBean(ColorBean.class, "red");
+        assertTrue(redBean3 instanceof RedBean);
+    }
+
+    @Test
     public void checkSecondCircularDependencyBean() {
         beanLoader.loadBeans();
 
@@ -226,6 +286,20 @@ public class DefaultBeanLoaderTest {
         final SetterBean setterBean = beanLoader.getBean(SetterBean.class);
 
         assertNotNull(setterBean.getFieldBean());
+    }
+
+    @Test
+    public void checkYellowBean() {
+        beanLoader.loadBeans();
+
+        final YellowBean yellowBean1 = beanLoader.getBean(YellowBean.class);
+        assertNotNull(yellowBean1);
+
+        final YellowBean yellowBean2 = beanLoader.getBean(YellowBean.class, "Yellow");
+        assertNotNull(yellowBean2);
+
+        final ColorBean yellowBean3 = beanLoader.getBean(ColorBean.class, "Yellow");
+        assertTrue(yellowBean3 instanceof YellowBean);
     }
 
     @Test
@@ -337,5 +411,26 @@ public class DefaultBeanLoaderTest {
         when(beanLocator.findBeans()).thenReturn(beans);
 
         loader.loadBeans();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getBeanShouldFailIfQualifierIsUsedOnBeanWithoutQualifier() {
+        beanLoader.loadBeans();
+
+        beanLoader.getBean(RainbowBean.class, "pink");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getBeanShouldFailIfWrongQualifierIsUsedOnExactClass() {
+        beanLoader.loadBeans();
+
+        beanLoader.getBean(YellowBean.class, "brown");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getBeanShouldFailIfWrongQualifierIsUsedOnSuperClass() {
+        beanLoader.loadBeans();
+
+        beanLoader.getBean(ColorBean.class, "brown");
     }
 }

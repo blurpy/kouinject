@@ -127,10 +127,20 @@ public class DefaultBeanLoader implements BeanLoader {
      * {@inheritDoc}
      */
     @Override
-    public <T extends Object> T getBean(final Class<T> beanClass) {
-        Validate.notNull(beanClass, "Bean class can not be null");
+    public <T> T getBean(final Class<T> beanClass) {
+        return getBean(beanClass, null);
+    }
 
-        return findBean(beanClass, true);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T extends Object> T getBean(final Class<T> beanClass, final String qualifier) {
+        Validate.notNull(beanClass, "Bean class can not be null");
+        final Dependency bean = new Dependency(beanClass, qualifier);
+
+        return (T) findBean(bean, true);
     }
 
     /**
@@ -150,7 +160,7 @@ public class DefaultBeanLoader implements BeanLoader {
     }
 
     /**
-     * Adds a new bean to the container.
+     * Adds a new bean to the container, with the given qualifier.
      *
      * <p>The bean must be ready to use, and will be available for dependency injection in other beans.</p>
      *
@@ -168,7 +178,7 @@ public class DefaultBeanLoader implements BeanLoader {
         final Class<?> beanClass = beanToAdd.getClass();
         final Dependency bean = new Dependency(beanClass, qualifier);
 
-        if (beanAlreadyExists(beanClass)) {
+        if (beanAlreadyExists(bean)) {
             throw new IllegalArgumentException("Cannot add already existing bean: " + beanClass);
         }
 
@@ -207,7 +217,7 @@ public class DefaultBeanLoader implements BeanLoader {
             return;
         }
 
-        if (beanAlreadyExists(dependency.getBeanClass())) {
+        if (beanAlreadyExists(dependency)) {
             LOG.finer("Bean already added - skipping: " + dependency);
             return;
         }
@@ -215,7 +225,7 @@ public class DefaultBeanLoader implements BeanLoader {
         abortIfBeanCurrentlyInCreation(dependency.getBeanClass());
         addBeanInCreation(dependency.getBeanClass());
 
-        final BeanData beanData = findBeanData(dependency.getBeanClass(), beanDataMap);
+        final BeanData beanData = findBeanData(dependency, beanDataMap);
         final List<Dependency> missingDependencies = findMissingDependencies(beanData);
 
         for (final Dependency missingDependency : missingDependencies) {
@@ -251,12 +261,12 @@ public class DefaultBeanLoader implements BeanLoader {
         }
     }
 
-    private boolean beanAlreadyExists(final Class<?> beanClass) {
-        final Object existingBean = findBean(beanClass, false);
+    private boolean beanAlreadyExists(final Dependency bean) {
+        final Object existingBean = findBean(bean, false);
         return existingBean != null;
     }
 
-    private BeanData findBeanData(final Class<?> beanNeeded, final Map<Dependency, BeanData> beanDataMap) {
+    private BeanData findBeanData(final Dependency beanNeeded, final Map<Dependency, BeanData> beanDataMap) {
         final Iterator<Dependency> beanIterator = beanDataMap.keySet().iterator();
         final Dependency matchingBean = getMatchingBean(beanNeeded, beanIterator, true);
 
@@ -334,26 +344,24 @@ public class DefaultBeanLoader implements BeanLoader {
             };
         }
 
-        return findBean(dependency.getBeanClass(), true);
+        return findBean(dependency, true);
     }
 
-    @SuppressWarnings("unchecked")
-    private <T extends Object> T findBean(final Class<T> beanNeeded, final boolean throwEx) {
+    private Object findBean(final Dependency beanNeeded, final boolean throwEx) {
         synchronized (beanMap) {
             final Iterator<Dependency> beanIterator = beanMap.keySet().iterator();
             final Dependency matchingBean = getMatchingBean(beanNeeded, beanIterator, throwEx);
-            return (T) beanMap.get(matchingBean);
+            return beanMap.get(matchingBean);
         }
     }
 
-    private Dependency getMatchingBean(final Class<?> beanNeeded, final Iterator<Dependency> beanIterator, final boolean throwEx) {
+    private Dependency getMatchingBean(final Dependency beanNeeded, final Iterator<Dependency> beanIterator, final boolean throwEx) {
         final List<Dependency> matches = new ArrayList<Dependency>();
 
         while (beanIterator.hasNext()) {
             final Dependency bean = beanIterator.next();
-            final Class<?> beanClass = bean.getBeanClass();
 
-            if (beanNeeded.isAssignableFrom(beanClass)) {
+            if (beanNeeded.canInject(bean)) {
                 matches.add(bean);
             }
         }
@@ -383,7 +391,7 @@ public class DefaultBeanLoader implements BeanLoader {
         final List<Dependency> missingDeps = new ArrayList<Dependency>();
 
         for (final Dependency dependency : beanData.getDependencies()) {
-            final Object bean = findBean(dependency.getBeanClass(), false);
+            final Object bean = findBean(dependency, false);
 
             if (bean == null) {
                 missingDeps.add(dependency);

@@ -20,49 +20,58 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject;
+package net.usikkert.kouinject.testbeans.scanned;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import net.usikkert.kouinject.annotation.Component;
+import net.usikkert.kouinject.testbeans.scanned.qualifier.Blue;
+import net.usikkert.kouinject.testbeans.scanned.qualifier.ColorBean;
+import net.usikkert.kouinject.testbeans.scanned.qualifier.Green;
+import net.usikkert.kouinject.testbeans.scanned.qualifier.Yellow;
 
 /**
- * Interface for the main IoC component, the component that loads beans and autowires the
- * dependencies.
+ * Bean for testing injection of the correct implementation of an interface based on a qualifier.
  *
  * @author Christian Ihle
  */
-public interface BeanLoader {
+@Component
+public class RainbowBean {
 
-    /**
-     * Loads and autowires all the beans setup in the container.
-     *
-     * @throws RuntimeException If the beans can not be instantiated or dependencies can not be satisfied.
-     */
-    void loadBeans();
+    @Inject @Blue
+    private ColorBean blueBean;
 
-    /**
-     * Autowires dependencies in an already instantiated object.
-     *
-     * @param objectToAutowire The object to autowire.
-     * @throws RuntimeException If not all dependencies could be satisfied.
-     */
-    void autowire(Object objectToAutowire);
+    private final ColorBean greenBean;
 
-    /**
-     * Gets a bean from the container for the given class, with no qualifier.
-     *
-     * @param <T> The bean will be cast to the type specified.
-     * @param beanClass The class to get a bean for.
-     * @return An object satisfying the specified class.
-     * @throws RuntimeException If no bean is found.
-     */
-    <T extends Object> T getBean(Class<T> beanClass);
+    private final ColorBean redBean;
 
-    /**
-     * Gets a bean from the container for the given class and qualifier.
-     *
-     * @param <T> The bean will be cast to the type specified.
-     * @param beanClass The class to get a bean for.
-     * @param qualifier The qualifier for the bean to get.
-     * @return An object satisfying the specified class.
-     * @throws RuntimeException If no bean is found.
-     */
-    <T extends Object> T getBean(Class<T> beanClass, String qualifier);
+    private ColorBean yellowBean;
+
+    @Inject
+    public RainbowBean(@Green final ColorBean greenBean, @Named("red") final ColorBean redBean) {
+        this.greenBean = greenBean;
+        this.redBean = redBean;
+    }
+
+    @Inject
+    public void setYellowBean(@Yellow final ColorBean yellowBean) {
+        this.yellowBean = yellowBean;
+    }
+
+    public ColorBean getBlueBean() {
+        return blueBean;
+    }
+
+    public ColorBean getGreenBean() {
+        return greenBean;
+    }
+
+    public ColorBean getRedBean() {
+        return redBean;
+    }
+
+    public ColorBean getYellowBean() {
+        return yellowBean;
+    }
 }
