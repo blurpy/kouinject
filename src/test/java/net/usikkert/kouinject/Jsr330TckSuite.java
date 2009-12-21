@@ -70,10 +70,10 @@ public class Jsr330TckSuite {
         };
 
         final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
-        final DefaultBeanLoader beanLoader = new DefaultBeanLoader(beanDataHandler, beanLocator);
+        final BeanLoader beanLoader = new DefaultBeanLoader(beanDataHandler, beanLocator);
         beanLoader.loadBeans();
 
         final Car car = beanLoader.getBean(Car.class);
-        return Tck.testsFor(car, true , true);
+        return Tck.testsFor(car, true, true);
     }
 }
