@@ -135,14 +135,14 @@ public class DependencyTest {
     }
 
     @Test
-    public void canInjectShouldAcceptSameClassAndSuperClassWhenNoQualifierEvenIfBeansHaveQualifier() {
+    public void canInjectShouldOnlyAcceptSameClassWhenNoQualifierEvenIfBeansHaveQualifier() {
         final Dependency theGreenBean = new Dependency(GreenBean.class, false, "green");
         final Dependency theColorBean = new Dependency(ColorBean.class, false, "colorfull");
         final Dependency theObjectBean = new Dependency(Object.class, false, "dull");
 
         final Dependency theColorField = new Dependency(ColorBean.class, false, null);
 
-        assertTrue(theColorField.canInject(theGreenBean));
+        assertFalse(theColorField.canInject(theGreenBean));
         assertTrue(theColorField.canInject(theColorBean));
         assertFalse(theColorField.canInject(theObjectBean));
     }

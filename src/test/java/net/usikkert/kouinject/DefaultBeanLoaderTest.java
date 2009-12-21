@@ -38,10 +38,13 @@ import net.usikkert.kouinject.testbeans.notscanned.SecondCircularBean;
 import net.usikkert.kouinject.testbeans.notscanned.SecondInterfaceImpl;
 import net.usikkert.kouinject.testbeans.notscanned.TheInterface;
 import net.usikkert.kouinject.testbeans.notscanned.TheInterfaceUser;
+import net.usikkert.kouinject.testbeans.scanned.BlueCarBean;
+import net.usikkert.kouinject.testbeans.scanned.CarBean;
 import net.usikkert.kouinject.testbeans.scanned.ConstructorBean;
 import net.usikkert.kouinject.testbeans.scanned.EverythingBean;
 import net.usikkert.kouinject.testbeans.scanned.FieldBean;
 import net.usikkert.kouinject.testbeans.scanned.FirstCircularDependencyBean;
+import net.usikkert.kouinject.testbeans.scanned.GarageBean;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.LastBean;
 import net.usikkert.kouinject.testbeans.scanned.ProviderBean;
@@ -161,6 +164,35 @@ public class DefaultBeanLoaderTest {
         final FirstCircularDependencyBean firstCircularDependencyBean = beanLoader.getBean(FirstCircularDependencyBean.class);
 
         assertNotNull(firstCircularDependencyBean.getSecondCircularDependencyBean());
+    }
+
+    @Test
+    public void checkGarageBean() {
+        beanLoader.loadBeans();
+
+        final GarageBean garageBean = beanLoader.getBean(GarageBean.class);
+
+        final CarBean carBean = garageBean.getCarBean();
+        assertNotNull(carBean);
+        assertTrue(carBean.getClass().equals(CarBean.class));
+
+        final Provider<CarBean> carBeanProvider = garageBean.getCarBeanProvider();
+        assertNotNull(carBeanProvider);
+
+        final CarBean carBeanFromProvider = carBeanProvider.get();
+        assertNotNull(carBeanFromProvider);
+        assertTrue(carBeanFromProvider.getClass().equals(CarBean.class));
+
+        final CarBean blueCarBean = garageBean.getBlueCarBean();
+        assertNotNull(blueCarBean);
+        assertTrue(blueCarBean.getClass().equals(BlueCarBean.class));
+
+        final Provider<CarBean> blueCarBeanProvider = garageBean.getBlueCarBeanProvider();
+        assertNotNull(blueCarBeanProvider);
+
+        final CarBean blueCarBeanFromProvider = blueCarBeanProvider.get();
+        assertNotNull(blueCarBeanFromProvider);
+        assertTrue(blueCarBeanFromProvider.getClass().equals(BlueCarBean.class));
     }
 
     @Test
@@ -428,9 +460,16 @@ public class DefaultBeanLoaderTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void getBeanShouldFailIfWrongQualifierIsUsedOnSuperClass() {
+    public void getBeanShouldFailIfWrongQualifierIsUsedOnInterface() {
         beanLoader.loadBeans();
 
         beanLoader.getBean(ColorBean.class, "brown");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getBeanShouldFailIfNoQualifierIsUsedOnInterface() {
+        beanLoader.loadBeans();
+
+        beanLoader.getBean(ColorBean.class);
     }
 }

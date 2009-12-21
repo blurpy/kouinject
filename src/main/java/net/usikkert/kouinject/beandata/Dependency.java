@@ -85,7 +85,7 @@ public class Dependency {
      * Gets the qualifier for this dependency.
      *
      * <p>A qualifier combined with the class helps identify the bean to inject.
-     * If the qualifier is not null, then the injected bean must have the same qualifier as well.</p>
+     * See {@link #canInject(Dependency)} for details regarding qualifier rules.</p>
      *
      * @return The qualifier.
      */
@@ -99,7 +99,8 @@ public class Dependency {
      * <p>Rules:</p>
      * <ul>
      *   <li>The bean must be of the same class or a superclass.</li>
-     *   <li>If this dependency has a qualifier then the bean must have the same qualifier.</li>
+     *   <li>The qualifier must be identical, even if it's <code>null</code>.</li>
+     *   <li>Except if the class is an exact match and this qualifier is <code>null</code>.</li>
      * </ul>
      *
      * @param bean The bean to check.
@@ -114,12 +115,16 @@ public class Dependency {
             return true;
         }
 
+        if (beanClass.equals(bean.getBeanClass()) && qualifier == null) {
+            return true;
+        }
+
         if (beanClass.isAssignableFrom(bean.getBeanClass())) {
-            if (qualifier == null) {
+            if (qualifier == null && bean.getQualifier() == null) {
                 return true;
             }
 
-            else if (qualifier.equals(bean.getQualifier())) {
+            else if (qualifier != null && qualifier.equals(bean.getQualifier())) {
                 return true;
             }
         }
