@@ -60,7 +60,7 @@ public class DefaultBeanLoader implements BeanLoader {
 
     private static final Logger LOG = Logger.getLogger(DefaultBeanLoader.class.getName());
 
-    private final Map<Class<?>, Object> beanMap;
+    private final Map<Dependency, Object> beanMap;
 
     private final Collection<Class<?>> beansInCreation;
 
@@ -81,7 +81,7 @@ public class DefaultBeanLoader implements BeanLoader {
 
         this.beanDataHandler = beanDataHandler;
         this.beanLocator = beanLocator;
-        this.beanMap = Collections.synchronizedMap(new HashMap<Class<?>, Object>());
+        this.beanMap = Collections.synchronizedMap(new HashMap<Dependency, Object>());
         this.beansInCreation = Collections.synchronizedCollection(new ArrayList<Class<?>>());
     }
 
@@ -95,7 +95,7 @@ public class DefaultBeanLoader implements BeanLoader {
 
         final long start = System.currentTimeMillis();
 
-        final Map<Class<?>, BeanData> beanDataMap = getBeanDataMap(detectedBeans);
+        final Map<Dependency, BeanData> beanDataMap = getBeanDataMap(detectedBeans);
         createBeans(beanDataMap);
 
         final long stop = System.currentTimeMillis();
@@ -134,8 +134,9 @@ public class DefaultBeanLoader implements BeanLoader {
     }
 
     /**
-     * Adds a new bean to the container. The bean must be ready to use, and will be available
-     * for dependency injection in other beans.
+     * Adds a new bean to the container, with no qualifier.
+     *
+     * <p>The bean must be ready to use, and will be available for dependency injection in other beans.</p>
      *
      * <p>Do <strong>NOT</strong> depend on manually invoking this method from outside
      * the framework to get all the required beans in the container. The beans will
@@ -145,42 +146,60 @@ public class DefaultBeanLoader implements BeanLoader {
      * @param beanToAdd The fully instantiated and ready to use bean to add to the container.
      */
     protected void addBean(final Object beanToAdd) {
+        addBean(beanToAdd, null);
+    }
+
+    /**
+     * Adds a new bean to the container.
+     *
+     * <p>The bean must be ready to use, and will be available for dependency injection in other beans.</p>
+     *
+     * <p>Do <strong>NOT</strong> depend on manually invoking this method from outside
+     * the framework to get all the required beans in the container. The beans will
+     * be instantiated in random order, and dependencies not instantiated by the container is
+     * not guaranteed to be available at the right moment.</p>
+     *
+     * @param beanToAdd The fully instantiated and ready to use bean to add to the container.
+     * @param qualifier The qualifier for this bean. May be <code>null</code>.
+     */
+    protected void addBean(final Object beanToAdd, final String qualifier) {
         Validate.notNull(beanToAdd, "Bean can not be null");
 
         final Class<?> beanClass = beanToAdd.getClass();
+        final Dependency bean = new Dependency(beanClass, qualifier);
 
         if (beanAlreadyExists(beanClass)) {
             throw new IllegalArgumentException("Cannot add already existing bean: " + beanClass);
         }
 
         synchronized (beanMap) {
-            beanMap.put(beanClass, beanToAdd);
+            beanMap.put(bean, beanToAdd);
         }
 
         LOG.fine("Bean added: " + beanClass.getName());
     }
 
-    private Map<Class<?>, BeanData> getBeanDataMap(final Set<Dependency> detectedBeans) {
-        final Map<Class<?>, BeanData> beanDataMap = new HashMap<Class<?>, BeanData>();
+    private Map<Dependency, BeanData> getBeanDataMap(final Set<Dependency> detectedBeans) {
+        final Map<Dependency, BeanData> beanDataMap = new HashMap<Dependency, BeanData>();
 
         for (final Dependency bean : detectedBeans) {
             final BeanData beanData = beanDataHandler.getBeanData(bean.getBeanClass(), false);
-            beanDataMap.put(bean.getBeanClass(), beanData);
+            beanDataMap.put(bean, beanData);
         }
 
         return beanDataMap;
     }
 
-    private void createBeans(final Map<Class<?>, BeanData> beanDataMap) {
-        final Iterator<Class<?>> beanIterator = beanDataMap.keySet().iterator();
+    private void createBeans(final Map<Dependency, BeanData> beanDataMap) {
+        final Iterator<Dependency> beanIterator = beanDataMap.keySet().iterator();
 
         while (beanIterator.hasNext()) {
-            final Class<?> beanClass = beanIterator.next();
-            createBean(new Dependency(beanClass, false, null), beanDataMap);
+            final Dependency bean = beanIterator.next();
+            createBean(bean, beanDataMap);
         }
     }
 
-    private void createBean(final Dependency dependency, final Map<Class<?>, BeanData> beanDataMap) {
+    private void createBean(final Dependency dependency, final Map<Dependency, BeanData> beanDataMap) {
         LOG.finer("Checking bean before creation: " + dependency);
 
         if (dependency.isProvider()) {
@@ -205,7 +224,7 @@ public class DefaultBeanLoader implements BeanLoader {
         }
 
         final Object instance = instantiateBean(beanData);
-        addBean(instance);
+        addBean(instance, dependency.getQualifier());
 
         removeBeanInCreation(dependency.getBeanClass());
     }
@@ -237,9 +256,9 @@ public class DefaultBeanLoader implements BeanLoader {
         return existingBean != null;
     }
 
-    private BeanData findBeanData(final Class<?> beanNeeded, final Map<Class<?>, BeanData> beanDataMap) {
-        final Iterator<Class<?>> beanIterator = beanDataMap.keySet().iterator();
-        final Class<?> matchingBean = getMatchingBean(beanNeeded, beanIterator, true);
+    private BeanData findBeanData(final Class<?> beanNeeded, final Map<Dependency, BeanData> beanDataMap) {
+        final Iterator<Dependency> beanIterator = beanDataMap.keySet().iterator();
+        final Dependency matchingBean = getMatchingBean(beanNeeded, beanIterator, true);
 
         return beanDataMap.get(matchingBean);
     }
@@ -321,20 +340,21 @@ public class DefaultBeanLoader implements BeanLoader {
     @SuppressWarnings("unchecked")
     private <T extends Object> T findBean(final Class<T> beanNeeded, final boolean throwEx) {
         synchronized (beanMap) {
-            final Iterator<Class<?>> beanIterator = beanMap.keySet().iterator();
-            final Class<?> matchingBean = getMatchingBean(beanNeeded, beanIterator, throwEx);
+            final Iterator<Dependency> beanIterator = beanMap.keySet().iterator();
+            final Dependency matchingBean = getMatchingBean(beanNeeded, beanIterator, throwEx);
             return (T) beanMap.get(matchingBean);
         }
     }
 
-    private Class<?> getMatchingBean(final Class<?> beanNeeded, final Iterator<Class<?>> beanIterator, final boolean throwEx) {
-        final List<Class<?>> matches = new ArrayList<Class<?>>();
+    private Dependency getMatchingBean(final Class<?> beanNeeded, final Iterator<Dependency> beanIterator, final boolean throwEx) {
+        final List<Dependency> matches = new ArrayList<Dependency>();
 
         while (beanIterator.hasNext()) {
-            final Class<?> beanClass = beanIterator.next();
+            final Dependency bean = beanIterator.next();
+            final Class<?> beanClass = bean.getBeanClass();
 
             if (beanNeeded.isAssignableFrom(beanClass)) {
-                matches.add(beanClass);
+                matches.add(bean);
             }
         }
 
