@@ -42,7 +42,7 @@ public class Dependency {
      *
      * @param beanClass The actual bean class dependency.
      * @param isProvider If the actual bean class is for a provider.
-     * @param qualifier The required qualifier for this dependency.
+     * @param qualifier The qualifier for this dependency.
      */
     public Dependency(final Class<?> beanClass, final boolean isProvider, final String qualifier) {
         Validate.notNull(beanClass, "Bean class can not be null");
@@ -72,15 +72,92 @@ public class Dependency {
     }
 
     /**
-     * Gets the required qualifier for this dependency.
+     * Gets the qualifier for this dependency.
      *
      * <p>A qualifier combined with the class helps identify the bean to inject.
-     * If the qualifier is null, then the injected bean must have a null qualifier as well.</p>
+     * If the qualifier is not null, then the injected bean must have the same qualifier as well.</p>
      *
-     * @return The required qualifier.
+     * @return The qualifier.
      */
     public String getQualifier() {
         return qualifier;
+    }
+
+    /**
+     * Checks if the bean can be injected into this dependency.
+     *
+     * <p>Rules:</p>
+     * <ul>
+     *   <li>The bean must be of the same class or a superclass.</li>
+     *   <li>If this dependency has a qualifier then the bean must have the same qualifier.</li>
+     * </ul>
+     *
+     * @param bean The bean to check.
+     * @return If the bean can be injected into this dependency.
+     */
+    public boolean canInject(final Dependency bean) {
+        if (bean == null) {
+            return false;
+        }
+
+        if (bean == this) {
+            return true;
+        }
+
+        if (beanClass.isAssignableFrom(bean.getBeanClass())) {
+            if (qualifier == null) {
+                return true;
+            }
+
+            else if (qualifier.equals(bean.getQualifier())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks equality based on {@link #getBeanClass()} and {@link #getQualifier()}.
+     *
+     * @param obj The dependency to compare with this.
+     * @return If the dependency is equal to this.
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+
+        if (!(obj instanceof Dependency)) {
+            return false;
+        }
+
+        final Dependency dependency = (Dependency) obj;
+
+        if (beanClass.equals(dependency.getBeanClass())) {
+            if (qualifier == null && dependency.getQualifier() == null) {
+                return true;
+            }
+
+            else if (qualifier != null && qualifier.equals(dependency.getQualifier())) {
+                return true;
+            }
+
+        }
+
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        if (qualifier != null) {
+            return beanClass.hashCode() + qualifier.hashCode();
+        }
+
+        else {
+            return beanClass.hashCode();
+        }
     }
 
     @Override
