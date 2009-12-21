@@ -27,7 +27,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.usikkert.kouinject.annotation.Component;
-import net.usikkert.kouinject.beandata.Bean;
+import net.usikkert.kouinject.beandata.Dependency;
 import net.usikkert.kouinject.util.Validate;
 
 /**
@@ -65,14 +65,14 @@ public class AnnotationBasedBeanLocator implements BeanLocator {
      * {@inheritDoc}
      */
     @Override
-    public Set<Bean> findBeans() {
+    public Set<Dependency> findBeans() {
         final Set<Class<?>> allClasses = classLocator.findClasses(basePackage);
-        final Set<Bean> detectedBeans = new HashSet<Bean>();
+        final Set<Dependency> detectedBeans = new HashSet<Dependency>();
 
         for (final Class<?> clazz : allClasses) {
             if (classIsBean(clazz)) {
                 final String qualifier = getQualifier(clazz);
-                final Bean bean = new Bean(clazz, qualifier);
+                final Dependency bean = new Dependency(clazz, qualifier);
 
                 detectedBeans.add(bean);
             }

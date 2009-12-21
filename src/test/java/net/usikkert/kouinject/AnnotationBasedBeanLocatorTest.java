@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
 import java.util.Set;
 
 import net.usikkert.kouinject.annotation.Component;
-import net.usikkert.kouinject.beandata.Bean;
+import net.usikkert.kouinject.beandata.Dependency;
 import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.BlueBean;
@@ -55,11 +55,11 @@ public class AnnotationBasedBeanLocatorTest {
     @Test
     public void findBeansShouldReturnAllComponents() {
         final BeanLocator beanLocator = new AnnotationBasedBeanLocator("net.usikkert.kouinject", classLocator);
-        final Set<Bean> beans = beanLocator.findBeans();
+        final Set<Dependency> beans = beanLocator.findBeans();
 
         assertEquals(23, beans.size());
 
-        for (final Bean bean : beans) {
+        for (final Dependency bean : beans) {
             final Class<?> beanClass = bean.getBeanClass();
             assertNotNull(beanClass);
             assertTrue(beanClass.isAnnotationPresent(Component.class));
@@ -69,7 +69,7 @@ public class AnnotationBasedBeanLocatorTest {
     @Test
     public void findBeansShouldDetectQualifiers() {
         final BeanLocator beanLocator = new AnnotationBasedBeanLocator("net.usikkert.kouinject.testbeans.scanned.qualifier", classLocator);
-        final Set<Bean> beans = beanLocator.findBeans();
+        final Set<Dependency> beans = beanLocator.findBeans();
 
         assertEquals(4, beans.size());
 
@@ -82,7 +82,7 @@ public class AnnotationBasedBeanLocatorTest {
     @Test
     public void findBeansShouldIgnoreMissingQualifiers() {
         final BeanLocator beanLocator = new AnnotationBasedBeanLocator("net.usikkert.kouinject.testbeans.scanned.coffee", classLocator);
-        final Set<Bean> beans = beanLocator.findBeans();
+        final Set<Dependency> beans = beanLocator.findBeans();
 
         assertEquals(2, beans.size());
 
@@ -90,8 +90,8 @@ public class AnnotationBasedBeanLocatorTest {
         assertTrue(containsBean(beans, JavaBean.class, null));
     }
 
-    private boolean containsBean(final Set<Bean> beans, final Class<?> beanClass, final String qualifier) {
-        for (final Bean bean : beans) {
+    private boolean containsBean(final Set<Dependency> beans, final Class<?> beanClass, final String qualifier) {
+        for (final Dependency bean : beans) {
             if (bean.getBeanClass().equals(beanClass)) {
                 if (qualifier == null && bean.getQualifier() == null) {
                     return true;

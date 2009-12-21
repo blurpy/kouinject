@@ -38,6 +38,16 @@ public class Dependency {
     private final String qualifier;
 
     /**
+     * Creates a new dependency for the specified bean class, with provider set to false.
+     *
+     * @param beanClass The actual bean class dependency.
+     * @param qualifier The qualifier for this dependency.
+     */
+    public Dependency(final Class<?> beanClass, final String qualifier) {
+        this(beanClass, false, qualifier);
+    }
+
+    /**
      * Creates a new dependency for the specified bean class.
      *
      * @param beanClass The actual bean class dependency.

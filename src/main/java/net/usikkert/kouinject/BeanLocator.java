@@ -24,7 +24,7 @@ package net.usikkert.kouinject;
 
 import java.util.Set;
 
-import net.usikkert.kouinject.beandata.Bean;
+import net.usikkert.kouinject.beandata.Dependency;
 
 /**
  * Interface for finding beans.
@@ -38,5 +38,5 @@ public interface BeanLocator {
      *
      * @return All registered beans.
      */
-    Set<Bean> findBeans();
+    Set<Dependency> findBeans();
 }

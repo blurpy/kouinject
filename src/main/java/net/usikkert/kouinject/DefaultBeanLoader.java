@@ -34,7 +34,6 @@ import java.util.logging.Logger;
 
 import javax.inject.Provider;
 
-import net.usikkert.kouinject.beandata.Bean;
 import net.usikkert.kouinject.beandata.BeanData;
 import net.usikkert.kouinject.beandata.ConstructorData;
 import net.usikkert.kouinject.beandata.Dependency;
@@ -91,7 +90,7 @@ public class DefaultBeanLoader implements BeanLoader {
      */
     @Override
     public void loadBeans() {
-        final Set<Bean> detectedBeans = beanLocator.findBeans();
+        final Set<Dependency> detectedBeans = beanLocator.findBeans();
         LOG.fine("Beans found: " + detectedBeans.size());
 
         final long start = System.currentTimeMillis();
@@ -161,10 +160,10 @@ public class DefaultBeanLoader implements BeanLoader {
         LOG.fine("Bean added: " + beanClass.getName());
     }
 
-    private Map<Class<?>, BeanData> getBeanDataMap(final Set<Bean> detectedBeans) {
+    private Map<Class<?>, BeanData> getBeanDataMap(final Set<Dependency> detectedBeans) {
         final Map<Class<?>, BeanData> beanDataMap = new HashMap<Class<?>, BeanData>();
 
-        for (final Bean bean : detectedBeans) {
+        for (final Dependency bean : detectedBeans) {
             final BeanData beanData = beanDataHandler.getBeanData(bean.getBeanClass(), false);
             beanDataMap.put(bean.getBeanClass(), beanData);
         }
