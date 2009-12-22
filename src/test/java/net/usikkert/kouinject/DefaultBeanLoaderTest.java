@@ -60,6 +60,7 @@ import net.usikkert.kouinject.testbeans.scanned.hierarchy.interfacebean.Interfac
 import net.usikkert.kouinject.testbeans.scanned.notloaded.NoBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.BlueBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.ColorBean;
+import net.usikkert.kouinject.testbeans.scanned.qualifier.DarkYellowBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.GreenBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.RedBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.YellowBean;
@@ -128,6 +129,25 @@ public class DefaultBeanLoaderTest {
 
         assertNotNull(constructorBean.getHelloBean());
         assertNotNull(constructorBean.getSetterBean());
+    }
+
+    @Test
+    public void checkDarkYellowBean() {
+        beanLoader.loadBeans();
+
+        final DarkYellowBean darkYellowBean1 = beanLoader.getBean(DarkYellowBean.class);
+        assertNotNull(darkYellowBean1);
+
+        final DarkYellowBean darkYellowBean2 = beanLoader.getBean(DarkYellowBean.class, "darkYellow");
+        assertNotNull(darkYellowBean2);
+
+        final YellowBean darkYellowBean3 = beanLoader.getBean(YellowBean.class, "darkYellow");
+        assertNotNull(darkYellowBean3);
+        assertTrue(darkYellowBean3.getClass().equals(DarkYellowBean.class));
+
+        final ColorBean darkYellowBean4 = beanLoader.getBean(ColorBean.class, "darkYellow");
+        assertNotNull(darkYellowBean4);
+        assertTrue(darkYellowBean4.getClass().equals(DarkYellowBean.class));
     }
 
     @Test
@@ -326,12 +346,15 @@ public class DefaultBeanLoaderTest {
 
         final YellowBean yellowBean1 = beanLoader.getBean(YellowBean.class);
         assertNotNull(yellowBean1);
+        assertTrue(yellowBean1.getClass().equals(YellowBean.class));
 
         final YellowBean yellowBean2 = beanLoader.getBean(YellowBean.class, "Yellow");
         assertNotNull(yellowBean2);
+        assertTrue(yellowBean2.getClass().equals(YellowBean.class));
 
         final ColorBean yellowBean3 = beanLoader.getBean(ColorBean.class, "Yellow");
-        assertTrue(yellowBean3 instanceof YellowBean);
+        assertNotNull(yellowBean3);
+        assertTrue(yellowBean3.getClass().equals(YellowBean.class));
     }
 
     @Test

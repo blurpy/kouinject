@@ -31,6 +31,7 @@ import net.usikkert.kouinject.beandata.Dependency;
 import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.BlueBean;
+import net.usikkert.kouinject.testbeans.scanned.qualifier.DarkYellowBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.GreenBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.RedBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.YellowBean;
@@ -57,7 +58,7 @@ public class AnnotationBasedBeanLocatorTest {
         final BeanLocator beanLocator = new AnnotationBasedBeanLocator("net.usikkert.kouinject", classLocator);
         final Set<Dependency> beans = beanLocator.findBeans();
 
-        assertEquals(27, beans.size());
+        assertEquals(28, beans.size());
 
         for (final Dependency bean : beans) {
             final Class<?> beanClass = bean.getBeanClass();
@@ -71,12 +72,13 @@ public class AnnotationBasedBeanLocatorTest {
         final BeanLocator beanLocator = new AnnotationBasedBeanLocator("net.usikkert.kouinject.testbeans.scanned.qualifier", classLocator);
         final Set<Dependency> beans = beanLocator.findBeans();
 
-        assertEquals(4, beans.size());
+        assertEquals(5, beans.size());
 
         assertTrue(containsBean(beans, BlueBean.class, "Blue"));
         assertTrue(containsBean(beans, GreenBean.class, "Green"));
         assertTrue(containsBean(beans, RedBean.class, "red"));
         assertTrue(containsBean(beans, YellowBean.class, "Yellow"));
+        assertTrue(containsBean(beans, DarkYellowBean.class, "darkYellow"));
     }
 
     @Test
