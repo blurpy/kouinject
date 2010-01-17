@@ -96,6 +96,10 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
             }
         }
 
+        if (beanClass.getSuperclass() != null) {
+            fields.addAll(findFields(beanClass.getSuperclass()));
+        }
+
         return fields;
     }
 

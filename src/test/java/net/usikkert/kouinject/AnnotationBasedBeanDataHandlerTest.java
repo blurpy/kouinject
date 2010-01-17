@@ -45,7 +45,9 @@ import net.usikkert.kouinject.testbeans.scanned.FieldBean;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.ProviderBean;
 import net.usikkert.kouinject.testbeans.scanned.SetterBean;
+import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
+import net.usikkert.kouinject.testbeans.scanned.hierarchy.ChildBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.interfacebean.InterfaceBean;
 import net.usikkert.kouinject.testbeans.scanned.notloaded.QualifierBean;
@@ -92,6 +94,32 @@ public class AnnotationBasedBeanDataHandlerTest {
         assertTrue(containsField(fields, HelloBean.class));
         assertTrue(containsField(fields, AbstractBean.class));
         assertTrue(containsField(fields, InterfaceBean.class));
+    }
+
+    @Test
+    public void getBeanDataShouldDetectInheritedFieldsAndDependenciesForInjection() {
+        final BeanData beanData = handler.getBeanData(ChildBean.class, false);
+
+        assertEquals(ChildBean.class, beanData.getBeanClass());
+
+        final List<Dependency> dependencies = beanData.getDependencies();
+        assertEquals(3, dependencies.size());
+        assertNoQualifiers(dependencies);
+
+        assertTrue(containsDependency(dependencies, FieldBean.class));
+        assertTrue(containsDependency(dependencies, HelloBean.class));
+        assertTrue(containsDependency(dependencies, CoffeeBean.class));
+
+        final List<FieldData> fields = beanData.getFields();
+        assertEquals(3, fields.size());
+
+        for (final FieldData field : fields) {
+            assertTrue(field.getField().isAnnotationPresent(Inject.class));
+        }
+
+        assertTrue(containsField(fields, FieldBean.class));
+        assertTrue(containsField(fields, HelloBean.class));
+        assertTrue(containsField(fields, CoffeeBean.class));
     }
 
     @Test

@@ -53,6 +53,7 @@ import net.usikkert.kouinject.testbeans.scanned.SecondCircularDependencyBean;
 import net.usikkert.kouinject.testbeans.scanned.SetterBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
+import net.usikkert.kouinject.testbeans.scanned.hierarchy.ChildBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractBeanImpl;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.interfacebean.InterfaceBean;
@@ -109,6 +110,17 @@ public class DefaultBeanLoaderTest {
 
         final ColorBean blueBean3 = beanLoader.getBean(ColorBean.class, "Blue");
         assertTrue(blueBean3 instanceof BlueBean);
+    }
+
+    @Test
+    public void checkChildBean() {
+        beanLoader.loadBeans();
+
+        final ChildBean childBean = beanLoader.getBean(ChildBean.class);
+
+        assertNotNull(childBean.getFieldBean());
+        assertNotNull(childBean.getHelloBean());
+        assertNotNull(childBean.getCoffeeBean());
     }
 
     @Test
