@@ -24,6 +24,7 @@ package net.usikkert.kouinject;
 
 import static org.junit.Assert.*;
 
+import java.lang.reflect.Modifier;
 import java.util.Set;
 
 import net.usikkert.kouinject.testbeans.notscanned.TheInterfaceUser;
@@ -108,6 +109,15 @@ public class ClassPathScannerTest {
 
         for (final Class<?> class1 : classes) {
             assertFalse(class1.isMemberClass());
+        }
+    }
+
+    @Test
+    public void findClassesShouldNotIncludeAbstractClasses() {
+        final Set<Class<?>> classes = scanner.findClasses(ALL);
+
+        for (final Class<?> class1 : classes) {
+            assertFalse(Modifier.isAbstract(class1.getModifiers()));
         }
     }
 }

@@ -57,6 +57,8 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
 
     private final AnnotationBasedQualifierHandler qualifierHandler = new AnnotationBasedQualifierHandler();
 
+    private final ReflectionUtils reflectionUtils = new ReflectionUtils();
+
     /**
      * {@inheritDoc}
      */
@@ -67,7 +69,8 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
         final List<Field> fields = findFields(beanClass);
         final List<FieldData> fieldData = createFieldData(fields);
 
-        final List<Method> methods = findMethods(beanClass);
+        final List<Method> allMethods = reflectionUtils.findAllMethods(beanClass);
+        final List<Method> methods = findMethods(beanClass, allMethods);
         final List<MethodData> methodData = createMethodData(methods);
 
         final BeanData beanData;
@@ -141,12 +144,11 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
         }
     }
 
-    private List<Method> findMethods(final Class<?> beanClass) {
-        final Method[] declaredMethods = beanClass.getDeclaredMethods();
+    private List<Method> findMethods(final Class<?> beanClass, final List<Method> allMethods) {
         final List<Method> methods = new ArrayList<Method>();
 
-        for (final Method method : declaredMethods) {
-            if (methodNeedsInjection(method)) {
+        for (final Method method : allMethods) {
+            if (methodNeedsInjection(method) && !reflectionUtils.isOverridden(method, allMethods)) {
                 methods.add(method);
             }
         }

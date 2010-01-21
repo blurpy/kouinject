@@ -72,6 +72,8 @@ import org.junit.Test;
 /**
  * Test of {@link DefaultBeanLoader}.
  *
+ * TODO test method overriding
+ *
  * @author Christian Ihle
  */
 public class DefaultBeanLoaderTest {

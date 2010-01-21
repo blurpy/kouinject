@@ -45,6 +45,8 @@ public class ClassPathScanner implements ClassLocator {
 
     private static final Logger LOG = Logger.getLogger(ClassPathScanner.class.getName());
 
+    private final ReflectionUtils reflectionUtils = new ReflectionUtils();
+
     /**
      * {@inheritDoc}
      */
@@ -220,8 +222,7 @@ public class ClassPathScanner implements ClassLocator {
     }
 
     private void addClass(final Class<?> clazz, final Set<Class<?>> classes) {
-        if (!clazz.isAnonymousClass() && !clazz.isMemberClass() && !clazz.isSynthetic() && !clazz.isAnnotation()
-                && !clazz.isEnum() && !clazz.isInterface()) {
+        if (reflectionUtils.isNormalClass(clazz)) {
             classes.add(clazz);
         }
     }
