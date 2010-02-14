@@ -58,7 +58,7 @@ public class AnnotationBasedBeanLocatorTest {
         final BeanLocator beanLocator = new AnnotationBasedBeanLocator("net.usikkert.kouinject", classLocator);
         final Set<Dependency> beans = beanLocator.findBeans();
 
-        assertEquals(29, beans.size());
+        assertEquals(33, beans.size());
 
         for (final Dependency bean : beans) {
             final Class<?> beanClass = bean.getBeanClass();
