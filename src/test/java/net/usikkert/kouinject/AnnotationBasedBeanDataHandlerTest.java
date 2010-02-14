@@ -155,11 +155,11 @@ public class AnnotationBasedBeanDataHandlerTest {
         assertEquals(CatBean.class, beanData.getBeanClass());
 
         final List<Dependency> dependencies = beanData.getDependencies();
-        assertEquals(9, dependencies.size());
+        assertEquals(12, dependencies.size());
         assertNoQualifiers(dependencies);
 
         final List<MethodData> methods = beanData.getMethods();
-        assertEquals(9, methods.size());
+        assertEquals(12, methods.size());
 
         // all beans have private methods, none overridden
         assertEquals(4, containsMethod(methods, "setHelloBean", HelloBean.class));
@@ -173,8 +173,11 @@ public class AnnotationBasedBeanDataHandlerTest {
         // public method overridden in last bean
         assertEquals(1, containsMethod(methods, "setCarBean", CarBean.class));
 
-        // public method inherited from super
-        assertEquals(1, containsMethod(methods, "setSetterBean", SetterBean.class));
+        // inherited public methods
+        assertEquals(1, containsMethod(methods, "setSetterBeanInOrganismBean", SetterBean.class));
+        assertEquals(1, containsMethod(methods, "setSetterBeanInAnimalBean", SetterBean.class));
+        assertEquals(1, containsMethod(methods, "setSetterBeanInPetBean", SetterBean.class));
+        assertEquals(1, containsMethod(methods, "setSetterBeanInCatBean", SetterBean.class));
     }
 
     @Test

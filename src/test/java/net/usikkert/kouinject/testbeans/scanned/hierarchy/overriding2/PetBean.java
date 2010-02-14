@@ -28,6 +28,7 @@ import javax.inject.Named;
 import net.usikkert.kouinject.annotation.Component;
 import net.usikkert.kouinject.testbeans.scanned.CarBean;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
+import net.usikkert.kouinject.testbeans.scanned.SetterBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
 
@@ -48,6 +49,10 @@ public class PetBean extends AnimalBean {
 
     private CarBean carBean;
 
+    private SetterBean setterBeanInPetBean;
+
+    private boolean methodsInjectedInPetBean;
+
     public HelloBean getHelloBeanInPetBean() {
         return helloBean;
     }
@@ -56,6 +61,8 @@ public class PetBean extends AnimalBean {
     @SuppressWarnings("unused")
     private void setHelloBean(final HelloBean helloBean) {
         this.helloBean = helloBean;
+
+        checkMethodInjections();
     }
 
     public JavaBean getJavaBeanInPetBean() {
@@ -66,6 +73,8 @@ public class PetBean extends AnimalBean {
     @Override
     void setJavaBean(final JavaBean javaBean) {
         this.javaBean = javaBean;
+
+        checkMethodInjections();
     }
 
     public CoffeeBean getCoffeeBeanInPetBean() {
@@ -76,6 +85,8 @@ public class PetBean extends AnimalBean {
     @Override
     protected void setCoffeeBean(final CoffeeBean coffeeBean) {
         this.coffeeBean = coffeeBean;
+
+        checkMethodInjections();
     }
 
     public CarBean getCarBeanInPetBean() {
@@ -86,5 +97,29 @@ public class PetBean extends AnimalBean {
     @Override
     public void setCarBean(final CarBean carBean) {
         this.carBean = carBean;
+
+        checkMethodInjections();
+    }
+
+    public SetterBean getSetterBeanInPetBean() {
+        return setterBeanInPetBean;
+    }
+
+    @Inject
+    public void setSetterBeanInPetBean(final SetterBean setterBeanInPetBean) {
+        this.setterBeanInPetBean = setterBeanInPetBean;
+
+        checkMethodInjections();
+    }
+
+    public boolean isMethodsInjectedInPetBean() {
+        return methodsInjectedInPetBean;
+    }
+
+    private void checkMethodInjections() {
+        if (isMethodsInjectedInAnimalBean() &&  helloBean != null
+                && setterBeanInPetBean != null && javaBean != null) {
+            methodsInjectedInPetBean = true;
+        }
     }
 }

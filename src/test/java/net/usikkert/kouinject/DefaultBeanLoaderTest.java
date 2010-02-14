@@ -120,7 +120,10 @@ public class DefaultBeanLoaderTest {
         assertNotNull(animalBean.getCoffeeBeanInAnimalBean());
         assertNotNull(animalBean.getCarBeanInAnimalBean());
 
-        assertNotNull(animalBean.getSetterBean());
+        assertNotNull(animalBean.getSetterBeanInOrganismBean());
+        assertNotNull(animalBean.getSetterBeanInAnimalBean());
+
+        assertTrue(animalBean.isMethodsInjectedInAnimalBean());
     }
 
     @Test
@@ -165,7 +168,12 @@ public class DefaultBeanLoaderTest {
         assertNotNull(catBean.getCoffeeBeanInCatBean());
         assertNotNull(catBean.getCarBeanInCatBean());
 
-        assertNotNull(catBean.getSetterBean());
+        assertNotNull(catBean.getSetterBeanInOrganismBean());
+        assertNotNull(catBean.getSetterBeanInAnimalBean());
+        assertNotNull(catBean.getSetterBeanInPetBean());
+        assertNotNull(catBean.getSetterBeanInCatBean());
+
+        assertTrue(catBean.isMethodsInjectedInCatBean());
     }
 
     @Test
@@ -355,7 +363,9 @@ public class DefaultBeanLoaderTest {
         assertNotNull(organismBean.getCoffeeBeanInOrganismBean());
         assertNotNull(organismBean.getCarBeanInOrganismBean());
 
-        assertNotNull(organismBean.getSetterBean());
+        assertNotNull(organismBean.getSetterBeanInOrganismBean());
+
+        assertTrue(organismBean.isMethodsInjectedInOrganismBean());
     }
 
     @Test
@@ -381,7 +391,12 @@ public class DefaultBeanLoaderTest {
         assertNotNull(petBean.getCoffeeBeanInPetBean());
         assertNotNull(petBean.getCarBeanInPetBean());
 
-        assertNotNull(petBean.getSetterBean());
+
+        assertNotNull(petBean.getSetterBeanInOrganismBean());
+        assertNotNull(petBean.getSetterBeanInAnimalBean());
+        assertNotNull(petBean.getSetterBeanInPetBean());
+
+        assertTrue(petBean.isMethodsInjectedInPetBean());
     }
 
     @Test

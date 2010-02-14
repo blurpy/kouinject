@@ -49,7 +49,9 @@ public class OrganismBean {
 
     private CarBean carBean;
 
-    private SetterBean setterBean;
+    private SetterBean setterBeanInOrganismBean;
+
+    private boolean methodsInjectedInOrganismBean;
 
     public HelloBean getHelloBeanInOrganismBean() {
         return helloBean;
@@ -59,6 +61,8 @@ public class OrganismBean {
     @SuppressWarnings("unused")
     private void setHelloBean(final HelloBean helloBean) {
         this.helloBean = helloBean;
+
+        checkMethodInjections();
     }
 
     public JavaBean getJavaBeanInOrganismBean() {
@@ -68,6 +72,8 @@ public class OrganismBean {
     @Inject
     void setJavaBean(final JavaBean javaBean) {
         this.javaBean = javaBean;
+
+        checkMethodInjections();
     }
 
     public CoffeeBean getCoffeeBeanInOrganismBean() {
@@ -77,6 +83,8 @@ public class OrganismBean {
     @Inject
     protected void setCoffeeBean(final CoffeeBean coffeeBean) {
         this.coffeeBean = coffeeBean;
+
+        checkMethodInjections();
     }
 
     public CarBean getCarBeanInOrganismBean() {
@@ -86,14 +94,28 @@ public class OrganismBean {
     @Inject
     public void setCarBean(final CarBean carBean) {
         this.carBean = carBean;
+
+        checkMethodInjections();
     }
 
-    public SetterBean getSetterBean() {
-        return setterBean;
+    public SetterBean getSetterBeanInOrganismBean() {
+        return setterBeanInOrganismBean;
     }
 
     @Inject
-    public void setSetterBean(final SetterBean setterBean) {
-        this.setterBean = setterBean;
+    public void setSetterBeanInOrganismBean(final SetterBean setterBeanInOrganismBean) {
+        this.setterBeanInOrganismBean = setterBeanInOrganismBean;
+
+        checkMethodInjections();
+    }
+
+    public boolean isMethodsInjectedInOrganismBean() {
+        return methodsInjectedInOrganismBean;
+    }
+
+    private void checkMethodInjections() {
+        if (helloBean != null && setterBeanInOrganismBean != null) {
+            methodsInjectedInOrganismBean = true;
+        }
     }
 }

@@ -28,6 +28,7 @@ import javax.inject.Named;
 import net.usikkert.kouinject.annotation.Component;
 import net.usikkert.kouinject.testbeans.scanned.CarBean;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
+import net.usikkert.kouinject.testbeans.scanned.SetterBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
 
@@ -48,6 +49,10 @@ public class AnimalBean extends OrganismBean {
 
     private CarBean carBean;
 
+    private SetterBean setterBeanInAnimalBean;
+
+    private boolean methodsInjectedInAnimalBean;
+
     public HelloBean getHelloBeanInAnimalBean() {
         return helloBean;
     }
@@ -56,6 +61,8 @@ public class AnimalBean extends OrganismBean {
     @SuppressWarnings("unused")
     private void setHelloBean(final HelloBean helloBean) {
         this.helloBean = helloBean;
+
+        checkMethodInjections();
     }
 
     public JavaBean getJavaBeanInAnimalBean() {
@@ -66,6 +73,8 @@ public class AnimalBean extends OrganismBean {
     @Override
     void setJavaBean(final JavaBean javaBean) {
         this.javaBean = javaBean;
+
+        checkMethodInjections();
     }
 
     public CoffeeBean getCoffeeBeanInAnimalBean() {
@@ -76,6 +85,8 @@ public class AnimalBean extends OrganismBean {
     @Override
     protected void setCoffeeBean(final CoffeeBean coffeeBean) {
         this.coffeeBean = coffeeBean;
+
+        checkMethodInjections();
     }
 
     public CarBean getCarBeanInAnimalBean() {
@@ -86,5 +97,28 @@ public class AnimalBean extends OrganismBean {
     @Override
     public void setCarBean(final CarBean carBean) {
         this.carBean = carBean;
+
+        checkMethodInjections();
+    }
+
+    public SetterBean getSetterBeanInAnimalBean() {
+        return setterBeanInAnimalBean;
+    }
+
+    @Inject
+    public void setSetterBeanInAnimalBean(final SetterBean setterBeanInAnimalBean) {
+        this.setterBeanInAnimalBean = setterBeanInAnimalBean;
+
+        checkMethodInjections();
+    }
+
+    public boolean isMethodsInjectedInAnimalBean() {
+        return methodsInjectedInAnimalBean;
+    }
+
+    private void checkMethodInjections() {
+        if (isMethodsInjectedInOrganismBean() && helloBean != null && setterBeanInAnimalBean != null) {
+            methodsInjectedInAnimalBean = true;
+        }
     }
 }
