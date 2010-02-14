@@ -27,6 +27,7 @@ import javax.inject.Named;
 
 import net.usikkert.kouinject.annotation.Component;
 import net.usikkert.kouinject.testbeans.scanned.CarBean;
+import net.usikkert.kouinject.testbeans.scanned.FieldBean;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.SetterBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
@@ -51,7 +52,15 @@ public class AnimalBean extends OrganismBean {
 
     private SetterBean setterBeanInAnimalBean;
 
+    @Inject
+    private FieldBean fieldBean1InAnimalBean;
+
+    @Inject
+    private FieldBean fieldBean2InAnimalBean;
+
     private boolean methodsInjectedInAnimalBean;
+
+    private boolean fieldsInjectedInAnimalBean = true;
 
     public HelloBean getHelloBeanInAnimalBean() {
         return helloBean;
@@ -62,7 +71,7 @@ public class AnimalBean extends OrganismBean {
     private void setHelloBean(final HelloBean helloBean) {
         this.helloBean = helloBean;
 
-        checkMethodInjections();
+        checkInjections();
     }
 
     public JavaBean getJavaBeanInAnimalBean() {
@@ -74,7 +83,7 @@ public class AnimalBean extends OrganismBean {
     void setJavaBean(final JavaBean javaBean) {
         this.javaBean = javaBean;
 
-        checkMethodInjections();
+        checkInjections();
     }
 
     public CoffeeBean getCoffeeBeanInAnimalBean() {
@@ -86,7 +95,7 @@ public class AnimalBean extends OrganismBean {
     protected void setCoffeeBean(final CoffeeBean coffeeBean) {
         this.coffeeBean = coffeeBean;
 
-        checkMethodInjections();
+        checkInjections();
     }
 
     public CarBean getCarBeanInAnimalBean() {
@@ -98,7 +107,7 @@ public class AnimalBean extends OrganismBean {
     public void setCarBean(final CarBean carBean) {
         this.carBean = carBean;
 
-        checkMethodInjections();
+        checkInjections();
     }
 
     public SetterBean getSetterBeanInAnimalBean() {
@@ -109,16 +118,30 @@ public class AnimalBean extends OrganismBean {
     public void setSetterBeanInAnimalBean(final SetterBean setterBeanInAnimalBean) {
         this.setterBeanInAnimalBean = setterBeanInAnimalBean;
 
-        checkMethodInjections();
+        checkInjections();
     }
 
-    public boolean isMethodsInjectedInAnimalBean() {
-        return methodsInjectedInAnimalBean;
+    public FieldBean getFieldBean1InAnimalBean() {
+        return fieldBean1InAnimalBean;
     }
 
-    private void checkMethodInjections() {
-        if (isMethodsInjectedInOrganismBean() && helloBean != null && setterBeanInAnimalBean != null) {
-            methodsInjectedInAnimalBean = true;
+    public FieldBean getFieldBean2InAnimalBean() {
+        return fieldBean2InAnimalBean;
+    }
+
+    public boolean isFieldsThenMethodsInjectedInAnimalBean() {
+        return fieldsInjectedInAnimalBean && methodsInjectedInAnimalBean;
+    }
+
+    private void checkInjections() {
+        if (isFieldsThenMethodsInjectedInOrganismBean()) {
+            if (fieldBean1InAnimalBean == null || fieldBean2InAnimalBean == null) {
+                fieldsInjectedInAnimalBean = false;
+            }
+
+            if (helloBean != null && setterBeanInAnimalBean != null) {
+                methodsInjectedInAnimalBean = true;
+            }
         }
     }
 }

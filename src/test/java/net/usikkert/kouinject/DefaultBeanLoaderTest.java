@@ -123,7 +123,13 @@ public class DefaultBeanLoaderTest {
         assertNotNull(animalBean.getSetterBeanInOrganismBean());
         assertNotNull(animalBean.getSetterBeanInAnimalBean());
 
-        assertTrue(animalBean.isMethodsInjectedInAnimalBean());
+        assertNotNull(animalBean.getFieldBean1InOrganismBean());
+        assertNotNull(animalBean.getFieldBean1InAnimalBean());
+
+        assertNotNull(animalBean.getFieldBean2InOrganismBean());
+        assertNotNull(animalBean.getFieldBean2InAnimalBean());
+
+        assertTrue(animalBean.isFieldsThenMethodsInjectedInAnimalBean());
     }
 
     @Test
@@ -173,7 +179,17 @@ public class DefaultBeanLoaderTest {
         assertNotNull(catBean.getSetterBeanInPetBean());
         assertNotNull(catBean.getSetterBeanInCatBean());
 
-        assertTrue(catBean.isMethodsInjectedInCatBean());
+        assertNotNull(catBean.getFieldBean1InOrganismBean());
+        assertNotNull(catBean.getFieldBean1InAnimalBean());
+        assertNotNull(catBean.getFieldBean1InPetBean());
+        assertNotNull(catBean.getFieldBean1InCatBean());
+
+        assertNotNull(catBean.getFieldBean2InOrganismBean());
+        assertNotNull(catBean.getFieldBean2InAnimalBean());
+        assertNotNull(catBean.getFieldBean2InPetBean());
+        assertNotNull(catBean.getFieldBean2InCatBean());
+
+        assertTrue(catBean.isFieldsThenMethodsInjectedInCatBean());
     }
 
     @Test
@@ -365,7 +381,11 @@ public class DefaultBeanLoaderTest {
 
         assertNotNull(organismBean.getSetterBeanInOrganismBean());
 
-        assertTrue(organismBean.isMethodsInjectedInOrganismBean());
+        assertNotNull(organismBean.getFieldBean1InOrganismBean());
+
+        assertNotNull(organismBean.getFieldBean2InOrganismBean());
+
+        assertTrue(organismBean.isFieldsThenMethodsInjectedInOrganismBean());
     }
 
     @Test
@@ -391,12 +411,19 @@ public class DefaultBeanLoaderTest {
         assertNotNull(petBean.getCoffeeBeanInPetBean());
         assertNotNull(petBean.getCarBeanInPetBean());
 
-
         assertNotNull(petBean.getSetterBeanInOrganismBean());
         assertNotNull(petBean.getSetterBeanInAnimalBean());
         assertNotNull(petBean.getSetterBeanInPetBean());
 
-        assertTrue(petBean.isMethodsInjectedInPetBean());
+        assertNotNull(petBean.getFieldBean1InOrganismBean());
+        assertNotNull(petBean.getFieldBean1InAnimalBean());
+        assertNotNull(petBean.getFieldBean1InPetBean());
+
+        assertNotNull(petBean.getFieldBean2InOrganismBean());
+        assertNotNull(petBean.getFieldBean2InAnimalBean());
+        assertNotNull(petBean.getFieldBean2InPetBean());
+
+        assertTrue(petBean.isFieldsThenMethodsInjectedInPetBean());
     }
 
     @Test

@@ -24,6 +24,7 @@ package net.usikkert.kouinject;
 
 import static org.junit.Assert.*;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -155,7 +156,7 @@ public class AnnotationBasedBeanDataHandlerTest {
         assertEquals(CatBean.class, beanData.getBeanClass());
 
         final List<Dependency> dependencies = beanData.getDependencies();
-        assertEquals(12, dependencies.size());
+        assertEquals(20, dependencies.size());
         assertNoQualifiers(dependencies);
 
         final List<MethodData> methods = beanData.getMethods();
@@ -178,6 +179,20 @@ public class AnnotationBasedBeanDataHandlerTest {
         assertEquals(1, containsMethod(methods, "setSetterBeanInAnimalBean", SetterBean.class));
         assertEquals(1, containsMethod(methods, "setSetterBeanInPetBean", SetterBean.class));
         assertEquals(1, containsMethod(methods, "setSetterBeanInCatBean", SetterBean.class));
+
+        final List<FieldData> fields = beanData.getFields();
+        assertEquals(8, fields.size());
+
+        // inherited fields
+        assertEquals(1, containsField(fields, "fieldBean1InOrganismBean", FieldBean.class));
+        assertEquals(1, containsField(fields, "fieldBean1InAnimalBean", FieldBean.class));
+        assertEquals(1, containsField(fields, "fieldBean1InPetBean", FieldBean.class));
+        assertEquals(1, containsField(fields, "fieldBean1InCatBean", FieldBean.class));
+
+        assertEquals(1, containsField(fields, "fieldBean2InOrganismBean", FieldBean.class));
+        assertEquals(1, containsField(fields, "fieldBean2InAnimalBean", FieldBean.class));
+        assertEquals(1, containsField(fields, "fieldBean2InPetBean", FieldBean.class));
+        assertEquals(1, containsField(fields, "fieldBean2InCatBean", FieldBean.class));
     }
 
     @Test
@@ -410,6 +425,19 @@ public class AnnotationBasedBeanDataHandlerTest {
         }
 
         return false;
+    }
+
+    private int containsField(final List<FieldData> fields, final String fieldName, final Class<?> beanClass) {
+        int counter = 0;
+
+        for (final FieldData fieldData : fields) {
+            final Field field = fieldData.getField();
+            if (field.getName().equals(fieldName) && field.getType().equals(beanClass)) {
+                counter++;
+            }
+        }
+
+        return counter;
     }
 
     private int containsMethod(final List<MethodData> methods, final String methodName, final Class<?> beanClass) {

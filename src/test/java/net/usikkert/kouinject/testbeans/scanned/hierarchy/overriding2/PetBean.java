@@ -27,6 +27,7 @@ import javax.inject.Named;
 
 import net.usikkert.kouinject.annotation.Component;
 import net.usikkert.kouinject.testbeans.scanned.CarBean;
+import net.usikkert.kouinject.testbeans.scanned.FieldBean;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.SetterBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
@@ -51,7 +52,15 @@ public class PetBean extends AnimalBean {
 
     private SetterBean setterBeanInPetBean;
 
+    @Inject
+    private FieldBean fieldBean1InPetBean;
+
+    @Inject
+    private FieldBean fieldBean2InPetBean;
+
     private boolean methodsInjectedInPetBean;
+
+    private boolean fieldsInjectedInPetBean = true;
 
     public HelloBean getHelloBeanInPetBean() {
         return helloBean;
@@ -62,7 +71,7 @@ public class PetBean extends AnimalBean {
     private void setHelloBean(final HelloBean helloBean) {
         this.helloBean = helloBean;
 
-        checkMethodInjections();
+        checkInjections();
     }
 
     public JavaBean getJavaBeanInPetBean() {
@@ -74,7 +83,7 @@ public class PetBean extends AnimalBean {
     void setJavaBean(final JavaBean javaBean) {
         this.javaBean = javaBean;
 
-        checkMethodInjections();
+        checkInjections();
     }
 
     public CoffeeBean getCoffeeBeanInPetBean() {
@@ -86,7 +95,7 @@ public class PetBean extends AnimalBean {
     protected void setCoffeeBean(final CoffeeBean coffeeBean) {
         this.coffeeBean = coffeeBean;
 
-        checkMethodInjections();
+        checkInjections();
     }
 
     public CarBean getCarBeanInPetBean() {
@@ -98,7 +107,7 @@ public class PetBean extends AnimalBean {
     public void setCarBean(final CarBean carBean) {
         this.carBean = carBean;
 
-        checkMethodInjections();
+        checkInjections();
     }
 
     public SetterBean getSetterBeanInPetBean() {
@@ -109,17 +118,30 @@ public class PetBean extends AnimalBean {
     public void setSetterBeanInPetBean(final SetterBean setterBeanInPetBean) {
         this.setterBeanInPetBean = setterBeanInPetBean;
 
-        checkMethodInjections();
+        checkInjections();
     }
 
-    public boolean isMethodsInjectedInPetBean() {
-        return methodsInjectedInPetBean;
+    public FieldBean getFieldBean1InPetBean() {
+        return fieldBean1InPetBean;
     }
 
-    private void checkMethodInjections() {
-        if (isMethodsInjectedInAnimalBean() &&  helloBean != null
-                && setterBeanInPetBean != null && javaBean != null) {
-            methodsInjectedInPetBean = true;
+    public FieldBean getFieldBean2InPetBean() {
+        return fieldBean2InPetBean;
+    }
+
+    public boolean isFieldsThenMethodsInjectedInPetBean() {
+        return fieldsInjectedInPetBean && methodsInjectedInPetBean;
+    }
+
+    private void checkInjections() {
+        if (isFieldsThenMethodsInjectedInAnimalBean()) {
+            if (fieldBean1InPetBean == null || fieldBean2InPetBean == null) {
+                fieldsInjectedInPetBean = false;
+            }
+
+            if (helloBean != null && setterBeanInPetBean != null && javaBean != null) {
+                methodsInjectedInPetBean = true;
+            }
         }
     }
 }
