@@ -58,6 +58,10 @@ import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractB
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractBeanImpl;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.interfacebean.InterfaceBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.interfacebean.InterfaceBeanImpl;
+import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding2.AnimalBean;
+import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding2.OrganismBean;
+import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding2.PetBean;
+import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding2.pets.CatBean;
 import net.usikkert.kouinject.testbeans.scanned.notloaded.NoBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.BlueBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.ColorBean;
@@ -101,6 +105,25 @@ public class DefaultBeanLoaderTest {
     }
 
     @Test
+    public void checkAnimalBean() {
+        beanLoader.loadBeans();
+
+        final AnimalBean animalBean = beanLoader.getBean(AnimalBean.class);
+        assertNotNull(animalBean);
+        assertTrue(animalBean.getClass().equals(AnimalBean.class));
+
+        assertNotNull(animalBean.getHelloBeanInOrganismBean()); // private, not overridden
+        assertNull(animalBean.getJavaBeanInOrganismBean()); // default, overridden
+        assertNull(animalBean.getCoffeeBeanInOrganismBean()); // protected, overridden
+        assertNull(animalBean.getCarBeanInOrganismBean()); // public, overridden
+
+        assertNotNull(animalBean.getHelloBeanInAnimalBean());
+        assertNotNull(animalBean.getJavaBeanInAnimalBean());
+        assertNotNull(animalBean.getCoffeeBeanInAnimalBean());
+        assertNotNull(animalBean.getCarBeanInAnimalBean());
+    }
+
+    @Test
     public void checkBlueBean() {
         beanLoader.loadBeans();
 
@@ -112,6 +135,35 @@ public class DefaultBeanLoaderTest {
 
         final ColorBean blueBean3 = beanLoader.getBean(ColorBean.class, "Blue");
         assertTrue(blueBean3 instanceof BlueBean);
+    }
+
+    @Test
+    public void checkCatBean() {
+        beanLoader.loadBeans();
+
+        final CatBean catBean = beanLoader.getBean(CatBean.class);
+        assertNotNull(catBean);
+        assertTrue(catBean.getClass().equals(CatBean.class));
+
+        assertNotNull(catBean.getHelloBeanInOrganismBean()); // private, not overridden
+        assertNull(catBean.getJavaBeanInOrganismBean()); // default, overridden
+        assertNull(catBean.getCoffeeBeanInOrganismBean()); // protected, overridden
+        assertNull(catBean.getCarBeanInOrganismBean()); // public, overridden
+
+        assertNotNull(catBean.getHelloBeanInAnimalBean()); // private, not overridden
+        assertNull(catBean.getJavaBeanInAnimalBean()); // default, overridden
+        assertNull(catBean.getCoffeeBeanInAnimalBean()); // protected, overridden
+        assertNull(catBean.getCarBeanInAnimalBean()); // public, overridden
+
+        assertNotNull(catBean.getHelloBeanInPetBean()); // private, not overridden
+        assertNotNull(catBean.getJavaBeanInPetBean()); // default in different package, not overridden
+        assertNull(catBean.getCoffeeBeanInPetBean()); // protected, overridden
+        assertNull(catBean.getCarBeanInPetBean()); // public, overridden
+
+        assertNotNull(catBean.getHelloBeanInCatBean());
+        assertNotNull(catBean.getJavaBeanInCatBean());
+        assertNotNull(catBean.getCoffeeBeanInCatBean());
+        assertNotNull(catBean.getCarBeanInCatBean());
     }
 
     @Test
@@ -286,6 +338,44 @@ public class DefaultBeanLoaderTest {
         beanLoader.loadBeans();
 
         beanLoader.getBean(NoBean.class);
+    }
+
+    @Test
+    public void checkOrganismBean() {
+        beanLoader.loadBeans();
+
+        final OrganismBean organismBean = beanLoader.getBean(OrganismBean.class);
+        assertNotNull(organismBean);
+        assertTrue(organismBean.getClass().equals(OrganismBean.class));
+
+        assertNotNull(organismBean.getHelloBeanInOrganismBean());
+        assertNotNull(organismBean.getJavaBeanInOrganismBean());
+        assertNotNull(organismBean.getCoffeeBeanInOrganismBean());
+        assertNotNull(organismBean.getCarBeanInOrganismBean());
+    }
+
+    @Test
+    public void checkPetBean() {
+        beanLoader.loadBeans();
+
+        final PetBean petBean = beanLoader.getBean(PetBean.class);
+        assertNotNull(petBean);
+        assertTrue(petBean.getClass().equals(PetBean.class));
+
+        assertNotNull(petBean.getHelloBeanInOrganismBean()); // private, not overridden
+        assertNull(petBean.getJavaBeanInOrganismBean()); // default, overridden
+        assertNull(petBean.getCoffeeBeanInOrganismBean()); // protected, overridden
+        assertNull(petBean.getCarBeanInOrganismBean()); // public, overridden
+
+        assertNotNull(petBean.getHelloBeanInAnimalBean()); // private, not overridden
+        assertNull(petBean.getJavaBeanInAnimalBean()); // default, overridden
+        assertNull(petBean.getCoffeeBeanInAnimalBean()); // protected, overridden
+        assertNull(petBean.getCarBeanInAnimalBean()); // public, overridden
+
+        assertNotNull(petBean.getHelloBeanInPetBean());
+        assertNotNull(petBean.getJavaBeanInPetBean());
+        assertNotNull(petBean.getCoffeeBeanInPetBean());
+        assertNotNull(petBean.getCarBeanInPetBean());
     }
 
     @Test
