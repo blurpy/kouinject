@@ -24,6 +24,7 @@ package net.usikkert.kouinject;
 
 import static org.junit.Assert.*;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -39,6 +40,7 @@ import net.usikkert.kouinject.testbeans.notscanned.notloaded.NamedQualifierUsedW
 import net.usikkert.kouinject.testbeans.notscanned.notloaded.NoMatchingConstructorBean;
 import net.usikkert.kouinject.testbeans.notscanned.notloaded.TooManyMatchingConstructorsBean;
 import net.usikkert.kouinject.testbeans.notscanned.notloaded.TooManyQualifiersBean;
+import net.usikkert.kouinject.testbeans.scanned.CarBean;
 import net.usikkert.kouinject.testbeans.scanned.ConstructorBean;
 import net.usikkert.kouinject.testbeans.scanned.EverythingBean;
 import net.usikkert.kouinject.testbeans.scanned.FieldBean;
@@ -50,6 +52,7 @@ import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.ChildBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.interfacebean.InterfaceBean;
+import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding2.pets.CatBean;
 import net.usikkert.kouinject.testbeans.scanned.notloaded.QualifierBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.Blue;
 
@@ -58,8 +61,6 @@ import org.junit.Test;
 
 /**
  * Test of {@link AnnotationBasedBeanDataHandler}.
- *
- * TODO test method overriding
  *
  * @author Christian Ihle
  */
@@ -145,6 +146,35 @@ public class AnnotationBasedBeanDataHandlerTest {
             assertTrue(containsMethodParameter(method, HelloBean.class));
             assertTrue(containsMethodParameter(method, FieldBean.class));
         }
+    }
+
+    @Test
+    public void getBeanDataShouldDetectInheritedAndOverriddenMethodsAndDependenciesForInjection() {
+        final BeanData beanData = handler.getBeanData(CatBean.class, false);
+
+        assertEquals(CatBean.class, beanData.getBeanClass());
+
+        final List<Dependency> dependencies = beanData.getDependencies();
+        assertEquals(9, dependencies.size());
+        assertNoQualifiers(dependencies);
+
+        final List<MethodData> methods = beanData.getMethods();
+        assertEquals(9, methods.size());
+
+        // all beans have private methods, none overridden
+        assertEquals(4, containsMethod(methods, "setHelloBean", HelloBean.class));
+
+        // default method overridden in 2 beans in different packages
+        assertEquals(2, containsMethod(methods, "setJavaBean", JavaBean.class));
+
+        // protected method overridden in last bean
+        assertEquals(1, containsMethod(methods, "setCoffeeBean", CoffeeBean.class));
+
+        // public method overridden in last bean
+        assertEquals(1, containsMethod(methods, "setCarBean", CarBean.class));
+
+        // public method inherited from super
+        assertEquals(1, containsMethod(methods, "setSetterBean", SetterBean.class));
     }
 
     @Test
@@ -377,5 +407,22 @@ public class AnnotationBasedBeanDataHandlerTest {
         }
 
         return false;
+    }
+
+    private int containsMethod(final List<MethodData> methods, final String methodName, final Class<?> beanClass) {
+        int counter = 0;
+
+        for (final MethodData methodData : methods) {
+            final Method method = methodData.getMethod();
+
+            if (method.getName().equals(methodName) && method.getParameterTypes().length == 1) {
+                if (method.getParameterTypes()[0].equals(beanClass)) {
+                    counter++;
+                }
+            }
+        }
+
+
+        return counter;
     }
 }

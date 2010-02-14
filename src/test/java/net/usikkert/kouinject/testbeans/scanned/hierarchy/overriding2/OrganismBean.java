@@ -28,6 +28,7 @@ import javax.inject.Named;
 import net.usikkert.kouinject.annotation.Component;
 import net.usikkert.kouinject.testbeans.scanned.CarBean;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
+import net.usikkert.kouinject.testbeans.scanned.SetterBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
 
@@ -47,6 +48,8 @@ public class OrganismBean {
     private CoffeeBean coffeeBean;
 
     private CarBean carBean;
+
+    private SetterBean setterBean;
 
     public HelloBean getHelloBeanInOrganismBean() {
         return helloBean;
@@ -83,5 +86,14 @@ public class OrganismBean {
     @Inject
     public void setCarBean(final CarBean carBean) {
         this.carBean = carBean;
+    }
+
+    public SetterBean getSetterBean() {
+        return setterBean;
+    }
+
+    @Inject
+    public void setSetterBean(final SetterBean setterBean) {
+        this.setterBean = setterBean;
     }
 }
