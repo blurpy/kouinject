@@ -130,13 +130,19 @@ public class OrganismBean {
         return fieldsInjectedInOrganismBean && methodsInjectedInOrganismBean;
     }
 
-    private void checkInjections() {
-        if (fieldBean1InOrganismBean == null || fieldBean2InOrganismBean == null) {
-            fieldsInjectedInOrganismBean = false;
-        }
+    public boolean isInjected() {
+        return false;
+    }
 
-        if (helloBean != null && setterBeanInOrganismBean != null) {
-            methodsInjectedInOrganismBean = true;
+    private void checkInjections() {
+        if (!isInjected()) {
+            if (fieldBean1InOrganismBean == null || fieldBean2InOrganismBean == null) {
+                fieldsInjectedInOrganismBean = false;
+            }
+
+            if (helloBean != null && setterBeanInOrganismBean != null) {
+                methodsInjectedInOrganismBean = true;
+            }
         }
     }
 }

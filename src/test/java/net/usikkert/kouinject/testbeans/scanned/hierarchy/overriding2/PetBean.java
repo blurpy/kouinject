@@ -133,6 +133,17 @@ public class PetBean extends AnimalBean {
         return fieldsInjectedInPetBean && methodsInjectedInPetBean;
     }
 
+    @Override
+    public boolean isInjected() {
+        return helloBean != null
+             || javaBean != null
+             || coffeeBean != null
+             || carBean != null
+             || setterBeanInPetBean != null
+             || fieldBean1InPetBean != null
+             || fieldBean2InPetBean != null;
+    }
+
     private void checkInjections() {
         if (isFieldsThenMethodsInjectedInAnimalBean()) {
             if (fieldBean1InPetBean == null || fieldBean2InPetBean == null) {

@@ -133,6 +133,17 @@ public class AnimalBean extends OrganismBean {
         return fieldsInjectedInAnimalBean && methodsInjectedInAnimalBean;
     }
 
+    @Override
+    public boolean isInjected() {
+        return helloBean != null
+             || javaBean != null
+             || coffeeBean != null
+             || carBean != null
+             || setterBeanInAnimalBean != null
+             || fieldBean1InAnimalBean != null
+             || fieldBean2InAnimalBean != null;
+    }
+
     private void checkInjections() {
         if (isFieldsThenMethodsInjectedInOrganismBean()) {
             if (fieldBean1InAnimalBean == null || fieldBean2InAnimalBean == null) {
