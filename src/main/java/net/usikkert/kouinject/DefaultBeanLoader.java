@@ -310,7 +310,7 @@ public class DefaultBeanLoader implements BeanLoader {
             final Dependency dependency = field.getDependency();
             final Object bean = findBeanOrCreateProvider(dependency);
 
-            field.setFieldValue(objectToAutowire, bean);
+            field.inject(objectToAutowire, new Object[] {bean});
         }
     }
 
@@ -329,7 +329,7 @@ public class DefaultBeanLoader implements BeanLoader {
                 beansForMethod[i] = bean;
             }
 
-            method.invokeMethod(objectToAutowire, beansForMethod);
+            method.inject(objectToAutowire, beansForMethod);
         }
     }
 

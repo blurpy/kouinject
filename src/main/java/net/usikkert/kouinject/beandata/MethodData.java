@@ -33,7 +33,7 @@ import net.usikkert.kouinject.util.Validate;
  *
  * @author Christian Ihle
  */
-public class MethodData {
+public class MethodData implements InjectionPoint {
 
     private final Method method;
 
@@ -77,7 +77,7 @@ public class MethodData {
      * @param object The object to invoke the method on.
      * @param parameters The parameters for the method.
      */
-    public void invokeMethod(final Object object, final Object[] parameters) {
+    public void inject(final Object object, final Object[] parameters) {
         Validate.notNull(object, "Object can not be null");
         Validate.notNull(parameters, "Parameters can not be null");
 

@@ -23,6 +23,8 @@
 package net.usikkert.kouinject.beandata;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.List;
 
 import net.usikkert.kouinject.util.Validate;
 
@@ -31,11 +33,13 @@ import net.usikkert.kouinject.util.Validate;
  *
  * @author Christian Ihle
  */
-public class FieldData {
+public class FieldData implements InjectionPoint {
 
     private final Field field;
 
     private final Dependency dependency;
+
+    private final List<Dependency> dependencies;
 
     /**
      * Creates a new instance of this field data.
@@ -49,6 +53,7 @@ public class FieldData {
 
         this.field = field;
         this.dependency = dependency;
+        this.dependencies = Arrays.asList(dependency);
     }
 
     /**
@@ -70,19 +75,31 @@ public class FieldData {
     }
 
     /**
+     * Gets the required dependency for this field as a list.
+     *
+     * @return The required dependency.
+     */
+    @Override
+    public List<Dependency> getDependencies() {
+        return dependencies;
+    }
+
+    /**
      * Sets a value for this field, on the object. Supports fields with any access modifier.
      *
      * @param object The object to set the field value in.
-     * @param value The new value for this field in the object.
+     * @param parameters A single parameter with the new value for this field in the object.
      */
-    public void setFieldValue(final Object object, final Object value) {
+    public void inject(final Object object, final Object[] parameters) {
         Validate.notNull(object, "Object can not be null");
-        Validate.notNull(value, "Value can not be null");
+        Validate.notNull(parameters, "Parameters can not be null");
+        Validate.isTrue(parameters.length == 1, "Can only inject 1 parameter into a field");
 
         final boolean originalAccessible = field.isAccessible();
         field.setAccessible(true);
 
         try {
+            final Object value = parameters[0];
             field.set(object, value);
         }
 
