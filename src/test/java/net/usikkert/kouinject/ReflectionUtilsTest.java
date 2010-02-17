@@ -25,7 +25,9 @@ package net.usikkert.kouinject;
 import static org.junit.Assert.*;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.util.List;
 
 import net.usikkert.kouinject.testbeans.notscanned.SomeEnum;
 import net.usikkert.kouinject.testbeans.notscanned.notloaded.FieldModifierBean;
@@ -41,6 +43,10 @@ import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding.OverridingI
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding.OverridingSecondAbstractBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding.OverridingSuperBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding.subpackage.OverridingSubpackageBean;
+import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding2.AnimalBean;
+import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding2.OrganismBean;
+import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding2.PetBean;
+import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding2.pets.CatBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.Yellow;
 
 import org.junit.Before;
@@ -66,6 +72,47 @@ public class ReflectionUtilsTest {
         assertEquals(5, reflectionUtils.findAllMethods(OverridingSecondAbstractBean.class).size());
         assertEquals(13, reflectionUtils.findAllMethods(OverridingSuperBean.class).size());
         assertEquals(22, reflectionUtils.findAllMethods(OverridingChildBean.class).size());
+    }
+
+    @Test
+    public void findAllMembersShouldFindFieldsAndMethodsInCurrentClassAndSuperClassesExceptObject() {
+        assertEquals(24, reflectionUtils.findAllMembers(OrganismBean.class).size());
+        assertEquals(48, reflectionUtils.findAllMembers(AnimalBean.class).size());
+        assertEquals(72, reflectionUtils.findAllMembers(PetBean.class).size());
+        assertEquals(96, reflectionUtils.findAllMembers(CatBean.class).size());
+    }
+
+    @Test
+    public void findAllMembersShouldOrderByFieldsThenMethodsFromSuperclassToSubclass() {
+        final List<Member> members = reflectionUtils.findAllMembers(CatBean.class);
+        assertEquals(96, members.size());
+
+        final List<Member> organismMembers = members.subList(0, 24);
+        final List<Member> animalMembers = members.subList(24, 48);
+        final List<Member> petMembers = members.subList(48, 72);
+        final List<Member> catMembers = members.subList(72, 96);
+
+        validateSublist(organismMembers, OrganismBean.class);
+        validateSublist(animalMembers, AnimalBean.class);
+        validateSublist(petMembers, PetBean.class);
+        validateSublist(catMembers, CatBean.class);
+    }
+
+    private void validateSublist(final List<Member> members, final Class<?> beanClass) {
+        assertEquals(24, members.size());
+
+        for (int i = 0; i < members.size(); i++) {
+            final Member member = members.get(i);
+            assertEquals(beanClass, member.getDeclaringClass());
+
+            if (i < 9) {
+                assertTrue(member instanceof Field);
+            }
+
+            else {
+                assertTrue(member instanceof Method);
+            }
+        }
     }
 
     @Test

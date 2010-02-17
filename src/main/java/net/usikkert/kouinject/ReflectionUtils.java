@@ -22,6 +22,7 @@
 
 package net.usikkert.kouinject;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -48,6 +49,38 @@ public class ReflectionUtils {
         }
 
         return methods;
+    }
+
+    /**
+     * Gets all members from a class and its superclasses.
+     *
+     * <p>The members are sorted from superclass to subclass, with fields
+     * and methods in the superclass first, then fields and methods in subclasses.</p>
+     *
+     * @param clazz The class to find the members in.
+     * @return List with all the members found.
+     */
+    public List<Member> findAllMembers(final Class<?> clazz) {
+        final List<Member> members = new ArrayList<Member>();
+
+        final Field[] declaredFields = clazz.getDeclaredFields();
+
+        for (final Field field : declaredFields) {
+            members.add(field);
+        }
+
+        final Method[] declaredMethods = clazz.getDeclaredMethods();
+
+        for (final Method method : declaredMethods) {
+            members.add(method);
+        }
+
+
+        if (clazz.getSuperclass() != null && !clazz.getSuperclass().equals(Object.class)) {
+            members.addAll(0, findAllMembers(clazz.getSuperclass()));
+        }
+
+        return members;
     }
 
     public boolean isOverridden(final Method method, final List<Method> candidates) {
