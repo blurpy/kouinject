@@ -43,6 +43,7 @@ import net.usikkert.kouinject.testbeans.scanned.CarBean;
 import net.usikkert.kouinject.testbeans.scanned.ConstructorBean;
 import net.usikkert.kouinject.testbeans.scanned.EverythingBean;
 import net.usikkert.kouinject.testbeans.scanned.FieldBean;
+import net.usikkert.kouinject.testbeans.scanned.FinalBean;
 import net.usikkert.kouinject.testbeans.scanned.FirstCircularDependencyBean;
 import net.usikkert.kouinject.testbeans.scanned.GarageBean;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
@@ -51,6 +52,7 @@ import net.usikkert.kouinject.testbeans.scanned.ProviderBean;
 import net.usikkert.kouinject.testbeans.scanned.RainbowBean;
 import net.usikkert.kouinject.testbeans.scanned.SecondCircularDependencyBean;
 import net.usikkert.kouinject.testbeans.scanned.SetterBean;
+import net.usikkert.kouinject.testbeans.scanned.StaticBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.ChildBean;
@@ -267,6 +269,15 @@ public class DefaultBeanLoaderTest {
         assertNotNull(fieldBean.getHelloBean());
         assertNotNull(fieldBean.getAbstractBean());
         assertNotNull(fieldBean.getInterfaceBean());
+    }
+
+    @Test
+    public void checkFinalBean() {
+        beanLoader.loadBeans();
+
+        final FinalBean finalBean = beanLoader.getBean(FinalBean.class);
+
+        assertNull(finalBean.getFieldBean());
     }
 
     @Test
@@ -490,6 +501,14 @@ public class DefaultBeanLoaderTest {
         final SetterBean setterBean = beanLoader.getBean(SetterBean.class);
 
         assertNotNull(setterBean.getFieldBean());
+    }
+
+    @Test
+    public void checkStaticBean() {
+        beanLoader.loadBeans();
+
+        assertNull(StaticBean.getFieldBean());
+        assertNull(StaticBean.getSetterBean());
     }
 
     @Test

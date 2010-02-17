@@ -74,6 +74,10 @@ public class Jsr330TckSuite {
         beanLoader.loadBeans();
 
         final Car car = beanLoader.getBean(Car.class);
-        return Tck.testsFor(car, true, true);
+
+        final boolean supportsStatic = false;
+        final boolean supportsPrivate = true;
+
+        return Tck.testsFor(car, supportsStatic, supportsPrivate);
     }
 }

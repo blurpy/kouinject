@@ -45,9 +45,11 @@ import net.usikkert.kouinject.testbeans.scanned.CarBean;
 import net.usikkert.kouinject.testbeans.scanned.ConstructorBean;
 import net.usikkert.kouinject.testbeans.scanned.EverythingBean;
 import net.usikkert.kouinject.testbeans.scanned.FieldBean;
+import net.usikkert.kouinject.testbeans.scanned.FinalBean;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.ProviderBean;
 import net.usikkert.kouinject.testbeans.scanned.SetterBean;
+import net.usikkert.kouinject.testbeans.scanned.StaticBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.ChildBean;
@@ -359,6 +361,26 @@ public class AnnotationBasedBeanDataHandlerTest {
 
         final List<MethodData> methods = beanData.getMethods();
         assertEquals(0, methods.size());
+    }
+
+    @Test
+    public void getBeanDataShouldIgnoreStatics() {
+        final BeanData beanData = handler.getBeanData(StaticBean.class, false);
+
+        assertEquals(StaticBean.class, beanData.getBeanClass());
+
+        final List<Dependency> dependencies = beanData.getDependencies();
+        assertEquals(0, dependencies.size());
+    }
+
+    @Test
+    public void getBeanDataShouldIgnoreFinalFields() {
+        final BeanData beanData = handler.getBeanData(FinalBean.class, false);
+
+        assertEquals(FinalBean.class, beanData.getBeanClass());
+
+        final List<Dependency> dependencies = beanData.getDependencies();
+        assertEquals(0, dependencies.size());
     }
 
     @Test(expected = RuntimeException.class)

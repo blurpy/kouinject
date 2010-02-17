@@ -107,7 +107,9 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
     }
 
     private boolean fieldNeedsInjection(final Field field) {
-        return field.isAnnotationPresent(INJECTION_ANNOTATION);
+        return !reflectionUtils.isStatic(field)
+             && !reflectionUtils.isFinal(field)
+             && field.isAnnotationPresent(INJECTION_ANNOTATION);
     }
 
     private List<FieldData> createFieldData(final List<Field> fields) {
@@ -157,7 +159,7 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
     }
 
     private boolean methodNeedsInjection(final Method method) {
-        return method.isAnnotationPresent(INJECTION_ANNOTATION);
+        return !reflectionUtils.isStatic(method) && method.isAnnotationPresent(INJECTION_ANNOTATION);
     }
 
     private List<MethodData> createMethodData(final List<Method> methods) {
