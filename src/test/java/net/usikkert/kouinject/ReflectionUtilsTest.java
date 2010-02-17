@@ -24,9 +24,11 @@ package net.usikkert.kouinject;
 
 import static org.junit.Assert.*;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import net.usikkert.kouinject.testbeans.notscanned.SomeEnum;
+import net.usikkert.kouinject.testbeans.notscanned.notloaded.FieldModifierBean;
 import net.usikkert.kouinject.testbeans.scanned.GarageBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
@@ -273,7 +275,7 @@ public class ReflectionUtilsTest {
     }
 
     @Test
-    public void modifiers() throws Exception {
+    public void methodModifiers() throws Exception {
         final Method publicMethod = OverridingChildBean.class.getDeclaredMethod("publicMethod");
         assertTrue(reflectionUtils.isPublic(publicMethod));
 
@@ -291,8 +293,32 @@ public class ReflectionUtilsTest {
 
         final Method staticMethod = OverridingChildBean.class.getDeclaredMethod("staticMethod");
         assertTrue(reflectionUtils.isStatic(staticMethod));
+    }
 
+    @Test
+    public void classModifiers() throws Exception {
         assertTrue(reflectionUtils.isAbstract(OverridingFirstAbstractBean.class));
+    }
+
+    @Test
+    public void fieldModifiers() throws Exception {
+        final Field publicField = FieldModifierBean.class.getDeclaredField("publicField");
+        assertTrue(reflectionUtils.isPublic(publicField));
+
+        final Field protectedField = FieldModifierBean.class.getDeclaredField("protectedField");
+        assertTrue(reflectionUtils.isProtected(protectedField));
+
+        final Field defaultField = FieldModifierBean.class.getDeclaredField("defaultField");
+        assertTrue(reflectionUtils.isDefault(defaultField));
+
+        final Field privateField = FieldModifierBean.class.getDeclaredField("privateField");
+        assertTrue(reflectionUtils.isPrivate(privateField));
+
+        final Field finalField = FieldModifierBean.class.getDeclaredField("finalField");
+        assertTrue(reflectionUtils.isFinal(finalField));
+
+        final Field staticField = FieldModifierBean.class.getDeclaredField("staticField");
+        assertTrue(reflectionUtils.isStatic(staticField));
     }
 
     @Test

@@ -22,6 +22,7 @@
 
 package net.usikkert.kouinject;
 
+import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -154,28 +155,28 @@ public class ReflectionUtils {
         return methodPackage.equals(candidatePackage);
     }
 
-    public boolean isStatic(final Method method) {
-        return Modifier.isStatic(method.getModifiers());
+    public boolean isStatic(final Member member) {
+        return Modifier.isStatic(member.getModifiers());
     }
 
-    public boolean isFinal(final Method method) {
-        return Modifier.isFinal(method.getModifiers());
+    public boolean isFinal(final Member member) {
+        return Modifier.isFinal(member.getModifiers());
     }
 
-    public boolean isPrivate(final Method method) {
-        return Modifier.isPrivate(method.getModifiers());
+    public boolean isPrivate(final Member member) {
+        return Modifier.isPrivate(member.getModifiers());
     }
 
-    public boolean isDefault(final Method method) {
-        return !isPublic(method) && !isProtected(method) && !isPrivate(method);
+    public boolean isDefault(final Member member) {
+        return !isPublic(member) && !isProtected(member) && !isPrivate(member);
     }
 
-    public boolean isProtected(final Method method) {
-        return Modifier.isProtected(method.getModifiers());
+    public boolean isProtected(final Member member) {
+        return Modifier.isProtected(member.getModifiers());
     }
 
-    public boolean isPublic(final Method method) {
-        return Modifier.isPublic(method.getModifiers());
+    public boolean isPublic(final Member member) {
+        return Modifier.isPublic(member.getModifiers());
     }
 
     public boolean isAbstract(final Class<?> clazz) {
