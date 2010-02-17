@@ -36,8 +36,7 @@ public class BeanData {
 
     private final Class<?> beanClass;
     private final ConstructorData constructor;
-    private final List<FieldData> fields;
-    private final List<MethodData> methods;
+    private final List<InjectionPoint> injectionPoints;
     private final List<Dependency> dependencies;
 
     /**
@@ -45,20 +44,17 @@ public class BeanData {
      *
      * @param beanClass The class this BeanData will describe.
      * @param constructor Optional meta-data for the constructor to invoke on beanClass.
-     *                    If this is null then the bean can not be instantiated.
-     * @param fields Meta-data for the fields in beanClass that requires dependency injection.
-     * @param methods Meta-data for the methods in beanClass that requires dependency injection.
+     *                     If this is null then the bean can not be instantiated.
+     * @param injectionPoints Meta-data for the injection points in beanClass that requires dependency injection.
      */
     public BeanData(final Class<?> beanClass, final ConstructorData constructor,
-            final List<FieldData> fields, final List<MethodData> methods) {
+            final List<InjectionPoint> injectionPoints) {
         Validate.notNull(beanClass, "Bean class can not be null");
-        Validate.notNull(fields, "Fields can not be null");
-        Validate.notNull(methods, "Methods can not be null");
+        Validate.notNull(injectionPoints, "Injection points can not be null");
 
         this.beanClass = beanClass;
         this.constructor = constructor;
-        this.fields = fields;
-        this.methods = methods;
+        this.injectionPoints = injectionPoints;
         this.dependencies = new ArrayList<Dependency>();
 
         mapDependencies();
@@ -69,11 +65,10 @@ public class BeanData {
      * does not take constructor meta-data, so the bean can not be instantiated.
      *
      * @param beanClass The class this BeanData will describe.
-     * @param fields Meta-data for the fields in beanClass that requires dependency injection.
-     * @param methods Meta-data for the methods in beanClass that requires dependency injection.
+     * @param injectionPoints Meta-data for the injection points in beanClass that requires dependency injection.
      */
-    public BeanData(final Class<?> beanClass, final List<FieldData> fields, final List<MethodData> methods) {
-        this(beanClass, null, fields, methods);
+    public BeanData(final Class<?> beanClass, final List<InjectionPoint> injectionPoints) {
+        this(beanClass, null, injectionPoints);
     }
 
     /**
@@ -101,6 +96,14 @@ public class BeanData {
      * @return The meta-data of the fields.
      */
     public List<FieldData> getFields() {
+        final List<FieldData> fields = new ArrayList<FieldData>();
+
+        for (final InjectionPoint injectionPoint : injectionPoints) {
+            if (injectionPoint instanceof FieldData) {
+                fields.add((FieldData) injectionPoint);
+            }
+        }
+
         return fields;
     }
 
@@ -110,7 +113,24 @@ public class BeanData {
      * @return The meta-data of the methods.
      */
     public List<MethodData> getMethods() {
+        final List<MethodData> methods = new ArrayList<MethodData>();
+
+        for (final InjectionPoint injectionPoint : injectionPoints) {
+            if (injectionPoint instanceof MethodData) {
+                methods.add((MethodData) injectionPoint);
+            }
+        }
+
         return methods;
+    }
+
+    /**
+     * Gets the meta-data describing the injection points in {@link #getBeanClass()} requiring dependency injection.
+     *
+     * @return The meta-data of the injection points.
+     */
+    public List<InjectionPoint> getInjectionPoints() {
+        return injectionPoints;
     }
 
     /**
@@ -128,23 +148,16 @@ public class BeanData {
             mapConstructorDependencies();
         }
 
-        mapFieldDependencies();
-        mapMethodDependencies();
+        mapInjectionPointDependencies();
     }
 
     private void mapConstructorDependencies() {
         dependencies.addAll(constructor.getDependencies());
     }
 
-    private void mapFieldDependencies() {
-        for (final FieldData field : fields) {
-            dependencies.add(field.getDependency());
-        }
-    }
-
-    private void mapMethodDependencies() {
-        for (final MethodData method : methods) {
-            dependencies.addAll(method.getDependencies());
+    private void mapInjectionPointDependencies() {
+        for (final InjectionPoint injectionPoint : injectionPoints) {
+            dependencies.addAll(injectionPoint.getDependencies());
         }
     }
 

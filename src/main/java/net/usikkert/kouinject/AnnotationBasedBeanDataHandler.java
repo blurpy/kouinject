@@ -25,6 +25,7 @@ package net.usikkert.kouinject;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -38,6 +39,7 @@ import net.usikkert.kouinject.beandata.BeanData;
 import net.usikkert.kouinject.beandata.ConstructorData;
 import net.usikkert.kouinject.beandata.Dependency;
 import net.usikkert.kouinject.beandata.FieldData;
+import net.usikkert.kouinject.beandata.InjectionPoint;
 import net.usikkert.kouinject.beandata.MethodData;
 import net.usikkert.kouinject.util.Validate;
 
@@ -66,12 +68,9 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
     public BeanData getBeanData(final Class<?> beanClass, final boolean skipConstructor) {
         Validate.notNull(beanClass, "Bean class can not be null");
 
-        final List<Field> fields = findFields(beanClass);
-        final List<FieldData> fieldData = createFieldData(fields);
-
         final List<Method> allMethods = reflectionUtils.findAllMethods(beanClass);
-        final List<Method> methods = findMethods(beanClass, allMethods);
-        final List<MethodData> methodData = createMethodData(methods);
+        final List<Member> allMembers = reflectionUtils.findAllMembers(beanClass);
+        final List<InjectionPoint> injectionPoints = findInjectionPoints(allMembers, allMethods);
 
         final BeanData beanData;
 
@@ -79,48 +78,50 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
             final Constructor<?> constructor = findConstructor(beanClass);
             final ConstructorData constructorData = createConstructorData(constructor);
 
-            beanData = new BeanData(beanClass, constructorData, fieldData, methodData);
+            beanData = new BeanData(beanClass, constructorData, injectionPoints);
         }
 
         else {
-            beanData = new BeanData(beanClass, fieldData, methodData);
+            beanData = new BeanData(beanClass, injectionPoints);
         }
 
         return beanData;
     }
 
-    private List<Field> findFields(final Class<?> beanClass) {
-        final Field[] declaredFields = beanClass.getDeclaredFields();
-        final List<Field> fields = new ArrayList<Field>();
+    private List<InjectionPoint> findInjectionPoints(final List<Member> allMembers, final List<Method> allMethods) {
+        final List<InjectionPoint> injectionPoints = new ArrayList<InjectionPoint>();
 
-        for (final Field field : declaredFields) {
-            if (fieldNeedsInjection(field)) {
-                fields.add(field);
+        for (final Member member : allMembers) {
+            if (member instanceof Field) {
+                final Field field = (Field) member;
+
+                if (fieldNeedsInjection(field)) {
+                    final FieldData fieldData = createFieldData(field);
+                    injectionPoints.add(fieldData);
+                }
+            }
+
+            else if (member instanceof Method) {
+                final Method method = (Method) member;
+
+                if (methodNeedsInjection(method) && !reflectionUtils.isOverridden(method, allMethods)) {
+                    final MethodData methodData = createMethodData(method);
+                    injectionPoints.add(methodData);
+                }
+            }
+
+            else {
+                throw new UnsupportedOperationException("Unsupported member: " + member);
             }
         }
 
-        if (beanClass.getSuperclass() != null) {
-            fields.addAll(findFields(beanClass.getSuperclass()));
-        }
-
-        return fields;
+        return injectionPoints;
     }
 
     private boolean fieldNeedsInjection(final Field field) {
         return !reflectionUtils.isStatic(field)
              && !reflectionUtils.isFinal(field)
              && field.isAnnotationPresent(INJECTION_ANNOTATION);
-    }
-
-    private List<FieldData> createFieldData(final List<Field> fields) {
-        final List<FieldData> fieldDataList = new ArrayList<FieldData>();
-
-        for (final Field field : fields) {
-            final FieldData fieldData = createFieldData(field);
-            fieldDataList.add(fieldData);
-        }
-
-        return fieldDataList;
     }
 
     private FieldData createFieldData(final Field field) {
@@ -146,31 +147,8 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
         }
     }
 
-    private List<Method> findMethods(final Class<?> beanClass, final List<Method> allMethods) {
-        final List<Method> methods = new ArrayList<Method>();
-
-        for (final Method method : allMethods) {
-            if (methodNeedsInjection(method) && !reflectionUtils.isOverridden(method, allMethods)) {
-                methods.add(method);
-            }
-        }
-
-        return methods;
-    }
-
     private boolean methodNeedsInjection(final Method method) {
         return !reflectionUtils.isStatic(method) && method.isAnnotationPresent(INJECTION_ANNOTATION);
-    }
-
-    private List<MethodData> createMethodData(final List<Method> methods) {
-        final List<MethodData> methodDataList = new ArrayList<MethodData>();
-
-        for (final Method method : methods) {
-            final MethodData methodData = createMethodData(method);
-            methodDataList.add(methodData);
-        }
-
-        return methodDataList;
     }
 
     private MethodData createMethodData(final Method method) {

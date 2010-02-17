@@ -37,8 +37,7 @@ import javax.inject.Provider;
 import net.usikkert.kouinject.beandata.BeanData;
 import net.usikkert.kouinject.beandata.ConstructorData;
 import net.usikkert.kouinject.beandata.Dependency;
-import net.usikkert.kouinject.beandata.FieldData;
-import net.usikkert.kouinject.beandata.MethodData;
+import net.usikkert.kouinject.beandata.InjectionPoint;
 import net.usikkert.kouinject.util.Validate;
 
 /**
@@ -297,39 +296,21 @@ public class DefaultBeanLoader implements BeanLoader {
     }
 
     private void autowireBean(final BeanData beanData, final Object instance) {
-        autowireField(beanData, instance);
-        autowireMethod(beanData, instance);
-    }
+        final List<InjectionPoint> injectionPoints = beanData.getInjectionPoints();
 
-    private void autowireField(final BeanData beanData, final Object objectToAutowire) {
-        final List<FieldData> fields = beanData.getFields();
+        for (final InjectionPoint injectionPoint : injectionPoints) {
+            LOG.finer("Autowiring injection point: " + injectionPoint);
 
-        for (final FieldData field : fields) {
-            LOG.finer("Autowiring field: " + field);
-
-            final Dependency dependency = field.getDependency();
-            final Object bean = findBeanOrCreateProvider(dependency);
-
-            field.inject(objectToAutowire, new Object[] {bean});
-        }
-    }
-
-    private void autowireMethod(final BeanData beanData, final Object objectToAutowire) {
-        final List<MethodData> methods = beanData.getMethods();
-
-        for (final MethodData method : methods) {
-            LOG.finer("Autowiring method: " + method);
-
-            final List<Dependency> dependencies = method.getDependencies();
-            final Object[] beansForMethod = new Object[dependencies.size()];
+            final List<Dependency> dependencies = injectionPoint.getDependencies();
+            final Object[] beansForInjectionPoint = new Object[dependencies.size()];
 
             for (int i = 0; i < dependencies.size(); i++) {
                 final Dependency dependency = dependencies.get(i);
                 final Object bean = findBeanOrCreateProvider(dependency);
-                beansForMethod[i] = bean;
+                beansForInjectionPoint[i] = bean;
             }
 
-            method.inject(objectToAutowire, beansForMethod);
+            injectionPoint.inject(instance, beansForInjectionPoint);
         }
     }
 
