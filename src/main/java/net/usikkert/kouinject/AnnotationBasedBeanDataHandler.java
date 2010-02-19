@@ -71,21 +71,20 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
         final List<Method> allMethods = reflectionUtils.findAllMethods(beanClass);
         final List<Member> allMembers = reflectionUtils.findAllMembers(beanClass);
         final List<InjectionPoint> injectionPoints = findInjectionPoints(allMembers, allMethods);
+        final ConstructorData constructorData = createConstructorDataIfNeeded(beanClass, skipConstructor);
 
-        final BeanData beanData;
+        return new BeanData(beanClass, constructorData, injectionPoints, false);
+    }
 
-        if (!skipConstructor) {
-            final Constructor<?> constructor = findConstructor(beanClass);
-            final ConstructorData constructorData = createConstructorData(constructor);
-
-            beanData = new BeanData(beanClass, constructorData, injectionPoints);
+    private ConstructorData createConstructorDataIfNeeded(final Class<?> beanClass, final boolean skipConstructor) {
+        if (skipConstructor) {
+            return null;
         }
 
-        else {
-            beanData = new BeanData(beanClass, injectionPoints);
-        }
+        final Constructor<?> constructor = findConstructor(beanClass);
+        final ConstructorData constructorData = createConstructorData(constructor);
 
-        return beanData;
+        return constructorData;
     }
 
     private List<InjectionPoint> findInjectionPoints(final List<Member> allMembers, final List<Method> allMethods) {

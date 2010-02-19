@@ -38,6 +38,7 @@ public class BeanData {
     private final ConstructorData constructor;
     private final List<InjectionPoint> injectionPoints;
     private final List<Dependency> dependencies;
+    private final boolean isSingleton;
 
     /**
      * Constructs a new BeanData instance for describing the defined class.
@@ -46,29 +47,20 @@ public class BeanData {
      * @param constructor Optional meta-data for the constructor to invoke on beanClass.
      *                     If this is null then the bean can not be instantiated.
      * @param injectionPoints Meta-data for the injection points in beanClass that requires dependency injection.
+     * @param isSingleton If this bean is a singleton.
      */
     public BeanData(final Class<?> beanClass, final ConstructorData constructor,
-            final List<InjectionPoint> injectionPoints) {
+            final List<InjectionPoint> injectionPoints, final boolean isSingleton) {
         Validate.notNull(beanClass, "Bean class can not be null");
         Validate.notNull(injectionPoints, "Injection points can not be null");
 
         this.beanClass = beanClass;
         this.constructor = constructor;
         this.injectionPoints = injectionPoints;
+        this.isSingleton = isSingleton;
         this.dependencies = new ArrayList<Dependency>();
 
         mapDependencies();
-    }
-
-    /**
-     * Constructs a new BeanData instance for describing the defined class. This constructor
-     * does not take constructor meta-data, so the bean can not be instantiated.
-     *
-     * @param beanClass The class this BeanData will describe.
-     * @param injectionPoints Meta-data for the injection points in beanClass that requires dependency injection.
-     */
-    public BeanData(final Class<?> beanClass, final List<InjectionPoint> injectionPoints) {
-        this(beanClass, null, injectionPoints);
     }
 
     /**
@@ -141,6 +133,15 @@ public class BeanData {
      */
     public List<Dependency> getDependencies() {
         return dependencies;
+    }
+
+    /**
+     * If this bean is a singleton or not.
+     *
+     * @return If this bean is a singleton.
+     */
+    public boolean isSingleton() {
+        return isSingleton;
     }
 
     private void mapDependencies() {
