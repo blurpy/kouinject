@@ -49,6 +49,7 @@ import net.usikkert.kouinject.testbeans.scanned.FinalBean;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.ProviderBean;
 import net.usikkert.kouinject.testbeans.scanned.SetterBean;
+import net.usikkert.kouinject.testbeans.scanned.SingletonBean;
 import net.usikkert.kouinject.testbeans.scanned.StaticBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
@@ -381,6 +382,20 @@ public class AnnotationBasedBeanDataHandlerTest {
 
         final List<Dependency> dependencies = beanData.getDependencies();
         assertEquals(0, dependencies.size());
+    }
+
+    @Test
+    public void getBeanDataShouldDetectSingletons() {
+        final BeanData beanData = handler.getBeanData(SingletonBean.class, false);
+
+        assertTrue(beanData.isSingleton());
+    }
+
+    @Test
+    public void getBeanDataShouldDetectNonSingletons() {
+        final BeanData beanData = handler.getBeanData(CarBean.class, false);
+
+        assertFalse(beanData.isSingleton());
     }
 
     @Test(expected = RuntimeException.class)

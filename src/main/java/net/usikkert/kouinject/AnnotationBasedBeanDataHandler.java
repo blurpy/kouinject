@@ -58,7 +58,7 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
     private static final Class<Inject> INJECTION_ANNOTATION = Inject.class;
 
     private final AnnotationBasedQualifierHandler qualifierHandler = new AnnotationBasedQualifierHandler();
-
+    private final AnnotationBasedScopeHandler scopeHandler = new AnnotationBasedScopeHandler();
     private final ReflectionUtils reflectionUtils = new ReflectionUtils();
 
     /**
@@ -72,8 +72,9 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
         final List<Member> allMembers = reflectionUtils.findAllMembers(beanClass);
         final List<InjectionPoint> injectionPoints = findInjectionPoints(allMembers, allMethods);
         final ConstructorData constructorData = createConstructorDataIfNeeded(beanClass, skipConstructor);
+        final boolean singleton = scopeHandler.isSingleton(beanClass);
 
-        return new BeanData(beanClass, constructorData, injectionPoints, false);
+        return new BeanData(beanClass, constructorData, injectionPoints, singleton);
     }
 
     private ConstructorData createConstructorDataIfNeeded(final Class<?> beanClass, final boolean skipConstructor) {
