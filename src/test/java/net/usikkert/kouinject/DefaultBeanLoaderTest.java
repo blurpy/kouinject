@@ -552,6 +552,14 @@ public class DefaultBeanLoaderTest {
         assertNotNull(noBean.getCoffeeBean());
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void autowireShouldDetectMissingDependencies() {
+        beanLoader.loadBeans();
+
+        final TheInterfaceUser theInterfaceUser = new TheInterfaceUser();
+        beanLoader.autowire(theInterfaceUser);
+    }
+
     @Test
     public void beanLoaderShouldHandleMocks() {
         final HelloBean helloBean = mock(HelloBean.class);
