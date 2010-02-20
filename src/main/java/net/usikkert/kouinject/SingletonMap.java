@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.usikkert.kouinject.beandata.Dependency;
+import net.usikkert.kouinject.util.Validate;
 
 /**
  * Map with cached singleton beans.
@@ -53,6 +54,9 @@ public class SingletonMap {
      * @param singleton The bean to add as as singleton.
      */
     public synchronized void addSingleton(final Dependency description, final Object singleton) {
+        Validate.notNull(description, "Description can not be null");
+        Validate.notNull(singleton, "Singleton can not be null");
+
         if (containsSingleton(description)) {
             throw new IllegalArgumentException("Cannot add already existing singleton: " + description);
         }
@@ -68,6 +72,8 @@ public class SingletonMap {
      * @return The singleton, or <code>null</code>, or {@link IllegalArgumentException}.
      */
     public synchronized Object getSingleton(final Dependency singletonNeeded, final boolean throwEx) {
+        Validate.notNull(singletonNeeded, "Singleton needed can not be null");
+
         final List<Dependency> matches = new ArrayList<Dependency>();
         final Iterator<Dependency> iterator = singletons.keySet().iterator();
 
@@ -112,6 +118,8 @@ public class SingletonMap {
      * @return If the singleton exists in the map.
      */
     public boolean containsSingleton(final Dependency description) {
+        Validate.notNull(description, "Description can not be null");
+
         final Object singleton = getSingleton(description, false);
         return singleton != null;
     }
