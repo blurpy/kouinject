@@ -44,11 +44,9 @@ import org.atinject.tck.auto.accessories.SpareTire;
  * Test for setting up the official JSR-330 Technology Compatibility Kit
  * using KouInject.
  *
- * TODO rename so the tests run automatically when the TCK passes.
- *
  * @author Christian Ihle
  */
-public class Jsr330TckSuite {
+public class Jsr330TckSuiteTest {
 
     public static Test suite() {
         final BeanLocator beanLocator = new BeanLocator() {
