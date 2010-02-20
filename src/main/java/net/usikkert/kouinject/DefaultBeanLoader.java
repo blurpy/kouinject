@@ -110,16 +110,7 @@ public class DefaultBeanLoader implements BeanLoader {
         Validate.notNull(objectToAutowire, "Object to autowire can not be null");
 
         final BeanData beanData = beanDataHandler.getBeanData(objectToAutowire.getClass(), true);
-        final List<Dependency> missingDependencies = findMissingDependencies(beanData);
-
-        if (allDependenciesAreMet(missingDependencies)) {
-            autowireBean(beanData, objectToAutowire);
-        }
-
-        else {
-            throw new IllegalArgumentException(
-                    "Could not autowire object, missing dependencies: " + missingDependencies);
-        }
+        autowireBean(beanData, objectToAutowire);
     }
 
     /**
@@ -362,10 +353,6 @@ public class DefaultBeanLoader implements BeanLoader {
         }
 
         return matches.get(0);
-    }
-
-    private boolean allDependenciesAreMet(final List<Dependency> missingDependencies) {
-        return missingDependencies.size() == 0;
     }
 
     private List<Dependency> findMissingDependencies(final BeanData beanData) {
