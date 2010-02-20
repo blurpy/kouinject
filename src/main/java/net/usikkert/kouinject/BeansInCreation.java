@@ -52,6 +52,10 @@ public class BeansInCreation {
     public synchronized void addBean(final Dependency bean) {
         Validate.notNull(bean, "Bean can not be null");
 
+        if (containsBean(bean)) {
+            throw new IllegalStateException("Circular dependency - bean already in creation: " + bean);
+        }
+
         beansInCreation.add(bean);
     }
 

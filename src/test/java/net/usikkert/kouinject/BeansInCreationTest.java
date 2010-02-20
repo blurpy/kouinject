@@ -75,6 +75,18 @@ public class BeansInCreationTest {
     }
 
     @Test
+    public void addBeanShouldFailIfBeanAlreadyExists() {
+        assertEquals(0, beansInCreation.size());
+        assertFalse(beansInCreation.containsBean(helloBean));
+
+        beansInCreation.addBean(helloBean);
+        assertEquals(1, beansInCreation.size());
+        assertTrue(beansInCreation.containsBean(helloBean));
+
+        beansInCreation.addBean(helloBean);
+    }
+
+    @Test
     public void removeBeanShouldRemoveTheBeanFromTheList() {
         beansInCreation.addBean(helloBean);
         beansInCreation.addBean(setterBean);
