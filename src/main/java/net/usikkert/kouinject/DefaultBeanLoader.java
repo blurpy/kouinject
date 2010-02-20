@@ -59,7 +59,7 @@ public class DefaultBeanLoader implements BeanLoader {
 
     private static final Logger LOG = Logger.getLogger(DefaultBeanLoader.class.getName());
 
-    private final Map<Dependency, Object> beanMap;
+    private final SingletonMap singletonMap;
 
     private final Collection<Class<?>> beansInCreation;
 
@@ -80,7 +80,7 @@ public class DefaultBeanLoader implements BeanLoader {
 
         this.beanDataHandler = beanDataHandler;
         this.beanLocator = beanLocator;
-        this.beanMap = Collections.synchronizedMap(new HashMap<Dependency, Object>());
+        this.singletonMap = new SingletonMap();
         this.beansInCreation = Collections.synchronizedCollection(new ArrayList<Class<?>>());
     }
 
@@ -172,9 +172,7 @@ public class DefaultBeanLoader implements BeanLoader {
             throw new IllegalArgumentException("Cannot add already existing bean: " + beanClass);
         }
 
-        synchronized (beanMap) {
-            beanMap.put(bean, beanToAdd);
-        }
+        singletonMap.addSingleton(bean, beanToAdd);
 
         LOG.fine("Bean added: " + beanClass.getName());
     }
@@ -320,11 +318,7 @@ public class DefaultBeanLoader implements BeanLoader {
     }
 
     private Object findBean(final Dependency beanNeeded, final boolean throwEx) {
-        synchronized (beanMap) {
-            final Iterator<Dependency> beanIterator = beanMap.keySet().iterator();
-            final Dependency matchingBean = getMatchingBean(beanNeeded, beanIterator, throwEx);
-            return beanMap.get(matchingBean);
-        }
+        return singletonMap.getSingleton(beanNeeded, throwEx);
     }
 
     private Dependency getMatchingBean(final Dependency beanNeeded, final Iterator<Dependency> beanIterator, final boolean throwEx) {
