@@ -592,6 +592,8 @@ public class DefaultBeanLoaderTest {
         when(beanLocator.findBeans()).thenReturn(beans);
 
         loader.loadBeans();
+
+        loader.getBean(FirstCircularBean.class);
     }
 
     @Test(expected = IllegalStateException.class)
@@ -645,6 +647,8 @@ public class DefaultBeanLoaderTest {
         when(beanLocator.findBeans()).thenReturn(beans);
 
         loader.loadBeans();
+
+        loader.getBean(TheInterfaceUser.class);
     }
 
     @Test(expected = IllegalArgumentException.class)

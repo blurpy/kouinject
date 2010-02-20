@@ -23,10 +23,7 @@
 package net.usikkert.kouinject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -58,11 +55,9 @@ public class DefaultBeanLoader implements BeanLoader {
     private static final Logger LOG = Logger.getLogger(DefaultBeanLoader.class.getName());
 
     private final SingletonMap singletonMap;
-
+    private final BeanDataMap beanDataMap;
     private final BeansInCreation beansInCreation;
-
     private final BeanDataHandler beanDataHandler;
-
     private final BeanLocator beanLocator;
 
     /**
@@ -79,11 +74,14 @@ public class DefaultBeanLoader implements BeanLoader {
         this.beanDataHandler = beanDataHandler;
         this.beanLocator = beanLocator;
         this.singletonMap = new SingletonMap();
+        this.beanDataMap = new BeanDataMap();
         this.beansInCreation = new BeansInCreation();
     }
 
     /**
      * {@inheritDoc}
+     *
+     * TODO run from constructor and make private.
      */
     @Override
     public void loadBeans() {
@@ -92,12 +90,14 @@ public class DefaultBeanLoader implements BeanLoader {
 
         final long start = System.currentTimeMillis();
 
-        final Map<Dependency, BeanData> beanDataMap = getBeanDataMap(detectedBeans);
-        createBeans(beanDataMap);
+        for (final Dependency bean : detectedBeans) {
+            final BeanData beanData = beanDataHandler.getBeanData(bean.getBeanClass(), false);
+            beanDataMap.addBeanData(bean, beanData);
+        }
 
         final long stop = System.currentTimeMillis();
 
-        LOG.fine("All beans created in: " + (stop - start) + " ms");
+        LOG.fine("All bean-data loaded in: " + (stop - start) + " ms");
     }
 
     /**
@@ -126,9 +126,24 @@ public class DefaultBeanLoader implements BeanLoader {
     @SuppressWarnings("unchecked")
     public <T extends Object> T getBean(final Class<T> beanClass, final String qualifier) {
         Validate.notNull(beanClass, "Bean class can not be null");
-        final Dependency bean = new Dependency(beanClass, qualifier);
 
-        return (T) findBean(bean, true);
+        final Dependency dependency = new Dependency(beanClass, qualifier);
+
+        if (!beanDataMap.containsBeanData(dependency)) {
+            throw new IllegalArgumentException("No registered bean-data for: " + dependency);
+        }
+
+        return (T) findOrCreateBean(dependency);
+    }
+
+    private Object findOrCreateBean(final Dependency dependency) {
+        final Object bean = findBean(dependency, false);
+
+        if (bean != null) {
+            return bean;
+        }
+
+        return createBean(dependency);
     }
 
     /**
@@ -168,63 +183,49 @@ public class DefaultBeanLoader implements BeanLoader {
 
         singletonMap.addSingleton(bean, beanToAdd);
 
+        if (!beanDataMap.containsBeanData(bean)) {
+            beanDataMap.addBeanData(bean, beanDataHandler.getBeanData(beanClass, false));
+        }
+
         LOG.fine("Bean added: " + beanClass.getName());
     }
 
-    private Map<Dependency, BeanData> getBeanDataMap(final Set<Dependency> detectedBeans) {
-        final Map<Dependency, BeanData> beanDataMap = new HashMap<Dependency, BeanData>();
-
-        for (final Dependency bean : detectedBeans) {
-            final BeanData beanData = beanDataHandler.getBeanData(bean.getBeanClass(), false);
-            beanDataMap.put(bean, beanData);
-        }
-
-        return beanDataMap;
-    }
-
-    private void createBeans(final Map<Dependency, BeanData> beanDataMap) {
-        final Iterator<Dependency> beanIterator = beanDataMap.keySet().iterator();
-
-        while (beanIterator.hasNext()) {
-            final Dependency bean = beanIterator.next();
-            createBean(bean, beanDataMap);
-        }
-    }
-
-    private void createBean(final Dependency dependency, final Map<Dependency, BeanData> beanDataMap) {
+    private Object createBean(final Dependency dependency) {
         LOG.finer("Checking bean before creation: " + dependency);
 
         if (dependency.isProvider()) {
             LOG.finer("Bean is provider - skipping: " + dependency);
-            return;
+            return null;
         }
 
         if (singletonMap.containsSingleton(dependency)) {
             LOG.finer("Bean already added - skipping: " + dependency);
-            return;
+            return null;
         }
 
         beansInCreation.addBean(dependency);
 
-        final BeanData beanData = findBeanData(dependency, beanDataMap);
+        final BeanData beanData = findBeanData(dependency);
         final List<Dependency> missingDependencies = findMissingDependencies(beanData);
 
         for (final Dependency missingDependency : missingDependencies) {
             LOG.finer("Checking bean " + dependency + " for missing dependency: " + missingDependency);
-            createBean(missingDependency, beanDataMap);
+            createBean(missingDependency);
         }
 
         final Object instance = instantiateBean(beanData);
-        addBean(instance, dependency.getQualifier());
+
+        if (beanData.isSingleton()) {
+            addBean(instance, dependency.getQualifier());
+        }
 
         beansInCreation.removeBean(dependency);
+
+        return instance;
     }
 
-    private BeanData findBeanData(final Dependency beanNeeded, final Map<Dependency, BeanData> beanDataMap) {
-        final Iterator<Dependency> beanIterator = beanDataMap.keySet().iterator();
-        final Dependency matchingBean = getMatchingBean(beanNeeded, beanIterator, true);
-
-        return beanDataMap.get(matchingBean);
+    private BeanData findBeanData(final Dependency beanNeeded) {
+        return beanDataMap.getBeanData(beanNeeded);
     }
 
     private Object instantiateBean(final BeanData beanData) {
@@ -280,39 +281,11 @@ public class DefaultBeanLoader implements BeanLoader {
             };
         }
 
-        return findBean(dependency, true);
+        return getBean(dependency.getBeanClass(), dependency.getQualifier());
     }
 
     private Object findBean(final Dependency beanNeeded, final boolean throwEx) {
         return singletonMap.getSingleton(beanNeeded, throwEx);
-    }
-
-    private Dependency getMatchingBean(final Dependency beanNeeded, final Iterator<Dependency> beanIterator, final boolean throwEx) {
-        final List<Dependency> matches = new ArrayList<Dependency>();
-
-        while (beanIterator.hasNext()) {
-            final Dependency bean = beanIterator.next();
-
-            if (beanNeeded.canInject(bean)) {
-                matches.add(bean);
-            }
-        }
-
-        if (matches.size() == 0) {
-            if (throwEx) {
-                throw new IllegalArgumentException("No matching bean found for " + beanNeeded);
-            }
-
-            else {
-                return null;
-            }
-        }
-
-        else if (matches.size() > 1) {
-            throw new IllegalStateException("Too many matching beans found for " + beanNeeded + " " + matches);
-        }
-
-        return matches.get(0);
     }
 
     private List<Dependency> findMissingDependencies(final BeanData beanData) {
