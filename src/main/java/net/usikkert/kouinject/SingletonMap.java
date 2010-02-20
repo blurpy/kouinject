@@ -53,7 +53,7 @@ public class SingletonMap {
      * @param singleton The bean to add as as singleton.
      */
     public synchronized void addSingleton(final Dependency description, final Object singleton) {
-        if (singletonAlreadyExists(description)) {
+        if (containsSingleton(description)) {
             throw new IllegalArgumentException("Cannot add already existing singleton: " + description);
         }
 
@@ -105,8 +105,14 @@ public class SingletonMap {
         return singletons.size();
     }
 
-    private boolean singletonAlreadyExists(final Dependency bean) {
-        final Object existingBean = getSingleton(bean, false);
-        return existingBean != null;
+    /**
+     * Checks if a singleton exists in the cache.
+     *
+     * @param description The description of the singleton.
+     * @return If the singleton exists in the map.
+     */
+    public boolean containsSingleton(final Dependency description) {
+        final Object singleton = getSingleton(description, false);
+        return singleton != null;
     }
 }

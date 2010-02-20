@@ -98,7 +98,6 @@ public class SingletonMapTest {
         addTestBeans();
 
         final Object setterBean = map.getSingleton(new Dependency(SetterBean.class), true);
-        System.out.println(setterBean);
         assertTrue(setterBean instanceof SetterBean);
 
         final Object fieldBean = map.getSingleton(new Dependency(FieldBean.class), true);
@@ -129,6 +128,22 @@ public class SingletonMapTest {
         addTestBeans();
 
         map.getSingleton(new Dependency(Object.class), true);
+    }
+
+    @Test
+    public void containsSingletonShouldDetectAddedBeans() {
+        addTestBeans();
+
+        assertTrue(map.containsSingleton(new Dependency(SetterBean.class)));
+        assertTrue(map.containsSingleton(new Dependency(FieldBean.class)));
+        assertTrue(map.containsSingleton(new Dependency(HelloBean.class)));
+    }
+
+    @Test
+    public void containsSingletonShouldHandleMissingBeans() {
+        addTestBeans();
+
+        assertFalse(map.containsSingleton(new Dependency(CarBean.class)));
     }
 
     private void addTestBeans() {

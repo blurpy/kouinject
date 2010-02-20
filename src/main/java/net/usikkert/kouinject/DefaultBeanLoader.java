@@ -168,10 +168,6 @@ public class DefaultBeanLoader implements BeanLoader {
         final Class<?> beanClass = beanToAdd.getClass();
         final Dependency bean = new Dependency(beanClass, qualifier);
 
-        if (beanAlreadyExists(bean)) {
-            throw new IllegalArgumentException("Cannot add already existing bean: " + beanClass);
-        }
-
         singletonMap.addSingleton(bean, beanToAdd);
 
         LOG.fine("Bean added: " + beanClass.getName());
@@ -205,7 +201,7 @@ public class DefaultBeanLoader implements BeanLoader {
             return;
         }
 
-        if (beanAlreadyExists(dependency)) {
+        if (singletonMap.containsSingleton(dependency)) {
             LOG.finer("Bean already added - skipping: " + dependency);
             return;
         }
@@ -247,11 +243,6 @@ public class DefaultBeanLoader implements BeanLoader {
                 throw new IllegalStateException("Circular dependency - bean already in creation: " + beanClass);
             }
         }
-    }
-
-    private boolean beanAlreadyExists(final Dependency bean) {
-        final Object existingBean = findBean(bean, false);
-        return existingBean != null;
     }
 
     private BeanData findBeanData(final Dependency beanNeeded, final Map<Dependency, BeanData> beanDataMap) {
