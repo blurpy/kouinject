@@ -117,7 +117,7 @@ public class SingletonMap {
      * @param description The description of the singleton.
      * @return If the singleton exists in the map.
      */
-    public boolean containsSingleton(final Dependency description) {
+    public synchronized boolean containsSingleton(final Dependency description) {
         Validate.notNull(description, "Description can not be null");
 
         final Object singleton = getSingleton(description, false);
