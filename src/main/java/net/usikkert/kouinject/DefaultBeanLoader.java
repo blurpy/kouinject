@@ -23,8 +23,6 @@
 package net.usikkert.kouinject;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -61,7 +59,7 @@ public class DefaultBeanLoader implements BeanLoader {
 
     private final SingletonMap singletonMap;
 
-    private final Collection<Class<?>> beansInCreation;
+    private final BeansInCreation beansInCreation;
 
     private final BeanDataHandler beanDataHandler;
 
@@ -81,7 +79,7 @@ public class DefaultBeanLoader implements BeanLoader {
         this.beanDataHandler = beanDataHandler;
         this.beanLocator = beanLocator;
         this.singletonMap = new SingletonMap();
-        this.beansInCreation = Collections.synchronizedCollection(new ArrayList<Class<?>>());
+        this.beansInCreation = new BeansInCreation();
     }
 
     /**
@@ -206,8 +204,8 @@ public class DefaultBeanLoader implements BeanLoader {
             return;
         }
 
-        abortIfBeanCurrentlyInCreation(dependency.getBeanClass());
-        addBeanInCreation(dependency.getBeanClass());
+        abortIfBeanCurrentlyInCreation(dependency);
+        beansInCreation.addBean(dependency);
 
         final BeanData beanData = findBeanData(dependency, beanDataMap);
         final List<Dependency> missingDependencies = findMissingDependencies(beanData);
@@ -220,28 +218,12 @@ public class DefaultBeanLoader implements BeanLoader {
         final Object instance = instantiateBean(beanData);
         addBean(instance, dependency.getQualifier());
 
-        removeBeanInCreation(dependency.getBeanClass());
+        beansInCreation.removeBean(dependency);
     }
 
-    private void removeBeanInCreation(final Class<?> beanClass) {
-        synchronized (beansInCreation) {
-            beansInCreation.remove(beanClass);
-        }
-    }
-
-    private void addBeanInCreation(final Class<?> beanClass) {
-        synchronized (beansInCreation) {
-            beansInCreation.add(beanClass);
-        }
-    }
-
-    private void abortIfBeanCurrentlyInCreation(final Class<?> beanClass) {
-        synchronized (beansInCreation) {
-            final boolean beanCurrentlyInCreation = beansInCreation.contains(beanClass);
-
-            if (beanCurrentlyInCreation) {
-                throw new IllegalStateException("Circular dependency - bean already in creation: " + beanClass);
-            }
+    private void abortIfBeanCurrentlyInCreation(final Dependency dependency) {
+        if (beansInCreation.containsBean(dependency)) {
+            throw new IllegalStateException("Circular dependency - bean already in creation: " + dependency);
         }
     }
 
