@@ -74,7 +74,7 @@ public class BeansInCreationTest {
         assertTrue(beansInCreation.containsBean(fieldBean));
     }
 
-    @Test
+    @Test(expected = IllegalStateException.class)
     public void addBeanShouldFailIfBeanAlreadyExists() {
         assertEquals(0, beansInCreation.size());
         assertFalse(beansInCreation.containsBean(helloBean));
