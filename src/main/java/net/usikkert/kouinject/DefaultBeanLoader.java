@@ -204,7 +204,6 @@ public class DefaultBeanLoader implements BeanLoader {
             return;
         }
 
-        abortIfBeanCurrentlyInCreation(dependency);
         beansInCreation.addBean(dependency);
 
         final BeanData beanData = findBeanData(dependency, beanDataMap);
@@ -219,12 +218,6 @@ public class DefaultBeanLoader implements BeanLoader {
         addBean(instance, dependency.getQualifier());
 
         beansInCreation.removeBean(dependency);
-    }
-
-    private void abortIfBeanCurrentlyInCreation(final Dependency dependency) {
-        if (beansInCreation.containsBean(dependency)) {
-            throw new IllegalStateException("Circular dependency - bean already in creation: " + dependency);
-        }
     }
 
     private BeanData findBeanData(final Dependency beanNeeded, final Map<Dependency, BeanData> beanDataMap) {
