@@ -53,7 +53,7 @@ public class AnnotationBasedBeanLocator implements BeanLocator {
      * that are bean candidates.
      */
     public AnnotationBasedBeanLocator(final String basePackage, final ClassLocator classLocator) {
-        Validate.notNull(basePackage, "Base package can not be null");
+        Validate.notEmpty(basePackage, "Base package can not be empty");
         Validate.notNull(classLocator, "Class locator can not be null");
 
         this.basePackage = basePackage;

@@ -83,4 +83,45 @@ public class ValidateTest {
             assertEquals("isFalse should fail", e.getMessage());
         }
     }
+
+    @Test
+    public void notEmptyShouldAcceptStringWithContent() {
+        Validate.notEmpty("not empty", "notEmpty should not fail");
+    }
+
+    @Test
+    public void notEmptyShouldThrowExceptionIfStringIsNull() {
+        try {
+            Validate.notEmpty(null, "notEmpty should fail");
+            fail("Should have got an exception");
+        }
+
+        catch (final IllegalArgumentException e) {
+            assertEquals("notEmpty should fail", e.getMessage());
+        }
+    }
+
+    @Test
+    public void notEmptyShouldThrowExceptionIfStringIsEmpty() {
+        try {
+            Validate.notEmpty("", "notEmpty should fail");
+            fail("Should have got an exception");
+        }
+
+        catch (final IllegalArgumentException e) {
+            assertEquals("notEmpty should fail", e.getMessage());
+        }
+    }
+
+    @Test
+    public void notEmptyShouldThrowExceptionIfStringIsOnlySpaces() {
+        try {
+            Validate.notEmpty(" ", "notEmpty should fail");
+            fail("Should have got an exception");
+        }
+
+        catch (final IllegalArgumentException e) {
+            assertEquals("notEmpty should fail", e.getMessage());
+        }
+    }
 }

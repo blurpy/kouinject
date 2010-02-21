@@ -50,6 +50,19 @@ public final class Validate {
     }
 
     /**
+     * Validates that the string is not empty, or only spaces.
+     *
+     * @param string The string to validate.
+     * @param message The message to use in the exception.
+     * @throws IllegalArgumentException If the string is empty.
+     */
+    public static void notEmpty(final String string, final String message) {
+        if (string == null || string.trim().isEmpty()) {
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    /**
      * Validates that the expression is true.
      *
      * @param expression The expression to validate.
