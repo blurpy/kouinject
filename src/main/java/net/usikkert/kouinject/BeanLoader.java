@@ -31,13 +31,6 @@ package net.usikkert.kouinject;
 public interface BeanLoader {
 
     /**
-     * Loads and autowires all the beans setup in the container.
-     *
-     * @throws RuntimeException If the beans can not be instantiated or dependencies can not be satisfied.
-     */
-    void loadBeans();
-
-    /**
      * Autowires dependencies in an already instantiated object.
      *
      * @param objectToAutowire The object to autowire.

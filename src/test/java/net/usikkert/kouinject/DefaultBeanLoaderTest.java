@@ -99,8 +99,6 @@ public class DefaultBeanLoaderTest {
 
     @Test
     public void checkAbstractBean() {
-        beanLoader.loadBeans();
-
         final AbstractBean abstractBean = beanLoader.getBean(AbstractBean.class);
         assertNotNull(abstractBean);
 
@@ -110,8 +108,6 @@ public class DefaultBeanLoaderTest {
 
     @Test
     public void checkAnimalBean() {
-        beanLoader.loadBeans();
-
         final AnimalBean animalBean = beanLoader.getBean(AnimalBean.class);
         assertNotNull(animalBean);
         assertTrue(animalBean.getClass().equals(AnimalBean.class));
@@ -140,8 +136,6 @@ public class DefaultBeanLoaderTest {
 
     @Test
     public void checkBlueBean() {
-        beanLoader.loadBeans();
-
         final BlueBean blueBean1 = beanLoader.getBean(BlueBean.class);
         assertNotNull(blueBean1);
 
@@ -154,8 +148,6 @@ public class DefaultBeanLoaderTest {
 
     @Test
     public void checkCatBean() {
-        beanLoader.loadBeans();
-
         final CatBean catBean = beanLoader.getBean(CatBean.class);
         assertNotNull(catBean);
         assertTrue(catBean.getClass().equals(CatBean.class));
@@ -200,8 +192,6 @@ public class DefaultBeanLoaderTest {
 
     @Test
     public void checkChildBean() {
-        beanLoader.loadBeans();
-
         final ChildBean childBean = beanLoader.getBean(ChildBean.class);
 
         assertNotNull(childBean.getFieldBean());
@@ -211,8 +201,6 @@ public class DefaultBeanLoaderTest {
 
     @Test
     public void checkCoffeeBean() {
-        beanLoader.loadBeans();
-
         final CoffeeBean coffeeBean = beanLoader.getBean(CoffeeBean.class);
 
         assertNotNull(coffeeBean.getHelloBean());
@@ -221,8 +209,6 @@ public class DefaultBeanLoaderTest {
 
     @Test
     public void checkConstructorBean() {
-        beanLoader.loadBeans();
-
         final ConstructorBean constructorBean = beanLoader.getBean(ConstructorBean.class);
 
         assertNotNull(constructorBean.getHelloBean());
@@ -231,8 +217,6 @@ public class DefaultBeanLoaderTest {
 
     @Test
     public void checkDarkYellowBean() {
-        beanLoader.loadBeans();
-
         final DarkYellowBean darkYellowBean1 = beanLoader.getBean(DarkYellowBean.class);
         assertNotNull(darkYellowBean1);
 
@@ -250,8 +234,6 @@ public class DefaultBeanLoaderTest {
 
     @Test
     public void checkEverythingBean() {
-        beanLoader.loadBeans();
-
         final EverythingBean everythingBean = beanLoader.getBean(EverythingBean.class);
 
         assertNotNull(everythingBean.getCoffeeBean());
@@ -266,8 +248,6 @@ public class DefaultBeanLoaderTest {
 
     @Test
     public void checkFieldBean() {
-        beanLoader.loadBeans();
-
         final FieldBean fieldBean = beanLoader.getBean(FieldBean.class);
 
         assertNotNull(fieldBean.getHelloBean());
@@ -277,8 +257,6 @@ public class DefaultBeanLoaderTest {
 
     @Test
     public void checkFinalBean() {
-        beanLoader.loadBeans();
-
         final FinalBean finalBean = beanLoader.getBean(FinalBean.class);
 
         assertNull(finalBean.getFieldBean());
@@ -286,8 +264,6 @@ public class DefaultBeanLoaderTest {
 
     @Test
     public void checkFirstCircularDependencyBean() {
-        beanLoader.loadBeans();
-
         final FirstCircularDependencyBean firstCircularDependencyBean = beanLoader.getBean(FirstCircularDependencyBean.class);
 
         assertNotNull(firstCircularDependencyBean.getSecondCircularDependencyBean());
@@ -295,8 +271,6 @@ public class DefaultBeanLoaderTest {
 
     @Test
     public void checkGarageBean() {
-        beanLoader.loadBeans();
-
         final GarageBean garageBean = beanLoader.getBean(GarageBean.class);
 
         final CarBean carBean = garageBean.getCarBean();
@@ -324,8 +298,6 @@ public class DefaultBeanLoaderTest {
 
     @Test
     public void checkGreenBean() {
-        beanLoader.loadBeans();
-
         final GreenBean greenBean1 = beanLoader.getBean(GreenBean.class);
         assertNotNull(greenBean1);
 
@@ -338,16 +310,13 @@ public class DefaultBeanLoaderTest {
 
     @Test
     public void checkHelloBean() {
-        beanLoader.loadBeans();
-
         final HelloBean helloBean = beanLoader.getBean(HelloBean.class);
+
         assertNotNull(helloBean);
     }
 
     @Test
     public void checkInterfaceBean() {
-        beanLoader.loadBeans();
-
         final InterfaceBean interfaceBean = beanLoader.getBean(InterfaceBean.class);
         assertNotNull(interfaceBean);
 
@@ -357,8 +326,6 @@ public class DefaultBeanLoaderTest {
 
     @Test
     public void checkJavaBean() {
-        beanLoader.loadBeans();
-
         final JavaBean javaBean = beanLoader.getBean(JavaBean.class);
 
         assertNotNull(javaBean.getFieldBean());
@@ -367,8 +334,6 @@ public class DefaultBeanLoaderTest {
 
     @Test
     public void checkLastBean() {
-        beanLoader.loadBeans();
-
         final LastBean lastBean = beanLoader.getBean(LastBean.class);
 
         assertNotNull(lastBean.getEverythingBean());
@@ -376,15 +341,11 @@ public class DefaultBeanLoaderTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void checkNoBean() {
-        beanLoader.loadBeans();
-
         beanLoader.getBean(NoBean.class);
     }
 
     @Test
     public void checkOrganismBean() {
-        beanLoader.loadBeans();
-
         final OrganismBean organismBean = beanLoader.getBean(OrganismBean.class);
         assertNotNull(organismBean);
         assertTrue(organismBean.getClass().equals(OrganismBean.class));
@@ -405,8 +366,6 @@ public class DefaultBeanLoaderTest {
 
     @Test
     public void checkPetBean() {
-        beanLoader.loadBeans();
-
         final PetBean petBean = beanLoader.getBean(PetBean.class);
         assertNotNull(petBean);
         assertTrue(petBean.getClass().equals(PetBean.class));
@@ -443,8 +402,6 @@ public class DefaultBeanLoaderTest {
 
     @Test
     public void checkProviderBean() {
-        beanLoader.loadBeans();
-
         final ProviderBean providerBean = beanLoader.getBean(ProviderBean.class);
 
         final Provider<ConstructorBean> constructorBeanProvider = providerBean.getConstructorBeanProvider();
@@ -462,8 +419,6 @@ public class DefaultBeanLoaderTest {
 
     @Test
     public void checkRainbowBean() {
-        beanLoader.loadBeans();
-
         final RainbowBean rainbowBean = beanLoader.getBean(RainbowBean.class);
 
         assertTrue(rainbowBean.getBlueBean() instanceof BlueBean);
@@ -474,8 +429,6 @@ public class DefaultBeanLoaderTest {
 
     @Test
     public void checkRedBean() {
-        beanLoader.loadBeans();
-
         final RedBean redBean1 = beanLoader.getBean(RedBean.class);
         assertNotNull(redBean1);
 
@@ -488,8 +441,6 @@ public class DefaultBeanLoaderTest {
 
     @Test
     public void checkSecondCircularDependencyBean() {
-        beanLoader.loadBeans();
-
         final SecondCircularDependencyBean secondCircularDependencyBean = beanLoader.getBean(SecondCircularDependencyBean.class);
 
         final Provider<FirstCircularDependencyBean> firstCircularDependencyBeanProvider
@@ -500,8 +451,6 @@ public class DefaultBeanLoaderTest {
 
     @Test
     public void checkSetterBean() {
-        beanLoader.loadBeans();
-
         final SetterBean setterBean = beanLoader.getBean(SetterBean.class);
 
         assertNotNull(setterBean.getFieldBean());
@@ -509,16 +458,12 @@ public class DefaultBeanLoaderTest {
 
     @Test
     public void checkStaticBean() {
-        beanLoader.loadBeans();
-
         assertNull(StaticBean.getFieldBean());
         assertNull(StaticBean.getSetterBean());
     }
 
     @Test
     public void checkYellowBean() {
-        beanLoader.loadBeans();
-
         final YellowBean yellowBean1 = beanLoader.getBean(YellowBean.class);
         assertNotNull(yellowBean1);
         assertTrue(yellowBean1.getClass().equals(YellowBean.class));
@@ -534,8 +479,6 @@ public class DefaultBeanLoaderTest {
 
     @Test
     public void addBeanShouldMakeBeanAvailableButNotAutowire() {
-        beanLoader.loadBeans();
-
         final NoBean noBean = new NoBean();
         beanLoader.addBean(noBean);
 
@@ -547,8 +490,6 @@ public class DefaultBeanLoaderTest {
 
     @Test
     public void autowireShouldInjectFieldsInBean() {
-        beanLoader.loadBeans();
-
         final NoBean noBean = new NoBean();
         beanLoader.autowire(noBean);
 
@@ -558,25 +499,27 @@ public class DefaultBeanLoaderTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void autowireShouldDetectMissingDependencies() {
-        beanLoader.loadBeans();
-
         final TheInterfaceUser theInterfaceUser = new TheInterfaceUser();
         beanLoader.autowire(theInterfaceUser);
     }
 
     @Test
     public void beanLoaderShouldHandleMocks() {
+        final BeanLocator beanLocator = mock(BeanLocator.class);
+        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
+        final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler, beanLocator);
+
         final HelloBean helloBean = mock(HelloBean.class);
-        beanLoader.addBean(helloBean);
+        loader.addBean(helloBean);
 
         final AbstractBeanImpl abstractBean = mock(AbstractBeanImpl.class);
-        beanLoader.addBean(abstractBean);
+        loader.addBean(abstractBean);
 
         final InterfaceBean interfaceBean = mock(InterfaceBean.class);
-        beanLoader.addBean(interfaceBean);
+        loader.addBean(interfaceBean);
 
         final FieldBean fieldBean = new FieldBean();
-        beanLoader.autowire(fieldBean);
+        loader.autowire(fieldBean);
 
         assertSame(helloBean, fieldBean.getHelloBean());
         assertSame(abstractBean, fieldBean.getAbstractBean());
@@ -587,15 +530,13 @@ public class DefaultBeanLoaderTest {
     public void circularDependenciesShouldBeDetected() {
         final BeanLocator beanLocator = mock(BeanLocator.class);
         final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
-        final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler, beanLocator);
 
         final Set<Dependency> beans = new HashSet<Dependency>();
         beans.add(new Dependency(FirstCircularBean.class));
         beans.add(new Dependency(SecondCircularBean.class));
-
         when(beanLocator.findBeans()).thenReturn(beans);
 
-        loader.loadBeans();
+        final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler, beanLocator);
 
         loader.getBean(FirstCircularBean.class);
     }
@@ -604,15 +545,13 @@ public class DefaultBeanLoaderTest {
     public void tooManyMatchesForADependencyShouldBeDetected() {
         final BeanLocator beanLocator = mock(BeanLocator.class);
         final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
-        final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler, beanLocator);
 
         final Set<Dependency> beans = new HashSet<Dependency>();
         beans.add(new Dependency(FirstInterfaceImpl.class));
         beans.add(new Dependency(SecondInterfaceImpl.class));
-
         when(beanLocator.findBeans()).thenReturn(beans);
 
-        loader.loadBeans();
+        final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler, beanLocator);
 
         final TheInterfaceUser theInterfaceUser = new TheInterfaceUser();
         loader.autowire(theInterfaceUser);
@@ -622,15 +561,13 @@ public class DefaultBeanLoaderTest {
     public void severalBeansForAnInterfaceIsOKIfACloserMatchToImplIsRequested() {
         final BeanLocator beanLocator = mock(BeanLocator.class);
         final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
-        final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler, beanLocator);
 
         final Set<Dependency> beans = new HashSet<Dependency>();
         beans.add(new Dependency(FirstInterfaceImpl.class));
         beans.add(new Dependency(SecondInterfaceImpl.class));
-
         when(beanLocator.findBeans()).thenReturn(beans);
 
-        loader.loadBeans();
+        final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler, beanLocator);
 
         final ACloserMatchOfImplementationUser aCloserMatch = new ACloserMatchOfImplementationUser();
         loader.autowire(aCloserMatch);
@@ -643,50 +580,38 @@ public class DefaultBeanLoaderTest {
     public void noMatchesForADependencyShouldBeDetected() {
         final BeanLocator beanLocator = mock(BeanLocator.class);
         final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
-        final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler, beanLocator);
 
         final Set<Dependency> beans = new HashSet<Dependency>();
         beans.add(new Dependency(TheInterfaceUser.class));
-
         when(beanLocator.findBeans()).thenReturn(beans);
 
-        loader.loadBeans();
+        final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler, beanLocator);
 
         loader.getBean(TheInterfaceUser.class);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getBeanShouldFailIfQualifierIsUsedOnBeanWithoutQualifier() {
-        beanLoader.loadBeans();
-
         beanLoader.getBean(RainbowBean.class, "pink");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getBeanShouldFailIfWrongQualifierIsUsedOnExactClass() {
-        beanLoader.loadBeans();
-
         beanLoader.getBean(YellowBean.class, "brown");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getBeanShouldFailIfWrongQualifierIsUsedOnInterface() {
-        beanLoader.loadBeans();
-
         beanLoader.getBean(ColorBean.class, "brown");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getBeanShouldFailIfNoQualifierIsUsedOnInterface() {
-        beanLoader.loadBeans();
-
         beanLoader.getBean(ColorBean.class);
     }
 
     @Test
     public void getBeanShouldReturnUniqueInstancesForPrototypeScopedBeans() {
-        beanLoader.loadBeans();
-
         final HelloBean helloBean1 = beanLoader.getBean(HelloBean.class);
         final HelloBean helloBean2 = beanLoader.getBean(HelloBean.class);
 
@@ -695,8 +620,6 @@ public class DefaultBeanLoaderTest {
 
     @Test
     public void getBeanShouldReturnTheSameInstanceForSingletonScopedBeans() {
-        beanLoader.loadBeans();
-
         final SingletonBean singletonBean1 = beanLoader.getBean(SingletonBean.class);
         final SingletonBean singletonBean2 = beanLoader.getBean(SingletonBean.class);
 
@@ -705,8 +628,6 @@ public class DefaultBeanLoaderTest {
 
     @Test
     public void getOnAProviderShouldReturnUniqueInstancesForPrototypeScopedBeans() {
-        beanLoader.loadBeans();
-
         final ProviderBean providerBean = beanLoader.getBean(ProviderBean.class);
         final Provider<FieldBean> fieldBeanProvider = providerBean.getFieldBeanProvider();
 
@@ -718,8 +639,6 @@ public class DefaultBeanLoaderTest {
 
     @Test
     public void getOnAProviderShouldReturnTheSameInstanceForSingletonScopedBeans() {
-        beanLoader.loadBeans();
-
         final SingletonProviderBean singletonProviderBean = beanLoader.getBean(SingletonProviderBean.class);
         final Provider<SingletonBean> singletonBeanProvider = singletonProviderBean.getSingletonBeanProvider();
 
@@ -731,8 +650,6 @@ public class DefaultBeanLoaderTest {
 
     @Test
     public void prototypeBeanShouldSupportSingletonDependencies() {
-        beanLoader.loadBeans();
-
         final PrototypeWithSingletonBean prototypeBean1 = beanLoader.getBean(PrototypeWithSingletonBean.class);
         final PrototypeWithSingletonBean prototypeBean2 = beanLoader.getBean(PrototypeWithSingletonBean.class);
 
@@ -751,8 +668,6 @@ public class DefaultBeanLoaderTest {
 
     @Test
     public void singletonBeanShouldSupportPrototypeDependencies() {
-        beanLoader.loadBeans();
-
         final SingletonWithPrototypeBean singletonBean1 = beanLoader.getBean(SingletonWithPrototypeBean.class);
         final SingletonWithPrototypeBean singletonBean2 = beanLoader.getBean(SingletonWithPrototypeBean.class);
 

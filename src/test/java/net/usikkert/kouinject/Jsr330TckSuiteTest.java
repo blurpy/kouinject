@@ -69,7 +69,6 @@ public class Jsr330TckSuiteTest {
 
         final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
         final BeanLoader beanLoader = new DefaultBeanLoader(beanDataHandler, beanLocator);
-        beanLoader.loadBeans();
 
         final Car car = beanLoader.getBean(Car.class);
 

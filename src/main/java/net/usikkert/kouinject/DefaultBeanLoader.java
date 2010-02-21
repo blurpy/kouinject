@@ -45,7 +45,6 @@ import net.usikkert.kouinject.util.Validate;
  *   final BeanLocator beanLocator = new AnnotationBasedBeanLocator("basepackage.to.scan", classLocator);
  *   BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
  *   BeanLoader beanLoader = new DefaultBeanLoader(beanDataHandler, beanLocator);
- *   beanLoader.loadBeans();
  * </pre>
  *
  * @author Christian Ihle
@@ -62,7 +61,7 @@ public class DefaultBeanLoader implements BeanLoader {
 
     /**
      * Constructs a new instance of this {@link BeanLoader} with the specified {@link BeanDataHandler}
-     * and {@link BeanLocator}.
+     * and {@link BeanLocator}. Detected beans will be scanned and prepared, but not instantiated.
      *
      * @param beanDataHandler The handler to use for finding the meta-data required to instantiate beans.
      * @param beanLocator The locator to use for getting the beans to load.
@@ -76,15 +75,14 @@ public class DefaultBeanLoader implements BeanLoader {
         this.singletonMap = new SingletonMap();
         this.beanDataMap = new BeanDataMap();
         this.beansInCreation = new BeansInCreation();
+
+        loadBeanData();
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * TODO run from constructor and make private.
+     * Finds all registered beans, and prepares them for being instantiated.
      */
-    @Override
-    public void loadBeans() {
+    private void loadBeanData() {
         final Set<Dependency> detectedBeans = beanLocator.findBeans();
         LOG.fine("Beans found: " + detectedBeans.size());
 
