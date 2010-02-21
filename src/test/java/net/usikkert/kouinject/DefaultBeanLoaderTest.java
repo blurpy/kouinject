@@ -71,6 +71,10 @@ import net.usikkert.kouinject.testbeans.scanned.qualifier.DarkYellowBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.GreenBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.RedBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.YellowBean;
+import net.usikkert.kouinject.testbeans.scanned.scope.PrototypeWithSingletonBean;
+import net.usikkert.kouinject.testbeans.scanned.scope.SingletonBean;
+import net.usikkert.kouinject.testbeans.scanned.scope.SingletonProviderBean;
+import net.usikkert.kouinject.testbeans.scanned.scope.SingletonWithPrototypeBean;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -677,5 +681,85 @@ public class DefaultBeanLoaderTest {
         beanLoader.loadBeans();
 
         beanLoader.getBean(ColorBean.class);
+    }
+
+    @Test
+    public void getBeanShouldReturnUniqueInstancesForPrototypeScopedBeans() {
+        beanLoader.loadBeans();
+
+        final HelloBean helloBean1 = beanLoader.getBean(HelloBean.class);
+        final HelloBean helloBean2 = beanLoader.getBean(HelloBean.class);
+
+        assertNotSame(helloBean1, helloBean2);
+    }
+
+    @Test
+    public void getBeanShouldReturnTheSameInstanceForSingletonScopedBeans() {
+        beanLoader.loadBeans();
+
+        final SingletonBean singletonBean1 = beanLoader.getBean(SingletonBean.class);
+        final SingletonBean singletonBean2 = beanLoader.getBean(SingletonBean.class);
+
+        assertSame(singletonBean1, singletonBean2);
+    }
+
+    @Test
+    public void getOnAProviderShouldReturnUniqueInstancesForPrototypeScopedBeans() {
+        beanLoader.loadBeans();
+
+        final ProviderBean providerBean = beanLoader.getBean(ProviderBean.class);
+        final Provider<FieldBean> fieldBeanProvider = providerBean.getFieldBeanProvider();
+
+        final FieldBean fieldBean1 = fieldBeanProvider.get();
+        final FieldBean fieldBean2 = fieldBeanProvider.get();
+
+        assertNotSame(fieldBean1, fieldBean2);
+    }
+
+    @Test
+    public void getOnAProviderShouldReturnTheSameInstanceForSingletonScopedBeans() {
+        beanLoader.loadBeans();
+
+        final SingletonProviderBean singletonProviderBean = beanLoader.getBean(SingletonProviderBean.class);
+        final Provider<SingletonBean> singletonBeanProvider = singletonProviderBean.getSingletonBeanProvider();
+
+        final SingletonBean singletonBean1 = singletonBeanProvider.get();
+        final SingletonBean singletonBean2 = singletonBeanProvider.get();
+
+        assertSame(singletonBean1, singletonBean2);
+    }
+
+    @Test
+    public void prototypeBeanShouldSupportSingletonDependencies() {
+        beanLoader.loadBeans();
+
+        final PrototypeWithSingletonBean prototypeBean1 = beanLoader.getBean(PrototypeWithSingletonBean.class);
+        final PrototypeWithSingletonBean prototypeBean2 = beanLoader.getBean(PrototypeWithSingletonBean.class);
+
+        assertNotSame(prototypeBean1, prototypeBean2);
+
+        assertNotNull(prototypeBean1.getSingletonBean1());
+        assertNotNull(prototypeBean1.getSingletonBean2());
+        assertSame(prototypeBean1.getSingletonBean1(), prototypeBean1.getSingletonBean2());
+
+        assertNotNull(prototypeBean2.getSingletonBean1());
+        assertNotNull(prototypeBean2.getSingletonBean2());
+        assertSame(prototypeBean2.getSingletonBean1(), prototypeBean2.getSingletonBean2());
+
+        assertSame(prototypeBean1.getSingletonBean1(), prototypeBean2.getSingletonBean2());
+    }
+
+    @Test
+    public void singletonBeanShouldSupportPrototypeDependencies() {
+        beanLoader.loadBeans();
+
+        final SingletonWithPrototypeBean singletonBean1 = beanLoader.getBean(SingletonWithPrototypeBean.class);
+        final SingletonWithPrototypeBean singletonBean2 = beanLoader.getBean(SingletonWithPrototypeBean.class);
+
+        assertSame(singletonBean1, singletonBean2);
+
+        assertNotNull(singletonBean1.getHelloBean1());
+        assertNotNull(singletonBean1.getHelloBean2());
+        assertNotSame(singletonBean1.getHelloBean1(), singletonBean1.getHelloBean2());
     }
 }

@@ -20,49 +20,31 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject;
+package net.usikkert.kouinject.testbeans.scanned.scope;
 
-import static org.junit.Assert.*;
+import javax.inject.Inject;
 
-import net.usikkert.kouinject.testbeans.notscanned.notloaded.TooManyScopesBean;
-import net.usikkert.kouinject.testbeans.notscanned.notloaded.UnknownScopeBean;
-import net.usikkert.kouinject.testbeans.scanned.CarBean;
-import net.usikkert.kouinject.testbeans.scanned.scope.SingletonBean;
-
-import org.junit.Before;
-import org.junit.Test;
+import net.usikkert.kouinject.annotation.Component;
 
 /**
- * Test of {@link AnnotationBasedScopeHandler}.
+ * Prototype bean with singleton dependencies, for testing scope mixing.
  *
  * @author Christian Ihle
  */
-public class AnnotationBasedScopeHandlerTest {
+@Component
+public class PrototypeWithSingletonBean {
 
-    private AnnotationBasedScopeHandler scopeHandler;
+    @Inject
+    private SingletonBean singletonBean1;
 
-    @Before
-    public void createScopeHandler() {
-        scopeHandler = new AnnotationBasedScopeHandler();
+    @Inject
+    private SingletonBean singletonBean2;
+
+    public SingletonBean getSingletonBean1() {
+        return singletonBean1;
     }
 
-    @Test
-    public void isSingletonShouldBeFalseOnBeanWithoutSingletonAnnotation() {
-        assertFalse(scopeHandler.isSingleton(CarBean.class));
-    }
-
-    @Test
-    public void isSingletonShouldBeTrueOnBeanWithSingletonAnnotation() {
-        assertTrue(scopeHandler.isSingleton(SingletonBean.class));
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void isSingletonShouldThrowExceptionIfUnknownScope() {
-        assertFalse(scopeHandler.isSingleton(UnknownScopeBean.class));
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void isSingletonShouldThrowExceptionIfMoreThanOneScope() {
-        assertFalse(scopeHandler.isSingleton(TooManyScopesBean.class));
+    public SingletonBean getSingletonBean2() {
+        return singletonBean2;
     }
 }

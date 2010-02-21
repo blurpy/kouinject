@@ -20,49 +20,19 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject;
+package net.usikkert.kouinject.testbeans.scanned.scope;
 
-import static org.junit.Assert.*;
+import javax.inject.Singleton;
 
-import net.usikkert.kouinject.testbeans.notscanned.notloaded.TooManyScopesBean;
-import net.usikkert.kouinject.testbeans.notscanned.notloaded.UnknownScopeBean;
-import net.usikkert.kouinject.testbeans.scanned.CarBean;
-import net.usikkert.kouinject.testbeans.scanned.scope.SingletonBean;
-
-import org.junit.Before;
-import org.junit.Test;
+import net.usikkert.kouinject.annotation.Component;
 
 /**
- * Test of {@link AnnotationBasedScopeHandler}.
+ * Bean for testing singleton scope.
  *
  * @author Christian Ihle
  */
-public class AnnotationBasedScopeHandlerTest {
+@Singleton
+@Component
+public class SingletonBean {
 
-    private AnnotationBasedScopeHandler scopeHandler;
-
-    @Before
-    public void createScopeHandler() {
-        scopeHandler = new AnnotationBasedScopeHandler();
-    }
-
-    @Test
-    public void isSingletonShouldBeFalseOnBeanWithoutSingletonAnnotation() {
-        assertFalse(scopeHandler.isSingleton(CarBean.class));
-    }
-
-    @Test
-    public void isSingletonShouldBeTrueOnBeanWithSingletonAnnotation() {
-        assertTrue(scopeHandler.isSingleton(SingletonBean.class));
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void isSingletonShouldThrowExceptionIfUnknownScope() {
-        assertFalse(scopeHandler.isSingleton(UnknownScopeBean.class));
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void isSingletonShouldThrowExceptionIfMoreThanOneScope() {
-        assertFalse(scopeHandler.isSingleton(TooManyScopesBean.class));
-    }
 }

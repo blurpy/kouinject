@@ -20,16 +20,34 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans.scanned;
+package net.usikkert.kouinject.testbeans.scanned.scope;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import net.usikkert.kouinject.annotation.Component;
+import net.usikkert.kouinject.testbeans.scanned.HelloBean;
+
 /**
- * Bean for testing singleton scope.
+ * Singleton bean with prototype dependencies, for testing scope mixing.
  *
  * @author Christian Ihle
  */
 @Singleton
-public class SingletonBean {
+@Component
+public class SingletonWithPrototypeBean {
 
+    @Inject
+    private HelloBean helloBean1;
+
+    @Inject
+    private HelloBean helloBean2;
+
+    public HelloBean getHelloBean1() {
+        return helloBean1;
+    }
+
+    public HelloBean getHelloBean2() {
+        return helloBean2;
+    }
 }

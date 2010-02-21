@@ -49,7 +49,6 @@ import net.usikkert.kouinject.testbeans.scanned.FinalBean;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.ProviderBean;
 import net.usikkert.kouinject.testbeans.scanned.SetterBean;
-import net.usikkert.kouinject.testbeans.scanned.SingletonBean;
 import net.usikkert.kouinject.testbeans.scanned.StaticBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
@@ -59,6 +58,7 @@ import net.usikkert.kouinject.testbeans.scanned.hierarchy.interfacebean.Interfac
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding2.pets.CatBean;
 import net.usikkert.kouinject.testbeans.scanned.notloaded.QualifierBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.Blue;
+import net.usikkert.kouinject.testbeans.scanned.scope.SingletonBean;
 
 import org.junit.Before;
 import org.junit.Test;
