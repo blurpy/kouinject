@@ -67,6 +67,22 @@
     <url>http://kouinject.googlecode.com/svn/</url>
   </scm>
 
+  <distributionManagement>
+    <snapshotRepository>
+      <id>sonatype.nexus.snapshots.repo</id>
+      <name>Sonatype Nexus Snapshots Repository</name>
+      <url>http://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <repositories>
+    <repository>
+      <id>usikkert.repo</id>
+      <name>usikkert.net Repository</name>
+      <url>http://repo.usikkert.net/maven2</url>
+    </repository>
+  </repositories>
+
   <issueManagement>
     <system>Google Code</system>
     <url>http://code.google.com/p/kouinject/issues/list</url>
@@ -82,8 +98,7 @@
       <groupId>javax.inject</groupId>
       <artifactId>javax.inject-tck</artifactId>
       <version>1</version>
-      <scope>system</scope>
-      <systemPath>${basedir}/src/test/lib/javax.inject-tck-1.jar</systemPath>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
