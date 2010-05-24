@@ -38,6 +38,9 @@ import net.usikkert.kouinject.testbeans.notscanned.SecondCircularBean;
 import net.usikkert.kouinject.testbeans.notscanned.SecondInterfaceImpl;
 import net.usikkert.kouinject.testbeans.notscanned.TheInterface;
 import net.usikkert.kouinject.testbeans.notscanned.TheInterfaceUser;
+import net.usikkert.kouinject.testbeans.notscanned.instance.Instance1Bean;
+import net.usikkert.kouinject.testbeans.notscanned.instance.Instance2Bean;
+import net.usikkert.kouinject.testbeans.notscanned.instance.Instance3Bean;
 import net.usikkert.kouinject.testbeans.scanned.BlueCarBean;
 import net.usikkert.kouinject.testbeans.scanned.CarBean;
 import net.usikkert.kouinject.testbeans.scanned.ConstructorBean;
@@ -676,5 +679,38 @@ public class DefaultBeanLoaderTest {
         assertNotNull(singletonBean1.getHelloBean1());
         assertNotNull(singletonBean1.getHelloBean2());
         assertNotSame(singletonBean1.getHelloBean1(), singletonBean1.getHelloBean2());
+    }
+
+    @Test
+    public void prototypeBeansShouldNotBeInstantiatedMoreThanOnceForEachRequest() {
+        final BeanLocator beanLocator = mock(BeanLocator.class);
+        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
+
+        final Set<Dependency> beans = new HashSet<Dependency>();
+        beans.add(new Dependency(Instance1Bean.class));
+        beans.add(new Dependency(Instance2Bean.class));
+        beans.add(new Dependency(Instance3Bean.class));
+        when(beanLocator.findBeans()).thenReturn(beans);
+
+        final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler, beanLocator);
+
+        final Instance3Bean instance3Bean = loader.getBean(Instance3Bean.class);
+        assertNotNull(instance3Bean);
+
+        final Instance2Bean instance2Bean = instance3Bean.getInstance2Bean();
+        assertNotNull(instance2Bean);
+
+        final Instance1Bean instance1Bean = instance2Bean.getInstance1Bean();
+        assertNotNull(instance1Bean);
+
+        assertEquals(1, Instance1Bean.getInstanceCounter());
+        assertEquals(1, Instance2Bean.getInstanceCounter());
+        assertEquals(1, Instance3Bean.getInstanceCounter());
+
+        loader.getBean(Instance3Bean.class);
+
+        assertEquals(2, Instance1Bean.getInstanceCounter());
+        assertEquals(2, Instance2Bean.getInstanceCounter());
+        assertEquals(2, Instance3Bean.getInstanceCounter());
     }
 }

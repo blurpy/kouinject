@@ -22,7 +22,6 @@
 
 package net.usikkert.kouinject;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -204,13 +203,6 @@ public class DefaultBeanLoader implements BeanLoader {
         beansInCreation.addBean(dependency);
 
         final BeanData beanData = findBeanData(dependency);
-        final List<Dependency> missingDependencies = findMissingDependencies(beanData);
-
-        for (final Dependency missingDependency : missingDependencies) {
-            LOG.finer("Checking bean " + dependency + " for missing dependency: " + missingDependency);
-            createBean(missingDependency);
-        }
-
         final Object instance = instantiateBean(beanData);
 
         if (beanData.isSingleton()) {
@@ -284,19 +276,5 @@ public class DefaultBeanLoader implements BeanLoader {
 
     private Object findBean(final Dependency beanNeeded, final boolean throwEx) {
         return singletonMap.getSingleton(beanNeeded, throwEx);
-    }
-
-    private List<Dependency> findMissingDependencies(final BeanData beanData) {
-        final List<Dependency> missingDeps = new ArrayList<Dependency>();
-
-        for (final Dependency dependency : beanData.getDependencies()) {
-            final Object bean = findBean(dependency, false);
-
-            if (bean == null) {
-                missingDeps.add(dependency);
-            }
-        }
-
-        return missingDeps;
     }
 }
