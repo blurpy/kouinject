@@ -9,6 +9,12 @@
   <url>http://kouinject.googlecode.com/</url>
   <description>Simple dependency injection framework for Java.</description>
 
+  <parent>
+    <artifactId>oss-parent</artifactId>
+    <groupId>org.sonatype.oss</groupId>
+    <version>1</version>
+  </parent>
+
   <build>
     <resources>
       <resource>
@@ -66,14 +72,6 @@
     <developerConnection>scm:svn:https://kouinject.googlecode.com/svn/trunk/</developerConnection>
     <url>http://kouinject.googlecode.com/svn/</url>
   </scm>
-
-  <distributionManagement>
-    <snapshotRepository>
-      <id>sonatype.nexus.snapshots.repo</id>
-      <name>Sonatype Nexus Snapshots Repository</name>
-      <url>http://oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
-  </distributionManagement>
 
   <repositories>
     <repository>
