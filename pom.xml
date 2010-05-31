@@ -43,6 +43,13 @@
           <downloadSources>true</downloadSources>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <configuration>
+          <tagBase>http://kouinject.googlecode.com/svn/tags</tagBase>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
