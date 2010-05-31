@@ -1,9 +1,7 @@
 
 - KouInject TODO
 
-* Version 1.0:
- - Add scope support
- - Add child contexts?
- - Run initializer method
- - Run destroyer method
- - Allow circular dependencies in fields and methods?
+ - Add java configuration api
+ - Add manual override of bean matching
+ - Initialize and destroy methods in singletons
+ - support for registering custom annotations
