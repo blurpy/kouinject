@@ -4,4 +4,5 @@
  - Add java configuration api
  - Add manual override of bean matching
  - Initialize and destroy methods in singletons
- - support for registering custom annotations
+ - Support for registering custom annotations
+ - Test adding a custom thread scope
