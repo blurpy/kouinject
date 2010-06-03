@@ -6,3 +6,5 @@
  - Initialize and destroy methods in singletons
  - Support for registering custom annotations
  - Test adding a custom thread scope
+ - Optional eager load of singletons
+ - Injection in static members
