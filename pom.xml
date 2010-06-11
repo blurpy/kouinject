@@ -92,15 +92,6 @@
     </repository>
   </distributionManagement>
 
-  <!-- TODO remove when javax.inject-tck is in maven central repository -->
-  <repositories>
-    <repository>
-      <id>usikkert.repo</id>
-      <name>usikkert.net Repository</name>
-      <url>http://repo.usikkert.net/maven2</url>
-    </repository>
-  </repositories>
-
   <issueManagement>
     <system>Google Code</system>
     <url>http://code.google.com/p/kouinject/issues/list</url>
