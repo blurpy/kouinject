@@ -1,7 +1,7 @@
 
 - KouInject CHANGES
 
-* Version 0.6 (xx.xx.2010):
+* Version 0.6 (12.06.2010):
  - Implemented JSR-330 API
  - Added DefaultInjector for simpler setup
  - Updated copyright to include 2010

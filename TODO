@@ -8,3 +8,4 @@
  - Test adding a custom thread scope
  - Optional eager load of singletons
  - Injection in static members
+ - @Value annotation for injecton of properties
