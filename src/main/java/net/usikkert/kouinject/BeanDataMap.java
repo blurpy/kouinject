@@ -23,6 +23,7 @@
 package net.usikkert.kouinject;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -126,5 +127,30 @@ public class BeanDataMap {
 
         final BeanData beanData = getBeanData(description, false);
         return beanData != null;
+    }
+
+    /**
+     * Searches for all the beans that matches the description, and returns
+     * the keys. These keys can be used to get the actual bean-data.
+     *
+     * @param description Description of the beans to search for.
+     * @return A collection of bean keys.
+     */
+    public synchronized Collection<Dependency> findBeanKeys(final Dependency description) {
+        Validate.notNull(description, "Description can not be null");
+
+        final Collection<Dependency> matches = new ArrayList<Dependency>();
+        final Iterator<Dependency> iterator = beanDataMap.keySet().iterator();
+
+        while (iterator.hasNext()) {
+            final Dependency bean = iterator.next();
+
+            if (description.canInject(bean)) {
+                matches.add(bean);
+            }
+        }
+
+        return matches;
+
     }
 }

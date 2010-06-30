@@ -25,6 +25,7 @@ package net.usikkert.kouinject;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import net.usikkert.kouinject.beandata.BeanData;
 import net.usikkert.kouinject.beandata.Dependency;
@@ -33,6 +34,7 @@ import net.usikkert.kouinject.testbeans.scanned.CarBean;
 import net.usikkert.kouinject.testbeans.scanned.FieldBean;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.SetterBean;
+import net.usikkert.kouinject.testbeans.scanned.qualifier.GreenBean;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -112,6 +114,10 @@ public class BeanDataMapTest {
         final BeanData helloBean = map.getBeanData(new Dependency(HelloBean.class));
         assertNotNull(helloBean);
         assertTrue(helloBean.getBeanClass().equals(HelloBean.class));
+
+        final BeanData greenBean = map.getBeanData(new Dependency(GreenBean.class, "Green"));
+        assertNotNull(greenBean);
+        assertTrue(greenBean.getBeanClass().equals(GreenBean.class));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -135,6 +141,7 @@ public class BeanDataMapTest {
         assertTrue(map.containsBeanData(new Dependency(SetterBean.class)));
         assertTrue(map.containsBeanData(new Dependency(FieldBean.class)));
         assertTrue(map.containsBeanData(new Dependency(HelloBean.class)));
+        assertTrue(map.containsBeanData(new Dependency(GreenBean.class, "Green")));
     }
 
     @Test
@@ -142,6 +149,40 @@ public class BeanDataMapTest {
         addTestBeans();
 
         assertFalse(map.containsBeanData(new Dependency(CarBean.class)));
+    }
+
+    @Test
+    public void findBeanKeysWithoutQualifierShouldReturnBeansWithoutQualifier() {
+        addTestBeans();
+
+        final Collection<Dependency> beanKeys = map.findBeanKeys(new Dependency(Object.class));
+
+        assertNotNull(beanKeys);
+        assertEquals(3, beanKeys.size());
+        assertTrue(beanKeys.contains(new Dependency(SetterBean.class)));
+        assertTrue(beanKeys.contains(new Dependency(FieldBean.class)));
+        assertTrue(beanKeys.contains(new Dependency(HelloBean.class)));
+    }
+
+    @Test
+    public void findBeanKeysWithQualifierShouldReturnBeansWithQualifier() {
+        addTestBeans();
+
+        final Collection<Dependency> beanKeys = map.findBeanKeys(new Dependency(Object.class, "Green"));
+
+        assertNotNull(beanKeys);
+        assertEquals(1, beanKeys.size());
+        assertTrue(beanKeys.contains(new Dependency(GreenBean.class, "Green")));
+    }
+
+    @Test
+    public void findBeanKeysShouldHandleNoMatches() {
+        addTestBeans();
+
+        final Collection<Dependency> beanKeys = map.findBeanKeys(new Dependency(CarBean.class));
+
+        assertNotNull(beanKeys);
+        assertEquals(0, beanKeys.size());
     }
 
     private void addTestBeans() {
@@ -156,6 +197,10 @@ public class BeanDataMapTest {
         final BeanData helloBean = createBeanData(HelloBean.class);
         final Dependency helloBeanDependency = new Dependency(HelloBean.class);
         map.addBeanData(helloBeanDependency, helloBean);
+
+        final BeanData greenBean = createBeanData(GreenBean.class);
+        final Dependency greenBeanDependency = new Dependency(GreenBean.class, "Green");
+        map.addBeanData(greenBeanDependency, greenBean);
     }
 
     private BeanData createBeanData(final Class<?> beanClass) {
