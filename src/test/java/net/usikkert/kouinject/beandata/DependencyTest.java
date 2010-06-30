@@ -58,6 +58,16 @@ public class DependencyTest {
     }
 
     @Test
+    public void equalsAndHashcodeShouldBeTrueForSameBeanClassAndSameQualifierWithDifferentCase() {
+        final Dependency green = new Dependency(GreenBean.class, "GreEn");
+        final Dependency green2 = new Dependency(GreenBean.class, "gReen");
+
+        assertTrue(green.equals(green2));
+        assertTrue(green2.equals(green));
+        assertTrue(green.hashCode() == green2.hashCode());
+    }
+
+    @Test
     public void equalsAndHashcodeShouldBeTrueForSameBeanClassAndNullQualifier() {
         final Dependency green = new Dependency(GreenBean.class);
         final Dependency green2 = new Dependency(GreenBean.class);
@@ -167,6 +177,19 @@ public class DependencyTest {
         final Dependency theObjectBean = new Dependency(Object.class);
 
         final Dependency theColorField = new Dependency(ColorBean.class, "green");
+
+        assertFalse(theColorField.canInject(theGreenBean));
+        assertTrue(theColorField.canInject(theColorBean));
+        assertFalse(theColorField.canInject(theObjectBean));
+    }
+
+    @Test
+    public void canInjectShouldAcceptSameClassWhenQualifierMatchWithDifferentCase() {
+        final Dependency theGreenBean = new Dependency(GreenBean.class);
+        final Dependency theColorBean = new Dependency(ColorBean.class, "greeN");
+        final Dependency theObjectBean = new Dependency(Object.class);
+
+        final Dependency theColorField = new Dependency(ColorBean.class, "Green");
 
         assertFalse(theColorField.canInject(theGreenBean));
         assertTrue(theColorField.canInject(theColorBean));

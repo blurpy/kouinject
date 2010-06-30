@@ -134,7 +134,7 @@ public class Dependency {
                 return true;
             }
 
-            else if (qualifier != null && qualifier.equals(bean.getQualifier())) {
+            else if (qualifier != null && qualifier.equalsIgnoreCase(bean.getQualifier())) {
                 return true;
             }
         }
@@ -165,7 +165,7 @@ public class Dependency {
                 return true;
             }
 
-            else if (qualifier != null && qualifier.equals(dependency.getQualifier())) {
+            else if (qualifier != null && qualifier.equalsIgnoreCase(dependency.getQualifier())) {
                 return true;
             }
 
@@ -177,7 +177,7 @@ public class Dependency {
     @Override
     public int hashCode() {
         if (qualifier != null) {
-            return beanClass.hashCode() + qualifier.hashCode();
+            return beanClass.hashCode() + qualifier.toLowerCase().hashCode();
         }
 
         else {
