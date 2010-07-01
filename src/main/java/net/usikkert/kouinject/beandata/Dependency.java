@@ -31,6 +31,9 @@ import net.usikkert.kouinject.util.Validate;
  */
 public class Dependency {
 
+    /** Value of qualifier used to mark that an injection point accepts beans with any or no qualifier. */
+    private static final String ANY_QUALIFIER = "any";
+
     private final Class<?> beanClass;
 
     private final boolean isProvider;
@@ -111,6 +114,7 @@ public class Dependency {
      *   <li>The bean must be of the same class or a superclass.</li>
      *   <li>The qualifier must be identical, even if it's <code>null</code>.</li>
      *   <li>Except if the class is an exact match and this qualifier is <code>null</code>.</li>
+     *   <li>Or this qualifier is <code>any</code>.</li>
      * </ul>
      *
      * @param bean The bean to check.
@@ -135,6 +139,10 @@ public class Dependency {
             }
 
             else if (qualifier != null && qualifier.equalsIgnoreCase(bean.getQualifier())) {
+                return true;
+            }
+
+            else if (qualifier != null && qualifier.equalsIgnoreCase(ANY_QUALIFIER)) {
                 return true;
             }
         }

@@ -221,4 +221,52 @@ public class DependencyTest {
         assertFalse(theColorField.canInject(theColorBean));
         assertFalse(theColorField.canInject(theObjectBean));
     }
+
+    @Test
+    public void canInjectSubclassWhenNoQualifiers() {
+        final Dependency theGreenBean = new Dependency(GreenBean.class);
+        final Dependency theColorField = new Dependency(ColorBean.class);
+
+        assertTrue(theColorField.canInject(theGreenBean));
+    }
+
+    @Test
+    public void canInjectSubclassWhenSameQualifiers() {
+        final Dependency theGreenBean = new Dependency(GreenBean.class, "green");
+        final Dependency theColorField = new Dependency(ColorBean.class, "green");
+
+        assertTrue(theColorField.canInject(theGreenBean));
+    }
+
+    @Test
+    public void canInjectSubclassWhenFieldHasAnyQualifierAndBeanHasNone() {
+        final Dependency theGreenBean = new Dependency(GreenBean.class);
+        final Dependency theColorField = new Dependency(ColorBean.class, "any");
+
+        assertTrue(theColorField.canInject(theGreenBean));
+    }
+
+    @Test
+    public void canInjectSubclassWhenFieldHasAnyQualifierAndBeanHasOtherQualifier() {
+        final Dependency theGreenBean = new Dependency(GreenBean.class, "green");
+        final Dependency theColorField = new Dependency(ColorBean.class, "any");
+
+        assertTrue(theColorField.canInject(theGreenBean));
+    }
+
+    @Test
+    public void cantInjectSubclassWhenBeanHasAnyQualifierAndFieldHasNone() {
+        final Dependency theGreenBean = new Dependency(GreenBean.class, "any");
+        final Dependency theColorField = new Dependency(ColorBean.class);
+
+        assertFalse(theColorField.canInject(theGreenBean));
+    }
+
+    @Test
+    public void cantInjectSubclassWhenBeanHasAnyQualifierAndFieldHasOtherQualifier() {
+        final Dependency theGreenBean = new Dependency(GreenBean.class, "any");
+        final Dependency theColorField = new Dependency(ColorBean.class, "green");
+
+        assertFalse(theColorField.canInject(theGreenBean));
+    }
 }
