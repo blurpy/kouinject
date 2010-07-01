@@ -22,6 +22,8 @@
 
 package net.usikkert.kouinject;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -131,6 +133,38 @@ public class DefaultBeanLoader implements BeanLoader {
         }
 
         return (T) findOrCreateBean(dependency);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> Collection<T> getBeans(final Class<T> beanClass) {
+        return getBeans(beanClass, null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T extends Object> Collection<T> getBeans(final Class<T> beanClass, final String qualifier) {
+        Validate.notNull(beanClass, "Bean class can not be null");
+
+        final Dependency dependency = new Dependency(beanClass, qualifier);
+        final Collection<Dependency> beanKeys = beanDataMap.findBeanKeys(dependency);
+
+        if (beanKeys.isEmpty()) {
+            throw new IllegalArgumentException("No registered bean-data for: " + dependency);
+        }
+
+        final Collection<T> beans = new ArrayList<T>();
+
+        for (final Dependency beanKey : beanKeys) {
+            beans.add((T) findOrCreateBean(beanKey));
+        }
+
+        return beans;
     }
 
     private Object findOrCreateBean(final Dependency dependency) {
@@ -260,10 +294,9 @@ public class DefaultBeanLoader implements BeanLoader {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private Object findBeanOrCreateProvider(final Dependency dependency) {
         if (dependency.isProvider()) {
-            return new Provider() {
+            return new Provider<Object>() {
                 @Override
                 public Object get() {
                     return getBean(dependency.getBeanClass(), dependency.getQualifier());

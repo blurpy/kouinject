@@ -25,6 +25,7 @@ package net.usikkert.kouinject;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -712,5 +713,92 @@ public class DefaultBeanLoaderTest {
         assertEquals(2, Instance1Bean.getInstanceCounter());
         assertEquals(2, Instance2Bean.getInstanceCounter());
         assertEquals(2, Instance3Bean.getInstanceCounter());
+    }
+
+    @Test
+    public void getBeanWithBeanWithoutQualifierAndAnyQualifierShouldFindMatch() {
+        final HelloBean bean = beanLoader.getBean(HelloBean.class, "any");
+
+        assertNotNull(bean);
+    }
+
+    @Test
+    public void getBeanWithBeanWithQualifierAndAnyQualifierShouldFindMatch() {
+        final BlueBean bean = beanLoader.getBean(BlueBean.class, "any");
+
+        assertNotNull(bean);
+    }
+
+    @Test
+    public void getBeansWithNullQualifierShouldReturnOnlyBeansWithoutQualifier() {
+        final Collection<Object> beans = beanLoader.getBeans(Object.class, null);
+
+        assertNotNull(beans);
+        assertEquals(23, beans.size());
+
+        assertFalse(containsBean(BlueBean.class, beans)); // Bean with qualifier
+        assertTrue(containsBean(HelloBean.class, beans)); // Bean without qualifier
+    }
+
+    @Test
+    public void getBeansWithoutQualifierParameterShouldReturnOnlyBeansWithoutQualifier() {
+        final Collection<Object> beans = beanLoader.getBeans(Object.class);
+
+        assertNotNull(beans);
+        assertEquals(23, beans.size());
+
+        assertFalse(containsBean(BlueBean.class, beans)); // Bean with qualifier
+        assertTrue(containsBean(HelloBean.class, beans)); // Bean without qualifier
+    }
+
+    @Test
+    public void getBeansWithObjectAndGreenQualifierShouldGiveOnlyBeansWithGreenQualifier() {
+        final Collection<Object> beans = beanLoader.getBeans(Object.class, "blue");
+
+        assertNotNull(beans);
+        assertEquals(2, beans.size());
+
+        assertTrue(containsBean(BlueBean.class, beans));
+        assertTrue(containsBean(BlueCarBean.class, beans));
+    }
+
+    @Test
+    public void getBeansWithObjectAndAnyQualifierShouldReturnAllBeans() {
+        final Collection<Object> beans = beanLoader.getBeans(Object.class, "any");
+
+        assertNotNull(beans);
+        assertEquals(33, beans.size());
+
+        assertTrue(containsBean(BlueBean.class, beans)); // Bean with qualifier
+        assertTrue(containsBean(HelloBean.class, beans)); // Bean without qualifier
+    }
+
+    @Test
+    public void getBeansWithColorBeanAndAnyQualifierShouldReturnAllColorBeans() {
+        final Collection<ColorBean> beans = beanLoader.getBeans(ColorBean.class, "any");
+
+        assertNotNull(beans);
+        assertEquals(5, beans.size());
+
+        assertTrue(containsBean(BlueBean.class, beans));
+        assertTrue(containsBean(GreenBean.class, beans));
+        assertTrue(containsBean(RedBean.class, beans));
+        assertTrue(containsBean(YellowBean.class, beans));
+        assertTrue(containsBean(DarkYellowBean.class, beans));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getBeansWithNoMatchesShouldThrowException() {
+        beanLoader.getBeans(Object.class, "nomatch");
+    }
+
+    private boolean containsBean(final Class<?> bean, final Collection<?> collection) {
+        for (final Object object : collection) {
+            if (bean.equals(object.getClass())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
