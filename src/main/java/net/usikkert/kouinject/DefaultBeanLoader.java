@@ -100,16 +100,6 @@ public class DefaultBeanLoader implements BeanLoader {
     }
 
     /**
-     * TODO Remove.
-     */
-    public void autowire(final Object objectToAutowire) {
-        Validate.notNull(objectToAutowire, "Object to autowire can not be null");
-
-        final BeanData beanData = beanDataHandler.getBeanData(objectToAutowire.getClass(), true);
-        autowireBean(beanData, objectToAutowire);
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
