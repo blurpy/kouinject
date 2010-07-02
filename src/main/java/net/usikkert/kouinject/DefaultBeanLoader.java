@@ -100,9 +100,8 @@ public class DefaultBeanLoader implements BeanLoader {
     }
 
     /**
-     * {@inheritDoc}
+     * TODO Remove.
      */
-    @Override
     public void autowire(final Object objectToAutowire) {
         Validate.notNull(objectToAutowire, "Object to autowire can not be null");
 

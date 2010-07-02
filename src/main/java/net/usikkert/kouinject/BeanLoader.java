@@ -33,14 +33,6 @@ import java.util.Collection;
 public interface BeanLoader {
 
     /**
-     * Autowires dependencies in an already instantiated object.
-     *
-     * @param objectToAutowire The object to autowire.
-     * @throws RuntimeException If not all dependencies could be satisfied.
-     */
-    void autowire(Object objectToAutowire);
-
-    /**
      * Gets a bean that matches the given class, with no qualifier.
      *
      * <p>A bean is considered a match if it's assignable from the bean class, and has no qualifier.</p>
