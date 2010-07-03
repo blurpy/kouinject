@@ -22,6 +22,8 @@
 
 package net.usikkert.kouinject;
 
+import java.util.Collection;
+
 /**
  * An {@link Injector} using classpath scanning to detect beans, and annotations for
  * setup of beans and the dependency injections.
@@ -60,5 +62,21 @@ public class DefaultInjector implements Injector {
     @Override
     public <T> T getBean(final Class<T> beanClass, final String qualifier) {
         return beanLoader.getBean(beanClass, qualifier);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> Collection<T> getBeans(final Class<T> beanClass) {
+        return beanLoader.getBeans(beanClass);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> Collection<T> getBeans(final Class<T> beanClass, final String qualifier) {
+        return beanLoader.getBeans(beanClass, qualifier);
     }
 }

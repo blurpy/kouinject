@@ -24,6 +24,8 @@ package net.usikkert.kouinject;
 
 import static org.junit.Assert.*;
 
+import java.util.Collection;
+
 import net.usikkert.kouinject.testbeans.notscanned.TheInterfaceUser;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.ColorBean;
@@ -34,6 +36,9 @@ import org.junit.Test;
 
 /**
  * Test of {@link DefaultInjector}.
+ *
+ * <p>These tests are just to verify that the injector works. More thorough tests
+ * are done elsewhere.</p>
  *
  * @author Christian Ihle
  */
@@ -64,5 +69,21 @@ public class DefaultInjectorTest {
 
         assertNotNull(colorBean);
         assertEquals(RedBean.class, colorBean.getClass());
+    }
+
+    @Test
+    public void getBeansWithoutQualifierShouldFindBeansWithoutQualifier() {
+        final Collection<Object> beans = injector.getBeans(Object.class);
+
+        assertNotNull(beans);
+        assertEquals(23, beans.size());
+    }
+
+    @Test
+    public void getBeansWithAnyQualifierShouldFindAllBeans() {
+        final Collection<Object> beans = injector.getBeans(Object.class, "any");
+
+        assertNotNull(beans);
+        assertEquals(33, beans.size());
     }
 }

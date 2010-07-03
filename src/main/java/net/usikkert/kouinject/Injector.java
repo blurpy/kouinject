@@ -22,6 +22,8 @@
 
 package net.usikkert.kouinject;
 
+import java.util.Collection;
+
 /**
  * Public interface for the KouInject injector, giving access to the available beans.
  *
@@ -30,23 +32,58 @@ package net.usikkert.kouinject;
 public interface Injector {
 
     /**
-     * Gets a bean from the injector for the given class, with no qualifier.
+     * Gets a bean that matches the given class, with no qualifier.
+     *
+     * <p>A bean is considered a match if it's assignable from the bean class, and has no qualifier.</p>
      *
      * @param <T> The bean will be cast to the type specified.
      * @param beanClass The class to get a bean for.
      * @return An object satisfying the specified class.
-     * @throws RuntimeException If no bean is found.
+     * @throws IllegalArgumentException If no bean is found.
      */
     <T extends Object> T getBean(Class<T> beanClass);
 
     /**
-     * Gets a bean from the injector for the given class and qualifier.
+     * Gets a bean that matches the given class and qualifier.
+     *
+     * <p>A bean is considered a match if it's assignable from the bean class,
+     * and has the exact same qualifier. If the qualifier is <code>null</code>, then only beans
+     * with no qualifier will match. If the qualifier is <code>any</code> then
+     * the qualifier match is ignored.</p>
      *
      * @param <T> The bean will be cast to the type specified.
      * @param beanClass The class to get a bean for.
-     * @param qualifier The qualifier for the bean to get.
-     * @return An object satisfying the specified class.
-     * @throws RuntimeException If no bean is found.
+     * @param qualifier The qualifier for the bean to get. Can be <code>null</code>.
+     * @return An object satisfying the specified class and qualifier.
+     * @throws IllegalArgumentException If no bean is found.
      */
     <T extends Object> T getBean(Class<T> beanClass, String qualifier);
+
+    /**
+     * Gets a collection of all the beans that matches the bean class, with no qualifier.
+     *
+     * <p>A bean is considered a match if it's assignable from the bean class, and has no qualifier.</p>
+     *
+     * @param <T> The beans will be cast to the type specified.
+     * @param beanClass The class to get beans for.
+     * @return A collection of beans satisfying the bean class.
+     * @throws IllegalArgumentException If no beans are found.
+     */
+    <T extends Object> Collection<T> getBeans(Class<T> beanClass);
+
+    /**
+     * Gets a collection of all the beans that matches the bean class and qualifier.
+     *
+     * <p>A bean is considered a match if it's assignable from the bean class,
+     * and has the exact same qualifier. If the qualifier is <code>null</code>, then only beans
+     * with no qualifier will match. If the qualifier is <code>any</code> then
+     * the qualifier match is ignored.</p>
+     *
+     * @param <T> The beans will be cast to the type specified.
+     * @param beanClass The class to get beans for.
+     * @param qualifier The qualifier for the bean to get. Can be <code>null</code>.
+     * @return A collection of beans satisfying the bean class and qualifier.
+     * @throws IllegalArgumentException If no beans are found.
+     */
+    <T extends Object> Collection<T> getBeans(Class<T> beanClass, String qualifier);
 }
