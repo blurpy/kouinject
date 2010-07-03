@@ -41,7 +41,8 @@ import net.usikkert.kouinject.beandata.Dependency;
 import net.usikkert.kouinject.beandata.FieldData;
 import net.usikkert.kouinject.beandata.InjectionPoint;
 import net.usikkert.kouinject.beandata.MethodData;
-import net.usikkert.kouinject.util.Validate;
+
+import org.apache.commons.lang.Validate;
 
 /**
  * Implementation of {@link BeanDataHandler} that uses annotations and reflection

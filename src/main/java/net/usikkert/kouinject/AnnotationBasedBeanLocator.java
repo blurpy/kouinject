@@ -28,7 +28,8 @@ import java.util.Set;
 
 import net.usikkert.kouinject.annotation.Component;
 import net.usikkert.kouinject.beandata.Dependency;
-import net.usikkert.kouinject.util.Validate;
+
+import org.apache.commons.lang.Validate;
 
 /**
  * Implementation of {@link BeanLocator} using the {@link Component} annotation to detect beans,

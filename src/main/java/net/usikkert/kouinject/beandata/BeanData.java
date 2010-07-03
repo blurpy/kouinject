@@ -25,7 +25,7 @@ package net.usikkert.kouinject.beandata;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.usikkert.kouinject.util.Validate;
+import org.apache.commons.lang.Validate;
 
 /**
  * This class describes the bean meta-data needed to instantiate a new bean to a consistent state.

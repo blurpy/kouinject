@@ -33,7 +33,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.logging.Logger;
 
-import net.usikkert.kouinject.util.Validate;
+import org.apache.commons.lang.Validate;
 
 /**
  * Finds classes by scanning the classpath. Classes are searched for in the file system and in

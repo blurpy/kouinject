@@ -26,7 +26,7 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 
-import net.usikkert.kouinject.util.Validate;
+import org.apache.commons.lang.Validate;
 
 /**
  * Meta-data describing the dependency for a field.
@@ -90,6 +90,7 @@ public class FieldData implements InjectionPoint {
      * @param object The object to set the field value in.
      * @param parameters A single parameter with the new value for this field in the object.
      */
+    @Override
     public void inject(final Object object, final Object[] parameters) {
         Validate.notNull(object, "Object can not be null");
         Validate.notNull(parameters, "Parameters can not be null");

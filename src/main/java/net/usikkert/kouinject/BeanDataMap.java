@@ -31,7 +31,8 @@ import java.util.Map;
 
 import net.usikkert.kouinject.beandata.BeanData;
 import net.usikkert.kouinject.beandata.Dependency;
-import net.usikkert.kouinject.util.Validate;
+
+import org.apache.commons.lang.Validate;
 
 /**
  * Map with bean-data for all the beans possible to create.

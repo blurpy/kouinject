@@ -26,7 +26,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import net.usikkert.kouinject.util.Validate;
+import org.apache.commons.lang.Validate;
 
 /**
  * Meta-data describing the dependencies for a constructor.

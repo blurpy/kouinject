@@ -26,7 +26,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import net.usikkert.kouinject.util.Validate;
+import org.apache.commons.lang.Validate;
 
 /**
  * Meta-data describing the dependencies for a method.
@@ -67,6 +67,7 @@ public class MethodData implements InjectionPoint {
      *
      * @return The required dependencies.
      */
+    @Override
     public List<Dependency> getDependencies() {
         return dependencies;
     }
@@ -77,6 +78,7 @@ public class MethodData implements InjectionPoint {
      * @param object The object to invoke the method on.
      * @param parameters The parameters for the method.
      */
+    @Override
     public void inject(final Object object, final Object[] parameters) {
         Validate.notNull(object, "Object can not be null");
         Validate.notNull(parameters, "Parameters can not be null");

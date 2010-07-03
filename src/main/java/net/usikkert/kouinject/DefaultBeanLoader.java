@@ -34,7 +34,8 @@ import net.usikkert.kouinject.beandata.BeanData;
 import net.usikkert.kouinject.beandata.ConstructorData;
 import net.usikkert.kouinject.beandata.Dependency;
 import net.usikkert.kouinject.beandata.InjectionPoint;
-import net.usikkert.kouinject.util.Validate;
+
+import org.apache.commons.lang.Validate;
 
 /**
  * Default implementation of the {@link BeanLoader}.

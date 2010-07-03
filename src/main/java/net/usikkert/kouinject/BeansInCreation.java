@@ -26,7 +26,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import net.usikkert.kouinject.beandata.Dependency;
-import net.usikkert.kouinject.util.Validate;
+
+import org.apache.commons.lang.Validate;
 
 /**
  * Class for keeping control of beans while they are being created.

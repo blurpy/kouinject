@@ -22,7 +22,7 @@
 
 package net.usikkert.kouinject.beandata;
 
-import net.usikkert.kouinject.util.Validate;
+import org.apache.commons.lang.Validate;
 
 /**
  * Represents a dependency marked for injection.

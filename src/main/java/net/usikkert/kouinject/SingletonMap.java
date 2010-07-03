@@ -29,7 +29,8 @@ import java.util.List;
 import java.util.Map;
 
 import net.usikkert.kouinject.beandata.Dependency;
-import net.usikkert.kouinject.util.Validate;
+
+import org.apache.commons.lang.Validate;
 
 /**
  * Map with cached singleton beans.
