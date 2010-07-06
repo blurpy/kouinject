@@ -41,6 +41,7 @@ import net.usikkert.kouinject.beandata.BeanKey;
 import net.usikkert.kouinject.beandata.FieldData;
 import net.usikkert.kouinject.beandata.InjectionPoint;
 import net.usikkert.kouinject.beandata.MethodData;
+import net.usikkert.kouinject.beandata.ProviderBeanKey;
 
 import org.apache.commons.lang.Validate;
 
@@ -140,11 +141,11 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
             final Type genericType = field.getGenericType();
             final Class<?> beanClassFromProvider = getBeanClassFromProvider(field, genericType);
 
-            return new BeanKey(beanClassFromProvider, true, qualifier);
+            return new ProviderBeanKey(beanClassFromProvider, qualifier);
         }
 
         else {
-            return new BeanKey(fieldBeanClass, false, qualifier);
+            return new BeanKey(fieldBeanClass, qualifier);
         }
     }
 
@@ -236,11 +237,11 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
         if (isProvider(parameterClass)) {
             final Class<?> beanClassFromProvider = getBeanClassFromProvider(parameterOwner, parameterType);
 
-            return new BeanKey(beanClassFromProvider, true, qualifier);
+            return new ProviderBeanKey(beanClassFromProvider, qualifier);
         }
 
         else {
-            return new BeanKey(parameterClass, false, qualifier);
+            return new BeanKey(parameterClass, qualifier);
         }
     }
 

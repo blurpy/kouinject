@@ -25,7 +25,8 @@ package net.usikkert.kouinject.beandata;
 import org.apache.commons.lang.Validate;
 
 /**
- * Represents a dependency marked for injection.
+ * Represents a bean key for acquiring a real bean instance or the bean data required
+ * to create an instance.
  *
  * @author Christian Ihle
  */
@@ -36,66 +37,52 @@ public class BeanKey {
 
     private final Class<?> beanClass;
 
-    private final boolean isProvider;
-
     private final String qualifier;
 
     /**
-     * Creates a new dependency for the specified bean class, with provider set to false,
+     * Creates a new bean key for the specified bean class, with provider set to false,
      * and no qualifier.
      *
-     * @param beanClass The actual bean class dependency.
+     * @param beanClass The actual bean class for this key.
      */
     public BeanKey(final Class<?> beanClass) {
         this(beanClass, null);
     }
 
     /**
-     * Creates a new dependency for the specified bean class, with provider set to false.
+     * Creates a new bean key for the specified bean class, with provider set to false.
      *
-     * @param beanClass The actual bean class dependency.
-     * @param qualifier The qualifier for this dependency.
+     * @param beanClass The actual bean class for this key.
+     * @param qualifier The qualifier for this key.
      */
     public BeanKey(final Class<?> beanClass, final String qualifier) {
-        this(beanClass, false, qualifier);
-    }
-
-    /**
-     * Creates a new dependency for the specified bean class.
-     *
-     * @param beanClass The actual bean class dependency.
-     * @param isProvider If the actual bean class is for a provider.
-     * @param qualifier The qualifier for this dependency.
-     */
-    public BeanKey(final Class<?> beanClass, final boolean isProvider, final String qualifier) {
         Validate.notNull(beanClass, "Bean class can not be null");
 
         this.beanClass = beanClass;
-        this.isProvider = isProvider;
         this.qualifier = qualifier;
     }
 
     /**
-     * Gets the actual bean class dependency. If this is a {@link Provider},
+     * Gets the actual bean class for this key. If this is a {@link Provider},
      * then this bean class is the generic type argument of the provider.
      *
-     * @return The bean class dependency.
+     * @return The bean class for this key.
      */
     public Class<?> getBeanClass() {
         return beanClass;
     }
 
     /**
-     * If this dependency is for a {@link Provider}.
+     * If this bean key is for a {@link Provider}.
      *
-     * @return If this is for a provider.
+     * @return If this is for a provider. False for the default implementation.
      */
     public boolean isProvider() {
-        return isProvider;
+        return false;
     }
 
     /**
-     * Gets the qualifier for this dependency.
+     * Gets the qualifier for this bean key.
      *
      * <p>A qualifier combined with the class helps identify the bean to inject.
      * See {@link #canInject(BeanKey)} for details regarding qualifier rules.</p>
@@ -107,7 +94,8 @@ public class BeanKey {
     }
 
     /**
-     * Checks if the bean can be injected into this dependency.
+     * If this key represents a field or parameter marked for injection,
+     * could the bean be injected?
      *
      * <p>Rules:</p>
      * <ul>
@@ -118,7 +106,7 @@ public class BeanKey {
      * </ul>
      *
      * @param bean The bean to check.
-     * @return If the bean can be injected into this dependency.
+     * @return If the bean can be injected into this key.
      */
     public boolean canInject(final BeanKey bean) {
         if (bean == null) {
@@ -153,8 +141,8 @@ public class BeanKey {
     /**
      * Checks equality based on {@link #getBeanClass()} and {@link #getQualifier()}.
      *
-     * @param obj The dependency to compare with this.
-     * @return If the dependency is equal to this.
+     * @param obj The key to compare with this.
+     * @return If the key is equal to this.
      */
     @Override
     public boolean equals(final Object obj) {
@@ -166,14 +154,14 @@ public class BeanKey {
             return false;
         }
 
-        final BeanKey dependency = (BeanKey) obj;
+        final BeanKey beanKey = (BeanKey) obj;
 
-        if (beanClass.equals(dependency.getBeanClass())) {
-            if (qualifier == null && dependency.getQualifier() == null) {
+        if (beanClass.equals(beanKey.getBeanClass())) {
+            if (qualifier == null && beanKey.getQualifier() == null) {
                 return true;
             }
 
-            else if (qualifier != null && qualifier.equalsIgnoreCase(dependency.getQualifier())) {
+            else if (qualifier != null && qualifier.equalsIgnoreCase(beanKey.getQualifier())) {
                 return true;
             }
 
@@ -196,10 +184,6 @@ public class BeanKey {
     @Override
     public String toString() {
         final StringBuilder toStringBuilder = new StringBuilder();
-
-        if (isProvider) {
-            toStringBuilder.append("[provider] ");
-        }
 
         if (qualifier != null) {
             toStringBuilder.append("[q=" + qualifier + "] ");
