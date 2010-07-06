@@ -59,6 +59,11 @@ import net.usikkert.kouinject.testbeans.scanned.SetterBean;
 import net.usikkert.kouinject.testbeans.scanned.StaticBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
+import net.usikkert.kouinject.testbeans.scanned.collection.BananaBean;
+import net.usikkert.kouinject.testbeans.scanned.collection.CheeseBean;
+import net.usikkert.kouinject.testbeans.scanned.collection.FishBean;
+import net.usikkert.kouinject.testbeans.scanned.collection.Food;
+import net.usikkert.kouinject.testbeans.scanned.collection.HungryBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.ChildBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractBeanImpl;
@@ -317,6 +322,21 @@ public class DefaultBeanLoaderTest {
         final HelloBean helloBean = beanLoader.getBean(HelloBean.class);
 
         assertNotNull(helloBean);
+    }
+
+    @Test
+    public void checkHungryBean() {
+        final HungryBean hungryBean = beanLoader.getBean(HungryBean.class);
+
+        assertNotNull(hungryBean);
+
+        final Collection<Food> foodBeans = hungryBean.getFoodBeans();
+        assertNotNull(foodBeans);
+        assertEquals(3, foodBeans.size());
+        assertTrue(containsBean(CheeseBean.class, foodBeans));
+        assertTrue(containsBean(FishBean.class, foodBeans));
+        assertTrue(containsBean(BananaBean.class, foodBeans));
+
     }
 
     @Test
@@ -737,7 +757,7 @@ public class DefaultBeanLoaderTest {
         final Collection<Object> beans = beanLoader.getBeans(Object.class, null);
 
         assertNotNull(beans);
-        assertEquals(23, beans.size());
+        assertEquals(27, beans.size());
 
         assertFalse(containsBean(BlueBean.class, beans)); // Bean with qualifier
         assertTrue(containsBean(HelloBean.class, beans)); // Bean without qualifier
@@ -748,7 +768,7 @@ public class DefaultBeanLoaderTest {
         final Collection<Object> beans = beanLoader.getBeans(Object.class);
 
         assertNotNull(beans);
-        assertEquals(23, beans.size());
+        assertEquals(27, beans.size());
 
         assertFalse(containsBean(BlueBean.class, beans)); // Bean with qualifier
         assertTrue(containsBean(HelloBean.class, beans)); // Bean without qualifier
@@ -770,7 +790,7 @@ public class DefaultBeanLoaderTest {
         final Collection<Object> beans = beanLoader.getBeans(Object.class, "any");
 
         assertNotNull(beans);
-        assertEquals(33, beans.size());
+        assertEquals(37, beans.size());
 
         assertTrue(containsBean(BlueBean.class, beans)); // Bean with qualifier
         assertTrue(containsBean(HelloBean.class, beans)); // Bean without qualifier

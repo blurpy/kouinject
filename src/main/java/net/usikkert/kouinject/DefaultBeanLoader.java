@@ -294,6 +294,10 @@ public class DefaultBeanLoader implements BeanLoader {
             };
         }
 
+        if (dependency.isCollection()) {
+            return getBeans(dependency.getBeanClass(), dependency.getQualifier());
+        }
+
         return getBean(dependency.getBeanClass(), dependency.getQualifier());
     }
 

@@ -82,6 +82,15 @@ public class BeanKey {
     }
 
     /**
+     * If this bean key is for a collection of beans.
+     *
+     * @return If this is for a collection of beans. False for the default implementation.
+     */
+    public boolean isCollection() {
+        return false;
+    }
+
+    /**
      * Gets the qualifier for this bean key.
      *
      * <p>A qualifier combined with the class helps identify the bean to inject.

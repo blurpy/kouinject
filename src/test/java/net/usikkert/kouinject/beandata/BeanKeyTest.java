@@ -271,14 +271,23 @@ public class BeanKeyTest {
     }
 
     @Test
-    public void isProviderShouldBeFalseForBeanKey() {
+    public void defaultBeanKey() {
         final BeanKey theGreenBean = new BeanKey(GreenBean.class, "none");
         assertFalse(theGreenBean.isProvider());
+        assertFalse(theGreenBean.isCollection());
     }
 
     @Test
-    public void isProviderShouldBeTrueForProviderBeanKey() {
+    public void providerBeanKey() {
         final BeanKey theGreenBean = new ProviderBeanKey(GreenBean.class, "none");
         assertTrue(theGreenBean.isProvider());
+        assertFalse(theGreenBean.isCollection());
+    }
+
+    @Test
+    public void collectionBeanKey() {
+        final BeanKey theGreenBean = new CollectionBeanKey(GreenBean.class, "none");
+        assertFalse(theGreenBean.isProvider());
+        assertTrue(theGreenBean.isCollection());
     }
 }

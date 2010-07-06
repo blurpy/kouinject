@@ -30,12 +30,14 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 
 import net.usikkert.kouinject.beandata.BeanData;
+import net.usikkert.kouinject.beandata.CollectionBeanKey;
 import net.usikkert.kouinject.beandata.ConstructorData;
 import net.usikkert.kouinject.beandata.BeanKey;
 import net.usikkert.kouinject.beandata.FieldData;
@@ -139,9 +141,16 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
 
         if (isProvider(fieldBeanClass)) {
             final Type genericType = field.getGenericType();
-            final Class<?> beanClassFromProvider = getBeanClassFromProvider(field, genericType);
+            final Class<?> beanClassFromProvider = getBeanClassFromGenericType(field, genericType);
 
             return new ProviderBeanKey(beanClassFromProvider, qualifier);
+        }
+
+        else if (isCollection(fieldBeanClass)) {
+            final Type genericType = field.getGenericType();
+            final Class<?> beanClassFromCollection = getBeanClassFromGenericType(field, genericType);
+
+            return new CollectionBeanKey(beanClassFromCollection, qualifier);
         }
 
         else {
@@ -235,9 +244,15 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
         final String qualifier = qualifierHandler.getQualifier(parameterOwner, annotations);
 
         if (isProvider(parameterClass)) {
-            final Class<?> beanClassFromProvider = getBeanClassFromProvider(parameterOwner, parameterType);
+            final Class<?> beanClassFromProvider = getBeanClassFromGenericType(parameterOwner, parameterType);
 
             return new ProviderBeanKey(beanClassFromProvider, qualifier);
+        }
+
+        else if (isCollection(parameterClass)) {
+            final Class<?> beanClassFromCollection = getBeanClassFromGenericType(parameterOwner, parameterType);
+
+            return new CollectionBeanKey(beanClassFromCollection, qualifier);
         }
 
         else {
@@ -249,7 +264,11 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
         return Provider.class.isAssignableFrom(parameterType);
     }
 
-    private Class<?> getBeanClassFromProvider(final Object parameterOwner, final Type genericParameterType) {
+    private boolean isCollection(final Class<?> parameterType) {
+        return Collection.class.isAssignableFrom(parameterType);
+    }
+
+    private Class<?> getBeanClassFromGenericType(final Object parameterOwner, final Type genericParameterType) {
         if (genericParameterType instanceof ParameterizedType) {
             final ParameterizedType parameterizedType = (ParameterizedType) genericParameterType;
             final Type[] typeArguments = parameterizedType.getActualTypeArguments();
