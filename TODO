@@ -11,3 +11,5 @@
  - @Value annotation for injecton of properties
  - @Produces annotation for defining factories for beans
  - Support for injecting collection of beans
+ - Tests for @Any
+ - Test Provider with wildcard

@@ -1,6 +1,15 @@
 
 - KouInject CHANGES
 
+
+* Version 0.7 (xx.xx.2010):
+ - Added support for injecting collection of beans
+ - Added @Any qualifier for getting beans with any or no qualifier
+ - Made qualifier strings case insensitive
+ - Removed autowire method from BeanLoader
+ - Replaced own Validate with Validate from Apache Commons
+
+
 * Version 0.6 (12.06.2010):
  - Implemented JSR-330 API
  - Added DefaultInjector for simpler setup
