@@ -37,9 +37,9 @@ public class FieldData implements InjectionPoint {
 
     private final Field field;
 
-    private final Dependency dependency;
+    private final BeanKey dependency;
 
-    private final List<Dependency> dependencies;
+    private final List<BeanKey> dependencies;
 
     /**
      * Creates a new instance of this field data.
@@ -47,7 +47,7 @@ public class FieldData implements InjectionPoint {
      * @param field The field this meta-data is for.
      * @param dependency The required dependency for this field.
      */
-    public FieldData(final Field field, final Dependency dependency) {
+    public FieldData(final Field field, final BeanKey dependency) {
         Validate.notNull(field, "Field can not be null");
         Validate.notNull(dependency, "Dependency can not be null");
 
@@ -70,7 +70,7 @@ public class FieldData implements InjectionPoint {
      *
      * @return The required dependency.
      */
-    public Dependency getDependency() {
+    public BeanKey getDependency() {
         return dependency;
     }
 
@@ -80,7 +80,7 @@ public class FieldData implements InjectionPoint {
      * @return The required dependency.
      */
     @Override
-    public List<Dependency> getDependencies() {
+    public List<BeanKey> getDependencies() {
         return dependencies;
     }
 

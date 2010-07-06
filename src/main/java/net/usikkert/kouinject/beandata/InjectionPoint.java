@@ -44,5 +44,5 @@ public interface InjectionPoint {
      *
      * @return A list of the required dependencies.
      */
-    List<Dependency> getDependencies();
+    List<BeanKey> getDependencies();
 }

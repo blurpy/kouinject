@@ -25,7 +25,7 @@ package net.usikkert.kouinject;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import net.usikkert.kouinject.beandata.Dependency;
+import net.usikkert.kouinject.beandata.BeanKey;
 
 import org.apache.commons.lang.Validate;
 
@@ -36,13 +36,13 @@ import org.apache.commons.lang.Validate;
  */
 public class BeansInCreation {
 
-    private final Collection<Dependency> beansInCreation;
+    private final Collection<BeanKey> beansInCreation;
 
     /**
      * Creates a new instance of this beans in creation class, ready to use.
      */
     public BeansInCreation() {
-        beansInCreation = new ArrayList<Dependency>();
+        beansInCreation = new ArrayList<BeanKey>();
     }
 
     /**
@@ -50,7 +50,7 @@ public class BeansInCreation {
      *
      * @param bean The bean to add.
      */
-    public synchronized void addBean(final Dependency bean) {
+    public synchronized void addBean(final BeanKey bean) {
         Validate.notNull(bean, "Bean can not be null");
 
         if (containsBean(bean)) {
@@ -65,7 +65,7 @@ public class BeansInCreation {
      *
      * @param bean The bean to remove.
      */
-    public synchronized void removeBean(final Dependency bean) {
+    public synchronized void removeBean(final BeanKey bean) {
         Validate.notNull(bean, "Bean can not be null");
 
         beansInCreation.remove(bean);
@@ -77,7 +77,7 @@ public class BeansInCreation {
      * @param bean The bean to check.
      * @return If the bean is in creation.
      */
-    public synchronized boolean containsBean(final Dependency bean) {
+    public synchronized boolean containsBean(final BeanKey bean) {
         Validate.notNull(bean, "Bean can not be null");
 
         return beansInCreation.contains(bean);

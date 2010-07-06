@@ -37,7 +37,7 @@ public class BeanData {
     private final Class<?> beanClass;
     private final ConstructorData constructor;
     private final List<InjectionPoint> injectionPoints;
-    private final List<Dependency> dependencies;
+    private final List<BeanKey> dependencies;
     private final boolean isSingleton;
 
     /**
@@ -58,7 +58,7 @@ public class BeanData {
         this.constructor = constructor;
         this.injectionPoints = injectionPoints;
         this.isSingleton = isSingleton;
-        this.dependencies = new ArrayList<Dependency>();
+        this.dependencies = new ArrayList<BeanKey>();
 
         mapDependencies();
     }
@@ -131,7 +131,7 @@ public class BeanData {
      *
      * @return All required dependencies.
      */
-    public List<Dependency> getDependencies() {
+    public List<BeanKey> getDependencies() {
         return dependencies;
     }
 

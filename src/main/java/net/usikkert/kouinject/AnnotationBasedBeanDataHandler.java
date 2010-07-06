@@ -37,7 +37,7 @@ import javax.inject.Provider;
 
 import net.usikkert.kouinject.beandata.BeanData;
 import net.usikkert.kouinject.beandata.ConstructorData;
-import net.usikkert.kouinject.beandata.Dependency;
+import net.usikkert.kouinject.beandata.BeanKey;
 import net.usikkert.kouinject.beandata.FieldData;
 import net.usikkert.kouinject.beandata.InjectionPoint;
 import net.usikkert.kouinject.beandata.MethodData;
@@ -126,13 +126,13 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
     }
 
     private FieldData createFieldData(final Field field) {
-        final Dependency dependency = findDependency(field);
+        final BeanKey dependency = findDependency(field);
         final FieldData fieldData = new FieldData(field, dependency);
 
         return fieldData;
     }
 
-    private Dependency findDependency(final Field field) {
+    private BeanKey findDependency(final Field field) {
         final Class<?> fieldBeanClass = field.getType();
         final String qualifier = qualifierHandler.getQualifier(field, field.getAnnotations());
 
@@ -140,11 +140,11 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
             final Type genericType = field.getGenericType();
             final Class<?> beanClassFromProvider = getBeanClassFromProvider(field, genericType);
 
-            return new Dependency(beanClassFromProvider, true, qualifier);
+            return new BeanKey(beanClassFromProvider, true, qualifier);
         }
 
         else {
-            return new Dependency(fieldBeanClass, false, qualifier);
+            return new BeanKey(fieldBeanClass, false, qualifier);
         }
     }
 
@@ -153,13 +153,13 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
     }
 
     private MethodData createMethodData(final Method method) {
-        final List<Dependency> dependencies = findDependencies(method);
+        final List<BeanKey> dependencies = findDependencies(method);
         final MethodData methodData = new MethodData(method, dependencies);
 
         return methodData;
     }
 
-    private List<Dependency> findDependencies(final Method method) {
+    private List<BeanKey> findDependencies(final Method method) {
         final Class<?>[] parameterTypes = method.getParameterTypes();
         final Type[] genericParameterTypes = method.getGenericParameterTypes();
         final Annotation[][] parameterAnnotations = method.getParameterAnnotations();
@@ -200,13 +200,13 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
     }
 
     private ConstructorData createConstructorData(final Constructor<?> constructor) {
-        final List<Dependency> dependencies = findDependencies(constructor);
+        final List<BeanKey> dependencies = findDependencies(constructor);
         final ConstructorData constructorData = new ConstructorData(constructor, dependencies);
 
         return constructorData;
     }
 
-    private List<Dependency> findDependencies(final Constructor<?> constructor) {
+    private List<BeanKey> findDependencies(final Constructor<?> constructor) {
         final Class<?>[] parameterTypes = constructor.getParameterTypes();
         final Type[] genericParameterTypes = constructor.getGenericParameterTypes();
         final Annotation[][] parameterAnnotations = constructor.getParameterAnnotations();
@@ -214,33 +214,33 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
         return findDependencies(constructor, parameterTypes, genericParameterTypes, parameterAnnotations);
     }
 
-    private List<Dependency> findDependencies(final Object parameterOwner, final Class<?>[] parameterTypes,
+    private List<BeanKey> findDependencies(final Object parameterOwner, final Class<?>[] parameterTypes,
             final Type[] genericParameterTypes, final Annotation[][] annotations) {
-        final List<Dependency> dependencies = new ArrayList<Dependency>();
+        final List<BeanKey> dependencies = new ArrayList<BeanKey>();
 
         for (int i = 0; i < parameterTypes.length; i++) {
             final Class<?> parameterClass = parameterTypes[i];
             final Type parameterType = genericParameterTypes[i];
 
-            final Dependency dependency = findDependency(parameterOwner, parameterClass, parameterType, annotations[i]);
+            final BeanKey dependency = findDependency(parameterOwner, parameterClass, parameterType, annotations[i]);
             dependencies.add(dependency);
         }
 
         return dependencies;
     }
 
-    private Dependency findDependency(final Object parameterOwner, final Class<?> parameterClass,
+    private BeanKey findDependency(final Object parameterOwner, final Class<?> parameterClass,
             final Type parameterType, final Annotation[] annotations) {
         final String qualifier = qualifierHandler.getQualifier(parameterOwner, annotations);
 
         if (isProvider(parameterClass)) {
             final Class<?> beanClassFromProvider = getBeanClassFromProvider(parameterOwner, parameterType);
 
-            return new Dependency(beanClassFromProvider, true, qualifier);
+            return new BeanKey(beanClassFromProvider, true, qualifier);
         }
 
         else {
-            return new Dependency(parameterClass, false, qualifier);
+            return new BeanKey(parameterClass, false, qualifier);
         }
     }
 

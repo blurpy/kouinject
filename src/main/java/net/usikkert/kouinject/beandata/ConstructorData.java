@@ -37,7 +37,7 @@ public class ConstructorData {
 
     private final Constructor<?> constructor;
 
-    private final List<Dependency> dependencies;
+    private final List<BeanKey> dependencies;
 
     /**
      * Creates a new instance of this constructor data.
@@ -45,7 +45,7 @@ public class ConstructorData {
      * @param constructor The constructor this meta-data is for.
      * @param dependencies The required dependencies for this constructor.
      */
-    public ConstructorData(final Constructor<?> constructor, final List<Dependency> dependencies) {
+    public ConstructorData(final Constructor<?> constructor, final List<BeanKey> dependencies) {
         Validate.notNull(constructor, "Constructor can not be null");
         Validate.notNull(dependencies, "Dependencies can not be null");
 
@@ -67,7 +67,7 @@ public class ConstructorData {
      *
      * @return The required dependencies.
      */
-    public List<Dependency> getDependencies() {
+    public List<BeanKey> getDependencies() {
         return dependencies;
     }
 

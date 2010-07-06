@@ -24,7 +24,7 @@ package net.usikkert.kouinject;
 
 import static org.junit.Assert.*;
 
-import net.usikkert.kouinject.beandata.Dependency;
+import net.usikkert.kouinject.beandata.BeanKey;
 import net.usikkert.kouinject.testbeans.scanned.FieldBean;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.SetterBean;
@@ -40,16 +40,16 @@ import org.junit.Test;
 public class BeansInCreationTest {
 
     private BeansInCreation beansInCreation;
-    private Dependency helloBean;
-    private Dependency fieldBean;
-    private Dependency setterBean;
+    private BeanKey helloBean;
+    private BeanKey fieldBean;
+    private BeanKey setterBean;
 
     @Before
     public void createBeansInCreation() {
         beansInCreation = new BeansInCreation();
-        helloBean = new Dependency(HelloBean.class);
-        setterBean = new Dependency(SetterBean.class);
-        fieldBean = new Dependency(FieldBean.class);
+        helloBean = new BeanKey(HelloBean.class);
+        setterBean = new BeanKey(SetterBean.class);
+        fieldBean = new BeanKey(FieldBean.class);
     }
 
     @Test

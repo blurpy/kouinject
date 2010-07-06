@@ -37,7 +37,7 @@ public class MethodData implements InjectionPoint {
 
     private final Method method;
 
-    private final List<Dependency> dependencies;
+    private final List<BeanKey> dependencies;
 
     /**
      * Creates a new instance of this method data.
@@ -45,7 +45,7 @@ public class MethodData implements InjectionPoint {
      * @param method The method this meta-data is for.
      * @param dependencies The required dependencies for this method.
      */
-    public MethodData(final Method method, final List<Dependency> dependencies) {
+    public MethodData(final Method method, final List<BeanKey> dependencies) {
         Validate.notNull(method, "Method can not be null");
         Validate.notNull(dependencies, "Dependencies can not be null");
 
@@ -68,7 +68,7 @@ public class MethodData implements InjectionPoint {
      * @return The required dependencies.
      */
     @Override
-    public List<Dependency> getDependencies() {
+    public List<BeanKey> getDependencies() {
         return dependencies;
     }
 

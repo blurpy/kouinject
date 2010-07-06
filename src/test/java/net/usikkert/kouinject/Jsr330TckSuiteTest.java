@@ -27,7 +27,7 @@ import java.util.Set;
 
 import junit.framework.Test;
 
-import net.usikkert.kouinject.beandata.Dependency;
+import net.usikkert.kouinject.beandata.BeanKey;
 
 import org.atinject.tck.Tck;
 import org.atinject.tck.auto.Car;
@@ -51,17 +51,17 @@ public class Jsr330TckSuiteTest {
     public static Test suite() {
         final BeanLocator beanLocator = new BeanLocator() {
             @Override
-            public Set<Dependency> findBeans() {
-                final Set<Dependency> beans = new HashSet<Dependency>();
+            public Set<BeanKey> findBeans() {
+                final Set<BeanKey> beans = new HashSet<BeanKey>();
 
-                beans.add(new Dependency(Convertible.class));
-                beans.add(new Dependency(V8Engine.class));
-                beans.add(new Dependency(Cupholder.class));
-                beans.add(new Dependency(Tire.class));
-                beans.add(new Dependency(SpareTire.class, "spare"));
-                beans.add(new Dependency(FuelTank.class));
-                beans.add(new Dependency(Seat.class));
-                beans.add(new Dependency(DriversSeat.class, "Drivers"));
+                beans.add(new BeanKey(Convertible.class));
+                beans.add(new BeanKey(V8Engine.class));
+                beans.add(new BeanKey(Cupholder.class));
+                beans.add(new BeanKey(Tire.class));
+                beans.add(new BeanKey(SpareTire.class, "spare"));
+                beans.add(new BeanKey(FuelTank.class));
+                beans.add(new BeanKey(Seat.class));
+                beans.add(new BeanKey(DriversSeat.class, "Drivers"));
 
                 return beans;
             }

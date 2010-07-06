@@ -29,7 +29,7 @@ import org.apache.commons.lang.Validate;
  *
  * @author Christian Ihle
  */
-public class Dependency {
+public class BeanKey {
 
     /** Value of qualifier used to mark that an injection point accepts beans with any or no qualifier. */
     private static final String ANY_QUALIFIER = "any";
@@ -46,7 +46,7 @@ public class Dependency {
      *
      * @param beanClass The actual bean class dependency.
      */
-    public Dependency(final Class<?> beanClass) {
+    public BeanKey(final Class<?> beanClass) {
         this(beanClass, null);
     }
 
@@ -56,7 +56,7 @@ public class Dependency {
      * @param beanClass The actual bean class dependency.
      * @param qualifier The qualifier for this dependency.
      */
-    public Dependency(final Class<?> beanClass, final String qualifier) {
+    public BeanKey(final Class<?> beanClass, final String qualifier) {
         this(beanClass, false, qualifier);
     }
 
@@ -67,7 +67,7 @@ public class Dependency {
      * @param isProvider If the actual bean class is for a provider.
      * @param qualifier The qualifier for this dependency.
      */
-    public Dependency(final Class<?> beanClass, final boolean isProvider, final String qualifier) {
+    public BeanKey(final Class<?> beanClass, final boolean isProvider, final String qualifier) {
         Validate.notNull(beanClass, "Bean class can not be null");
 
         this.beanClass = beanClass;
@@ -98,7 +98,7 @@ public class Dependency {
      * Gets the qualifier for this dependency.
      *
      * <p>A qualifier combined with the class helps identify the bean to inject.
-     * See {@link #canInject(Dependency)} for details regarding qualifier rules.</p>
+     * See {@link #canInject(BeanKey)} for details regarding qualifier rules.</p>
      *
      * @return The qualifier.
      */
@@ -120,7 +120,7 @@ public class Dependency {
      * @param bean The bean to check.
      * @return If the bean can be injected into this dependency.
      */
-    public boolean canInject(final Dependency bean) {
+    public boolean canInject(final BeanKey bean) {
         if (bean == null) {
             return false;
         }
@@ -162,11 +162,11 @@ public class Dependency {
             return true;
         }
 
-        if (!(obj instanceof Dependency)) {
+        if (!(obj instanceof BeanKey)) {
             return false;
         }
 
-        final Dependency dependency = (Dependency) obj;
+        final BeanKey dependency = (BeanKey) obj;
 
         if (beanClass.equals(dependency.getBeanClass())) {
             if (qualifier == null && dependency.getQualifier() == null) {

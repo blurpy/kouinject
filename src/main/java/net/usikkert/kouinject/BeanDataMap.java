@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.usikkert.kouinject.beandata.BeanData;
-import net.usikkert.kouinject.beandata.Dependency;
+import net.usikkert.kouinject.beandata.BeanKey;
 
 import org.apache.commons.lang.Validate;
 
@@ -41,13 +41,13 @@ import org.apache.commons.lang.Validate;
  */
 public class BeanDataMap {
 
-    private final Map<Dependency, BeanData> beanDataMap;
+    private final Map<BeanKey, BeanData> beanDataMap;
 
     /**
      * Creates a new instance of this bean-data map, ready to use.
      */
     public BeanDataMap() {
-        this.beanDataMap = new HashMap<Dependency, BeanData>();
+        this.beanDataMap = new HashMap<BeanKey, BeanData>();
     }
 
     /**
@@ -56,7 +56,7 @@ public class BeanDataMap {
      * @param description The description of the bean-data.
      * @param beanData The bean-data to add.
      */
-    public synchronized void addBeanData(final Dependency description, final BeanData beanData) {
+    public synchronized void addBeanData(final BeanKey description, final BeanData beanData) {
         Validate.notNull(description, "Description can not be null");
         Validate.notNull(beanData, "BeanData can not be null");
 
@@ -73,18 +73,18 @@ public class BeanDataMap {
      * @param beanNeeded The description of the bean-data to get.
      * @return The bean-data, or {@link IllegalArgumentException} if not found.
      */
-    public synchronized BeanData getBeanData(final Dependency beanNeeded) {
+    public synchronized BeanData getBeanData(final BeanKey beanNeeded) {
         return getBeanData(beanNeeded, true);
     }
 
-    private BeanData getBeanData(final Dependency beanNeeded, final boolean throwEx) {
+    private BeanData getBeanData(final BeanKey beanNeeded, final boolean throwEx) {
         Validate.notNull(beanNeeded, "Bean needed can not be null");
 
-        final List<Dependency> matches = new ArrayList<Dependency>();
-        final Iterator<Dependency> iterator = beanDataMap.keySet().iterator();
+        final List<BeanKey> matches = new ArrayList<BeanKey>();
+        final Iterator<BeanKey> iterator = beanDataMap.keySet().iterator();
 
         while (iterator.hasNext()) {
-            final Dependency bean = iterator.next();
+            final BeanKey bean = iterator.next();
 
             if (beanNeeded.canInject(bean)) {
                 matches.add(bean);
@@ -123,7 +123,7 @@ public class BeanDataMap {
      * @param description The description of the bean-data.
      * @return If the bean-data exists in the map.
      */
-    public synchronized boolean containsBeanData(final Dependency description) {
+    public synchronized boolean containsBeanData(final BeanKey description) {
         Validate.notNull(description, "Description can not be null");
 
         final BeanData beanData = getBeanData(description, false);
@@ -137,14 +137,14 @@ public class BeanDataMap {
      * @param description Description of the beans to search for.
      * @return A collection of bean keys.
      */
-    public synchronized Collection<Dependency> findBeanKeys(final Dependency description) {
+    public synchronized Collection<BeanKey> findBeanKeys(final BeanKey description) {
         Validate.notNull(description, "Description can not be null");
 
-        final Collection<Dependency> matches = new ArrayList<Dependency>();
-        final Iterator<Dependency> iterator = beanDataMap.keySet().iterator();
+        final Collection<BeanKey> matches = new ArrayList<BeanKey>();
+        final Iterator<BeanKey> iterator = beanDataMap.keySet().iterator();
 
         while (iterator.hasNext()) {
-            final Dependency bean = iterator.next();
+            final BeanKey bean = iterator.next();
 
             if (description.canInject(bean)) {
                 matches.add(bean);

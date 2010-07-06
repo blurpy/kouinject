@@ -24,7 +24,7 @@ package net.usikkert.kouinject;
 
 import static org.junit.Assert.*;
 
-import net.usikkert.kouinject.beandata.Dependency;
+import net.usikkert.kouinject.beandata.BeanKey;
 import net.usikkert.kouinject.testbeans.scanned.CarBean;
 import net.usikkert.kouinject.testbeans.scanned.FieldBean;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
@@ -52,7 +52,7 @@ public class SingletonMapTest {
         assertEquals(0, map.size());
 
         final Object beanToAdd = new Object();
-        final Dependency bean = new Dependency(Object.class);
+        final BeanKey bean = new BeanKey(Object.class);
 
         map.addSingleton(bean, beanToAdd);
 
@@ -64,7 +64,7 @@ public class SingletonMapTest {
         assertEquals(0, map.size());
 
         final Object beanToAdd = new Object();
-        final Dependency bean = new Dependency(Object.class);
+        final BeanKey bean = new BeanKey(Object.class);
 
         map.addSingleton(bean, beanToAdd);
         map.addSingleton(bean, beanToAdd);
@@ -75,19 +75,19 @@ public class SingletonMapTest {
         assertEquals(0, map.size());
 
         final SetterBean setterBean = new SetterBean();
-        final Dependency setterBeanDependency = new Dependency(SetterBean.class);
+        final BeanKey setterBeanDependency = new BeanKey(SetterBean.class);
 
         map.addSingleton(setterBeanDependency, setterBean);
         assertEquals(1, map.size());
 
         final FieldBean fieldBean = new FieldBean();
-        final Dependency fieldBeanDependency = new Dependency(FieldBean.class);
+        final BeanKey fieldBeanDependency = new BeanKey(FieldBean.class);
 
         map.addSingleton(fieldBeanDependency, fieldBean);
         assertEquals(2, map.size());
 
         final HelloBean helloBean = new HelloBean();
-        final Dependency helloBeanDependency = new Dependency(HelloBean.class);
+        final BeanKey helloBeanDependency = new BeanKey(HelloBean.class);
 
         map.addSingleton(helloBeanDependency, helloBean);
         assertEquals(3, map.size());
@@ -97,13 +97,13 @@ public class SingletonMapTest {
     public void getSingletonShouldFindTheCorrectSingleton() {
         addTestBeans();
 
-        final Object setterBean = map.getSingleton(new Dependency(SetterBean.class), true);
+        final Object setterBean = map.getSingleton(new BeanKey(SetterBean.class), true);
         assertTrue(setterBean instanceof SetterBean);
 
-        final Object fieldBean = map.getSingleton(new Dependency(FieldBean.class), true);
+        final Object fieldBean = map.getSingleton(new BeanKey(FieldBean.class), true);
         assertTrue(fieldBean instanceof FieldBean);
 
-        final Object helloBean = map.getSingleton(new Dependency(HelloBean.class), true);
+        final Object helloBean = map.getSingleton(new BeanKey(HelloBean.class), true);
         assertTrue(helloBean instanceof HelloBean);
     }
 
@@ -111,14 +111,14 @@ public class SingletonMapTest {
     public void getSingletonShouldFailIfNoMatchFoundIfThrowExIsTrue() {
         addTestBeans();
 
-        map.getSingleton(new Dependency(CarBean.class), true);
+        map.getSingleton(new BeanKey(CarBean.class), true);
     }
 
     @Test
     public void getSingletonShouldReturnNullIfNoMatchFoundIfThrowExIsFalse() {
         addTestBeans();
 
-        final Object carBean = map.getSingleton(new Dependency(CarBean.class), false);
+        final Object carBean = map.getSingleton(new BeanKey(CarBean.class), false);
 
         assertNull(carBean);
     }
@@ -127,36 +127,36 @@ public class SingletonMapTest {
     public void getSingletonShouldFailIfTooManyMatches() {
         addTestBeans();
 
-        map.getSingleton(new Dependency(Object.class), true);
+        map.getSingleton(new BeanKey(Object.class), true);
     }
 
     @Test
     public void containsSingletonShouldDetectAddedBeans() {
         addTestBeans();
 
-        assertTrue(map.containsSingleton(new Dependency(SetterBean.class)));
-        assertTrue(map.containsSingleton(new Dependency(FieldBean.class)));
-        assertTrue(map.containsSingleton(new Dependency(HelloBean.class)));
+        assertTrue(map.containsSingleton(new BeanKey(SetterBean.class)));
+        assertTrue(map.containsSingleton(new BeanKey(FieldBean.class)));
+        assertTrue(map.containsSingleton(new BeanKey(HelloBean.class)));
     }
 
     @Test
     public void containsSingletonShouldHandleMissingBeans() {
         addTestBeans();
 
-        assertFalse(map.containsSingleton(new Dependency(CarBean.class)));
+        assertFalse(map.containsSingleton(new BeanKey(CarBean.class)));
     }
 
     private void addTestBeans() {
         final SetterBean setterBean = new SetterBean();
-        final Dependency setterBeanDependency = new Dependency(SetterBean.class);
+        final BeanKey setterBeanDependency = new BeanKey(SetterBean.class);
         map.addSingleton(setterBeanDependency, setterBean);
 
         final FieldBean fieldBean = new FieldBean();
-        final Dependency fieldBeanDependency = new Dependency(FieldBean.class);
+        final BeanKey fieldBeanDependency = new BeanKey(FieldBean.class);
         map.addSingleton(fieldBeanDependency, fieldBean);
 
         final HelloBean helloBean = new HelloBean();
-        final Dependency helloBeanDependency = new Dependency(HelloBean.class);
+        final BeanKey helloBeanDependency = new BeanKey(HelloBean.class);
         map.addSingleton(helloBeanDependency, helloBean);
     }
 }

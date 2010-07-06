@@ -32,7 +32,7 @@ import javax.inject.Provider;
 
 import net.usikkert.kouinject.beandata.BeanData;
 import net.usikkert.kouinject.beandata.ConstructorData;
-import net.usikkert.kouinject.beandata.Dependency;
+import net.usikkert.kouinject.beandata.BeanKey;
 import net.usikkert.kouinject.beandata.InjectionPoint;
 
 import org.apache.commons.lang.Validate;
@@ -85,12 +85,12 @@ public class DefaultBeanLoader implements BeanLoader {
      * Finds all registered beans, and prepares them for being instantiated.
      */
     private void loadBeanData() {
-        final Set<Dependency> detectedBeans = beanLocator.findBeans();
+        final Set<BeanKey> detectedBeans = beanLocator.findBeans();
         LOG.fine("Beans found: " + detectedBeans.size());
 
         final long start = System.currentTimeMillis();
 
-        for (final Dependency bean : detectedBeans) {
+        for (final BeanKey bean : detectedBeans) {
             final BeanData beanData = beanDataHandler.getBeanData(bean.getBeanClass(), false);
             beanDataMap.addBeanData(bean, beanData);
         }
@@ -116,7 +116,7 @@ public class DefaultBeanLoader implements BeanLoader {
     public <T extends Object> T getBean(final Class<T> beanClass, final String qualifier) {
         Validate.notNull(beanClass, "Bean class can not be null");
 
-        final Dependency dependency = new Dependency(beanClass, qualifier);
+        final BeanKey dependency = new BeanKey(beanClass, qualifier);
 
         if (!beanDataMap.containsBeanData(dependency)) {
             throw new IllegalArgumentException("No registered bean-data for: " + dependency);
@@ -141,8 +141,8 @@ public class DefaultBeanLoader implements BeanLoader {
     public <T extends Object> Collection<T> getBeans(final Class<T> beanClass, final String qualifier) {
         Validate.notNull(beanClass, "Bean class can not be null");
 
-        final Dependency dependency = new Dependency(beanClass, qualifier);
-        final Collection<Dependency> beanKeys = beanDataMap.findBeanKeys(dependency);
+        final BeanKey dependency = new BeanKey(beanClass, qualifier);
+        final Collection<BeanKey> beanKeys = beanDataMap.findBeanKeys(dependency);
 
         if (beanKeys.isEmpty()) {
             throw new IllegalArgumentException("No registered bean-data for: " + dependency);
@@ -150,14 +150,14 @@ public class DefaultBeanLoader implements BeanLoader {
 
         final Collection<T> beans = new ArrayList<T>();
 
-        for (final Dependency beanKey : beanKeys) {
+        for (final BeanKey beanKey : beanKeys) {
             beans.add((T) findOrCreateBean(beanKey));
         }
 
         return beans;
     }
 
-    private Object findOrCreateBean(final Dependency dependency) {
+    private Object findOrCreateBean(final BeanKey dependency) {
         final Object bean = findBean(dependency, false);
 
         if (bean != null) {
@@ -200,7 +200,7 @@ public class DefaultBeanLoader implements BeanLoader {
         Validate.notNull(beanToAdd, "Bean can not be null");
 
         final Class<?> beanClass = beanToAdd.getClass();
-        final Dependency bean = new Dependency(beanClass, qualifier);
+        final BeanKey bean = new BeanKey(beanClass, qualifier);
 
         singletonMap.addSingleton(bean, beanToAdd);
 
@@ -211,7 +211,7 @@ public class DefaultBeanLoader implements BeanLoader {
         LOG.fine("Bean added: " + beanClass.getName());
     }
 
-    private Object createBean(final Dependency dependency) {
+    private Object createBean(final BeanKey dependency) {
         LOG.finer("Checking bean before creation: " + dependency);
 
         if (dependency.isProvider()) {
@@ -238,7 +238,7 @@ public class DefaultBeanLoader implements BeanLoader {
         return instance;
     }
 
-    private BeanData findBeanData(final Dependency beanNeeded) {
+    private BeanData findBeanData(final BeanKey beanNeeded) {
         return beanDataMap.getBeanData(beanNeeded);
     }
 
@@ -253,11 +253,11 @@ public class DefaultBeanLoader implements BeanLoader {
         final ConstructorData constructor = beanData.getConstructor();
         LOG.finer("Invoking constructor: " + constructor);
 
-        final List<Dependency> dependencies = constructor.getDependencies();
+        final List<BeanKey> dependencies = constructor.getDependencies();
         final Object[] beansForConstructor = new Object[dependencies.size()];
 
         for (int i = 0; i < dependencies.size(); i++) {
-            final Dependency dependency = dependencies.get(i);
+            final BeanKey dependency = dependencies.get(i);
             final Object bean = findBeanOrCreateProvider(dependency);
             beansForConstructor[i] = bean;
         }
@@ -271,11 +271,11 @@ public class DefaultBeanLoader implements BeanLoader {
         for (final InjectionPoint injectionPoint : injectionPoints) {
             LOG.finer("Autowiring injection point: " + injectionPoint);
 
-            final List<Dependency> dependencies = injectionPoint.getDependencies();
+            final List<BeanKey> dependencies = injectionPoint.getDependencies();
             final Object[] beansForInjectionPoint = new Object[dependencies.size()];
 
             for (int i = 0; i < dependencies.size(); i++) {
-                final Dependency dependency = dependencies.get(i);
+                final BeanKey dependency = dependencies.get(i);
                 final Object bean = findBeanOrCreateProvider(dependency);
                 beansForInjectionPoint[i] = bean;
             }
@@ -284,7 +284,7 @@ public class DefaultBeanLoader implements BeanLoader {
         }
     }
 
-    private Object findBeanOrCreateProvider(final Dependency dependency) {
+    private Object findBeanOrCreateProvider(final BeanKey dependency) {
         if (dependency.isProvider()) {
             return new Provider<Object>() {
                 @Override
@@ -297,7 +297,7 @@ public class DefaultBeanLoader implements BeanLoader {
         return getBean(dependency.getBeanClass(), dependency.getQualifier());
     }
 
-    private Object findBean(final Dependency beanNeeded, final boolean throwEx) {
+    private Object findBean(final BeanKey beanNeeded, final boolean throwEx) {
         return singletonMap.getSingleton(beanNeeded, throwEx);
     }
 }

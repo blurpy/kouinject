@@ -30,16 +30,16 @@ import net.usikkert.kouinject.testbeans.scanned.qualifier.YellowBean;
 import org.junit.Test;
 
 /**
- * Test of {@link Dependency}.
+ * Test of {@link BeanKey}.
  *
  * @author Christian Ihle
  */
-public class DependencyTest {
+public class BeanKeyTest {
 
     @Test
     public void equalsAndHashcodeShouldBeTrueForSameObject() {
-        final Dependency green = new Dependency(GreenBean.class, "green");
-        final Dependency green2 = green;
+        final BeanKey green = new BeanKey(GreenBean.class, "green");
+        final BeanKey green2 = green;
 
         assertSame(green, green2);
         assertTrue(green.equals(green2));
@@ -49,8 +49,8 @@ public class DependencyTest {
 
     @Test
     public void equalsAndHashcodeShouldBeTrueForSameBeanClassAndSameQualifier() {
-        final Dependency green = new Dependency(GreenBean.class, "green");
-        final Dependency green2 = new Dependency(GreenBean.class, "green");
+        final BeanKey green = new BeanKey(GreenBean.class, "green");
+        final BeanKey green2 = new BeanKey(GreenBean.class, "green");
 
         assertTrue(green.equals(green2));
         assertTrue(green2.equals(green));
@@ -59,8 +59,8 @@ public class DependencyTest {
 
     @Test
     public void equalsAndHashcodeShouldBeTrueForSameBeanClassAndSameQualifierWithDifferentCase() {
-        final Dependency green = new Dependency(GreenBean.class, "GreEn");
-        final Dependency green2 = new Dependency(GreenBean.class, "gReen");
+        final BeanKey green = new BeanKey(GreenBean.class, "GreEn");
+        final BeanKey green2 = new BeanKey(GreenBean.class, "gReen");
 
         assertTrue(green.equals(green2));
         assertTrue(green2.equals(green));
@@ -69,8 +69,8 @@ public class DependencyTest {
 
     @Test
     public void equalsAndHashcodeShouldBeTrueForSameBeanClassAndNullQualifier() {
-        final Dependency green = new Dependency(GreenBean.class);
-        final Dependency green2 = new Dependency(GreenBean.class);
+        final BeanKey green = new BeanKey(GreenBean.class);
+        final BeanKey green2 = new BeanKey(GreenBean.class);
 
         assertTrue(green.equals(green2));
         assertTrue(green2.equals(green));
@@ -79,7 +79,7 @@ public class DependencyTest {
 
     @Test
     public void equalsAndHashcodeShouldBeFalseForDifferentTypes() {
-        final Dependency green = new Dependency(GreenBean.class);
+        final BeanKey green = new BeanKey(GreenBean.class);
         final Object object = new Object();
 
         assertFalse(green.equals(object));
@@ -89,15 +89,15 @@ public class DependencyTest {
 
     @Test
     public void equalsAndHashcodeShouldBeFalseForNull() {
-        final Dependency green = new Dependency(GreenBean.class);
+        final BeanKey green = new BeanKey(GreenBean.class);
 
         assertFalse(green.equals(null));
     }
 
     @Test
     public void equalsAndHashcodeShouldBeFalseForDifferentBeanClasses() {
-        final Dependency green = new Dependency(GreenBean.class);
-        final Dependency yellow = new Dependency(YellowBean.class);
+        final BeanKey green = new BeanKey(GreenBean.class);
+        final BeanKey yellow = new BeanKey(YellowBean.class);
 
         assertFalse(green.equals(yellow));
         assertFalse(yellow.equals(green));
@@ -106,8 +106,8 @@ public class DependencyTest {
 
     @Test
     public void equalsAndHashcodeShouldBeFalseForSameBeanClassWithDifferentQualifier() {
-        final Dependency green = new Dependency(GreenBean.class, "green1");
-        final Dependency green2 = new Dependency(GreenBean.class, "green2");
+        final BeanKey green = new BeanKey(GreenBean.class, "green1");
+        final BeanKey green2 = new BeanKey(GreenBean.class, "green2");
 
         assertFalse(green.equals(green2));
         assertFalse(green2.equals(green));
@@ -116,8 +116,8 @@ public class DependencyTest {
 
     @Test
     public void equalsAndHashcodeShouldBeFalseForSameBeanClassWithOneNullQualifier() {
-        final Dependency green = new Dependency(GreenBean.class, "green");
-        final Dependency green2 = new Dependency(GreenBean.class);
+        final BeanKey green = new BeanKey(GreenBean.class, "green");
+        final BeanKey green2 = new BeanKey(GreenBean.class);
 
         assertFalse(green.equals(green2));
         assertFalse(green2.equals(green));
@@ -126,18 +126,18 @@ public class DependencyTest {
 
     @Test
     public void canInjectShouldBeFalseForNull() {
-        final Dependency green = new Dependency(GreenBean.class);
+        final BeanKey green = new BeanKey(GreenBean.class);
 
         assertFalse(green.canInject(null));
     }
 
     @Test
     public void canInjectShouldAcceptSameClassAndSuperClassWhenNoQualifier() {
-        final Dependency theGreenBean = new Dependency(GreenBean.class);
-        final Dependency theColorBean = new Dependency(ColorBean.class);
-        final Dependency theObjectBean = new Dependency(Object.class);
+        final BeanKey theGreenBean = new BeanKey(GreenBean.class);
+        final BeanKey theColorBean = new BeanKey(ColorBean.class);
+        final BeanKey theObjectBean = new BeanKey(Object.class);
 
-        final Dependency theColorField = new Dependency(ColorBean.class);
+        final BeanKey theColorField = new BeanKey(ColorBean.class);
 
         assertTrue(theColorField.canInject(theGreenBean));
         assertTrue(theColorField.canInject(theColorBean));
@@ -146,11 +146,11 @@ public class DependencyTest {
 
     @Test
     public void canInjectShouldOnlyAcceptSameClassWhenNoQualifierEvenIfBeansHaveQualifier() {
-        final Dependency theGreenBean = new Dependency(GreenBean.class, "green");
-        final Dependency theColorBean = new Dependency(ColorBean.class, "colorfull");
-        final Dependency theObjectBean = new Dependency(Object.class, "dull");
+        final BeanKey theGreenBean = new BeanKey(GreenBean.class, "green");
+        final BeanKey theColorBean = new BeanKey(ColorBean.class, "colorfull");
+        final BeanKey theObjectBean = new BeanKey(Object.class, "dull");
 
-        final Dependency theColorField = new Dependency(ColorBean.class);
+        final BeanKey theColorField = new BeanKey(ColorBean.class);
 
         assertFalse(theColorField.canInject(theGreenBean));
         assertTrue(theColorField.canInject(theColorBean));
@@ -159,11 +159,11 @@ public class DependencyTest {
 
     @Test
     public void canInjectShouldAcceptSuperClassWhenQualifierMatch() {
-        final Dependency theGreenBean = new Dependency(GreenBean.class, "green");
-        final Dependency theColorBean = new Dependency(ColorBean.class);
-        final Dependency theObjectBean = new Dependency(Object.class);
+        final BeanKey theGreenBean = new BeanKey(GreenBean.class, "green");
+        final BeanKey theColorBean = new BeanKey(ColorBean.class);
+        final BeanKey theObjectBean = new BeanKey(Object.class);
 
-        final Dependency theColorField = new Dependency(ColorBean.class, "green");
+        final BeanKey theColorField = new BeanKey(ColorBean.class, "green");
 
         assertTrue(theColorField.canInject(theGreenBean));
         assertFalse(theColorField.canInject(theColorBean));
@@ -172,11 +172,11 @@ public class DependencyTest {
 
     @Test
     public void canInjectShouldAcceptSameClassWhenQualifierMatch() {
-        final Dependency theGreenBean = new Dependency(GreenBean.class);
-        final Dependency theColorBean = new Dependency(ColorBean.class, "green");
-        final Dependency theObjectBean = new Dependency(Object.class);
+        final BeanKey theGreenBean = new BeanKey(GreenBean.class);
+        final BeanKey theColorBean = new BeanKey(ColorBean.class, "green");
+        final BeanKey theObjectBean = new BeanKey(Object.class);
 
-        final Dependency theColorField = new Dependency(ColorBean.class, "green");
+        final BeanKey theColorField = new BeanKey(ColorBean.class, "green");
 
         assertFalse(theColorField.canInject(theGreenBean));
         assertTrue(theColorField.canInject(theColorBean));
@@ -185,11 +185,11 @@ public class DependencyTest {
 
     @Test
     public void canInjectShouldAcceptSameClassWhenQualifierMatchWithDifferentCase() {
-        final Dependency theGreenBean = new Dependency(GreenBean.class);
-        final Dependency theColorBean = new Dependency(ColorBean.class, "greeN");
-        final Dependency theObjectBean = new Dependency(Object.class);
+        final BeanKey theGreenBean = new BeanKey(GreenBean.class);
+        final BeanKey theColorBean = new BeanKey(ColorBean.class, "greeN");
+        final BeanKey theObjectBean = new BeanKey(Object.class);
 
-        final Dependency theColorField = new Dependency(ColorBean.class, "Green");
+        final BeanKey theColorField = new BeanKey(ColorBean.class, "Green");
 
         assertFalse(theColorField.canInject(theGreenBean));
         assertTrue(theColorField.canInject(theColorBean));
@@ -198,11 +198,11 @@ public class DependencyTest {
 
     @Test
     public void canInjectShouldDenyBeansThatMatchWithClassIfQualifierIsMissing() {
-        final Dependency theGreenBean = new Dependency(GreenBean.class);
-        final Dependency theColorBean = new Dependency(ColorBean.class);
-        final Dependency theObjectBean = new Dependency(Object.class);
+        final BeanKey theGreenBean = new BeanKey(GreenBean.class);
+        final BeanKey theColorBean = new BeanKey(ColorBean.class);
+        final BeanKey theObjectBean = new BeanKey(Object.class);
 
-        final Dependency theColorField = new Dependency(ColorBean.class, "red");
+        final BeanKey theColorField = new BeanKey(ColorBean.class, "red");
 
         assertFalse(theColorField.canInject(theGreenBean));
         assertFalse(theColorField.canInject(theColorBean));
@@ -211,11 +211,11 @@ public class DependencyTest {
 
     @Test
     public void canInjectShouldDenyBeansThatMatchWithClassIfQualifierIsDifferent() {
-        final Dependency theGreenBean = new Dependency(GreenBean.class, "green");
-        final Dependency theColorBean = new Dependency(ColorBean.class, "colorfull");
-        final Dependency theObjectBean = new Dependency(Object.class, "dull");
+        final BeanKey theGreenBean = new BeanKey(GreenBean.class, "green");
+        final BeanKey theColorBean = new BeanKey(ColorBean.class, "colorfull");
+        final BeanKey theObjectBean = new BeanKey(Object.class, "dull");
 
-        final Dependency theColorField = new Dependency(ColorBean.class, "red");
+        final BeanKey theColorField = new BeanKey(ColorBean.class, "red");
 
         assertFalse(theColorField.canInject(theGreenBean));
         assertFalse(theColorField.canInject(theColorBean));
@@ -224,48 +224,48 @@ public class DependencyTest {
 
     @Test
     public void canInjectSubclassWhenNoQualifiers() {
-        final Dependency theGreenBean = new Dependency(GreenBean.class);
-        final Dependency theColorField = new Dependency(ColorBean.class);
+        final BeanKey theGreenBean = new BeanKey(GreenBean.class);
+        final BeanKey theColorField = new BeanKey(ColorBean.class);
 
         assertTrue(theColorField.canInject(theGreenBean));
     }
 
     @Test
     public void canInjectSubclassWhenSameQualifiers() {
-        final Dependency theGreenBean = new Dependency(GreenBean.class, "green");
-        final Dependency theColorField = new Dependency(ColorBean.class, "green");
+        final BeanKey theGreenBean = new BeanKey(GreenBean.class, "green");
+        final BeanKey theColorField = new BeanKey(ColorBean.class, "green");
 
         assertTrue(theColorField.canInject(theGreenBean));
     }
 
     @Test
     public void canInjectSubclassWhenFieldHasAnyQualifierAndBeanHasNone() {
-        final Dependency theGreenBean = new Dependency(GreenBean.class);
-        final Dependency theColorField = new Dependency(ColorBean.class, "any");
+        final BeanKey theGreenBean = new BeanKey(GreenBean.class);
+        final BeanKey theColorField = new BeanKey(ColorBean.class, "any");
 
         assertTrue(theColorField.canInject(theGreenBean));
     }
 
     @Test
     public void canInjectSubclassWhenFieldHasAnyQualifierAndBeanHasOtherQualifier() {
-        final Dependency theGreenBean = new Dependency(GreenBean.class, "green");
-        final Dependency theColorField = new Dependency(ColorBean.class, "any");
+        final BeanKey theGreenBean = new BeanKey(GreenBean.class, "green");
+        final BeanKey theColorField = new BeanKey(ColorBean.class, "any");
 
         assertTrue(theColorField.canInject(theGreenBean));
     }
 
     @Test
     public void cantInjectSubclassWhenBeanHasAnyQualifierAndFieldHasNone() {
-        final Dependency theGreenBean = new Dependency(GreenBean.class, "any");
-        final Dependency theColorField = new Dependency(ColorBean.class);
+        final BeanKey theGreenBean = new BeanKey(GreenBean.class, "any");
+        final BeanKey theColorField = new BeanKey(ColorBean.class);
 
         assertFalse(theColorField.canInject(theGreenBean));
     }
 
     @Test
     public void cantInjectSubclassWhenBeanHasAnyQualifierAndFieldHasOtherQualifier() {
-        final Dependency theGreenBean = new Dependency(GreenBean.class, "any");
-        final Dependency theColorField = new Dependency(ColorBean.class, "green");
+        final BeanKey theGreenBean = new BeanKey(GreenBean.class, "any");
+        final BeanKey theColorField = new BeanKey(ColorBean.class, "green");
 
         assertFalse(theColorField.canInject(theGreenBean));
     }

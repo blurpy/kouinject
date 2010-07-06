@@ -28,7 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.usikkert.kouinject.beandata.Dependency;
+import net.usikkert.kouinject.beandata.BeanKey;
 
 import org.apache.commons.lang.Validate;
 
@@ -39,13 +39,13 @@ import org.apache.commons.lang.Validate;
  */
 public class SingletonMap {
 
-    private final Map<Dependency, Object> singletons;
+    private final Map<BeanKey, Object> singletons;
 
     /**
      * Creates a new instance of this singleton map, ready to use.
      */
     public SingletonMap() {
-        this.singletons = new HashMap<Dependency, Object>();
+        this.singletons = new HashMap<BeanKey, Object>();
     }
 
     /**
@@ -54,7 +54,7 @@ public class SingletonMap {
      * @param description The description of the singleton.
      * @param singleton The bean to add as as singleton.
      */
-    public synchronized void addSingleton(final Dependency description, final Object singleton) {
+    public synchronized void addSingleton(final BeanKey description, final Object singleton) {
         Validate.notNull(description, "Description can not be null");
         Validate.notNull(singleton, "Singleton can not be null");
 
@@ -72,14 +72,14 @@ public class SingletonMap {
      * @param throwEx If an exception should be thrown if no singleton was found.
      * @return The singleton, or <code>null</code>, or {@link IllegalArgumentException}.
      */
-    public synchronized Object getSingleton(final Dependency singletonNeeded, final boolean throwEx) {
+    public synchronized Object getSingleton(final BeanKey singletonNeeded, final boolean throwEx) {
         Validate.notNull(singletonNeeded, "Singleton needed can not be null");
 
-        final List<Dependency> matches = new ArrayList<Dependency>();
-        final Iterator<Dependency> iterator = singletons.keySet().iterator();
+        final List<BeanKey> matches = new ArrayList<BeanKey>();
+        final Iterator<BeanKey> iterator = singletons.keySet().iterator();
 
         while (iterator.hasNext()) {
-            final Dependency singleton = iterator.next();
+            final BeanKey singleton = iterator.next();
 
             if (singletonNeeded.canInject(singleton)) {
                 matches.add(singleton);
@@ -118,7 +118,7 @@ public class SingletonMap {
      * @param description The description of the singleton.
      * @return If the singleton exists in the map.
      */
-    public synchronized boolean containsSingleton(final Dependency description) {
+    public synchronized boolean containsSingleton(final BeanKey description) {
         Validate.notNull(description, "Description can not be null");
 
         final Object singleton = getSingleton(description, false);

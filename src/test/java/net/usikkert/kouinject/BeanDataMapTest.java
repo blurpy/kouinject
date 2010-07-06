@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import net.usikkert.kouinject.beandata.BeanData;
-import net.usikkert.kouinject.beandata.Dependency;
+import net.usikkert.kouinject.beandata.BeanKey;
 import net.usikkert.kouinject.beandata.InjectionPoint;
 import net.usikkert.kouinject.testbeans.scanned.CarBean;
 import net.usikkert.kouinject.testbeans.scanned.FieldBean;
@@ -58,7 +58,7 @@ public class BeanDataMapTest {
         assertEquals(0, map.size());
 
         final BeanData beanData = createBeanData(Object.class);
-        final Dependency bean = new Dependency(Object.class);
+        final BeanKey bean = new BeanKey(Object.class);
 
         map.addBeanData(bean, beanData);
 
@@ -70,7 +70,7 @@ public class BeanDataMapTest {
         assertEquals(0, map.size());
 
         final BeanData beanData = createBeanData(Object.class);
-        final Dependency bean = new Dependency(Object.class);
+        final BeanKey bean = new BeanKey(Object.class);
 
         map.addBeanData(bean, beanData);
         map.addBeanData(bean, beanData);
@@ -81,19 +81,19 @@ public class BeanDataMapTest {
         assertEquals(0, map.size());
 
         final BeanData setterBean = createBeanData(SetterBean.class);
-        final Dependency setterBeanDependency = new Dependency(SetterBean.class);
+        final BeanKey setterBeanDependency = new BeanKey(SetterBean.class);
 
         map.addBeanData(setterBeanDependency, setterBean);
         assertEquals(1, map.size());
 
         final BeanData fieldBean = createBeanData(FieldBean.class);
-        final Dependency fieldBeanDependency = new Dependency(FieldBean.class);
+        final BeanKey fieldBeanDependency = new BeanKey(FieldBean.class);
 
         map.addBeanData(fieldBeanDependency, fieldBean);
         assertEquals(2, map.size());
 
         final BeanData helloBean = createBeanData(HelloBean.class);
-        final Dependency helloBeanDependency = new Dependency(HelloBean.class);
+        final BeanKey helloBeanDependency = new BeanKey(HelloBean.class);
 
         map.addBeanData(helloBeanDependency, helloBean);
         assertEquals(3, map.size());
@@ -103,19 +103,19 @@ public class BeanDataMapTest {
     public void getBeanDataShouldFindTheCorrectBeanData() {
         addTestBeans();
 
-        final BeanData setterBean = map.getBeanData(new Dependency(SetterBean.class));
+        final BeanData setterBean = map.getBeanData(new BeanKey(SetterBean.class));
         assertNotNull(setterBean);
         assertTrue(setterBean.getBeanClass().equals(SetterBean.class));
 
-        final BeanData fieldBean = map.getBeanData(new Dependency(FieldBean.class));
+        final BeanData fieldBean = map.getBeanData(new BeanKey(FieldBean.class));
         assertNotNull(fieldBean);
         assertTrue(fieldBean.getBeanClass().equals(FieldBean.class));
 
-        final BeanData helloBean = map.getBeanData(new Dependency(HelloBean.class));
+        final BeanData helloBean = map.getBeanData(new BeanKey(HelloBean.class));
         assertNotNull(helloBean);
         assertTrue(helloBean.getBeanClass().equals(HelloBean.class));
 
-        final BeanData greenBean = map.getBeanData(new Dependency(GreenBean.class, "Green"));
+        final BeanData greenBean = map.getBeanData(new BeanKey(GreenBean.class, "Green"));
         assertNotNull(greenBean);
         assertTrue(greenBean.getBeanClass().equals(GreenBean.class));
     }
@@ -124,62 +124,62 @@ public class BeanDataMapTest {
     public void getBeanDataShouldFailIfNoMatchFound() {
         addTestBeans();
 
-        map.getBeanData(new Dependency(CarBean.class));
+        map.getBeanData(new BeanKey(CarBean.class));
     }
 
     @Test(expected = IllegalStateException.class)
     public void getBeanDataShouldFailIfTooManyMatches() {
         addTestBeans();
 
-        map.getBeanData(new Dependency(Object.class));
+        map.getBeanData(new BeanKey(Object.class));
     }
 
     @Test
     public void containsBeanDataShouldDetectAddedBeanData() {
         addTestBeans();
 
-        assertTrue(map.containsBeanData(new Dependency(SetterBean.class)));
-        assertTrue(map.containsBeanData(new Dependency(FieldBean.class)));
-        assertTrue(map.containsBeanData(new Dependency(HelloBean.class)));
-        assertTrue(map.containsBeanData(new Dependency(GreenBean.class, "Green")));
+        assertTrue(map.containsBeanData(new BeanKey(SetterBean.class)));
+        assertTrue(map.containsBeanData(new BeanKey(FieldBean.class)));
+        assertTrue(map.containsBeanData(new BeanKey(HelloBean.class)));
+        assertTrue(map.containsBeanData(new BeanKey(GreenBean.class, "Green")));
     }
 
     @Test
     public void containsBeanDataShouldHandleMissingBeanData() {
         addTestBeans();
 
-        assertFalse(map.containsBeanData(new Dependency(CarBean.class)));
+        assertFalse(map.containsBeanData(new BeanKey(CarBean.class)));
     }
 
     @Test
     public void findBeanKeysWithoutQualifierShouldReturnBeansWithoutQualifier() {
         addTestBeans();
 
-        final Collection<Dependency> beanKeys = map.findBeanKeys(new Dependency(Object.class));
+        final Collection<BeanKey> beanKeys = map.findBeanKeys(new BeanKey(Object.class));
 
         assertNotNull(beanKeys);
         assertEquals(3, beanKeys.size());
-        assertTrue(beanKeys.contains(new Dependency(SetterBean.class)));
-        assertTrue(beanKeys.contains(new Dependency(FieldBean.class)));
-        assertTrue(beanKeys.contains(new Dependency(HelloBean.class)));
+        assertTrue(beanKeys.contains(new BeanKey(SetterBean.class)));
+        assertTrue(beanKeys.contains(new BeanKey(FieldBean.class)));
+        assertTrue(beanKeys.contains(new BeanKey(HelloBean.class)));
     }
 
     @Test
     public void findBeanKeysWithQualifierShouldReturnBeansWithQualifier() {
         addTestBeans();
 
-        final Collection<Dependency> beanKeys = map.findBeanKeys(new Dependency(Object.class, "Green"));
+        final Collection<BeanKey> beanKeys = map.findBeanKeys(new BeanKey(Object.class, "Green"));
 
         assertNotNull(beanKeys);
         assertEquals(1, beanKeys.size());
-        assertTrue(beanKeys.contains(new Dependency(GreenBean.class, "Green")));
+        assertTrue(beanKeys.contains(new BeanKey(GreenBean.class, "Green")));
     }
 
     @Test
     public void findBeanKeysShouldHandleNoMatches() {
         addTestBeans();
 
-        final Collection<Dependency> beanKeys = map.findBeanKeys(new Dependency(CarBean.class));
+        final Collection<BeanKey> beanKeys = map.findBeanKeys(new BeanKey(CarBean.class));
 
         assertNotNull(beanKeys);
         assertEquals(0, beanKeys.size());
@@ -187,19 +187,19 @@ public class BeanDataMapTest {
 
     private void addTestBeans() {
         final BeanData setterBean = createBeanData(SetterBean.class);
-        final Dependency setterBeanDependency = new Dependency(SetterBean.class);
+        final BeanKey setterBeanDependency = new BeanKey(SetterBean.class);
         map.addBeanData(setterBeanDependency, setterBean);
 
         final BeanData fieldBean = createBeanData(FieldBean.class);
-        final Dependency fieldBeanDependency = new Dependency(FieldBean.class);
+        final BeanKey fieldBeanDependency = new BeanKey(FieldBean.class);
         map.addBeanData(fieldBeanDependency, fieldBean);
 
         final BeanData helloBean = createBeanData(HelloBean.class);
-        final Dependency helloBeanDependency = new Dependency(HelloBean.class);
+        final BeanKey helloBeanDependency = new BeanKey(HelloBean.class);
         map.addBeanData(helloBeanDependency, helloBean);
 
         final BeanData greenBean = createBeanData(GreenBean.class);
-        final Dependency greenBeanDependency = new Dependency(GreenBean.class, "Green");
+        final BeanKey greenBeanDependency = new BeanKey(GreenBean.class, "Green");
         map.addBeanData(greenBeanDependency, greenBean);
     }
 
