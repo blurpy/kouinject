@@ -269,4 +269,16 @@ public class BeanKeyTest {
 
         assertFalse(theColorField.canInject(theGreenBean));
     }
+
+    @Test
+    public void isProviderShouldBeFalseForBeanKey() {
+        final BeanKey theGreenBean = new BeanKey(GreenBean.class, "none");
+        assertFalse(theGreenBean.isProvider());
+    }
+
+    @Test
+    public void isProviderShouldBeTrueForProviderBeanKey() {
+        final BeanKey theGreenBean = new ProviderBeanKey(GreenBean.class, "none");
+        assertTrue(theGreenBean.isProvider());
+    }
 }
