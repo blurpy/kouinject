@@ -31,20 +31,41 @@ import net.usikkert.kouinject.annotation.Component;
 /**
  * Bean used for testing correct dependency injection in collections.
  *
+ * TODO test qualifier
+ * TODO test list and set
+ * TODO datahandler test
+ *
  * @author Christian Ihle
  */
 @Component
 public class HungryBean {
 
     @Inject
-    private Collection<Food> foodBeans;
+    private Collection<Food> foodBeansInField;
 
-    public Collection<Food> getFoodBeans() {
-        return foodBeans;
+    private final Collection<Food> foodBeansInConstructor;
+
+    private Collection<Food> foodBeansInSetter;
+
+    @Inject
+    public HungryBean(final Collection<Food> foodBeansInConstructor) {
+        this.foodBeansInConstructor = foodBeansInConstructor;
     }
 
-    // TODO test qualifier
-    // TODO test constructor and method
-    // TODO test list and set
-    // TODO datahandler test
+    public Collection<Food> getFoodBeansInField() {
+        return foodBeansInField;
+    }
+
+    public Collection<Food> getFoodBeansInConstructor() {
+        return foodBeansInConstructor;
+    }
+
+    public Collection<Food> getFoodBeansInSetter() {
+        return foodBeansInSetter;
+    }
+
+    @Inject
+    public void setFoodBeansInSetter(final Collection<Food> foodBeansInSetter) {
+        this.foodBeansInSetter = foodBeansInSetter;
+    }
 }

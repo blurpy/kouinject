@@ -26,6 +26,7 @@ import static org.junit.Assert.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -52,6 +53,8 @@ import net.usikkert.kouinject.testbeans.scanned.SetterBean;
 import net.usikkert.kouinject.testbeans.scanned.StaticBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
+import net.usikkert.kouinject.testbeans.scanned.collection.Food;
+import net.usikkert.kouinject.testbeans.scanned.collection.HungryBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.ChildBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.interfacebean.InterfaceBean;
@@ -330,6 +333,26 @@ public class AnnotationBasedBeanDataHandlerTest {
         assertTrue(containsConstructorParameter(beanData.getConstructor(), Provider.class));
         assertTrue(containsField(beanData.getFields(), Provider.class));
         assertTrue(containsMethodParameter(beanData.getMethods().get(0), Provider.class));
+    }
+
+    @Test
+    public void getBeanDataShouldDetectDependenciesInCollections() {
+        final BeanData beanData = handler.getBeanData(HungryBean.class, false);
+
+        assertEquals(HungryBean.class, beanData.getBeanClass());
+
+        final List<BeanKey> dependencies = beanData.getDependencies();
+        assertEquals(3, dependencies.size());
+        assertNoQualifiers(dependencies);
+
+        for (final BeanKey dependency : dependencies) {
+            assertTrue(dependency.isCollection());
+            assertTrue(dependency.getBeanClass().equals(Food.class));
+        }
+
+        assertTrue(containsConstructorParameter(beanData.getConstructor(), Collection.class));
+        assertTrue(containsField(beanData.getFields(), Collection.class));
+        assertTrue(containsMethodParameter(beanData.getMethods().get(0), Collection.class));
     }
 
     @Test

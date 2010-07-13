@@ -330,13 +330,26 @@ public class DefaultBeanLoaderTest {
 
         assertNotNull(hungryBean);
 
-        final Collection<Food> foodBeans = hungryBean.getFoodBeans();
-        assertNotNull(foodBeans);
-        assertEquals(3, foodBeans.size());
-        assertTrue(containsBean(CheeseBean.class, foodBeans));
-        assertTrue(containsBean(FishBean.class, foodBeans));
-        assertTrue(containsBean(BananaBean.class, foodBeans));
+        final Collection<Food> foodBeansInField = hungryBean.getFoodBeansInField();
+        assertNotNull(foodBeansInField);
+        assertEquals(3, foodBeansInField.size());
+        assertTrue(containsBean(CheeseBean.class, foodBeansInField));
+        assertTrue(containsBean(FishBean.class, foodBeansInField));
+        assertTrue(containsBean(BananaBean.class, foodBeansInField));
 
+        final Collection<Food> foodBeansInConstructor = hungryBean.getFoodBeansInConstructor();
+        assertNotNull(foodBeansInConstructor);
+        assertEquals(3, foodBeansInConstructor.size());
+        assertTrue(containsBean(CheeseBean.class, foodBeansInConstructor));
+        assertTrue(containsBean(FishBean.class, foodBeansInConstructor));
+        assertTrue(containsBean(BananaBean.class, foodBeansInConstructor));
+
+        final Collection<Food> foodBeansInSetter = hungryBean.getFoodBeansInSetter();
+        assertNotNull(foodBeansInSetter);
+        assertEquals(3, foodBeansInSetter.size());
+        assertTrue(containsBean(CheeseBean.class, foodBeansInSetter));
+        assertTrue(containsBean(FishBean.class, foodBeansInSetter));
+        assertTrue(containsBean(BananaBean.class, foodBeansInSetter));
     }
 
     @Test
