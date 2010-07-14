@@ -59,11 +59,15 @@ import net.usikkert.kouinject.testbeans.scanned.SetterBean;
 import net.usikkert.kouinject.testbeans.scanned.StaticBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
+import net.usikkert.kouinject.testbeans.scanned.collection.AppleBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.BananaBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.CheeseBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.FishBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.Food;
+import net.usikkert.kouinject.testbeans.scanned.collection.HamburgerBean;
+import net.usikkert.kouinject.testbeans.scanned.collection.HotdogBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.HungryBean;
+import net.usikkert.kouinject.testbeans.scanned.collection.HungryQualifierBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.ChildBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractBeanImpl;
@@ -350,6 +354,34 @@ public class DefaultBeanLoaderTest {
         assertTrue(containsBean(CheeseBean.class, foodBeansInSetter));
         assertTrue(containsBean(FishBean.class, foodBeansInSetter));
         assertTrue(containsBean(BananaBean.class, foodBeansInSetter));
+    }
+
+    @Test
+    public void checkHungryQualifierBean() {
+        final HungryQualifierBean hungryQualifierBean = beanLoader.getBean(HungryQualifierBean.class);
+
+        assertNotNull(hungryQualifierBean);
+
+        final Collection<Food> fastFoodBeans = hungryQualifierBean.getFastFoodBeans();
+        assertNotNull(fastFoodBeans);
+        assertEquals(2, fastFoodBeans.size());
+        assertTrue(containsBean(HotdogBean.class, fastFoodBeans));
+        assertTrue(containsBean(HamburgerBean.class, fastFoodBeans));
+
+        final Collection<Food> allFoodBeans = hungryQualifierBean.getAllFoodBeans();
+        assertNotNull(allFoodBeans);
+        assertEquals(6, allFoodBeans.size());
+        assertTrue(containsBean(CheeseBean.class, allFoodBeans));
+        assertTrue(containsBean(FishBean.class, allFoodBeans));
+        assertTrue(containsBean(BananaBean.class, allFoodBeans));
+        assertTrue(containsBean(HotdogBean.class, allFoodBeans));
+        assertTrue(containsBean(HamburgerBean.class, allFoodBeans));
+        assertTrue(containsBean(AppleBean.class, allFoodBeans));
+
+        final Collection<Food> roundFoodBeans = hungryQualifierBean.getRoundFoodBeans();
+        assertNotNull(roundFoodBeans);
+        assertEquals(1, roundFoodBeans.size());
+        assertTrue(containsBean(AppleBean.class, roundFoodBeans));
     }
 
     @Test
@@ -770,7 +802,7 @@ public class DefaultBeanLoaderTest {
         final Collection<Object> beans = beanLoader.getBeans(Object.class, null);
 
         assertNotNull(beans);
-        assertEquals(27, beans.size());
+        assertEquals(28, beans.size());
 
         assertFalse(containsBean(BlueBean.class, beans)); // Bean with qualifier
         assertTrue(containsBean(HelloBean.class, beans)); // Bean without qualifier
@@ -781,7 +813,7 @@ public class DefaultBeanLoaderTest {
         final Collection<Object> beans = beanLoader.getBeans(Object.class);
 
         assertNotNull(beans);
-        assertEquals(27, beans.size());
+        assertEquals(28, beans.size());
 
         assertFalse(containsBean(BlueBean.class, beans)); // Bean with qualifier
         assertTrue(containsBean(HelloBean.class, beans)); // Bean without qualifier
@@ -803,7 +835,7 @@ public class DefaultBeanLoaderTest {
         final Collection<Object> beans = beanLoader.getBeans(Object.class, "any");
 
         assertNotNull(beans);
-        assertEquals(37, beans.size());
+        assertEquals(41, beans.size());
 
         assertTrue(containsBean(BlueBean.class, beans)); // Bean with qualifier
         assertTrue(containsBean(HelloBean.class, beans)); // Bean without qualifier

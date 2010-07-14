@@ -22,9 +22,7 @@
 
 package net.usikkert.kouinject.testbeans.scanned.collection;
 
-import java.util.Collection;
-
-import javax.inject.Inject;
+import javax.inject.Named;
 
 import net.usikkert.kouinject.annotation.Component;
 
@@ -33,35 +31,8 @@ import net.usikkert.kouinject.annotation.Component;
  *
  * @author Christian Ihle
  */
+@Named("fastFood")
 @Component
-public class HungryBean {
+public class HotdogBean implements Food {
 
-    @Inject
-    private Collection<Food> foodBeansInField;
-
-    private final Collection<Food> foodBeansInConstructor;
-
-    private Collection<Food> foodBeansInSetter;
-
-    @Inject
-    public HungryBean(final Collection<Food> foodBeansInConstructor) {
-        this.foodBeansInConstructor = foodBeansInConstructor;
-    }
-
-    public Collection<Food> getFoodBeansInField() {
-        return foodBeansInField;
-    }
-
-    public Collection<Food> getFoodBeansInConstructor() {
-        return foodBeansInConstructor;
-    }
-
-    public Collection<Food> getFoodBeansInSetter() {
-        return foodBeansInSetter;
-    }
-
-    @Inject
-    public void setFoodBeansInSetter(final Collection<Food> foodBeansInSetter) {
-        this.foodBeansInSetter = foodBeansInSetter;
-    }
 }

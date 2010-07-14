@@ -76,7 +76,7 @@ public class DefaultInjectorTest {
         final Collection<Object> beans = injector.getBeans(Object.class);
 
         assertNotNull(beans);
-        assertEquals(27, beans.size());
+        assertEquals(28, beans.size());
     }
 
     @Test
@@ -84,6 +84,6 @@ public class DefaultInjectorTest {
         final Collection<Object> beans = injector.getBeans(Object.class, "any");
 
         assertNotNull(beans);
-        assertEquals(37, beans.size());
+        assertEquals(41, beans.size());
     }
 }

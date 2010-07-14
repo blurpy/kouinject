@@ -25,43 +25,46 @@ package net.usikkert.kouinject.testbeans.scanned.collection;
 import java.util.Collection;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
+import net.usikkert.kouinject.annotation.Any;
 import net.usikkert.kouinject.annotation.Component;
 
 /**
- * Bean used for testing correct dependency injection in collections.
+ * Bean used for testing correct dependency injection in collections, with qualifiers.
  *
  * @author Christian Ihle
  */
 @Component
-public class HungryBean {
+public class HungryQualifierBean {
 
     @Inject
-    private Collection<Food> foodBeansInField;
+    @Named("fastFood")
+    private Collection<Food> fastFoodBeans;
 
-    private final Collection<Food> foodBeansInConstructor;
+    private final Collection<Food> allFoodBeans;
 
-    private Collection<Food> foodBeansInSetter;
-
-    @Inject
-    public HungryBean(final Collection<Food> foodBeansInConstructor) {
-        this.foodBeansInConstructor = foodBeansInConstructor;
-    }
-
-    public Collection<Food> getFoodBeansInField() {
-        return foodBeansInField;
-    }
-
-    public Collection<Food> getFoodBeansInConstructor() {
-        return foodBeansInConstructor;
-    }
-
-    public Collection<Food> getFoodBeansInSetter() {
-        return foodBeansInSetter;
-    }
+    private Collection<Food> roundFoodBeans;
 
     @Inject
-    public void setFoodBeansInSetter(final Collection<Food> foodBeansInSetter) {
-        this.foodBeansInSetter = foodBeansInSetter;
+    public HungryQualifierBean(@Any final Collection<Food> allFoodBeans) {
+        this.allFoodBeans = allFoodBeans;
+    }
+
+    public Collection<Food> getFastFoodBeans() {
+        return fastFoodBeans;
+    }
+
+    public Collection<Food> getAllFoodBeans() {
+        return allFoodBeans;
+    }
+
+    public Collection<Food> getRoundFoodBeans() {
+        return roundFoodBeans;
+    }
+
+    @Inject
+    public void setRoundFoodBeans(@Named("roundFood") final Collection<Food> roundFoodBeans) {
+        this.roundFoodBeans = roundFoodBeans;
     }
 }
