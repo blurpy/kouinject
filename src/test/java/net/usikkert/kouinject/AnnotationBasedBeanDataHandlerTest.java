@@ -55,6 +55,7 @@ import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.Food;
 import net.usikkert.kouinject.testbeans.scanned.collection.HungryBean;
+import net.usikkert.kouinject.testbeans.scanned.collection.HungryQualifierBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.ChildBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.interfacebean.InterfaceBean;
@@ -353,6 +354,41 @@ public class AnnotationBasedBeanDataHandlerTest {
         assertTrue(containsConstructorParameter(beanData.getConstructor(), Collection.class));
         assertTrue(containsField(beanData.getFields(), Collection.class));
         assertTrue(containsMethodParameter(beanData.getMethods().get(0), Collection.class));
+    }
+
+    @Test
+    public void getBeanDataShouldDetectQualifiersForCollections() {
+        final BeanData beanData = handler.getBeanData(HungryQualifierBean.class, false);
+
+        assertEquals(HungryQualifierBean.class, beanData.getBeanClass());
+
+        final List<BeanKey> dependencies = beanData.getDependencies();
+        assertEquals(3, dependencies.size());
+
+        for (final BeanKey dependency : dependencies) {
+            assertTrue(dependency.isCollection());
+            assertTrue(dependency.getBeanClass().equals(Food.class));
+        }
+
+        assertTrue(containsConstructorParameter(beanData.getConstructor(), Collection.class));
+        assertTrue(containsField(beanData.getFields(), Collection.class));
+        assertTrue(containsMethodParameter(beanData.getMethods().get(0), Collection.class));
+
+        final FieldData fastFoodField = beanData.getFields().get(0);
+        assertTrue(fastFoodField.getField().isAnnotationPresent(Named.class));
+        final BeanKey fastFoodDependency = fastFoodField.getDependency();
+        assertEquals("fastFood", fastFoodDependency.getQualifier());
+        assertTrue(fastFoodDependency.isCollection());
+
+        final MethodData roundFoodMethod = beanData.getMethods().get(0);
+        final BeanKey roundFoodDependency = roundFoodMethod.getDependencies().get(0);
+        assertEquals("roundFood", roundFoodDependency.getQualifier());
+        assertTrue(roundFoodDependency.isCollection());
+
+        final ConstructorData allFoodConstructor = beanData.getConstructor();
+        final BeanKey allFoodDependency = allFoodConstructor.getDependencies().get(0);
+        assertEquals("Any", allFoodDependency.getQualifier());
+        assertTrue(allFoodDependency.isCollection());
     }
 
     @Test
