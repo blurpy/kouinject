@@ -13,3 +13,9 @@
  - Support for injecting collection of beans
  - Tests for @Any
  - Test Provider with wildcard
+ - Test list and set
+ - Test bean with bean, provider and collection at the same time
+ - Test no beans found for collection
+ - Anybean having bean with qualifier, and bean without qualifier
+ - Test collection with t,? and nothing
+ 
