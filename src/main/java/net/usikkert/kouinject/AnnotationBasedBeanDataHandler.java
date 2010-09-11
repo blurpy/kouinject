@@ -261,11 +261,11 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
     }
 
     private boolean isProvider(final Class<?> parameterType) {
-        return Provider.class.isAssignableFrom(parameterType);
+        return Provider.class.equals(parameterType);
     }
 
     private boolean isCollection(final Class<?> parameterType) {
-        return Collection.class.isAssignableFrom(parameterType);
+        return Collection.class.equals(parameterType);
     }
 
     private Class<?> getBeanClassFromGenericType(final Object parameterOwner, final Type genericParameterType) {
