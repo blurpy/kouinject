@@ -26,6 +26,7 @@ import static org.junit.Assert.*;
 
 import java.util.Collection;
 
+import net.usikkert.kouinject.testbeans.BeanCount;
 import net.usikkert.kouinject.testbeans.notscanned.TheInterfaceUser;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.ColorBean;
@@ -76,7 +77,7 @@ public class DefaultInjectorTest {
         final Collection<Object> beans = injector.getBeans(Object.class);
 
         assertNotNull(beans);
-        assertEquals(29, beans.size());
+        assertEquals(BeanCount.SCANNED_WITHOUT_QUALIFIER.getNumberOfBeans(), beans.size());
     }
 
     @Test
@@ -84,6 +85,6 @@ public class DefaultInjectorTest {
         final Collection<Object> beans = injector.getBeans(Object.class, "any");
 
         assertNotNull(beans);
-        assertEquals(42, beans.size());
+        assertEquals(BeanCount.SCANNED.getNumberOfBeans(), beans.size());
     }
 }

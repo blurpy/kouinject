@@ -28,6 +28,7 @@ import java.util.Set;
 
 import net.usikkert.kouinject.annotation.Component;
 import net.usikkert.kouinject.beandata.BeanKey;
+import net.usikkert.kouinject.testbeans.BeanCount;
 import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.BlueBean;
@@ -58,7 +59,7 @@ public class AnnotationBasedBeanLocatorTest {
         final BeanLocator beanLocator = new AnnotationBasedBeanLocator("net.usikkert.kouinject", classLocator);
         final Set<BeanKey> beans = beanLocator.findBeans();
 
-        assertEquals(58, beans.size());
+        assertEquals(BeanCount.ALL.getNumberOfBeans(), beans.size());
 
         for (final BeanKey bean : beans) {
             final Class<?> beanClass = bean.getBeanClass();

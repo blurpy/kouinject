@@ -32,6 +32,7 @@ import java.util.Set;
 import javax.inject.Provider;
 
 import net.usikkert.kouinject.beandata.BeanKey;
+import net.usikkert.kouinject.testbeans.BeanCount;
 import net.usikkert.kouinject.testbeans.notscanned.ACloserMatchOfImplementationUser;
 import net.usikkert.kouinject.testbeans.notscanned.FirstCircularBean;
 import net.usikkert.kouinject.testbeans.notscanned.FirstInterfaceImpl;
@@ -49,6 +50,7 @@ import net.usikkert.kouinject.testbeans.notscanned.instance.Instance2Bean;
 import net.usikkert.kouinject.testbeans.notscanned.instance.Instance3Bean;
 import net.usikkert.kouinject.testbeans.notscanned.provider.ProviderInjectionWithWildcard;
 import net.usikkert.kouinject.testbeans.notscanned.provider.ProviderInjectionWithoutTypeArgument;
+import net.usikkert.kouinject.testbeans.scanned.AllInjectionTypesBean;
 import net.usikkert.kouinject.testbeans.scanned.BlueCarBean;
 import net.usikkert.kouinject.testbeans.scanned.CarBean;
 import net.usikkert.kouinject.testbeans.scanned.ConstructorBean;
@@ -125,6 +127,24 @@ public class DefaultBeanLoaderTest {
 
         final AbstractBeanImpl abstractBeanImpl = beanLoader.getBean(AbstractBeanImpl.class);
         assertNotNull(abstractBeanImpl);
+    }
+
+    @Test
+    public void checkAllInjectionTypesBean() {
+        final AllInjectionTypesBean allInjectionTypesBean = beanLoader.getBean(AllInjectionTypesBean.class);
+
+        final HelloBean helloBean = allInjectionTypesBean.getHelloBean();
+        assertNotNull(helloBean);
+
+        final Collection<HelloBean> helloBeanCollection = allInjectionTypesBean.getHelloBeanCollection();
+        assertNotNull(helloBeanCollection);
+        assertEquals(1, helloBeanCollection.size());
+
+        final Provider<HelloBean> helloBeanProvider = allInjectionTypesBean.getHelloBeanProvider();
+        assertNotNull(helloBeanProvider);
+
+        final HelloBean helloBeanFromProvider = helloBeanProvider.get();
+        assertNotNull(helloBeanFromProvider);
     }
 
     @Test
@@ -830,7 +850,7 @@ public class DefaultBeanLoaderTest {
         final Collection<Object> beans = beanLoader.getBeans(Object.class, null);
 
         assertNotNull(beans);
-        assertEquals(29, beans.size());
+        assertEquals(BeanCount.SCANNED_WITHOUT_QUALIFIER.getNumberOfBeans(), beans.size());
 
         assertFalse(containsBean(BlueBean.class, beans)); // Bean with qualifier
         assertTrue(containsBean(HelloBean.class, beans)); // Bean without qualifier
@@ -841,7 +861,7 @@ public class DefaultBeanLoaderTest {
         final Collection<Object> beans = beanLoader.getBeans(Object.class);
 
         assertNotNull(beans);
-        assertEquals(29, beans.size());
+        assertEquals(BeanCount.SCANNED_WITHOUT_QUALIFIER.getNumberOfBeans(), beans.size());
 
         assertFalse(containsBean(BlueBean.class, beans)); // Bean with qualifier
         assertTrue(containsBean(HelloBean.class, beans)); // Bean without qualifier
@@ -863,7 +883,7 @@ public class DefaultBeanLoaderTest {
         final Collection<Object> beans = beanLoader.getBeans(Object.class, "any");
 
         assertNotNull(beans);
-        assertEquals(42, beans.size());
+        assertEquals(BeanCount.SCANNED.getNumberOfBeans(), beans.size());
 
         assertTrue(containsBean(BlueBean.class, beans)); // Bean with qualifier
         assertTrue(containsBean(HelloBean.class, beans)); // Bean without qualifier
