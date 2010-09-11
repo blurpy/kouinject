@@ -39,6 +39,8 @@ import net.usikkert.kouinject.testbeans.notscanned.SecondCircularBean;
 import net.usikkert.kouinject.testbeans.notscanned.SecondInterfaceImpl;
 import net.usikkert.kouinject.testbeans.notscanned.TheInterface;
 import net.usikkert.kouinject.testbeans.notscanned.TheInterfaceUser;
+import net.usikkert.kouinject.testbeans.notscanned.collection.CollectionInjectionWithWildcard;
+import net.usikkert.kouinject.testbeans.notscanned.collection.CollectionInjectionWithoutTypeArgument;
 import net.usikkert.kouinject.testbeans.notscanned.instance.Instance1Bean;
 import net.usikkert.kouinject.testbeans.notscanned.instance.Instance2Bean;
 import net.usikkert.kouinject.testbeans.notscanned.instance.Instance3Bean;
@@ -858,6 +860,30 @@ public class DefaultBeanLoaderTest {
     @Test(expected = IllegalArgumentException.class)
     public void getBeansWithNoMatchesShouldThrowException() {
         beanLoader.getBeans(Object.class, "nomatch");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void injectionOfCollectionWithWildcardShouldFail() {
+        final BeanLocator beanLocator = mock(BeanLocator.class);
+        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
+
+        final Set<BeanKey> beans = new HashSet<BeanKey>();
+        beans.add(new BeanKey(CollectionInjectionWithWildcard.class));
+        when(beanLocator.findBeans()).thenReturn(beans);
+
+        new DefaultBeanLoader(beanDataHandler, beanLocator);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void injectionOfCollectionWithoutTypeArgumentShouldFail() {
+        final BeanLocator beanLocator = mock(BeanLocator.class);
+        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
+
+        final Set<BeanKey> beans = new HashSet<BeanKey>();
+        beans.add(new BeanKey(CollectionInjectionWithoutTypeArgument.class));
+        when(beanLocator.findBeans()).thenReturn(beans);
+
+        new DefaultBeanLoader(beanDataHandler, beanLocator);
     }
 
     private boolean containsBean(final Class<?> bean, final Collection<?> collection) {

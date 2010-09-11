@@ -272,11 +272,13 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
         if (genericParameterType instanceof ParameterizedType) {
             final ParameterizedType parameterizedType = (ParameterizedType) genericParameterType;
             final Type[] typeArguments = parameterizedType.getActualTypeArguments();
-            final Class<?> beanClassFromProvider = (Class<?>) typeArguments[0];
+            final Type firstTypeArgument = typeArguments[0];
 
-            return beanClassFromProvider;
+            if (firstTypeArgument instanceof Class<?>) {
+                return (Class<?>) firstTypeArgument;
+            }
         }
 
-        throw new IllegalArgumentException("Provider used without generic argument: " + parameterOwner);
+        throw new IllegalArgumentException("Generic class used without type argument: " + parameterOwner);
     }
 }
