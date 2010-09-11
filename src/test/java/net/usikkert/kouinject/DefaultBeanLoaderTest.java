@@ -44,6 +44,8 @@ import net.usikkert.kouinject.testbeans.notscanned.collection.CollectionInjectio
 import net.usikkert.kouinject.testbeans.notscanned.instance.Instance1Bean;
 import net.usikkert.kouinject.testbeans.notscanned.instance.Instance2Bean;
 import net.usikkert.kouinject.testbeans.notscanned.instance.Instance3Bean;
+import net.usikkert.kouinject.testbeans.notscanned.provider.ProviderInjectionWithWildcard;
+import net.usikkert.kouinject.testbeans.notscanned.provider.ProviderInjectionWithoutTypeArgument;
 import net.usikkert.kouinject.testbeans.scanned.BlueCarBean;
 import net.usikkert.kouinject.testbeans.scanned.CarBean;
 import net.usikkert.kouinject.testbeans.scanned.ConstructorBean;
@@ -881,6 +883,30 @@ public class DefaultBeanLoaderTest {
 
         final Set<BeanKey> beans = new HashSet<BeanKey>();
         beans.add(new BeanKey(CollectionInjectionWithoutTypeArgument.class));
+        when(beanLocator.findBeans()).thenReturn(beans);
+
+        new DefaultBeanLoader(beanDataHandler, beanLocator);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void injectionOfProviderWithWildcardShouldFail() {
+        final BeanLocator beanLocator = mock(BeanLocator.class);
+        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
+
+        final Set<BeanKey> beans = new HashSet<BeanKey>();
+        beans.add(new BeanKey(ProviderInjectionWithWildcard.class));
+        when(beanLocator.findBeans()).thenReturn(beans);
+
+        new DefaultBeanLoader(beanDataHandler, beanLocator);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void injectionOfProviderWithoutTypeArgumentShouldFail() {
+        final BeanLocator beanLocator = mock(BeanLocator.class);
+        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
+
+        final Set<BeanKey> beans = new HashSet<BeanKey>();
+        beans.add(new BeanKey(ProviderInjectionWithoutTypeArgument.class));
         when(beanLocator.findBeans()).thenReturn(beans);
 
         new DefaultBeanLoader(beanDataHandler, beanLocator);
