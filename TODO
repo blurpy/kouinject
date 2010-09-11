@@ -13,6 +13,5 @@
  - Support for injecting collection of beans
  - Tests for @Any
  - Test bean with bean, provider and collection at the same time
- - Test no beans found for collection
  - Anybean having bean with qualifier, and bean without qualifier
  

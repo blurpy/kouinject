@@ -39,6 +39,7 @@ import net.usikkert.kouinject.testbeans.notscanned.SecondCircularBean;
 import net.usikkert.kouinject.testbeans.notscanned.SecondInterfaceImpl;
 import net.usikkert.kouinject.testbeans.notscanned.TheInterface;
 import net.usikkert.kouinject.testbeans.notscanned.TheInterfaceUser;
+import net.usikkert.kouinject.testbeans.notscanned.collection.CollectionInjectionWithNoMatchingBeans;
 import net.usikkert.kouinject.testbeans.notscanned.collection.CollectionInjectionWithWildcard;
 import net.usikkert.kouinject.testbeans.notscanned.collection.CollectionInjectionWithoutTypeArgument;
 import net.usikkert.kouinject.testbeans.notscanned.collection.ListInjection;
@@ -942,6 +943,20 @@ public class DefaultBeanLoaderTest {
         final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler, beanLocator);
 
         loader.getBean(SetInjection.class);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void injectionOfCollectionWithNoMatchingBeansShouldFail() {
+        final BeanLocator beanLocator = mock(BeanLocator.class);
+        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
+
+        final Set<BeanKey> beans = new HashSet<BeanKey>();
+        beans.add(new BeanKey(CollectionInjectionWithNoMatchingBeans.class));
+        when(beanLocator.findBeans()).thenReturn(beans);
+
+        final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler, beanLocator);
+
+        loader.getBean(CollectionInjectionWithNoMatchingBeans.class);
     }
 
     private boolean containsBean(final Class<?> bean, final Collection<?> collection) {
