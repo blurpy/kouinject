@@ -37,6 +37,11 @@ import net.usikkert.kouinject.annotation.Component;
 public class CollectionInjectionWithoutTypeArgument {
 
     @Inject
-    @SuppressWarnings({ "unused", "unchecked" })
+    @SuppressWarnings("unchecked")
     private Collection noTypeArgumentCollection;
+
+    @SuppressWarnings("unchecked")
+    public Collection getNoTypeArgumentCollection() {
+        return noTypeArgumentCollection;
+    }
 }

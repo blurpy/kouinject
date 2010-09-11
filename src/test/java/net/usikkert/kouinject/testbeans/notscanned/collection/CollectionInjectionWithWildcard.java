@@ -37,6 +37,9 @@ import net.usikkert.kouinject.annotation.Component;
 public class CollectionInjectionWithWildcard {
 
     @Inject
-    @SuppressWarnings("unused")
     private Collection<?> wildcardCollection;
+
+    public Collection<?> getWildcardCollection() {
+        return wildcardCollection;
+    }
 }
