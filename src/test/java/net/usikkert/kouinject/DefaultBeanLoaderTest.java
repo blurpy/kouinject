@@ -64,6 +64,7 @@ import net.usikkert.kouinject.testbeans.scanned.RainbowBean;
 import net.usikkert.kouinject.testbeans.scanned.SecondCircularDependencyBean;
 import net.usikkert.kouinject.testbeans.scanned.SetterBean;
 import net.usikkert.kouinject.testbeans.scanned.StaticBean;
+import net.usikkert.kouinject.testbeans.scanned.any.AnyBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.AppleBean;
@@ -152,6 +153,26 @@ public class DefaultBeanLoaderTest {
         assertNotNull(animalBean.getFieldBean2InAnimalBean());
 
         assertTrue(animalBean.isFieldsThenMethodsInjectedInAnimalBean());
+    }
+
+    @Test
+    public void checkAnyBean() {
+        final AnyBean anyBean = beanLoader.getBean(AnyBean.class);
+
+        assertNotNull(anyBean.getHelloBean());
+        assertNotNull(anyBean.getRedBean());
+
+        final Collection<ColorBean> colorBeans = anyBean.getColorBeans();
+        assertNotNull(colorBeans);
+        assertEquals(5, colorBeans.size());
+
+        final Collection<HelloBean> helloBeanCollection = anyBean.getHelloBeanCollection();
+        assertNotNull(helloBeanCollection);
+        assertEquals(1, helloBeanCollection.size());
+
+        final Collection<RedBean> theRedBeanCollection = anyBean.getTheRedBeanCollection();
+        assertNotNull(theRedBeanCollection);
+        assertEquals(1, theRedBeanCollection.size());
     }
 
     @Test
@@ -809,7 +830,7 @@ public class DefaultBeanLoaderTest {
         final Collection<Object> beans = beanLoader.getBeans(Object.class, null);
 
         assertNotNull(beans);
-        assertEquals(28, beans.size());
+        assertEquals(29, beans.size());
 
         assertFalse(containsBean(BlueBean.class, beans)); // Bean with qualifier
         assertTrue(containsBean(HelloBean.class, beans)); // Bean without qualifier
@@ -820,7 +841,7 @@ public class DefaultBeanLoaderTest {
         final Collection<Object> beans = beanLoader.getBeans(Object.class);
 
         assertNotNull(beans);
-        assertEquals(28, beans.size());
+        assertEquals(29, beans.size());
 
         assertFalse(containsBean(BlueBean.class, beans)); // Bean with qualifier
         assertTrue(containsBean(HelloBean.class, beans)); // Bean without qualifier
@@ -842,7 +863,7 @@ public class DefaultBeanLoaderTest {
         final Collection<Object> beans = beanLoader.getBeans(Object.class, "any");
 
         assertNotNull(beans);
-        assertEquals(41, beans.size());
+        assertEquals(42, beans.size());
 
         assertTrue(containsBean(BlueBean.class, beans)); // Bean with qualifier
         assertTrue(containsBean(HelloBean.class, beans)); // Bean without qualifier

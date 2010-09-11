@@ -20,70 +20,64 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject;
-
-import static org.junit.Assert.*;
+package net.usikkert.kouinject.testbeans.scanned.any;
 
 import java.util.Collection;
 
-import net.usikkert.kouinject.testbeans.notscanned.TheInterfaceUser;
+import javax.inject.Inject;
+
+import net.usikkert.kouinject.annotation.Any;
+import net.usikkert.kouinject.annotation.Component;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.ColorBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.RedBean;
 
-import org.junit.Before;
-import org.junit.Test;
-
 /**
- * Test of {@link DefaultInjector}.
- *
- * <p>These tests are just to verify that the injector works. More thorough tests
- * are done elsewhere.</p>
+ * Bean for testing that @Any can be used to get beans with or without a qualifier.
  *
  * @author Christian Ihle
  */
-public class DefaultInjectorTest {
+@Component
+public class AnyBean {
 
-    private DefaultInjector injector;
+    @Inject @Any
+    private HelloBean helloBean;
 
-    @Before
-    public void createInjector() {
-        injector = new DefaultInjector("net.usikkert.kouinject.testbeans.scanned");
+    private RedBean redBean;
+    private final Collection<HelloBean> helloBeanCollection;
+    private final Collection<RedBean> theRedBeanCollection;
+    private Collection<ColorBean> colorBeans;
+
+    @Inject
+    public AnyBean(@Any final Collection<HelloBean> helloBeanCollection,
+                    @Any final Collection<RedBean> theRedBeanCollection) {
+        this.helloBeanCollection = helloBeanCollection;
+        this.theRedBeanCollection = theRedBeanCollection;
     }
 
-    @Test
-    public void getBeanShouldFindBeanAvailableInTheBasePackage() {
-        final HelloBean helloBean = injector.getBean(HelloBean.class);
-
-        assertNotNull(helloBean);
+    @Inject
+    public void setAnyBeans(@Any final RedBean theRedBean, @Any final Collection<ColorBean> theColorBeans) {
+        this.redBean = theRedBean;
+        this.colorBeans = theColorBeans;
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void getBeanShouldThrowExceptionIfRequestedBeanIsUnavailableInTheBasePackage() {
-        injector.getBean(TheInterfaceUser.class);
+    public HelloBean getHelloBean() {
+        return helloBean;
     }
 
-    @Test
-    public void getBeanWithQualifierShouldFindCorrectBean() {
-        final ColorBean colorBean = injector.getBean(ColorBean.class, "red");
-
-        assertNotNull(colorBean);
-        assertEquals(RedBean.class, colorBean.getClass());
+    public RedBean getRedBean() {
+        return redBean;
     }
 
-    @Test
-    public void getBeansWithoutQualifierShouldFindBeansWithoutQualifier() {
-        final Collection<Object> beans = injector.getBeans(Object.class);
-
-        assertNotNull(beans);
-        assertEquals(29, beans.size());
+    public Collection<HelloBean> getHelloBeanCollection() {
+        return helloBeanCollection;
     }
 
-    @Test
-    public void getBeansWithAnyQualifierShouldFindAllBeans() {
-        final Collection<Object> beans = injector.getBeans(Object.class, "any");
+    public Collection<RedBean> getTheRedBeanCollection() {
+        return theRedBeanCollection;
+    }
 
-        assertNotNull(beans);
-        assertEquals(42, beans.size());
+    public Collection<ColorBean> getColorBeans() {
+        return colorBeans;
     }
 }
