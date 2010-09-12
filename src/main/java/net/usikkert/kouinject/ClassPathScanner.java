@@ -56,52 +56,49 @@ public class ClassPathScanner implements ClassLocator {
 
         final ClassLoader loader = getClassLoader();
 
+        final long start = System.currentTimeMillis();
+        final Set<Class<?>> classes = findClasses(loader, basePackage);
+        final long stop = System.currentTimeMillis();
+
+        LOG.fine("Time spent scanning classpath: " + (stop - start) + " ms");
+        LOG.fine("Classes found: " + classes.size());
+
+        return classes;
+    }
+
+    private Set<Class<?>> findClasses(final ClassLoader loader, final String basePackage) {
+        final Set<Class<?>> classes = new HashSet<Class<?>>();
+        final String path = basePackage.replace('.', '/');
+
         try {
-            final long start = System.currentTimeMillis();
-            final Set<Class<?>> classes = findClasses(loader, basePackage);
-            final long stop = System.currentTimeMillis();
+            final Enumeration<URL> resources = loader.getResources(path);
 
-            LOG.fine("Time spent scanning classpath: " + (stop - start) + " ms");
-            LOG.fine("Classes found: " + classes.size());
+            if (resources != null) {
+                while (resources.hasMoreElements()) {
+                    final String filePath = getFilePath(resources.nextElement());
 
-            return classes;
+                    if (filePath != null) {
+                        if (isJarFilePath(filePath)) {
+                            final String jarPath = getJarPath(filePath);
+                            classes.addAll(getFromJARFile(jarPath, path));
+                        }
+
+                        else {
+                            classes.addAll(getFromDirectory(new File(filePath), basePackage));
+                        }
+                    }
+                }
+            }
         }
 
         catch (final IOException e) {
             throw new RuntimeException(e);
         }
 
-        catch (final ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private Set<Class<?>> findClasses(final ClassLoader loader, final String basePackage) throws IOException, ClassNotFoundException {
-        final Set<Class<?>> classes = new HashSet<Class<?>>();
-        final String path = basePackage.replace('.', '/');
-        final Enumeration<URL> resources = loader.getResources(path);
-
-        if (resources != null) {
-            while (resources.hasMoreElements()) {
-                final String filePath = getFilePath(resources.nextElement());
-
-                if (filePath != null) {
-                    if (isJarFilePath(filePath)) {
-                        final String jarPath = getJarPath(filePath);
-                        classes.addAll(getFromJARFile(jarPath, path));
-                    }
-
-                    else {
-                        classes.addAll(getFromDirectory(new File(filePath), basePackage));
-                    }
-                }
-            }
-        }
-
         return classes;
     }
 
-    private Set<Class<?>> getFromDirectory(final File directory, final String packageName) throws ClassNotFoundException {
+    private Set<Class<?>> getFromDirectory(final File directory, final String packageName) {
         final Set<Class<?>> classes = new HashSet<Class<?>>();
 
         if (directory.exists()) {
@@ -114,7 +111,7 @@ public class ClassPathScanner implements ClassLocator {
 
                 else if (isClass(file.getName())) {
                     final String className = packageName + '.' + stripFilenameExtension(file.getName());
-                    final Class<?> clazz = Class.forName(className);
+                    final Class<?> clazz = loadClass(className);
                     addClass(clazz, classes);
                 }
             }
@@ -123,28 +120,48 @@ public class ClassPathScanner implements ClassLocator {
         return classes;
     }
 
-    private Set<Class<?>> getFromJARFile(final String jar, final String packageName) throws IOException, ClassNotFoundException {
+    private Set<Class<?>> getFromJARFile(final String jar, final String packageName) {
         final Set<Class<?>> classes = new HashSet<Class<?>>();
-        final JarInputStream jarFile = new JarInputStream(new FileInputStream(jar));
-        JarEntry jarEntry;
+        JarInputStream jarFile = null;
 
-        do {
-            jarEntry = jarFile.getNextJarEntry();
+        try {
+            jarFile = new JarInputStream(new FileInputStream(jar));
+            JarEntry jarEntry;
 
-            if (jarEntry != null) {
-                final String fileName = jarEntry.getName();
+            do {
+                jarEntry = jarFile.getNextJarEntry();
 
-                if (isClass(fileName)) {
-                    final String className = stripFilenameExtension(fileName);
+                if (jarEntry != null) {
+                    final String fileName = jarEntry.getName();
 
-                    if (className.startsWith(packageName)) {
-                        final Class<?> clazz = Class.forName(className.replace('/', '.'));
-                        addClass(clazz, classes);
+                    if (isClass(fileName)) {
+                        final String className = stripFilenameExtension(fileName);
 
+                        if (className.startsWith(packageName)) {
+                            final Class<?> clazz = loadClass(className.replace('/', '.'));
+                            addClass(clazz, classes);
+
+                        }
                     }
                 }
+            } while (jarEntry != null);
+        }
+
+        catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        finally {
+            if (jarFile != null) {
+                try {
+                    jarFile.close();
+                }
+
+                catch (final IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
-        } while (jarEntry != null);
+        }
 
         return classes;
     }
@@ -224,6 +241,16 @@ public class ClassPathScanner implements ClassLocator {
     private void addClass(final Class<?> clazz, final Set<Class<?>> classes) {
         if (reflectionUtils.isNormalClass(clazz)) {
             classes.add(clazz);
+        }
+    }
+
+    private Class<?> loadClass(final String className) {
+        try {
+            return Class.forName(className);
+        }
+
+        catch (final ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 }
