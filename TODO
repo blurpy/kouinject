@@ -10,4 +10,5 @@
  - Injection in static members
  - @Value annotation for injecton of properties
  - @Produces annotation for defining factories for beans
- 
+ - Add tests for classpath scanning in jar-files, and windows
+ - Fix findbugs warnings
