@@ -29,6 +29,8 @@ import java.util.Collection;
 import net.usikkert.kouinject.testbeans.BeanCount;
 import net.usikkert.kouinject.testbeans.notscanned.TheInterfaceUser;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
+import net.usikkert.kouinject.testbeans.scanned.collection.HungryBean;
+import net.usikkert.kouinject.testbeans.scanned.qualifier.BlueBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.ColorBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.RedBean;
 
@@ -86,5 +88,24 @@ public class DefaultInjectorTest {
 
         assertNotNull(beans);
         assertEquals(BeanCount.SCANNED.getNumberOfBeans(), beans.size());
+    }
+
+    @Test
+    public void injectorShouldSupportLoadingBeansFromMultipleBasePackages() {
+        final Injector newInjector = new DefaultInjector(
+                "net.usikkert.kouinject.testbeans.scanned.qualifier",
+                "net.usikkert.kouinject.testbeans.scanned.collection");
+
+        assertNotNull(newInjector.getBean(BlueBean.class));
+        assertNotNull(newInjector.getBean(HungryBean.class));
+
+        try {
+            newInjector.getBean(HelloBean.class);
+            fail("Should not get an instance of a bean class not scanned");
+        }
+
+        catch (IllegalArgumentException e) {
+            // ok
+        }
     }
 }
