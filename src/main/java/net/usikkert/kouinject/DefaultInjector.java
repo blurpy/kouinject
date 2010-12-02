@@ -39,11 +39,11 @@ public class DefaultInjector implements Injector {
     /**
      * Creates and initializes this injector.
      *
-     * @param basePackage The package to start scanning for beans. All sub-packages will also be scanned.
+     * @param basePackages A set of packages to start scanning for beans. All sub-packages will also be scanned.
      */
-    public DefaultInjector(final String basePackage) {
+    public DefaultInjector(final String... basePackages) {
         final ClassLocator classLocator = new ClassPathScanner();
-        final BeanLocator beanLocator = new AnnotationBasedBeanLocator(basePackage, classLocator);
+        final BeanLocator beanLocator = new AnnotationBasedBeanLocator(classLocator, basePackages);
         final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
         beanLoader = new DefaultBeanLoader(beanDataHandler, beanLocator);
     }

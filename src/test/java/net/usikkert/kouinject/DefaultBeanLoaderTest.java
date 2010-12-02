@@ -115,7 +115,7 @@ public class DefaultBeanLoaderTest {
     public void setupBeanLoader() {
         final ClassLocator classLocator = new ClassPathScanner();
         final BeanLocator beanLocator = new AnnotationBasedBeanLocator(
-                "net.usikkert.kouinject.testbeans.scanned", classLocator);
+                classLocator, "net.usikkert.kouinject.testbeans.scanned");
         final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
         beanLoader = new DefaultBeanLoader(beanDataHandler, beanLocator);
     }

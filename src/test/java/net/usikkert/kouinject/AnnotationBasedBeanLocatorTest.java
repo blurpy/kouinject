@@ -56,7 +56,7 @@ public class AnnotationBasedBeanLocatorTest {
 
     @Test
     public void findBeansShouldReturnAllComponents() {
-        final BeanLocator beanLocator = new AnnotationBasedBeanLocator("net.usikkert.kouinject", classLocator);
+        final BeanLocator beanLocator = new AnnotationBasedBeanLocator(classLocator, "net.usikkert.kouinject");
         final Set<BeanKey> beans = beanLocator.findBeans();
 
         assertEquals(BeanCount.ALL.getNumberOfBeans(), beans.size());
@@ -70,7 +70,7 @@ public class AnnotationBasedBeanLocatorTest {
 
     @Test
     public void findBeansShouldDetectQualifiers() {
-        final BeanLocator beanLocator = new AnnotationBasedBeanLocator("net.usikkert.kouinject.testbeans.scanned.qualifier", classLocator);
+        final BeanLocator beanLocator = new AnnotationBasedBeanLocator(classLocator, "net.usikkert.kouinject.testbeans.scanned.qualifier");
         final Set<BeanKey> beans = beanLocator.findBeans();
 
         assertEquals(5, beans.size());
@@ -84,7 +84,7 @@ public class AnnotationBasedBeanLocatorTest {
 
     @Test
     public void findBeansShouldIgnoreMissingQualifiers() {
-        final BeanLocator beanLocator = new AnnotationBasedBeanLocator("net.usikkert.kouinject.testbeans.scanned.coffee", classLocator);
+        final BeanLocator beanLocator = new AnnotationBasedBeanLocator(classLocator, "net.usikkert.kouinject.testbeans.scanned.coffee");
         final Set<BeanKey> beans = beanLocator.findBeans();
 
         assertEquals(2, beans.size());

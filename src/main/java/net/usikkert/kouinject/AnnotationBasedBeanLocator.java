@@ -29,11 +29,12 @@ import java.util.Set;
 import net.usikkert.kouinject.annotation.Component;
 import net.usikkert.kouinject.beandata.BeanKey;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 
 /**
  * Implementation of {@link BeanLocator} using the {@link Component} annotation to detect beans,
- * and the {@link Qualifier} annotation to get the qualifier.
+ * and the {@link javax.inject.Qualifier} annotation to get the qualifier.
  *
  * @author Christian Ihle
  */
@@ -42,24 +43,33 @@ public class AnnotationBasedBeanLocator implements BeanLocator {
     private static final Class<Component> COMPONENT_ANNOTATION = Component.class;
 
     private final ClassLocator classLocator;
-    private final String basePackage;
+    private final Set<String> basePackageSet;
     private final AnnotationBasedQualifierHandler qualifierHandler;
 
     /**
      * Constructs a new instance of this {@link BeanLocator} using a {@link ClassLocator} for
-     * autodetecting the beans in the specified base package.
+     * autodetecting the beans in the specified base packages.
      *
-     * @param basePackage The package to start scanning for beans. All sub-packages will also be scanned.
      * @param classLocator The instance of {@link ClassLocator} to use for finding the classes
      * that are bean candidates.
+     * @param basePackages A set of packages to start scanning for beans. All sub-packages will also be scanned.
      */
-    public AnnotationBasedBeanLocator(final String basePackage, final ClassLocator classLocator) {
-        Validate.notEmpty(basePackage, "Base package can not be empty");
+    public AnnotationBasedBeanLocator(final ClassLocator classLocator, final String... basePackages) {
         Validate.notNull(classLocator, "Class locator can not be null");
 
-        this.basePackage = basePackage;
+        this.basePackageSet = new HashSet<String>();
         this.classLocator = classLocator;
         this.qualifierHandler = new AnnotationBasedQualifierHandler();
+        validateAndAddBasePackagesToSet(basePackages);
+    }
+
+    private void validateAndAddBasePackagesToSet(final String... basePackages) {
+        Validate.notNull(basePackages, "Base packages can not be null");
+
+        for (final String basePackage : basePackages) {
+            Validate.isTrue(StringUtils.isNotBlank(basePackage), "Base package can not be empty");
+            basePackageSet.add(basePackage);
+        }
     }
 
     /**
@@ -67,7 +77,7 @@ public class AnnotationBasedBeanLocator implements BeanLocator {
      */
     @Override
     public Set<BeanKey> findBeans() {
-        final Set<Class<?>> allClasses = classLocator.findClasses(basePackage);
+        final Set<Class<?>> allClasses = classLocator.findClasses(basePackageSet.iterator().next());
         final Set<BeanKey> detectedBeans = new HashSet<BeanKey>();
 
         for (final Class<?> clazz : allClasses) {
