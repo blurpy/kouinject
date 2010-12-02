@@ -93,6 +93,26 @@ public class AnnotationBasedBeanLocatorTest {
         assertTrue(containsBean(beans, JavaBean.class, null));
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void constructorShouldValidateClassLocatorNotNull() {
+        new AnnotationBasedBeanLocator(null, "package");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void constructorShouldRequireAtLeastOneBasePackages() {
+        new AnnotationBasedBeanLocator(classLocator);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void constructorShouldValidateBasePackagesNotNull() {
+        new AnnotationBasedBeanLocator(classLocator, null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void constructorShouldValidateBasePackagesNotEmpty() {
+        new AnnotationBasedBeanLocator(classLocator, " ");
+    }
+
     private boolean containsBean(final Set<BeanKey> beans, final Class<?> beanClass, final String qualifier) {
         for (final BeanKey bean : beans) {
             if (bean.getBeanClass().equals(beanClass)) {

@@ -65,6 +65,7 @@ public class AnnotationBasedBeanLocator implements BeanLocator {
 
     private void validateAndAddBasePackagesToSet(final String... basePackages) {
         Validate.notNull(basePackages, "Base packages can not be null");
+        Validate.isTrue(basePackages.length > 0, "Must have at least one base package");
 
         for (final String basePackage : basePackages) {
             Validate.isTrue(StringUtils.isNotBlank(basePackage), "Base package can not be empty");
