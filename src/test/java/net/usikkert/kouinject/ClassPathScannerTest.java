@@ -22,16 +22,19 @@
 
 package net.usikkert.kouinject;
 
-import static org.junit.Assert.*;
+import net.usikkert.kouinject.testbeans.notscanned.TheInterfaceUser;
+import net.usikkert.kouinject.testbeans.scanned.LastBean;
+import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
+import net.usikkert.kouinject.testbeans.scanned.hierarchy.interfacebean.InterfaceBeanImpl;
+import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding.subpackage.OverridingSubpackageBean;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.lang.reflect.Modifier;
 import java.util.Set;
 
-import net.usikkert.kouinject.testbeans.notscanned.TheInterfaceUser;
-import net.usikkert.kouinject.testbeans.scanned.LastBean;
-
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test of {@link ClassPathScanner}.
@@ -56,6 +59,15 @@ public class ClassPathScannerTest {
 
         assertTrue(classes.contains(LastBean.class));
         assertFalse(classes.contains(TheInterfaceUser.class));
+    }
+
+    @Test
+    public void findClassesShouldDetectClassesInSubPackages() {
+        final Set<Class<?>> classes = scanner.findClasses(SCANNED);
+
+        assertTrue(classes.contains(InterfaceBeanImpl.class));
+        assertTrue(classes.contains(JavaBean.class));
+        assertTrue(classes.contains(OverridingSubpackageBean.class));
     }
 
     @Test
