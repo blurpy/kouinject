@@ -23,10 +23,14 @@
 package net.usikkert.kouinject;
 
 import net.usikkert.kouinject.testbeans.notscanned.TheInterfaceUser;
+import net.usikkert.kouinject.testbeans.scanned.CarBean;
 import net.usikkert.kouinject.testbeans.scanned.LastBean;
+import net.usikkert.kouinject.testbeans.scanned.any.AnyBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.interfacebean.InterfaceBeanImpl;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding.subpackage.OverridingSubpackageBean;
+import net.usikkert.kouinject.testbeans.scanned.scope.SingletonBean;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -45,6 +49,9 @@ public class ClassPathScannerTest {
 
     private static final String ALL = "net.usikkert.kouinject";
     private static final String SCANNED = "net.usikkert.kouinject.testbeans.scanned";
+    private static final String SCANNED_ANY = "net.usikkert.kouinject.testbeans.scanned.any";
+    private static final String SCANNED_SCOPE = "net.usikkert.kouinject.testbeans.scanned.scope";
+    private static final String SCANNED_HIERARCHY = "net.usikkert.kouinject.testbeans.scanned.hierarchy";
 
     private ClassPathScanner scanner;
 
@@ -68,6 +75,32 @@ public class ClassPathScannerTest {
         assertTrue(classes.contains(InterfaceBeanImpl.class));
         assertTrue(classes.contains(JavaBean.class));
         assertTrue(classes.contains(OverridingSubpackageBean.class));
+    }
+
+    @Test
+    public void findClassesShouldDetectClassesInDifferentBasePackages() {
+        final Set<Class<?>> classes = scanner.findClasses(SCANNED_ANY, SCANNED_SCOPE, SCANNED_HIERARCHY);
+
+        assertTrue(classes.contains(AnyBean.class));
+        assertTrue(classes.contains(SingletonBean.class));
+        assertTrue(classes.contains(OverridingSubpackageBean.class));
+        assertFalse(classes.contains(JavaBean.class));
+        assertFalse(classes.contains(CarBean.class));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void findClassesShouldRequireAtLeastOneBasePackage() {
+        scanner.findClasses();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void findClassesShouldValidateBasePackagesNotNull() {
+        scanner.findClasses(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void findClassesShouldValidateBasePackagesNotEmpty() {
+        scanner.findClasses(" ");
     }
 
     @Test

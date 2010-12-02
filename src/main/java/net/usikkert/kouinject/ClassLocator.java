@@ -32,10 +32,10 @@ import java.util.Set;
 public interface ClassLocator {
 
     /**
-     * Finds all classes in the given package. Classes in sub-packages are also included.
+     * Finds all classes in the given packages. Classes in sub-packages are also included.
      *
-     * @param basePackage The base package that all classes must be in to be included.
+     * @param basePackages The base packages that all classes must be in to be included.
      * @return A set of all the classes found in the search.
      */
-    Set<Class<?>> findClasses(String basePackage);
+    Set<Class<?>> findClasses(String... basePackages);
 }

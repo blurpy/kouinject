@@ -33,6 +33,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 
 /**
@@ -51,19 +52,41 @@ public class ClassPathScanner implements ClassLocator {
      * {@inheritDoc}
      */
     @Override
-    public Set<Class<?>> findClasses(final String basePackage) {
-        Validate.notNull(basePackage, "Base package can not be null");
-
+    public Set<Class<?>> findClasses(final String... basePackages) {
         final ClassLoader loader = getClassLoader();
 
         final long start = System.currentTimeMillis();
-        final Set<Class<?>> classes = findClasses(loader, basePackage);
+        final Set<Class<?>> classes = findClassesFromSetOfBasePackages(loader, basePackages);
         final long stop = System.currentTimeMillis();
 
         LOG.fine("Time spent scanning classpath: " + (stop - start) + " ms");
         LOG.fine("Classes found: " + classes.size());
 
         return classes;
+    }
+
+    private Set<Class<?>> findClassesFromSetOfBasePackages(final ClassLoader loader, final String... basePackages) {
+        final Set<Class<?>> classes = new HashSet<Class<?>>();
+        final Set<String> basePackageSet = convertBasePackagesToSet(basePackages);
+
+        for (final String basePackage : basePackageSet) {
+            classes.addAll(findClasses(loader, basePackage));
+        }
+
+        return classes;
+    }
+
+    private Set<String> convertBasePackagesToSet(final String... basePackages) {
+        Validate.notNull(basePackages, "Base packages can not be null");
+        Validate.isTrue(basePackages.length > 0, "Must have at least one base package");
+        final Set<String> basePackageSet = new HashSet<String>();
+
+        for (final String basePackage : basePackages) {
+            Validate.isTrue(StringUtils.isNotBlank(basePackage), "Base package can not be empty");
+            basePackageSet.add(basePackage);
+        }
+
+        return basePackageSet;
     }
 
     private Set<Class<?>> findClasses(final ClassLoader loader, final String basePackage) {
