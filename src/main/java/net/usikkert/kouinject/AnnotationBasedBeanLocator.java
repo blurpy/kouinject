@@ -29,7 +29,6 @@ import java.util.Set;
 import net.usikkert.kouinject.annotation.Component;
 import net.usikkert.kouinject.beandata.BeanKey;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 
 /**
@@ -43,7 +42,7 @@ public class AnnotationBasedBeanLocator implements BeanLocator {
     private static final Class<Component> COMPONENT_ANNOTATION = Component.class;
 
     private final ClassLocator classLocator;
-    private final Set<String> basePackageSet;
+    private final String[] basePackages;
     private final AnnotationBasedQualifierHandler qualifierHandler;
 
     /**
@@ -56,21 +55,11 @@ public class AnnotationBasedBeanLocator implements BeanLocator {
      */
     public AnnotationBasedBeanLocator(final ClassLocator classLocator, final String... basePackages) {
         Validate.notNull(classLocator, "Class locator can not be null");
+        Validate.notNull(basePackages, "Base packages can not be null");
 
-        this.basePackageSet = new HashSet<String>();
+        this.basePackages = basePackages;
         this.classLocator = classLocator;
         this.qualifierHandler = new AnnotationBasedQualifierHandler();
-        validateAndAddBasePackagesToSet(basePackages);
-    }
-
-    private void validateAndAddBasePackagesToSet(final String... basePackages) {
-        Validate.notNull(basePackages, "Base packages can not be null");
-        Validate.isTrue(basePackages.length > 0, "Must have at least one base package");
-
-        for (final String basePackage : basePackages) {
-            Validate.isTrue(StringUtils.isNotBlank(basePackage), "Base package can not be empty");
-            basePackageSet.add(basePackage);
-        }
     }
 
     /**
@@ -78,7 +67,7 @@ public class AnnotationBasedBeanLocator implements BeanLocator {
      */
     @Override
     public Set<BeanKey> findBeans() {
-        final Set<Class<?>> allClasses = classLocator.findClasses(basePackageSet.iterator().next());
+        final Set<Class<?>> allClasses = classLocator.findClasses(basePackages);
         final Set<BeanKey> detectedBeans = new HashSet<BeanKey>();
 
         for (final Class<?> clazz : allClasses) {

@@ -29,13 +29,21 @@ import java.util.Set;
 import net.usikkert.kouinject.annotation.Component;
 import net.usikkert.kouinject.beandata.BeanKey;
 import net.usikkert.kouinject.testbeans.BeanCount;
+import net.usikkert.kouinject.testbeans.scanned.HelloBean;
+import net.usikkert.kouinject.testbeans.scanned.any.AnyBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
+import net.usikkert.kouinject.testbeans.scanned.hierarchy.ChildBean;
+import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding2.AnimalBean;
+import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding2.OrganismBean;
+import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding2.PetBean;
+import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding2.pets.CatBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.BlueBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.DarkYellowBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.GreenBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.RedBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.YellowBean;
+import net.usikkert.kouinject.testbeans.scanned.scope.PrototypeWithSingletonBean;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -93,24 +101,38 @@ public class AnnotationBasedBeanLocatorTest {
         assertTrue(containsBean(beans, JavaBean.class, null));
     }
 
+    @Test
+    public void findBeansShouldHandleMultipleBasePackages() {
+        final BeanLocator beanLocator = new AnnotationBasedBeanLocator(
+                classLocator,
+                "net.usikkert.kouinject.testbeans.scanned.coffee",
+                "net.usikkert.kouinject.testbeans.scanned.any",
+                "net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding2");
+        final Set<BeanKey> beans = beanLocator.findBeans();
+
+        assertEquals(7, beans.size());
+
+        assertTrue(containsBean(beans, CoffeeBean.class, null));
+        assertTrue(containsBean(beans, JavaBean.class, null));
+        assertTrue(containsBean(beans, AnyBean.class, null));
+        assertTrue(containsBean(beans, CatBean.class, "cat"));
+        assertTrue(containsBean(beans, AnimalBean.class, "animal"));
+        assertTrue(containsBean(beans, OrganismBean.class, "organism"));
+        assertTrue(containsBean(beans, PetBean.class, "pet"));
+
+        assertFalse(containsBean(beans, ChildBean.class, null));
+        assertFalse(containsBean(beans, PrototypeWithSingletonBean.class, null));
+        assertFalse(containsBean(beans, HelloBean.class, null));
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void constructorShouldValidateClassLocatorNotNull() {
         new AnnotationBasedBeanLocator(null, "package");
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void constructorShouldRequireAtLeastOneBasePackages() {
-        new AnnotationBasedBeanLocator(classLocator);
-    }
-    
-    @Test(expected = IllegalArgumentException.class)
     public void constructorShouldValidateBasePackagesNotNull() {
         new AnnotationBasedBeanLocator(classLocator, null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void constructorShouldValidateBasePackagesNotEmpty() {
-        new AnnotationBasedBeanLocator(classLocator, " ");
     }
 
     private boolean containsBean(final Set<BeanKey> beans, final Class<?> beanClass, final String qualifier) {
