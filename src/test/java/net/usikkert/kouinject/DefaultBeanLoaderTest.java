@@ -78,6 +78,9 @@ import net.usikkert.kouinject.testbeans.scanned.collection.HamburgerBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.HotdogBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.HungryBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.HungryQualifierBean;
+import net.usikkert.kouinject.testbeans.scanned.folder.folder1.Folder1Bean;
+import net.usikkert.kouinject.testbeans.scanned.folder.folder2.Folder2Bean;
+import net.usikkert.kouinject.testbeans.scanned.folder.folder3.Folder3Bean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.ChildBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractBeanImpl;
@@ -328,6 +331,29 @@ public class DefaultBeanLoaderTest {
         final FirstCircularDependencyBean firstCircularDependencyBean = beanLoader.getBean(FirstCircularDependencyBean.class);
 
         assertNotNull(firstCircularDependencyBean.getSecondCircularDependencyBean());
+    }
+
+    @Test
+    public void checkFolder1Bean() {
+        final Folder1Bean folder1Bean = beanLoader.getBean(Folder1Bean.class);
+
+        assertNotNull(folder1Bean);
+    }
+
+    @Test
+    public void checkFolder2Bean() {
+        final Folder2Bean folder2Bean = beanLoader.getBean(Folder2Bean.class);
+
+        assertNotNull(folder2Bean);
+    }
+
+    @Test
+    public void checkFolder3Bean() {
+        final Folder3Bean folder3Bean = beanLoader.getBean(Folder3Bean.class);
+
+        assertNotNull(folder3Bean);
+        assertNotNull(folder3Bean.getFolder1Bean());
+        assertNotNull(folder3Bean.getFolder2Bean());
     }
 
     @Test
@@ -998,6 +1024,56 @@ public class DefaultBeanLoaderTest {
         final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler, beanLocator);
 
         loader.getBean(CollectionInjectionWithNoMatchingBeans.class);
+    }
+
+    @Test
+    public void findBeansShouldNotCareAboutOrderOfBasePackages() {
+        final BeanLoader newBeanLoader = createBeanLoaderWithBasePackages(
+                "net.usikkert.kouinject.testbeans.scanned.folder.folder3",
+                "net.usikkert.kouinject.testbeans.scanned.folder.folder2",
+                "net.usikkert.kouinject.testbeans.scanned.folder.folder1");
+
+        final Collection<Object> beans = newBeanLoader.getBeans(Object.class);
+
+        assertEquals(3, beans.size());
+
+        assertTrue(containsBean(Folder1Bean.class, beans));
+        assertTrue(containsBean(Folder2Bean.class, beans));
+        assertTrue(containsBean(Folder3Bean.class, beans));
+    }
+
+    @Test
+    public void findBeansShouldNotCareAboutOrderOfBasePackages2() {
+        final BeanLoader newBeanLoader = createBeanLoaderWithBasePackages(
+                "net.usikkert.kouinject.testbeans.scanned.folder.folder1",
+                "net.usikkert.kouinject.testbeans.scanned.folder.folder2",
+                "net.usikkert.kouinject.testbeans.scanned.folder.folder3");
+
+        final Collection<Object> beans = newBeanLoader.getBeans(Object.class);
+
+        assertEquals(3, beans.size());
+
+        assertTrue(containsBean(Folder1Bean.class, beans));
+        assertTrue(containsBean(Folder2Bean.class, beans));
+        assertTrue(containsBean(Folder3Bean.class, beans));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void findBeansShouldFailIfUnsatisfiedDependencies() {
+        final BeanLoader newBeanLoader = createBeanLoaderWithBasePackages(
+                "net.usikkert.kouinject.testbeans.scanned.folder.folder3",
+                "net.usikkert.kouinject.testbeans.scanned.folder.folder1");
+
+        newBeanLoader.getBeans(Object.class);
+    }
+
+    private BeanLoader createBeanLoaderWithBasePackages(final String... basePackages) {
+        final ClassLocator classLocator = new ClassPathScanner();
+        final BeanLocator beanLocator = new AnnotationBasedBeanLocator(
+                classLocator, basePackages);
+        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
+
+        return new DefaultBeanLoader(beanDataHandler, beanLocator);
     }
 
     private boolean containsBean(final Class<?> bean, final Collection<?> collection) {

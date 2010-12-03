@@ -20,26 +20,33 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.folder.folder3;
+
+import net.usikkert.kouinject.annotation.Component;
+import net.usikkert.kouinject.testbeans.scanned.folder.folder1.Folder1Bean;
+import net.usikkert.kouinject.testbeans.scanned.folder.folder2.Folder2Bean;
+
+import javax.inject.Inject;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * Bean used for testing correct dependency injection when using multiple base packages.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+@Component
+public class Folder3Bean {
 
-    ALL(62),
-    SCANNED(46),
-    SCANNED_WITHOUT_QUALIFIER(33);
+    @Inject
+    private Folder1Bean folder1Bean;
 
-    private int numberOfBeans;
+    @Inject
+    private Folder2Bean folder2Bean;
 
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
+    public Folder1Bean getFolder1Bean() {
+        return folder1Bean;
     }
 
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    public Folder2Bean getFolder2Bean() {
+        return folder2Bean;
     }
 }
