@@ -1058,6 +1058,32 @@ public class DefaultBeanLoaderTest {
         assertTrue(containsBean(Folder3Bean.class, beans));
     }
 
+    // Should be same as specifying package 1-3, like above.
+    @Test
+    public void findBeansWithParentPackageShouldGiveSameResultAsSpecifyingEachSubPackage() {
+        final BeanLoader newBeanLoader = createBeanLoaderWithBasePackages(
+                "net.usikkert.kouinject.testbeans.scanned.folder");
+
+        final Collection<Object> beans = newBeanLoader.getBeans(Object.class);
+
+        assertEquals(3, beans.size());
+
+        assertTrue(containsBean(Folder1Bean.class, beans));
+        assertTrue(containsBean(Folder2Bean.class, beans));
+        assertTrue(containsBean(Folder3Bean.class, beans));
+    }
+
+    @Test
+    public void findBeansShouldHandleOnlyOneSubPackage() {
+        final BeanLoader newBeanLoader = createBeanLoaderWithBasePackages(
+                "net.usikkert.kouinject.testbeans.scanned.folder.folder2");
+
+        final Collection<Object> beans = newBeanLoader.getBeans(Object.class);
+
+        assertEquals(1, beans.size());
+        assertTrue(containsBean(Folder2Bean.class, beans));
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void findBeansShouldFailIfUnsatisfiedDependencies() {
         final BeanLoader newBeanLoader = createBeanLoaderWithBasePackages(
