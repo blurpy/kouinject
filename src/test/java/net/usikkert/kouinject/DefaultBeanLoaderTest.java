@@ -1084,6 +1084,33 @@ public class DefaultBeanLoaderTest {
         assertTrue(containsBean(Folder2Bean.class, beans));
     }
 
+    @Test
+    public void findBeansShouldSupportDifferentParentPackages() {
+        final BeanLoader newBeanLoader = createBeanLoaderWithBasePackages(
+                "net.usikkert.kouinject.testbeans.scanned.folder.folder2",
+                "net.usikkert.kouinject.testbeans.scanned.folder.folder1",
+                "net.usikkert.kouinject.testbeans.scanned.qualifier",
+                "net.usikkert.kouinject.testbeans.scanned.folder.folder3",
+                "net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean",
+                "net.usikkert.kouinject.testbeans.scanned.empty");
+
+        final Collection<Object> beans = newBeanLoader.getBeans(Object.class, "any");
+
+        assertEquals(9, beans.size());
+
+        assertTrue(containsBean(Folder1Bean.class, beans));
+        assertTrue(containsBean(Folder2Bean.class, beans));
+        assertTrue(containsBean(Folder3Bean.class, beans));
+
+        assertTrue(containsBean(AbstractBeanImpl.class, beans));
+
+        assertTrue(containsBean(BlueBean.class, beans));
+        assertTrue(containsBean(DarkYellowBean.class, beans));
+        assertTrue(containsBean(GreenBean.class, beans));
+        assertTrue(containsBean(RedBean.class, beans));
+        assertTrue(containsBean(YellowBean.class, beans));
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void findBeansShouldFailIfUnsatisfiedDependencies() {
         final BeanLoader newBeanLoader = createBeanLoaderWithBasePackages(
