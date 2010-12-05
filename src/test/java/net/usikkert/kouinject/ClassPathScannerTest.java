@@ -88,9 +88,25 @@ public class ClassPathScannerTest {
         assertFalse(classes.contains(CarBean.class));
     }
 
+    @Test
+    public void findClassesShouldHandleArrays() {
+        final Set<Class<?>> classes = scanner.findClasses(new String[] {SCANNED_ANY, SCANNED_SCOPE, SCANNED_HIERARCHY});
+
+        assertTrue(classes.contains(AnyBean.class));
+        assertTrue(classes.contains(SingletonBean.class));
+        assertTrue(classes.contains(OverridingSubpackageBean.class));
+        assertFalse(classes.contains(JavaBean.class));
+        assertFalse(classes.contains(CarBean.class));
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void findClassesShouldRequireAtLeastOneBasePackage() {
         scanner.findClasses();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void findClassesShouldRequireAtLeastOneBasePackageWithArray() {
+        scanner.findClasses(new String[] {});
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -99,8 +115,18 @@ public class ClassPathScannerTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
+    public void findClassesShouldValidateBasePackagesNotNullInArray() {
+        scanner.findClasses(new String[] {null});
+    }
+
+    @Test(expected = IllegalArgumentException.class)
     public void findClassesShouldValidateBasePackagesNotEmpty() {
         scanner.findClasses(" ");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void findClassesShouldValidateBasePackagesNotEmptyInArray() {
+        scanner.findClasses(new String[] {" "});
     }
 
     @Test
