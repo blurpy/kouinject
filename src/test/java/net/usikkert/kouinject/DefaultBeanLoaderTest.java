@@ -26,6 +26,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -45,6 +46,7 @@ import net.usikkert.kouinject.testbeans.notscanned.collection.CollectionInjectio
 import net.usikkert.kouinject.testbeans.notscanned.collection.CollectionInjectionWithoutTypeArgument;
 import net.usikkert.kouinject.testbeans.notscanned.collection.ListInjection;
 import net.usikkert.kouinject.testbeans.notscanned.collection.SetInjection;
+import net.usikkert.kouinject.testbeans.notscanned.date.DateBean;
 import net.usikkert.kouinject.testbeans.notscanned.instance.Instance1Bean;
 import net.usikkert.kouinject.testbeans.notscanned.instance.Instance2Bean;
 import net.usikkert.kouinject.testbeans.notscanned.instance.Instance3Bean;
@@ -1120,7 +1122,21 @@ public class DefaultBeanLoaderTest {
         newBeanLoader.getBeans(Object.class);
     }
 
-    private BeanLoader createBeanLoaderWithBasePackages(final String... basePackages) {
+    @Test
+    public void addBeanShouldMakeAnyObjectAvailableForInjection() {
+        final DefaultBeanLoader newBeanLoader =
+                createBeanLoaderWithBasePackages("net.usikkert.kouinject.testbeans.notscanned.date");
+
+        final Date date = new Date();
+        newBeanLoader.addBean(date);
+
+        final DateBean dateBean = newBeanLoader.getBean(DateBean.class);
+
+        assertNotNull(dateBean);
+        assertSame(date, dateBean.getDate());
+    }
+
+    private DefaultBeanLoader createBeanLoaderWithBasePackages(final String... basePackages) {
         final ClassLocator classLocator = new ClassPathScanner();
         final BeanLocator beanLocator = new AnnotationBasedBeanLocator(
                 classLocator, basePackages);
