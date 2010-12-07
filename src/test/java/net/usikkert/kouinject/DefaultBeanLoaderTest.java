@@ -118,11 +118,7 @@ public class DefaultBeanLoaderTest {
 
     @Before
     public void setupBeanLoader() {
-        final ClassLocator classLocator = new ClassPathScanner();
-        final BeanLocator beanLocator = new AnnotationBasedBeanLocator(
-                classLocator, "net.usikkert.kouinject.testbeans.scanned");
-        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
-        beanLoader = new DefaultBeanLoader(beanDataHandler, beanLocator);
+        beanLoader = createBeanLoaderWithBasePackages("net.usikkert.kouinject.testbeans.scanned");
     }
 
     @Test
@@ -635,28 +631,20 @@ public class DefaultBeanLoaderTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void getBeanShouldDetectMissingDependencies() {
-        final BeanLocator beanLocator = mock(BeanLocator.class);
-        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
-
         final Set<BeanKey> beans = new HashSet<BeanKey>();
         beans.add(new BeanKey(TheInterfaceUser.class));
-        when(beanLocator.findBeans()).thenReturn(beans);
 
-        final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler, beanLocator);
+        final DefaultBeanLoader loader = createBeanLoaderWithBeans(beans);
 
         loader.getBean(TheInterfaceUser.class);
     }
 
     @Test
     public void beanLoaderShouldHandleMocks() {
-        final BeanLocator beanLocator = mock(BeanLocator.class);
-        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
-
         final Set<BeanKey> beans = new HashSet<BeanKey>();
         beans.add(new BeanKey(FieldBean.class));
-        when(beanLocator.findBeans()).thenReturn(beans);
 
-        final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler, beanLocator);
+        final DefaultBeanLoader loader = createBeanLoaderWithBeans(beans);
 
         final HelloBean helloBean = mock(HelloBean.class);
         loader.addBean(helloBean);
@@ -676,47 +664,35 @@ public class DefaultBeanLoaderTest {
 
     @Test(expected = IllegalStateException.class)
     public void circularDependenciesShouldBeDetected() {
-        final BeanLocator beanLocator = mock(BeanLocator.class);
-        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
-
         final Set<BeanKey> beans = new HashSet<BeanKey>();
         beans.add(new BeanKey(FirstCircularBean.class));
         beans.add(new BeanKey(SecondCircularBean.class));
-        when(beanLocator.findBeans()).thenReturn(beans);
 
-        final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler, beanLocator);
+        final DefaultBeanLoader loader = createBeanLoaderWithBeans(beans);
 
         loader.getBean(FirstCircularBean.class);
     }
 
     @Test(expected = IllegalStateException.class)
     public void tooManyMatchesForADependencyShouldBeDetected() {
-        final BeanLocator beanLocator = mock(BeanLocator.class);
-        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
-
         final Set<BeanKey> beans = new HashSet<BeanKey>();
         beans.add(new BeanKey(FirstInterfaceImpl.class));
         beans.add(new BeanKey(SecondInterfaceImpl.class));
         beans.add(new BeanKey(TheInterfaceUser.class));
-        when(beanLocator.findBeans()).thenReturn(beans);
 
-        final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler, beanLocator);
+        final DefaultBeanLoader loader = createBeanLoaderWithBeans(beans);
 
         loader.getBean(TheInterfaceUser.class);
     }
 
     @Test
     public void severalBeansForAnInterfaceIsOKIfACloserMatchToImplIsRequested() {
-        final BeanLocator beanLocator = mock(BeanLocator.class);
-        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
-
         final Set<BeanKey> beans = new HashSet<BeanKey>();
         beans.add(new BeanKey(FirstInterfaceImpl.class));
         beans.add(new BeanKey(SecondInterfaceImpl.class));
         beans.add(new BeanKey(ACloserMatchOfImplementationUser.class));
-        when(beanLocator.findBeans()).thenReturn(beans);
 
-        final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler, beanLocator);
+        final DefaultBeanLoader loader = createBeanLoaderWithBeans(beans);
 
         final ACloserMatchOfImplementationUser aCloserMatch = loader.getBean(ACloserMatchOfImplementationUser.class);
 
@@ -726,14 +702,10 @@ public class DefaultBeanLoaderTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void noMatchesForADependencyShouldBeDetected() {
-        final BeanLocator beanLocator = mock(BeanLocator.class);
-        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
-
         final Set<BeanKey> beans = new HashSet<BeanKey>();
         beans.add(new BeanKey(TheInterfaceUser.class));
-        when(beanLocator.findBeans()).thenReturn(beans);
 
-        final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler, beanLocator);
+        final DefaultBeanLoader loader = createBeanLoaderWithBeans(beans);
 
         loader.getBean(TheInterfaceUser.class);
     }
@@ -828,16 +800,12 @@ public class DefaultBeanLoaderTest {
 
     @Test
     public void prototypeBeansShouldNotBeInstantiatedMoreThanOnceForEachRequest() {
-        final BeanLocator beanLocator = mock(BeanLocator.class);
-        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
-
         final Set<BeanKey> beans = new HashSet<BeanKey>();
         beans.add(new BeanKey(Instance1Bean.class));
         beans.add(new BeanKey(Instance2Bean.class));
         beans.add(new BeanKey(Instance3Bean.class));
-        when(beanLocator.findBeans()).thenReturn(beans);
 
-        final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler, beanLocator);
+        final DefaultBeanLoader loader = createBeanLoaderWithBeans(beans);
 
         final Instance3Bean instance3Bean = loader.getBean(Instance3Bean.class);
         assertNotNull(instance3Bean);
@@ -938,92 +906,64 @@ public class DefaultBeanLoaderTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void injectionOfCollectionWithWildcardShouldFail() {
-        final BeanLocator beanLocator = mock(BeanLocator.class);
-        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
-
         final Set<BeanKey> beans = new HashSet<BeanKey>();
         beans.add(new BeanKey(CollectionInjectionWithWildcard.class));
-        when(beanLocator.findBeans()).thenReturn(beans);
 
-        new DefaultBeanLoader(beanDataHandler, beanLocator);
+        createBeanLoaderWithBeans(beans);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void injectionOfCollectionWithoutTypeArgumentShouldFail() {
-        final BeanLocator beanLocator = mock(BeanLocator.class);
-        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
-
         final Set<BeanKey> beans = new HashSet<BeanKey>();
         beans.add(new BeanKey(CollectionInjectionWithoutTypeArgument.class));
-        when(beanLocator.findBeans()).thenReturn(beans);
 
-        new DefaultBeanLoader(beanDataHandler, beanLocator);
+        createBeanLoaderWithBeans(beans);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void injectionOfProviderWithWildcardShouldFail() {
-        final BeanLocator beanLocator = mock(BeanLocator.class);
-        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
-
         final Set<BeanKey> beans = new HashSet<BeanKey>();
         beans.add(new BeanKey(ProviderInjectionWithWildcard.class));
-        when(beanLocator.findBeans()).thenReturn(beans);
 
-        new DefaultBeanLoader(beanDataHandler, beanLocator);
+        createBeanLoaderWithBeans(beans);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void injectionOfProviderWithoutTypeArgumentShouldFail() {
-        final BeanLocator beanLocator = mock(BeanLocator.class);
-        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
-
         final Set<BeanKey> beans = new HashSet<BeanKey>();
         beans.add(new BeanKey(ProviderInjectionWithoutTypeArgument.class));
-        when(beanLocator.findBeans()).thenReturn(beans);
 
-        new DefaultBeanLoader(beanDataHandler, beanLocator);
+        createBeanLoaderWithBeans(beans);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void injectionOfListShouldFail() {
-        final BeanLocator beanLocator = mock(BeanLocator.class);
-        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
-
         final Set<BeanKey> beans = new HashSet<BeanKey>();
         beans.add(new BeanKey(ListInjection.class));
         beans.add(new BeanKey(HelloBean.class));
-        when(beanLocator.findBeans()).thenReturn(beans);
 
-        final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler, beanLocator);
+        final DefaultBeanLoader loader = createBeanLoaderWithBeans(beans);
 
         loader.getBean(ListInjection.class);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void injectionOfSetShouldFail() {
-        final BeanLocator beanLocator = mock(BeanLocator.class);
-        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
-
         final Set<BeanKey> beans = new HashSet<BeanKey>();
         beans.add(new BeanKey(SetInjection.class));
         beans.add(new BeanKey(HelloBean.class));
-        when(beanLocator.findBeans()).thenReturn(beans);
 
-        final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler, beanLocator);
+        final DefaultBeanLoader loader = createBeanLoaderWithBeans(beans);
 
         loader.getBean(SetInjection.class);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void injectionOfCollectionWithNoMatchingBeansShouldFail() {
-        final BeanLocator beanLocator = mock(BeanLocator.class);
-        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
-
         final Set<BeanKey> beans = new HashSet<BeanKey>();
         beans.add(new BeanKey(CollectionInjectionWithNoMatchingBeans.class));
-        when(beanLocator.findBeans()).thenReturn(beans);
 
-        final DefaultBeanLoader loader = new DefaultBeanLoader(beanDataHandler, beanLocator);
+        final DefaultBeanLoader loader = createBeanLoaderWithBeans(beans);
 
         loader.getBean(CollectionInjectionWithNoMatchingBeans.class);
     }
@@ -1141,6 +1081,14 @@ public class DefaultBeanLoaderTest {
         final BeanLocator beanLocator = new AnnotationBasedBeanLocator(
                 classLocator, basePackages);
         final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
+
+        return new DefaultBeanLoader(beanDataHandler, beanLocator);
+    }
+
+    private DefaultBeanLoader createBeanLoaderWithBeans(final Set<BeanKey> beans) {
+        final BeanLocator beanLocator = mock(BeanLocator.class);
+        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
+        when(beanLocator.findBeans()).thenReturn(beans);
 
         return new DefaultBeanLoader(beanDataHandler, beanLocator);
     }
