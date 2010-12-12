@@ -2,7 +2,7 @@
 - KouInject CHANGES
 
 
-* Version 0.7 (xx.xx.2010):
+* Version 0.7 (12.12.2010):
  - Added support for scanning for beans in multiple base packages
  - Added support for injecting collection of beans
  - Added @Any qualifier for getting beans with any or no qualifier
