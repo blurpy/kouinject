@@ -38,6 +38,8 @@ import net.usikkert.kouinject.beandata.BeanKey;
 import net.usikkert.kouinject.beandata.ConstructorData;
 import net.usikkert.kouinject.beandata.FieldData;
 import net.usikkert.kouinject.beandata.MethodData;
+import net.usikkert.kouinject.testbeans.notscanned.collection.CollectionInjectionWithWildcard;
+import net.usikkert.kouinject.testbeans.notscanned.collection.CollectionInjectionWithoutTypeArgument;
 import net.usikkert.kouinject.testbeans.notscanned.collectionprovider.CollectionProviderInjectionWithWildcard;
 import net.usikkert.kouinject.testbeans.notscanned.collectionprovider.CollectionProviderInjectionWithoutTypeArgument;
 import net.usikkert.kouinject.testbeans.notscanned.collectionprovider.ProvidedHungryBean;
@@ -46,6 +48,8 @@ import net.usikkert.kouinject.testbeans.notscanned.notloaded.NamedQualifierUsedW
 import net.usikkert.kouinject.testbeans.notscanned.notloaded.NoMatchingConstructorBean;
 import net.usikkert.kouinject.testbeans.notscanned.notloaded.TooManyMatchingConstructorsBean;
 import net.usikkert.kouinject.testbeans.notscanned.notloaded.TooManyQualifiersBean;
+import net.usikkert.kouinject.testbeans.notscanned.provider.ProviderInjectionWithWildcard;
+import net.usikkert.kouinject.testbeans.notscanned.provider.ProviderInjectionWithoutTypeArgument;
 import net.usikkert.kouinject.testbeans.scanned.CarBean;
 import net.usikkert.kouinject.testbeans.scanned.ConstructorBean;
 import net.usikkert.kouinject.testbeans.scanned.EverythingBean;
@@ -458,6 +462,26 @@ public class AnnotationBasedBeanDataHandlerTest {
     @Test(expected = IllegalArgumentException.class)
     public void getBeanDataShouldFailIfCollectionProviderIsUsedWithoutTypeArgument() {
         handler.getBeanData(CollectionProviderInjectionWithoutTypeArgument.class, false);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getBeanDataShouldFailIfCollectionIsUsedWithWildcard() {
+        handler.getBeanData(CollectionInjectionWithWildcard.class, false);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getBeanDataShouldFailIfCollectionIsUsedWithoutTypeArgument() {
+        handler.getBeanData(CollectionInjectionWithoutTypeArgument.class, false);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getBeanDataShouldFailIfProviderIsUsedWithWildcard() {
+        handler.getBeanData(ProviderInjectionWithWildcard.class, false);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getBeanDataShouldFailIfProviderIsUsedWithoutTypeArgument() {
+        handler.getBeanData(ProviderInjectionWithoutTypeArgument.class, false);
     }
 
     @Test
