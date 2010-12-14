@@ -20,26 +20,51 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.notscanned.collectionprovider;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import net.usikkert.kouinject.CollectionProvider;
+import net.usikkert.kouinject.annotation.Any;
+import net.usikkert.kouinject.annotation.Component;
+import net.usikkert.kouinject.testbeans.scanned.collection.Food;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * Bean used for testing correct dependency injection in collection providers, with qualifiers.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+@Component
+public class ProvidedHungryQualifierBean {
 
-    ALL(68),
-    SCANNED(46),
-    SCANNED_WITHOUT_QUALIFIER(33);
+    @Inject
+    @Named("fastFood")
+    private CollectionProvider<Food> fastFoodBeans;
 
-    private final int numberOfBeans;
+    private final CollectionProvider<Food> allFoodBeans;
 
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
+    private CollectionProvider<Food> roundFoodBeans;
+
+    @Inject
+    public ProvidedHungryQualifierBean(@Any final CollectionProvider<Food> allFoodBeans) {
+        this.allFoodBeans = allFoodBeans;
     }
 
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    public CollectionProvider<Food> getFastFoodBeans() {
+        return fastFoodBeans;
+    }
+
+    public CollectionProvider<Food> getAllFoodBeans() {
+        return allFoodBeans;
+    }
+
+    public CollectionProvider<Food> getRoundFoodBeans() {
+        return roundFoodBeans;
+    }
+
+    @Inject
+    public void setRoundFoodBeans(@Named("roundFood") final CollectionProvider<Food> roundFoodBeans) {
+        this.roundFoodBeans = roundFoodBeans;
     }
 }

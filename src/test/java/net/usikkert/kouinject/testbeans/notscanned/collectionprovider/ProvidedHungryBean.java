@@ -20,26 +20,48 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.notscanned.collectionprovider;
+
+import javax.inject.Inject;
+
+import net.usikkert.kouinject.CollectionProvider;
+import net.usikkert.kouinject.annotation.Component;
+import net.usikkert.kouinject.testbeans.scanned.collection.Food;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * Bean used for testing correct dependency injection in collection providers.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+@Component
+public class ProvidedHungryBean {
 
-    ALL(68),
-    SCANNED(46),
-    SCANNED_WITHOUT_QUALIFIER(33);
+    @Inject
+    private CollectionProvider<Food> foodBeansInField;
 
-    private final int numberOfBeans;
+    private final CollectionProvider<Food> foodBeansInConstructor;
 
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
+    private CollectionProvider<Food> foodBeansInSetter;
+
+    @Inject
+    public ProvidedHungryBean(final CollectionProvider<Food> foodBeansInConstructor) {
+        this.foodBeansInConstructor = foodBeansInConstructor;
     }
 
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    public CollectionProvider<Food> getFoodBeansInField() {
+        return foodBeansInField;
+    }
+
+    public CollectionProvider<Food> getFoodBeansInConstructor() {
+        return foodBeansInConstructor;
+    }
+
+    public CollectionProvider<Food> getFoodBeansInSetter() {
+        return foodBeansInSetter;
+    }
+
+    @Inject
+    public void setFoodBeansInSetter(final CollectionProvider<Food> foodBeansInSetter) {
+        this.foodBeansInSetter = foodBeansInSetter;
     }
 }

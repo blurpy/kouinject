@@ -20,26 +20,43 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.beandata;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * A {@link net.usikkert.kouinject.beandata.BeanKey} for representing a request for a
+ * {@link net.usikkert.kouinject.CollectionProvider} of beans.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+public class CollectionProviderBeanKey extends BeanKey {
 
-    ALL(68),
-    SCANNED(46),
-    SCANNED_WITHOUT_QUALIFIER(33);
-
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
+    /**
+     * Creates a new bean key for a collection provider of beans.
+     *
+     * @param beanClass The actual bean class for this key.
+     * @param qualifier The qualifier for this key.
+     */
+    public CollectionProviderBeanKey(final Class<?> beanClass, final String qualifier) {
+        super(beanClass, qualifier);
     }
 
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    /**
+     * Checks if this bean key is for a collection provider of beans.
+     *
+     * @return True.
+     */
+    @Override
+    public boolean isCollectionProvider() {
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder toStringBuilder = new StringBuilder();
+
+        toStringBuilder.append("[collection provider] ");
+        toStringBuilder.append(super.toString());
+
+        return toStringBuilder.toString();
     }
 }

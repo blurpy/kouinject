@@ -73,7 +73,7 @@ public class BeanKey {
     }
 
     /**
-     * If this bean key is for a {@link Provider}.
+     * If this bean key is for a {@link javax.inject.Provider}.
      *
      * @return If this is for a provider. False for the default implementation.
      */
@@ -82,11 +82,20 @@ public class BeanKey {
     }
 
     /**
-     * If this bean key is for a collection of beans.
+     * If this bean key is for a {@link java.util.Collection} of beans.
      *
      * @return If this is for a collection of beans. False for the default implementation.
      */
     public boolean isCollection() {
+        return false;
+    }
+
+    /**
+     * If this bean key is for a {@link net.usikkert.kouinject.CollectionProvider} of beans.
+     *
+     * @return If this is for a collection provider of beans. False for the default implementation.
+     */
+    public boolean isCollectionProvider() {
         return false;
     }
 

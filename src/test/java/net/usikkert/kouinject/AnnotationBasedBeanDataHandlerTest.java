@@ -34,10 +34,14 @@ import javax.inject.Named;
 import javax.inject.Provider;
 
 import net.usikkert.kouinject.beandata.BeanData;
-import net.usikkert.kouinject.beandata.ConstructorData;
 import net.usikkert.kouinject.beandata.BeanKey;
+import net.usikkert.kouinject.beandata.ConstructorData;
 import net.usikkert.kouinject.beandata.FieldData;
 import net.usikkert.kouinject.beandata.MethodData;
+import net.usikkert.kouinject.testbeans.notscanned.collectionprovider.CollectionProviderInjectionWithWildcard;
+import net.usikkert.kouinject.testbeans.notscanned.collectionprovider.CollectionProviderInjectionWithoutTypeArgument;
+import net.usikkert.kouinject.testbeans.notscanned.collectionprovider.ProvidedHungryBean;
+import net.usikkert.kouinject.testbeans.notscanned.collectionprovider.ProvidedHungryQualifierBean;
 import net.usikkert.kouinject.testbeans.notscanned.notloaded.NamedQualifierUsedWithoutNameBean;
 import net.usikkert.kouinject.testbeans.notscanned.notloaded.NoMatchingConstructorBean;
 import net.usikkert.kouinject.testbeans.notscanned.notloaded.TooManyMatchingConstructorsBean;
@@ -203,7 +207,7 @@ public class AnnotationBasedBeanDataHandlerTest {
     }
 
     @Test
-    public void getBeanDataShouldDetectCorrectConstuctorAndDependenciesForInjection() {
+    public void getBeanDataShouldDetectCorrectConstructorAndDependenciesForInjection() {
         final BeanData beanData = handler.getBeanData(ConstructorBean.class, false);
 
         assertEquals(ConstructorBean.class, beanData.getBeanClass());
@@ -389,6 +393,71 @@ public class AnnotationBasedBeanDataHandlerTest {
         final BeanKey allFoodDependency = allFoodConstructor.getDependencies().get(0);
         assertEquals("Any", allFoodDependency.getQualifier());
         assertTrue(allFoodDependency.isCollection());
+    }
+
+    @Test
+    public void getBeanDataShouldDetectDependenciesInCollectionProviders() {
+        final BeanData beanData = handler.getBeanData(ProvidedHungryBean.class, false);
+
+        assertEquals(ProvidedHungryBean.class, beanData.getBeanClass());
+
+        final List<BeanKey> dependencies = beanData.getDependencies();
+        assertEquals(3, dependencies.size());
+        assertNoQualifiers(dependencies);
+
+        for (final BeanKey dependency : dependencies) {
+            assertTrue(dependency.isCollectionProvider());
+            assertTrue(dependency.getBeanClass().equals(Food.class));
+        }
+
+        assertTrue(containsConstructorParameter(beanData.getConstructor(), CollectionProvider.class));
+        assertTrue(containsField(beanData.getFields(), CollectionProvider.class));
+        assertTrue(containsMethodParameter(beanData.getMethods().get(0), CollectionProvider.class));
+    }
+
+    @Test
+    public void getBeanDataShouldDetectQualifiersForCollectionProviders() {
+        final BeanData beanData = handler.getBeanData(ProvidedHungryQualifierBean.class, false);
+
+        assertEquals(ProvidedHungryQualifierBean.class, beanData.getBeanClass());
+
+        final List<BeanKey> dependencies = beanData.getDependencies();
+        assertEquals(3, dependencies.size());
+
+        for (final BeanKey dependency : dependencies) {
+            assertTrue(dependency.isCollectionProvider());
+            assertTrue(dependency.getBeanClass().equals(Food.class));
+        }
+
+        assertTrue(containsConstructorParameter(beanData.getConstructor(), CollectionProvider.class));
+        assertTrue(containsField(beanData.getFields(), CollectionProvider.class));
+        assertTrue(containsMethodParameter(beanData.getMethods().get(0), CollectionProvider.class));
+
+        final FieldData fastFoodField = beanData.getFields().get(0);
+        assertTrue(fastFoodField.getField().isAnnotationPresent(Named.class));
+        final BeanKey fastFoodDependency = fastFoodField.getDependency();
+        assertEquals("fastFood", fastFoodDependency.getQualifier());
+        assertTrue(fastFoodDependency.isCollectionProvider());
+
+        final MethodData roundFoodMethod = beanData.getMethods().get(0);
+        final BeanKey roundFoodDependency = roundFoodMethod.getDependencies().get(0);
+        assertEquals("roundFood", roundFoodDependency.getQualifier());
+        assertTrue(roundFoodDependency.isCollectionProvider());
+
+        final ConstructorData allFoodConstructor = beanData.getConstructor();
+        final BeanKey allFoodDependency = allFoodConstructor.getDependencies().get(0);
+        assertEquals("Any", allFoodDependency.getQualifier());
+        assertTrue(allFoodDependency.isCollectionProvider());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getBeanDataShouldFailIfCollectionProviderIsUsedWithWildcard() {
+        handler.getBeanData(CollectionProviderInjectionWithWildcard.class, false);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getBeanDataShouldFailIfCollectionProviderIsUsedWithoutTypeArgument() {
+        handler.getBeanData(CollectionProviderInjectionWithoutTypeArgument.class, false);
     }
 
     @Test

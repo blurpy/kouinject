@@ -20,26 +20,27 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.notscanned.collectionprovider;
+
+import javax.inject.Inject;
+
+import net.usikkert.kouinject.CollectionProvider;
+import net.usikkert.kouinject.annotation.Component;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * Bean for testing error handling when trying to inject a CollectionProvider without any generic type.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+@Component
+public class CollectionProviderInjectionWithoutTypeArgument {
 
-    ALL(68),
-    SCANNED(46),
-    SCANNED_WITHOUT_QUALIFIER(33);
+    @Inject
+    @SuppressWarnings("unchecked")
+    private CollectionProvider noTypeArgumentCollectionProvider;
 
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
-    }
-
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    @SuppressWarnings("unchecked")
+    public CollectionProvider getNoTypeArgumentCollectionProvider() {
+        return noTypeArgumentCollectionProvider;
     }
 }

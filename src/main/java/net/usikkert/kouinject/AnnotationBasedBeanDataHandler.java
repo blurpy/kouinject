@@ -37,9 +37,10 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import net.usikkert.kouinject.beandata.BeanData;
-import net.usikkert.kouinject.beandata.CollectionBeanKey;
-import net.usikkert.kouinject.beandata.ConstructorData;
 import net.usikkert.kouinject.beandata.BeanKey;
+import net.usikkert.kouinject.beandata.CollectionBeanKey;
+import net.usikkert.kouinject.beandata.CollectionProviderBeanKey;
+import net.usikkert.kouinject.beandata.ConstructorData;
 import net.usikkert.kouinject.beandata.FieldData;
 import net.usikkert.kouinject.beandata.InjectionPoint;
 import net.usikkert.kouinject.beandata.MethodData;
@@ -52,7 +53,7 @@ import org.apache.commons.lang.Validate;
  * to extract meta-data from beans to find dependencies.
  *
  * <p>Scans beans for the {@link Inject} annotation to detect constructor, fields and methods
- * for dependency injection. They are then scanned for the {@link Qualifier} annotation to
+ * for dependency injection. They are then scanned for the {@link javax.inject.Qualifier} annotation to
  * find the required qualifier for the dependency.</p>
  *
  * @author Christian Ihle
@@ -151,6 +152,13 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
             final Class<?> beanClassFromCollection = getBeanClassFromGenericType(field, genericType);
 
             return new CollectionBeanKey(beanClassFromCollection, qualifier);
+        }
+
+        else if (isCollectionProvider(fieldBeanClass)) {
+            final Type genericType = field.getGenericType();
+            final Class<?> beanClassFromCollectionProvider = getBeanClassFromGenericType(field, genericType);
+
+            return new CollectionProviderBeanKey(beanClassFromCollectionProvider, qualifier);
         }
 
         else {
@@ -255,6 +263,12 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
             return new CollectionBeanKey(beanClassFromCollection, qualifier);
         }
 
+        else if (isCollectionProvider(parameterClass)) {
+            final Class<?> beanClassFromCollectionProvider = getBeanClassFromGenericType(parameterOwner, parameterType);
+
+            return new CollectionProviderBeanKey(beanClassFromCollectionProvider, qualifier);
+        }
+
         else {
             return new BeanKey(parameterClass, qualifier);
         }
@@ -266,6 +280,10 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
 
     private boolean isCollection(final Class<?> parameterType) {
         return Collection.class.equals(parameterType);
+    }
+
+    private boolean isCollectionProvider(final Class<?> parameterType) {
+        return CollectionProvider.class.equals(parameterType);
     }
 
     private Class<?> getBeanClassFromGenericType(final Object parameterOwner, final Type genericParameterType) {
