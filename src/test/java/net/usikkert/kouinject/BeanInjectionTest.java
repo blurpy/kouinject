@@ -75,6 +75,10 @@ import net.usikkert.kouinject.testbeans.scanned.qualifier.DarkYellowBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.GreenBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.RedBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.YellowBean;
+import net.usikkert.kouinject.testbeans.scanned.scope.PrototypeWithSingletonBean;
+import net.usikkert.kouinject.testbeans.scanned.scope.SingletonBean;
+import net.usikkert.kouinject.testbeans.scanned.scope.SingletonProviderBean;
+import net.usikkert.kouinject.testbeans.scanned.scope.SingletonWithPrototypeBean;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -169,6 +173,28 @@ public class BeanInjectionTest {
     }
 
     @Test
+    public void checkAppleBean() {
+        final AppleBean appleBean1 = beanLoader.getBean(AppleBean.class);
+        assertNotNull(appleBean1);
+
+        final AppleBean appleBean2 = beanLoader.getBean(AppleBean.class, "roundfood");
+        assertNotNull(appleBean2);
+
+        final AppleBean appleBean3 = beanLoader.getBean(AppleBean.class, "any");
+        assertNotNull(appleBean3);
+
+        final Food appleBean4 = beanLoader.getBean(Food.class, "RoundFood");
+        assertNotNull(appleBean4);
+        assertTrue(appleBean4 instanceof AppleBean);
+    }
+
+    @Test
+    public void checkBananaBean() {
+        final BananaBean bananaBean = beanLoader.getBean(BananaBean.class);
+        assertNotNull(bananaBean);
+    }
+
+    @Test
     public void checkBlueBean() {
         final BlueBean blueBean1 = beanLoader.getBean(BlueBean.class);
         assertNotNull(blueBean1);
@@ -178,6 +204,18 @@ public class BeanInjectionTest {
 
         final ColorBean blueBean3 = beanLoader.getBean(ColorBean.class, "Blue");
         assertTrue(blueBean3 instanceof BlueBean);
+    }
+
+    @Test
+    public void checkBlueCarBean() {
+        final BlueCarBean blueCarBean1 = beanLoader.getBean(BlueCarBean.class);
+        assertNotNull(blueCarBean1);
+
+        final BlueCarBean blueCarBean2 = beanLoader.getBean(BlueCarBean.class, "Blue");
+        assertNotNull(blueCarBean2);
+
+        final CarBean blueCarBean3 = beanLoader.getBean(CarBean.class, "Blue");
+        assertTrue(blueCarBean3 instanceof BlueCarBean);
     }
 
     @Test
@@ -222,6 +260,20 @@ public class BeanInjectionTest {
         assertNotNull(catBean.getFieldBean2InCatBean());
 
         assertTrue(catBean.isFieldsThenMethodsInjectedInCatBean());
+    }
+
+    @Test
+    public void checkCarBean() {
+        final CarBean carBean = beanLoader.getBean(CarBean.class);
+
+        assertNotNull(carBean);
+        assertEquals(CarBean.class, carBean.getClass());
+    }
+
+    @Test
+    public void checkCheeseBean() {
+        final CheeseBean cheeseBean = beanLoader.getBean(CheeseBean.class);
+        assertNotNull(cheeseBean);
     }
 
     @Test
@@ -304,6 +356,12 @@ public class BeanInjectionTest {
     }
 
     @Test
+    public void checkFishBean() {
+        final FishBean fishBean = beanLoader.getBean(FishBean.class);
+        assertNotNull(fishBean);
+    }
+
+    @Test
     public void checkFolder1Bean() {
         final Folder1Bean folder1Bean = beanLoader.getBean(Folder1Bean.class);
 
@@ -366,10 +424,34 @@ public class BeanInjectionTest {
     }
 
     @Test
+    public void checkHamburgerBean() {
+        final HamburgerBean hamburgerBean1 = beanLoader.getBean(HamburgerBean.class);
+        assertNotNull(hamburgerBean1);
+
+        final HamburgerBean hamburgerBean2 = beanLoader.getBean(HamburgerBean.class, "fastfood");
+        assertNotNull(hamburgerBean2);
+
+        final HamburgerBean hamburgerBean3 = beanLoader.getBean(HamburgerBean.class, "any");
+        assertNotNull(hamburgerBean3);
+    }
+
+    @Test
     public void checkHelloBean() {
         final HelloBean helloBean = beanLoader.getBean(HelloBean.class);
 
         assertNotNull(helloBean);
+    }
+
+    @Test
+    public void checkHotdogBean() {
+        final HotdogBean hotdogBean1 = beanLoader.getBean(HotdogBean.class);
+        assertNotNull(hotdogBean1);
+
+        final HotdogBean hotdogBean2 = beanLoader.getBean(HotdogBean.class, "fastfood");
+        assertNotNull(hotdogBean2);
+
+        final HotdogBean hotdogBean3 = beanLoader.getBean(HotdogBean.class, "any");
+        assertNotNull(hotdogBean3);
     }
 
     @Test
@@ -514,6 +596,18 @@ public class BeanInjectionTest {
     }
 
     @Test
+    public void checkPrototypeWithSingletonBean() {
+        final PrototypeWithSingletonBean prototypeWithSingletonBean = beanLoader.getBean(PrototypeWithSingletonBean.class);
+        assertNotNull(prototypeWithSingletonBean);
+
+        final SingletonBean singletonBean1 = prototypeWithSingletonBean.getSingletonBean1();
+        assertNotNull(singletonBean1);
+
+        final SingletonBean singletonBean2 = prototypeWithSingletonBean.getSingletonBean2();
+        assertNotNull(singletonBean2);
+    }
+
+    @Test
     public void checkProviderBean() {
         final ProviderBean providerBean = beanLoader.getBean(ProviderBean.class);
 
@@ -566,13 +660,47 @@ public class BeanInjectionTest {
     public void checkSetterBean() {
         final SetterBean setterBean = beanLoader.getBean(SetterBean.class);
 
+        assertNotNull(setterBean);
         assertNotNull(setterBean.getFieldBean());
+    }
+
+    @Test
+    public void checkSingletonBean() {
+        final SingletonBean singletonBean = beanLoader.getBean(SingletonBean.class);
+
+        assertNotNull(singletonBean);
+    }
+
+    @Test
+    public void checkSingletonProviderBean() {
+        final SingletonProviderBean singletonProviderBean = beanLoader.getBean(SingletonProviderBean.class);
+        assertNotNull(singletonProviderBean);
+
+        final Provider<SingletonBean> singletonBeanProvider = singletonProviderBean.getSingletonBeanProvider();
+        assertNotNull(singletonBeanProvider);
+
+        final SingletonBean singletonBean = singletonBeanProvider.get();
+        assertNotNull(singletonBean);
+    }
+
+    @Test
+    public void checkSingletonWithPrototypeBean() {
+        final SingletonWithPrototypeBean singletonWithPrototypeBean = beanLoader.getBean(SingletonWithPrototypeBean.class);
+
+        assertNotNull(singletonWithPrototypeBean);
+        assertNotNull(singletonWithPrototypeBean.getHelloBean1());
+        assertNotNull(singletonWithPrototypeBean.getHelloBean2());
     }
 
     @Test
     public void checkStaticBean() {
         assertNull(StaticBean.getFieldBean());
         assertNull(StaticBean.getSetterBean());
+
+        final StaticBean staticBean = beanLoader.getBean(StaticBean.class);
+        assertNotNull(staticBean);
+        assertNull(staticBean.getFieldBean());
+        assertNull(staticBean.getSetterBean());
     }
 
     @Test
