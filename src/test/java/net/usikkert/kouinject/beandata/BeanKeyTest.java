@@ -275,6 +275,8 @@ public class BeanKeyTest {
         final BeanKey theGreenBean = new BeanKey(GreenBean.class, "none");
         assertFalse(theGreenBean.isProvider());
         assertFalse(theGreenBean.isCollection());
+        assertFalse(theGreenBean.isCollectionProvider());
+        assertTrue(theGreenBean.isBeanForCreation());
     }
 
     @Test
@@ -282,6 +284,8 @@ public class BeanKeyTest {
         final BeanKey theGreenBean = new ProviderBeanKey(GreenBean.class, "none");
         assertTrue(theGreenBean.isProvider());
         assertFalse(theGreenBean.isCollection());
+        assertFalse(theGreenBean.isCollectionProvider());
+        assertFalse(theGreenBean.isBeanForCreation());
     }
 
     @Test
@@ -289,5 +293,16 @@ public class BeanKeyTest {
         final BeanKey theGreenBean = new CollectionBeanKey(GreenBean.class, "none");
         assertFalse(theGreenBean.isProvider());
         assertTrue(theGreenBean.isCollection());
+        assertFalse(theGreenBean.isCollectionProvider());
+        assertFalse(theGreenBean.isBeanForCreation());
+    }
+
+    @Test
+    public void collectionProviderBeanKey() {
+        final BeanKey theGreenBean = new CollectionProviderBeanKey(GreenBean.class, "none");
+        assertFalse(theGreenBean.isProvider());
+        assertFalse(theGreenBean.isCollection());
+        assertTrue(theGreenBean.isCollectionProvider());
+        assertFalse(theGreenBean.isBeanForCreation());
     }
 }

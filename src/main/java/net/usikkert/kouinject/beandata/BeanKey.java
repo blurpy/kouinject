@@ -63,7 +63,7 @@ public class BeanKey {
     }
 
     /**
-     * Gets the actual bean class for this key. If this is a {@link Provider},
+     * Gets the actual bean class for this key. If this is a {@link javax.inject.Provider},
      * then this bean class is the generic type argument of the provider.
      *
      * @return The bean class for this key.
@@ -97,6 +97,16 @@ public class BeanKey {
      */
     public boolean isCollectionProvider() {
         return false;
+    }
+
+    /**
+     * If this bean key can be used to create a correct instance of the bean it represents.
+     * Providers and collections aren't beans.
+     *
+     * @return If this key is for a bean that can be instantiated.
+     */
+    public boolean isBeanForCreation() {
+        return !isCollection() && !isProvider() && !isCollectionProvider();
     }
 
     /**

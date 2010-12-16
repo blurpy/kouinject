@@ -31,8 +31,8 @@ import java.util.logging.Logger;
 import javax.inject.Provider;
 
 import net.usikkert.kouinject.beandata.BeanData;
-import net.usikkert.kouinject.beandata.ConstructorData;
 import net.usikkert.kouinject.beandata.BeanKey;
+import net.usikkert.kouinject.beandata.ConstructorData;
 import net.usikkert.kouinject.beandata.InjectionPoint;
 
 import org.apache.commons.lang.Validate;
@@ -214,14 +214,12 @@ public class DefaultBeanLoader implements BeanLoader {
     private Object createBean(final BeanKey dependency) {
         LOG.finer("Checking bean before creation: " + dependency);
 
-        if (dependency.isProvider()) {
-            LOG.finer("Bean is provider - skipping: " + dependency);
-            return null;
+        if (!dependency.isBeanForCreation()) {
+            throw new UnsupportedOperationException("This bean can't be instantiated: " + dependency);
         }
 
         if (singletonMap.containsSingleton(dependency)) {
-            LOG.finer("Bean already added - skipping: " + dependency);
-            return null;
+            throw new UnsupportedOperationException("This singleton has already been created: " + dependency);
         }
 
         beansInCreation.addBean(dependency);
