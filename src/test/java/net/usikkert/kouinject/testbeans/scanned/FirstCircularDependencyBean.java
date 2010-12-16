@@ -27,7 +27,7 @@ import javax.inject.Inject;
 import net.usikkert.kouinject.annotation.Component;
 
 /**
- * Bean for testing circular dependencies in constructors using {@link Provider}.
+ * Bean for testing circular dependencies in constructors using {@link javax.inject.Provider}.
  *
  * @author Christian Ihle
  */

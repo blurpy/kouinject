@@ -23,7 +23,7 @@
 package net.usikkert.kouinject.beandata;
 
 /**
- * A {@link BeanKey} for representing request for a {@link Provider}.
+ * A {@link BeanKey} for representing request for a {@link javax.inject.Provider}.
  *
  * @author Christian Ihle
  */

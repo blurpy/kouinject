@@ -138,6 +138,11 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>2.7</version>
+        <configuration>
+          <links>
+            <url>http://atinject.googlecode.com/svn/tags/1/javadoc/</url>
+          </links>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
