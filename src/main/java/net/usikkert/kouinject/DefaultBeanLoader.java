@@ -298,6 +298,15 @@ public class DefaultBeanLoader implements BeanLoader {
             return getBeans(dependency.getBeanClass(), dependency.getQualifier());
         }
 
+        if (dependency.isCollectionProvider()) {
+            return new CollectionProvider() {
+                @Override
+                public Collection get() {
+                    return getBeans(dependency.getBeanClass(), dependency.getQualifier());
+                }
+            };
+        }
+
         return getBean(dependency.getBeanClass(), dependency.getQualifier());
     }
 

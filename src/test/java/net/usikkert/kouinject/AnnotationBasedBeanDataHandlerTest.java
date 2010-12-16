@@ -42,8 +42,6 @@ import net.usikkert.kouinject.testbeans.notscanned.collection.CollectionInjectio
 import net.usikkert.kouinject.testbeans.notscanned.collection.CollectionInjectionWithoutTypeArgument;
 import net.usikkert.kouinject.testbeans.notscanned.collectionprovider.CollectionProviderInjectionWithWildcard;
 import net.usikkert.kouinject.testbeans.notscanned.collectionprovider.CollectionProviderInjectionWithoutTypeArgument;
-import net.usikkert.kouinject.testbeans.notscanned.collectionprovider.ProvidedHungryBean;
-import net.usikkert.kouinject.testbeans.notscanned.collectionprovider.ProvidedHungryQualifierBean;
 import net.usikkert.kouinject.testbeans.notscanned.notloaded.NamedQualifierUsedWithoutNameBean;
 import net.usikkert.kouinject.testbeans.notscanned.notloaded.NoMatchingConstructorBean;
 import net.usikkert.kouinject.testbeans.notscanned.notloaded.TooManyMatchingConstructorsBean;
@@ -64,6 +62,8 @@ import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.Food;
 import net.usikkert.kouinject.testbeans.scanned.collection.HungryBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.HungryQualifierBean;
+import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungryBean;
+import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungryQualifierBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.ChildBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.interfacebean.InterfaceBean;

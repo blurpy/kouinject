@@ -20,51 +20,48 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans.notscanned.collectionprovider;
+package net.usikkert.kouinject.testbeans.scanned.collectionprovider;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import net.usikkert.kouinject.CollectionProvider;
-import net.usikkert.kouinject.annotation.Any;
 import net.usikkert.kouinject.annotation.Component;
 import net.usikkert.kouinject.testbeans.scanned.collection.Food;
 
 /**
- * Bean used for testing correct dependency injection in collection providers, with qualifiers.
+ * Bean used for testing correct dependency injection in collection providers.
  *
  * @author Christian Ihle
  */
 @Component
-public class ProvidedHungryQualifierBean {
+public class ProvidedHungryBean {
 
     @Inject
-    @Named("fastFood")
-    private CollectionProvider<Food> fastFoodBeans;
+    private CollectionProvider<Food> foodBeansInField;
 
-    private final CollectionProvider<Food> allFoodBeans;
+    private final CollectionProvider<Food> foodBeansInConstructor;
 
-    private CollectionProvider<Food> roundFoodBeans;
-
-    @Inject
-    public ProvidedHungryQualifierBean(@Any final CollectionProvider<Food> allFoodBeans) {
-        this.allFoodBeans = allFoodBeans;
-    }
-
-    public CollectionProvider<Food> getFastFoodBeans() {
-        return fastFoodBeans;
-    }
-
-    public CollectionProvider<Food> getAllFoodBeans() {
-        return allFoodBeans;
-    }
-
-    public CollectionProvider<Food> getRoundFoodBeans() {
-        return roundFoodBeans;
-    }
+    private CollectionProvider<Food> foodBeansInSetter;
 
     @Inject
-    public void setRoundFoodBeans(@Named("roundFood") final CollectionProvider<Food> roundFoodBeans) {
-        this.roundFoodBeans = roundFoodBeans;
+    public ProvidedHungryBean(final CollectionProvider<Food> foodBeansInConstructor) {
+        this.foodBeansInConstructor = foodBeansInConstructor;
+    }
+
+    public CollectionProvider<Food> getFoodBeansInField() {
+        return foodBeansInField;
+    }
+
+    public CollectionProvider<Food> getFoodBeansInConstructor() {
+        return foodBeansInConstructor;
+    }
+
+    public CollectionProvider<Food> getFoodBeansInSetter() {
+        return foodBeansInSetter;
+    }
+
+    @Inject
+    public void setFoodBeansInSetter(final CollectionProvider<Food> foodBeansInSetter) {
+        this.foodBeansInSetter = foodBeansInSetter;
     }
 }

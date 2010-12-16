@@ -30,8 +30,8 @@ package net.usikkert.kouinject.testbeans;
 public enum BeanCount {
 
     ALL(68),
-    SCANNED(46),
-    SCANNED_WITHOUT_QUALIFIER(33);
+    SCANNED(48),
+    SCANNED_WITHOUT_QUALIFIER(35);
 
     private final int numberOfBeans;
 
