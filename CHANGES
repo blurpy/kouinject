@@ -2,6 +2,10 @@
 - KouInject CHANGES
 
 
+* Version 1.0 (xx.12.2010):
+ - Added CollectionProvider for lazy-loading of collections of beans
+
+
 * Version 0.7 (12.12.2010):
  - Added support for scanning for beans in multiple base packages
  - Added support for injecting collection of beans
