@@ -113,7 +113,7 @@ public class DefaultBeanLoader implements BeanLoader {
      */
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends Object> T getBean(final Class<T> beanClass, final String qualifier) {
+    public <T> T getBean(final Class<T> beanClass, final String qualifier) {
         Validate.notNull(beanClass, "Bean class can not be null");
 
         final BeanKey dependency = new BeanKey(beanClass, qualifier);
@@ -138,7 +138,7 @@ public class DefaultBeanLoader implements BeanLoader {
      */
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends Object> Collection<T> getBeans(final Class<T> beanClass, final String qualifier) {
+    public <T> Collection<T> getBeans(final Class<T> beanClass, final String qualifier) {
         Validate.notNull(beanClass, "Bean class can not be null");
 
         final BeanKey dependency = new BeanKey(beanClass, qualifier);

@@ -42,7 +42,7 @@ public interface BeanLoader {
      * @return An object satisfying the specified class.
      * @throws IllegalArgumentException If no bean is found.
      */
-    <T extends Object> T getBean(Class<T> beanClass);
+    <T> T getBean(Class<T> beanClass);
 
     /**
      * Gets a bean that matches the given class and qualifier.
@@ -58,7 +58,7 @@ public interface BeanLoader {
      * @return An object satisfying the specified class and qualifier.
      * @throws IllegalArgumentException If no bean is found.
      */
-    <T extends Object> T getBean(Class<T> beanClass, String qualifier);
+    <T> T getBean(Class<T> beanClass, String qualifier);
 
     /**
      * Gets a collection of all the beans that matches the bean class, with no qualifier.
@@ -70,7 +70,7 @@ public interface BeanLoader {
      * @return A collection of beans satisfying the bean class.
      * @throws IllegalArgumentException If no beans are found.
      */
-    <T extends Object> Collection<T> getBeans(Class<T> beanClass);
+    <T> Collection<T> getBeans(Class<T> beanClass);
 
     /**
      * Gets a collection of all the beans that matches the bean class and qualifier.
@@ -86,5 +86,5 @@ public interface BeanLoader {
      * @return A collection of beans satisfying the bean class and qualifier.
      * @throws IllegalArgumentException If no beans are found.
      */
-    <T extends Object> Collection<T> getBeans(Class<T> beanClass, String qualifier);
+    <T> Collection<T> getBeans(Class<T> beanClass, String qualifier);
 }
