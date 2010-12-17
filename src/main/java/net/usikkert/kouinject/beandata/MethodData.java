@@ -105,6 +105,6 @@ public class MethodData implements InjectionPoint {
 
     @Override
     public String toString() {
-        return method.toGenericString();
+        return "[method] " + method.toGenericString() + " - " + dependencies;
     }
 }

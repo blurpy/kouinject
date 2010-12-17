@@ -161,6 +161,7 @@ public class DefaultBeanLoader implements BeanLoader {
         final Object bean = findBean(dependency, false);
 
         if (bean != null) {
+            LOG.finer("Returning already created singleton: " + dependency);
             return bean;
         }
 
@@ -168,7 +169,7 @@ public class DefaultBeanLoader implements BeanLoader {
     }
 
     /**
-     * Adds a new bean to the container, with no qualifier.
+     * Adds a new singleton to the container, with no qualifier.
      *
      * <p>The bean must be ready to use, and will be available for dependency injection in other beans.</p>
      *
@@ -184,7 +185,7 @@ public class DefaultBeanLoader implements BeanLoader {
     }
 
     /**
-     * Adds a new bean to the container, with the given qualifier.
+     * Adds a new singleton to the container, with the given qualifier.
      *
      * <p>The bean must be ready to use, and will be available for dependency injection in other beans.</p>
      *
@@ -201,6 +202,7 @@ public class DefaultBeanLoader implements BeanLoader {
 
         final Class<?> beanClass = beanToAdd.getClass();
         final BeanKey bean = new BeanKey(beanClass, qualifier);
+        LOG.finer("Adding singleton: " + bean);
 
         singletonMap.addSingleton(bean, beanToAdd);
 
@@ -208,7 +210,7 @@ public class DefaultBeanLoader implements BeanLoader {
             beanDataMap.addBeanData(bean, beanDataHandler.getBeanData(beanClass, false));
         }
 
-        LOG.fine("Bean added: " + beanClass.getName());
+        LOG.fine("Singleton added: " + bean);
     }
 
     private Object createBean(final BeanKey dependency) {
@@ -243,6 +245,7 @@ public class DefaultBeanLoader implements BeanLoader {
     private Object instantiateBean(final BeanData beanData) {
         final Object instance = instantiateConstructor(beanData);
         autowireBean(beanData, instance);
+        LOG.fine("Created bean: " + instance.getClass());
 
         return instance;
     }
@@ -260,7 +263,10 @@ public class DefaultBeanLoader implements BeanLoader {
             beansForConstructor[i] = bean;
         }
 
-        return constructor.createInstance(beansForConstructor);
+        final Object instance = constructor.createInstance(beansForConstructor);
+        LOG.finer("Constructor invoked: " + constructor);
+
+        return instance;
     }
 
     private void autowireBean(final BeanData beanData, final Object instance) {
@@ -277,6 +283,8 @@ public class DefaultBeanLoader implements BeanLoader {
                 final Object bean = findBeanOrCreateProvider(dependency);
                 beansForInjectionPoint[i] = bean;
             }
+
+            LOG.finer("Injection point autowired: " + injectionPoint);
 
             injectionPoint.inject(instance, beansForInjectionPoint);
         }

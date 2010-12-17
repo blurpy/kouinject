@@ -108,6 +108,6 @@ public class ConstructorData {
 
     @Override
     public String toString() {
-        return constructor.toGenericString();
+        return constructor.toGenericString() + " - " + dependencies;
     }
 }

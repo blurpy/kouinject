@@ -115,6 +115,6 @@ public class FieldData implements InjectionPoint {
 
     @Override
     public String toString() {
-        return field.toGenericString();
+        return "[field] " + field.toGenericString() + " - " + dependencies;
     }
 }
