@@ -118,12 +118,21 @@ public class BeanInjectionTest {
         final Collection<HelloBean> helloBeanCollection = allInjectionTypesBean.getHelloBeanCollection();
         assertNotNull(helloBeanCollection);
         assertEquals(1, helloBeanCollection.size());
+        assertNotNull(helloBeanCollection.iterator().next());
 
         final Provider<HelloBean> helloBeanProvider = allInjectionTypesBean.getHelloBeanProvider();
         assertNotNull(helloBeanProvider);
 
         final HelloBean helloBeanFromProvider = helloBeanProvider.get();
         assertNotNull(helloBeanFromProvider);
+
+        final CollectionProvider<HelloBean> helloBeanCollectionProvider = allInjectionTypesBean.getHelloBeanCollectionProvider();
+        assertNotNull(helloBeanCollectionProvider);
+
+        final Collection<HelloBean> helloBeanCollectionFromProvider = helloBeanCollectionProvider.get();
+        assertNotNull(helloBeanCollectionFromProvider);
+        assertEquals(1, helloBeanCollectionFromProvider.size());
+        assertNotNull(helloBeanCollectionFromProvider.iterator().next());
     }
 
     @Test

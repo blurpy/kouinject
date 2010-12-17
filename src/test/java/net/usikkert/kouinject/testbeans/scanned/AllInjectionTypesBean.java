@@ -27,6 +27,7 @@ import java.util.Collection;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import net.usikkert.kouinject.CollectionProvider;
 import net.usikkert.kouinject.annotation.Component;
 
 /**
@@ -46,6 +47,9 @@ public class AllInjectionTypesBean {
     @Inject
     private Collection<HelloBean> helloBeanCollection;
 
+    @Inject
+    private CollectionProvider<HelloBean> helloBeanCollectionProvider;
+
     public HelloBean getHelloBean() {
         return helloBean;
     }
@@ -56,5 +60,9 @@ public class AllInjectionTypesBean {
 
     public Collection<HelloBean> getHelloBeanCollection() {
         return helloBeanCollection;
+    }
+
+    public CollectionProvider<HelloBean> getHelloBeanCollectionProvider() {
+        return helloBeanCollectionProvider;
     }
 }
