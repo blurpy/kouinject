@@ -69,6 +69,7 @@ import net.usikkert.kouinject.testbeans.scanned.qualifier.DarkYellowBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.GreenBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.RedBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.YellowBean;
+import net.usikkert.kouinject.testbeans.scanned.scope.PinkSingletonBean;
 import net.usikkert.kouinject.testbeans.scanned.scope.PrototypeWithSingletonBean;
 import net.usikkert.kouinject.testbeans.scanned.scope.SingletonBean;
 import net.usikkert.kouinject.testbeans.scanned.scope.SingletonProviderBean;
@@ -217,6 +218,25 @@ public class DefaultBeanLoaderTest {
         final SingletonBean singletonBean2 = beanLoader.getBean(SingletonBean.class);
 
         assertSame(singletonBean1, singletonBean2);
+    }
+
+    @Test
+    public void getBeanShouldReturnTheSameInstanceForSingletonScopedBeansWhenUsingAny() {
+        final SingletonBean singletonBean1 = beanLoader.getBean(SingletonBean.class);
+        final SingletonBean singletonBean2 = beanLoader.getBean(SingletonBean.class, "any");
+
+        assertSame(singletonBean1, singletonBean2);
+    }
+
+    // TODO fix failing test
+    @Test
+    public void getBeanShouldReturnTheSameInstanceForQualifiedSingletonScopedBeans() {
+        final PinkSingletonBean singletonBean1 = beanLoader.getBean(PinkSingletonBean.class);
+        final PinkSingletonBean singletonBean2 = beanLoader.getBean(PinkSingletonBean.class, "pink");
+        final PinkSingletonBean singletonBean3 = beanLoader.getBean(PinkSingletonBean.class, "any");
+
+        assertSame(singletonBean1, singletonBean2);
+        assertSame(singletonBean2, singletonBean3);
     }
 
     @Test

@@ -20,26 +20,21 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.scope;
+
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+import net.usikkert.kouinject.annotation.Component;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * Bean for testing singleton scope and using a qualifier at the same time.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+@Named("pink")
+@Singleton
+@Component
+public class PinkSingletonBean {
 
-    ALL(69),
-    SCANNED(49),
-    SCANNED_WITHOUT_QUALIFIER(35);
-
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
-    }
-
-    public int getNumberOfBeans() {
-        return numberOfBeans;
-    }
 }

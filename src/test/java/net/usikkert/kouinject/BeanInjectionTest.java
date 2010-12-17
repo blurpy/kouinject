@@ -77,6 +77,7 @@ import net.usikkert.kouinject.testbeans.scanned.qualifier.DarkYellowBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.GreenBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.RedBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.YellowBean;
+import net.usikkert.kouinject.testbeans.scanned.scope.PinkSingletonBean;
 import net.usikkert.kouinject.testbeans.scanned.scope.PrototypeWithSingletonBean;
 import net.usikkert.kouinject.testbeans.scanned.scope.SingletonBean;
 import net.usikkert.kouinject.testbeans.scanned.scope.SingletonProviderBean;
@@ -604,6 +605,12 @@ public class BeanInjectionTest {
         assertNotNull(petBean.getFieldBean2InPetBean());
 
         assertTrue(petBean.isFieldsThenMethodsInjectedInPetBean());
+    }
+
+    @Test
+    public void checkPinkSingletonBean() {
+        final PinkSingletonBean pinkSingletonBean = beanLoader.getBean(PinkSingletonBean.class);
+        assertNotNull(pinkSingletonBean);
     }
 
     @Test
