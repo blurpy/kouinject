@@ -194,6 +194,7 @@ public class BeanInjectionTest {
     public void checkAppleBean() {
         final AppleBean appleBean1 = beanLoader.getBean(AppleBean.class);
         assertNotNull(appleBean1);
+        assertNotNull(appleBean1.getSingletonBean());
 
         final AppleBean appleBean2 = beanLoader.getBean(AppleBean.class, "roundfood");
         assertNotNull(appleBean2);
@@ -291,7 +292,10 @@ public class BeanInjectionTest {
     @Test
     public void checkCheeseBean() {
         final CheeseBean cheeseBean = beanLoader.getBean(CheeseBean.class);
+
         assertNotNull(cheeseBean);
+        assertNotNull(cheeseBean.getRedBean());
+        assertEquals(RedBean.class, cheeseBean.getRedBean().getClass());
     }
 
     @Test

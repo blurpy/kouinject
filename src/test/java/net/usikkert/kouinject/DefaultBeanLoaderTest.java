@@ -57,6 +57,7 @@ import net.usikkert.kouinject.testbeans.scanned.FieldBean;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.ProviderBean;
 import net.usikkert.kouinject.testbeans.scanned.RainbowBean;
+import net.usikkert.kouinject.testbeans.scanned.collection.AppleBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.BananaBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.CheeseBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.FishBean;
@@ -731,6 +732,48 @@ public class DefaultBeanLoaderTest {
     }
 
     @Test
+    public void collectionProviderShouldHandleScopeAndQualifierAtTheSameTimeInInnerInjections() {
+        final ProvidedHungryQualifierBean providedHungryQualifierBean = beanLoader.getBean(ProvidedHungryQualifierBean.class);
+        assertNotNull(providedHungryQualifierBean);
+
+        final CollectionProvider<Food> allFoodBeansProvider = providedHungryQualifierBean.getAllFoodBeans();
+        assertNotNull(allFoodBeansProvider);
+
+        // Getting beans first time
+        final Collection<Food> allFoodBeans1 = allFoodBeansProvider.get();
+        assertNotNull(allFoodBeans1);
+
+        final AppleBean appleBean1 = getBean(AppleBean.class, allFoodBeans1);
+        assertNotNull(appleBean1);
+        final SingletonBean singletonBean1 = appleBean1.getSingletonBean();
+        assertNotNull(singletonBean1);
+
+        final CheeseBean cheeseBean1 = getBean(CheeseBean.class, allFoodBeans1);
+        assertNotNull(cheeseBean1);
+        final ColorBean redBean1 = cheeseBean1.getRedBean();
+        assertNotNull(redBean1);
+        assertEquals(RedBean.class, redBean1.getClass());
+
+        // Getting beans second time
+        final Collection<Food> allFoodBeans2 = allFoodBeansProvider.get();
+        assertNotNull(allFoodBeans2);
+
+        final AppleBean appleBean2 = getBean(AppleBean.class, allFoodBeans2);
+        assertNotNull(appleBean2);
+        final SingletonBean singletonBean2 = appleBean2.getSingletonBean();
+        assertNotNull(singletonBean2);
+
+        final CheeseBean cheeseBean2 = getBean(CheeseBean.class, allFoodBeans2);
+        assertNotNull(cheeseBean2);
+        final ColorBean redBean2 = cheeseBean2.getRedBean();
+        assertNotNull(redBean2);
+        assertEquals(RedBean.class, redBean2.getClass());
+
+        assertSame(singletonBean1, singletonBean2);
+        assertNotSame(redBean1, redBean2);
+    }
+
+    @Test
     public void collectionShouldHandleScopeAndQualifierAtTheSameTime() {
         // Getting beans first time
         final HungryQualifierBean hungryQualifierBean1 = beanLoader.getBean(HungryQualifierBean.class);
@@ -803,6 +846,48 @@ public class DefaultBeanLoaderTest {
 
         // Banana is singleton
         assertSame(bananaBean1, bananaBean2);
+    }
+
+    @Test
+    public void collectionShouldHandleScopeAndQualifierAtTheSameTimeInInnerInjections() {
+        // Getting beans first time
+        final HungryQualifierBean hungryQualifierBean1 = beanLoader.getBean(HungryQualifierBean.class);
+        assertNotNull(hungryQualifierBean1);
+
+        final Collection<Food> allFoodBeans1 = hungryQualifierBean1.getAllFoodBeans();
+        assertNotNull(allFoodBeans1);
+
+        final AppleBean appleBean1 = getBean(AppleBean.class, allFoodBeans1);
+        assertNotNull(appleBean1);
+        final SingletonBean singletonBean1 = appleBean1.getSingletonBean();
+        assertNotNull(singletonBean1);
+
+        final CheeseBean cheeseBean1 = getBean(CheeseBean.class, allFoodBeans1);
+        assertNotNull(cheeseBean1);
+        final ColorBean redBean1 = cheeseBean1.getRedBean();
+        assertNotNull(redBean1);
+        assertEquals(RedBean.class, redBean1.getClass());
+
+        // Getting beans second time
+        final HungryQualifierBean hungryQualifierBean2 = beanLoader.getBean(HungryQualifierBean.class);
+        assertNotNull(hungryQualifierBean2);
+
+        final Collection<Food> allFoodBeans2 = hungryQualifierBean2.getAllFoodBeans();
+        assertNotNull(allFoodBeans2);
+
+        final AppleBean appleBean2 = getBean(AppleBean.class, allFoodBeans2);
+        assertNotNull(appleBean2);
+        final SingletonBean singletonBean2 = appleBean2.getSingletonBean();
+        assertNotNull(singletonBean2);
+
+        final CheeseBean cheeseBean2 = getBean(CheeseBean.class, allFoodBeans2);
+        assertNotNull(cheeseBean2);
+        final ColorBean redBean2 = cheeseBean2.getRedBean();
+        assertNotNull(redBean2);
+        assertEquals(RedBean.class, redBean2.getClass());
+
+        assertSame(singletonBean1, singletonBean2);
+        assertNotSame(redBean1, redBean2);
     }
 
     private DefaultBeanLoader createBeanLoaderWithBasePackages(final String... basePackages) {

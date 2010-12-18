@@ -22,7 +22,11 @@
 
 package net.usikkert.kouinject.testbeans.scanned.collection;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import net.usikkert.kouinject.annotation.Component;
+import net.usikkert.kouinject.testbeans.scanned.qualifier.ColorBean;
 
 /**
  * Bean used for testing correct dependency injection in collections.
@@ -32,4 +36,11 @@ import net.usikkert.kouinject.annotation.Component;
 @Component
 public class CheeseBean implements Food {
 
+    @Inject
+    @Named("red")
+    private ColorBean redBean;
+
+    public ColorBean getRedBean() {
+        return redBean;
+    }
 }
