@@ -164,7 +164,7 @@ public class DefaultBeanLoader implements BeanLoader {
         final Object bean = findBean(dependency, false);
 
         if (bean != null) {
-            LOG.finer("Returning already created singleton: " + dependency);
+            LOG.finer("Mapping " + dependency + " to existing singleton " + bean.getClass());
             return bean;
         }
 
@@ -230,11 +230,13 @@ public class DefaultBeanLoader implements BeanLoader {
         beansInCreation.addBean(dependency);
 
         final BeanData beanData = findBeanData(dependency);
-        LOG.finer("Mapping " + dependency + " to " + beanData.getBeanClass());
+        final BeanKey beanKeyForBeanData = beanDataMap.getBeanKeyForBeanData(beanData);
+        LOG.finer("Mapping " + dependency + " to " + beanKeyForBeanData);
+
         final Object instance = instantiateBean(beanData);
 
         if (beanData.isSingleton()) {
-            addBean(instance, dependency.getQualifier());
+            addBean(instance, beanKeyForBeanData.getQualifier());
         }
 
         beansInCreation.removeBean(dependency);

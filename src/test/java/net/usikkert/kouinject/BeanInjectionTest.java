@@ -82,6 +82,12 @@ import net.usikkert.kouinject.testbeans.scanned.scope.PrototypeWithSingletonBean
 import net.usikkert.kouinject.testbeans.scanned.scope.SingletonBean;
 import net.usikkert.kouinject.testbeans.scanned.scope.SingletonProviderBean;
 import net.usikkert.kouinject.testbeans.scanned.scope.SingletonWithPrototypeBean;
+import net.usikkert.kouinject.testbeans.scanned.scope.inheritance.FifthLayer;
+import net.usikkert.kouinject.testbeans.scanned.scope.inheritance.FirstLayer;
+import net.usikkert.kouinject.testbeans.scanned.scope.inheritance.FourthLayer;
+import net.usikkert.kouinject.testbeans.scanned.scope.inheritance.Layer;
+import net.usikkert.kouinject.testbeans.scanned.scope.inheritance.SecondLayer;
+import net.usikkert.kouinject.testbeans.scanned.scope.inheritance.ThirdLayer;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -354,6 +360,35 @@ public class BeanInjectionTest {
     }
 
     @Test
+    public void checkFifthLayer() {
+        final Layer fifthLayer1 = beanLoader.getBean(Layer.class, "fifth");
+        final Layer fifthLayer2 = beanLoader.getBean(FirstLayer.class, "fifth");
+        final Layer fifthLayer3 = beanLoader.getBean(SecondLayer.class, "fifth");
+        final Layer fifthLayer4 = beanLoader.getBean(ThirdLayer.class, "fifth");
+        final Layer fifthLayer5 = beanLoader.getBean(FourthLayer.class, "fifth");
+        final Layer fifthLayer6 = beanLoader.getBean(FifthLayer.class);
+        final Layer fifthLayer7 = beanLoader.getBean(FifthLayer.class, "fifth");
+        final Layer fifthLayer8 = beanLoader.getBean(FifthLayer.class, "any");
+
+        assertSame(fifthLayer1, fifthLayer2);
+        assertSame(fifthLayer2, fifthLayer3);
+        assertSame(fifthLayer3, fifthLayer4);
+        assertSame(fifthLayer4, fifthLayer5);
+        assertSame(fifthLayer5, fifthLayer6);
+        assertSame(fifthLayer6, fifthLayer7);
+        assertSame(fifthLayer7, fifthLayer8);
+
+        assertEquals(FifthLayer.class, fifthLayer1.getClass());
+        assertEquals(FifthLayer.class, fifthLayer2.getClass());
+        assertEquals(FifthLayer.class, fifthLayer3.getClass());
+        assertEquals(FifthLayer.class, fifthLayer4.getClass());
+        assertEquals(FifthLayer.class, fifthLayer5.getClass());
+        assertEquals(FifthLayer.class, fifthLayer6.getClass());
+        assertEquals(FifthLayer.class, fifthLayer7.getClass());
+        assertEquals(FifthLayer.class, fifthLayer8.getClass());
+    }
+
+    @Test
     public void checkFinalBean() {
         final FinalBean finalBean = beanLoader.getBean(FinalBean.class);
 
@@ -365,6 +400,20 @@ public class BeanInjectionTest {
         final FirstCircularDependencyBean firstCircularDependencyBean = beanLoader.getBean(FirstCircularDependencyBean.class);
 
         assertNotNull(firstCircularDependencyBean.getSecondCircularDependencyBean());
+    }
+
+    @Test
+    public void checkFirstLayer() {
+        final Layer firstLayer1 = beanLoader.getBean(Layer.class, "first");
+        final Layer firstLayer2 = beanLoader.getBean(FirstLayer.class);
+        final Layer firstLayer3 = beanLoader.getBean(FirstLayer.class, "first");
+
+        assertSame(firstLayer1, firstLayer2);
+        assertSame(firstLayer2, firstLayer3);
+
+        assertEquals(FirstLayer.class, firstLayer1.getClass());
+        assertEquals(FirstLayer.class, firstLayer2.getClass());
+        assertEquals(FirstLayer.class, firstLayer3.getClass());
     }
 
     @Test
@@ -797,6 +846,26 @@ public class BeanInjectionTest {
         assertNotNull(staticBean);
         assertNull(staticBean.getFieldBean());
         assertNull(staticBean.getSetterBean());
+    }
+
+    @Test
+    public void checkThirdLayer() {
+        final Layer thirdLayer1 = beanLoader.getBean(Layer.class, "third");
+        final Layer thirdLayer2 = beanLoader.getBean(FirstLayer.class, "third");
+        final Layer thirdLayer3 = beanLoader.getBean(SecondLayer.class, "third");
+        final Layer thirdLayer4 = beanLoader.getBean(ThirdLayer.class);
+        final Layer thirdLayer5 = beanLoader.getBean(ThirdLayer.class, "third");
+
+        assertNotSame(thirdLayer1, thirdLayer2);
+        assertNotSame(thirdLayer2, thirdLayer3);
+        assertNotSame(thirdLayer3, thirdLayer4);
+        assertNotSame(thirdLayer4, thirdLayer5);
+
+        assertEquals(ThirdLayer.class, thirdLayer1.getClass());
+        assertEquals(ThirdLayer.class, thirdLayer2.getClass());
+        assertEquals(ThirdLayer.class, thirdLayer3.getClass());
+        assertEquals(ThirdLayer.class, thirdLayer4.getClass());
+        assertEquals(ThirdLayer.class, thirdLayer5.getClass());
     }
 
     @Test

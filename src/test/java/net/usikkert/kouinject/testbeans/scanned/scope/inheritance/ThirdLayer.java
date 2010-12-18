@@ -20,26 +20,19 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.scope.inheritance;
+
+import javax.inject.Named;
+
+import net.usikkert.kouinject.annotation.Component;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * Bean for testing correct handling of scope and qualifier with inheritance.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+@Named("third")
+@Component
+public class ThirdLayer extends SecondLayer {
 
-    ALL(72),
-    SCANNED(52),
-    SCANNED_WITHOUT_QUALIFIER(35);
-
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
-    }
-
-    public int getNumberOfBeans() {
-        return numberOfBeans;
-    }
 }
