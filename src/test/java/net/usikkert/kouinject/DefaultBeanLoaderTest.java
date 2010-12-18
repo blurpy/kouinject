@@ -57,9 +57,13 @@ import net.usikkert.kouinject.testbeans.scanned.FieldBean;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.ProviderBean;
 import net.usikkert.kouinject.testbeans.scanned.RainbowBean;
+import net.usikkert.kouinject.testbeans.scanned.collection.BananaBean;
+import net.usikkert.kouinject.testbeans.scanned.collection.CheeseBean;
+import net.usikkert.kouinject.testbeans.scanned.collection.FishBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.Food;
 import net.usikkert.kouinject.testbeans.scanned.collection.HamburgerBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.HotdogBean;
+import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungryBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungryQualifierBean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder1.Folder1Bean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder2.Folder2Bean;
@@ -682,6 +686,46 @@ public class DefaultBeanLoaderTest {
 
         // Hamburger is prototype
         assertNotSame(hamburgerBean1, hamburgerBean2);
+    }
+
+    @Test
+    public void collectionProviderShouldHandleScopeInUnqualifiedBeans() {
+        final ProvidedHungryBean providedHungryBean = beanLoader.getBean(ProvidedHungryBean.class);
+        assertNotNull(providedHungryBean);
+
+        final CollectionProvider<Food> foodBeansInFieldProvider = providedHungryBean.getFoodBeansInField();
+        assertNotNull(foodBeansInFieldProvider);
+
+        // Getting beans first time
+        final Collection<Food> foodBeansInField1 = foodBeansInFieldProvider.get();
+        assertNotNull(foodBeansInField1);
+        assertEquals(3, foodBeansInField1.size());
+
+        final CheeseBean cheeseBean1 = getBean(CheeseBean.class, foodBeansInField1);
+        assertNotNull(cheeseBean1);
+        final FishBean fishBean1 = getBean(FishBean.class, foodBeansInField1);
+        assertNotNull(fishBean1);
+        final BananaBean bananaBean1 = getBean(BananaBean.class, foodBeansInField1);
+        assertNotNull(bananaBean1);
+
+        // Getting beans second time
+        final Collection<Food> foodBeansInField2 = foodBeansInFieldProvider.get();
+        assertNotNull(foodBeansInField2);
+        assertEquals(3, foodBeansInField2.size());
+
+        final CheeseBean cheeseBean2 = getBean(CheeseBean.class, foodBeansInField2);
+        assertNotNull(cheeseBean2);
+        final FishBean fishBean2 = getBean(FishBean.class, foodBeansInField2);
+        assertNotNull(fishBean2);
+        final BananaBean bananaBean2 = getBean(BananaBean.class, foodBeansInField2);
+        assertNotNull(bananaBean2);
+
+        // Cheese and fish are prototype
+        assertNotSame(cheeseBean1, cheeseBean2);
+        assertNotSame(fishBean1, fishBean2);
+
+        // Banana is singleton
+        assertSame(bananaBean1, bananaBean2);
     }
 
     private DefaultBeanLoader createBeanLoaderWithBasePackages(final String... basePackages) {

@@ -22,6 +22,8 @@
 
 package net.usikkert.kouinject.testbeans.scanned.collection;
 
+import javax.inject.Singleton;
+
 import net.usikkert.kouinject.annotation.Component;
 
 /**
@@ -29,6 +31,7 @@ import net.usikkert.kouinject.annotation.Component;
  *
  * @author Christian Ihle
  */
+@Singleton
 @Component
 public class BananaBean implements Food {
 
