@@ -44,10 +44,12 @@ import org.apache.commons.lang.Validate;
  *
  * <pre>
  *   ClassLocator classLocator = new ClassPathScanner();
- *   final BeanLocator beanLocator = new AnnotationBasedBeanLocator("basepackage.to.scan", classLocator);
+ *   BeanLocator beanLocator = new AnnotationBasedBeanLocator(classLocator, "basepackage.to.scan");
  *   BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
  *   BeanLoader beanLoader = new DefaultBeanLoader(beanDataHandler, beanLocator);
  * </pre>
+ *
+ * <p>It's recommended to use the {@link DefaultInjector} unless you have special requirements.</p>
  *
  * @author Christian Ihle
  */
