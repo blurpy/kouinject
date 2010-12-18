@@ -91,6 +91,7 @@ public class DefaultBeanLoader implements BeanLoader {
         final long start = System.currentTimeMillis();
 
         for (final BeanKey bean : detectedBeans) {
+            LOG.finest("Loading bean-data for: " + bean);
             final BeanData beanData = beanDataHandler.getBeanData(bean.getBeanClass(), false);
             beanDataMap.addBeanData(bean, beanData);
         }
@@ -117,6 +118,7 @@ public class DefaultBeanLoader implements BeanLoader {
         Validate.notNull(beanClass, "Bean class can not be null");
 
         final BeanKey dependency = new BeanKey(beanClass, qualifier);
+        LOG.finer("Requesting: " + dependency);
 
         if (!beanDataMap.containsBeanData(dependency)) {
             throw new IllegalArgumentException("No registered bean-data for: " + dependency);
@@ -142,6 +144,7 @@ public class DefaultBeanLoader implements BeanLoader {
         Validate.notNull(beanClass, "Bean class can not be null");
 
         final BeanKey dependency = new BeanKey(beanClass, qualifier);
+        LOG.finer("Requesting: " + dependency);
         final Collection<BeanKey> beanKeys = beanDataMap.findBeanKeys(dependency);
 
         if (beanKeys.isEmpty()) {
@@ -227,6 +230,7 @@ public class DefaultBeanLoader implements BeanLoader {
         beansInCreation.addBean(dependency);
 
         final BeanData beanData = findBeanData(dependency);
+        LOG.finer("Mapping " + dependency + " to " + beanData.getBeanClass());
         final Object instance = instantiateBean(beanData);
 
         if (beanData.isSingleton()) {
