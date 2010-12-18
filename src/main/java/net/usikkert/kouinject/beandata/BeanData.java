@@ -165,4 +165,9 @@ public class BeanData {
     private boolean skipConstructor() {
         return constructor == null;
     }
+
+    @Override
+    public String toString() {
+        return "[singleton=" + isSingleton + "] " + beanClass;
+    }
 }

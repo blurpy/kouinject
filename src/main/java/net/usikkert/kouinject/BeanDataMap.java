@@ -152,6 +152,25 @@ public class BeanDataMap {
         }
 
         return matches;
+    }
 
+    /**
+     * Returns the exact key used to access the bean-data parameter.
+     *
+     * @param beanData The bean-data to get the bean-key for.
+     * @return The bean-key that matches the bean-data in this map.
+     */
+    public synchronized BeanKey getBeanKeyForBeanData(final BeanData beanData) {
+        Validate.notNull(beanData, "Bean-data can not be null");
+
+        for (final BeanKey beanKey : beanDataMap.keySet()) {
+            final BeanData data = beanDataMap.get(beanKey);
+
+            if (data == beanData) {
+                return beanKey;
+            }
+        }
+
+        throw new IllegalArgumentException("Bean-data not registered in map: " + beanData);
     }
 }

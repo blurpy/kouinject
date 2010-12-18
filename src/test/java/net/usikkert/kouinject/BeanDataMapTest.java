@@ -34,6 +34,7 @@ import net.usikkert.kouinject.testbeans.scanned.CarBean;
 import net.usikkert.kouinject.testbeans.scanned.FieldBean;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.SetterBean;
+import net.usikkert.kouinject.testbeans.scanned.notloaded.NoBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.GreenBean;
 
 import org.junit.Before;
@@ -183,6 +184,36 @@ public class BeanDataMapTest {
 
         assertNotNull(beanKeys);
         assertEquals(0, beanKeys.size());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getBeanKeyForBeanDataShouldFailIfNoMatches() {
+        addTestBeans();
+
+        map.getBeanKeyForBeanData(createBeanData(NoBean.class));
+    }
+
+    @Test
+    public void getBeanKeyForBeanDataShouldReturnTheCorrectKey() {
+        addTestBeans();
+
+        final BeanKey setterBeanKey = map.getBeanKeyForBeanData(map.getBeanData(new BeanKey(SetterBean.class)));
+        assertBeanKey(setterBeanKey, SetterBean.class, null);
+
+        final BeanKey fieldBeanKey = map.getBeanKeyForBeanData(map.getBeanData(new BeanKey(FieldBean.class)));
+        assertBeanKey(fieldBeanKey, FieldBean.class, null);
+
+        final BeanKey helloBeanKey = map.getBeanKeyForBeanData(map.getBeanData(new BeanKey(HelloBean.class)));
+        assertBeanKey(helloBeanKey, HelloBean.class, null);
+
+        final BeanKey greenBeanKey = map.getBeanKeyForBeanData(map.getBeanData(new BeanKey(GreenBean.class)));
+        assertBeanKey(greenBeanKey, GreenBean.class, "Green");
+    }
+
+    private void assertBeanKey(final BeanKey beanKey, final Class<?> expectedClass, final String expectedQualifier) {
+        assertNotNull(beanKey);
+        assertEquals(expectedClass, beanKey.getBeanClass());
+        assertEquals(expectedQualifier, beanKey.getQualifier());
     }
 
     private void addTestBeans() {
