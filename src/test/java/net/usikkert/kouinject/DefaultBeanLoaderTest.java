@@ -57,6 +57,10 @@ import net.usikkert.kouinject.testbeans.scanned.FieldBean;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.ProviderBean;
 import net.usikkert.kouinject.testbeans.scanned.RainbowBean;
+import net.usikkert.kouinject.testbeans.scanned.collection.Food;
+import net.usikkert.kouinject.testbeans.scanned.collection.HamburgerBean;
+import net.usikkert.kouinject.testbeans.scanned.collection.HotdogBean;
+import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungryQualifierBean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder1.Folder1Bean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder2.Folder2Bean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder3.Folder3Bean;
@@ -645,6 +649,41 @@ public class DefaultBeanLoaderTest {
         assertSame(date, dateBean.getDate());
     }
 
+    @Test
+    public void collectionProviderShouldHandleScopeAndQualifierAtTheSameTime() {
+        final ProvidedHungryQualifierBean providedHungryQualifierBean = beanLoader.getBean(ProvidedHungryQualifierBean.class);
+        assertNotNull(providedHungryQualifierBean);
+
+        final CollectionProvider<Food> fastFoodBeansProvider = providedHungryQualifierBean.getFastFoodBeans();
+        assertNotNull(fastFoodBeansProvider);
+
+        // Getting beans first time
+        final Collection<Food> fastFoodBeans1 = fastFoodBeansProvider.get();
+        assertNotNull(fastFoodBeans1);
+        assertEquals(2, fastFoodBeans1.size());
+
+        final HotdogBean hotdogBean1 = getBean(HotdogBean.class, fastFoodBeans1);
+        assertNotNull(hotdogBean1);
+        final HamburgerBean hamburgerBean1 = getBean(HamburgerBean.class, fastFoodBeans1);
+        assertNotNull(hamburgerBean1);
+
+        // Getting beans second time
+        final Collection<Food> fastFoodBeans2 = fastFoodBeansProvider.get();
+        assertNotNull(fastFoodBeans2);
+        assertEquals(2, fastFoodBeans2.size());
+
+        final HotdogBean hotdogBean2 = getBean(HotdogBean.class, fastFoodBeans2);
+        assertNotNull(hotdogBean2);
+        final HamburgerBean hamburgerBean2 = getBean(HamburgerBean.class, fastFoodBeans2);
+        assertNotNull(hamburgerBean2);
+
+        // Hotdog is singleton
+        assertSame(hotdogBean1, hotdogBean2);
+
+        // Hamburger is prototype
+        assertNotSame(hamburgerBean1, hamburgerBean2);
+    }
+
     private DefaultBeanLoader createBeanLoaderWithBasePackages(final String... basePackages) {
         final ClassLocator classLocator = new ClassPathScanner();
         final BeanLocator beanLocator = new AnnotationBasedBeanLocator(
@@ -663,12 +702,16 @@ public class DefaultBeanLoaderTest {
     }
 
     private boolean containsBean(final Class<?> bean, final Collection<?> collection) {
+        return getBean(bean, collection) != null;
+    }
+
+    private <T> T getBean(final Class<T> bean, final Collection<?> collection) {
         for (final Object object : collection) {
             if (bean.equals(object.getClass())) {
-                return true;
+                return (T) object;
             }
         }
 
-        return false;
+        return null;
     }
 }

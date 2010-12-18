@@ -23,6 +23,7 @@
 package net.usikkert.kouinject.testbeans.scanned.collection;
 
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import net.usikkert.kouinject.annotation.Component;
 
@@ -32,6 +33,7 @@ import net.usikkert.kouinject.annotation.Component;
  * @author Christian Ihle
  */
 @Named("fastFood")
+@Singleton
 @Component
 public class HotdogBean implements Food {
 
