@@ -63,6 +63,8 @@ import net.usikkert.kouinject.testbeans.scanned.collection.FishBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.Food;
 import net.usikkert.kouinject.testbeans.scanned.collection.HamburgerBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.HotdogBean;
+import net.usikkert.kouinject.testbeans.scanned.collection.HungryBean;
+import net.usikkert.kouinject.testbeans.scanned.collection.HungryQualifierBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungryBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungryQualifierBean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder1.Folder1Bean;
@@ -710,6 +712,81 @@ public class DefaultBeanLoaderTest {
 
         // Getting beans second time
         final Collection<Food> foodBeansInField2 = foodBeansInFieldProvider.get();
+        assertNotNull(foodBeansInField2);
+        assertEquals(3, foodBeansInField2.size());
+
+        final CheeseBean cheeseBean2 = getBean(CheeseBean.class, foodBeansInField2);
+        assertNotNull(cheeseBean2);
+        final FishBean fishBean2 = getBean(FishBean.class, foodBeansInField2);
+        assertNotNull(fishBean2);
+        final BananaBean bananaBean2 = getBean(BananaBean.class, foodBeansInField2);
+        assertNotNull(bananaBean2);
+
+        // Cheese and fish are prototype
+        assertNotSame(cheeseBean1, cheeseBean2);
+        assertNotSame(fishBean1, fishBean2);
+
+        // Banana is singleton
+        assertSame(bananaBean1, bananaBean2);
+    }
+
+    @Test
+    public void collectionShouldHandleScopeAndQualifierAtTheSameTime() {
+        // Getting beans first time
+        final HungryQualifierBean hungryQualifierBean1 = beanLoader.getBean(HungryQualifierBean.class);
+        assertNotNull(hungryQualifierBean1);
+
+        final Collection<Food> fastFoodBeans1 = hungryQualifierBean1.getFastFoodBeans();
+        assertNotNull(fastFoodBeans1);
+        assertEquals(2, fastFoodBeans1.size());
+
+        final HotdogBean hotdogBean1 = getBean(HotdogBean.class, fastFoodBeans1);
+        assertNotNull(hotdogBean1);
+        final HamburgerBean hamburgerBean1 = getBean(HamburgerBean.class, fastFoodBeans1);
+        assertNotNull(hamburgerBean1);
+
+        // Getting beans second time
+        final HungryQualifierBean hungryQualifierBean2 = beanLoader.getBean(HungryQualifierBean.class);
+        assertNotNull(hungryQualifierBean2);
+
+        final Collection<Food> fastFoodBeans2 = hungryQualifierBean2.getFastFoodBeans();
+        assertNotNull(fastFoodBeans2);
+        assertEquals(2, fastFoodBeans2.size());
+
+        final HotdogBean hotdogBean2 = getBean(HotdogBean.class, fastFoodBeans2);
+        assertNotNull(hotdogBean2);
+        final HamburgerBean hamburgerBean2 = getBean(HamburgerBean.class, fastFoodBeans2);
+        assertNotNull(hamburgerBean2);
+
+        // Hotdog is singleton
+        assertSame(hotdogBean1, hotdogBean2);
+
+        // Hamburger is prototype
+        assertNotSame(hamburgerBean1, hamburgerBean2);
+    }
+
+    @Test
+    public void collectionShouldHandleScopeInUnqualifiedBeans() {
+        // Getting beans first time
+        final HungryBean hungryBean1 = beanLoader.getBean(HungryBean.class);
+        assertNotNull(hungryBean1);
+
+        final Collection<Food> foodBeansInField1 = hungryBean1.getFoodBeansInField();
+        assertNotNull(foodBeansInField1);
+        assertEquals(3, foodBeansInField1.size());
+
+        final CheeseBean cheeseBean1 = getBean(CheeseBean.class, foodBeansInField1);
+        assertNotNull(cheeseBean1);
+        final FishBean fishBean1 = getBean(FishBean.class, foodBeansInField1);
+        assertNotNull(fishBean1);
+        final BananaBean bananaBean1 = getBean(BananaBean.class, foodBeansInField1);
+        assertNotNull(bananaBean1);
+
+        // Getting beans second time
+        final HungryBean hungryBean2 = beanLoader.getBean(HungryBean.class);
+        assertNotNull(hungryBean2);
+
+        final Collection<Food> foodBeansInField2 = hungryBean2.getFoodBeansInField();
         assertNotNull(foodBeansInField2);
         assertEquals(3, foodBeansInField2.size());
 
