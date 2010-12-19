@@ -60,6 +60,8 @@ import net.usikkert.kouinject.testbeans.scanned.collection.HungryQualifierBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.MaxAndMinCollectionProviderBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungryBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungryQualifierBean;
+import net.usikkert.kouinject.testbeans.scanned.collectionprovider.QualifiedCollectionProviderBean;
+import net.usikkert.kouinject.testbeans.scanned.collectionprovider.SingletonCollectionProviderBean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder1.Folder1Bean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder2.Folder2Bean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder3.Folder3Bean;
@@ -801,6 +803,21 @@ public class BeanInjectionTest {
     }
 
     @Test
+    public void checkQualifiedCollectionProviderBean() {
+        final QualifiedCollectionProviderBean qualifiedCollectionProviderBean1 = beanLoader.getBean(QualifiedCollectionProviderBean.class);
+        assertNotNull(qualifiedCollectionProviderBean1);
+
+        final QualifiedCollectionProviderBean qualifiedCollectionProviderBean2 = beanLoader.getBean(QualifiedCollectionProviderBean.class, "qualifier");
+        assertNotNull(qualifiedCollectionProviderBean2);
+
+        final QualifiedCollectionProviderBean qualifiedCollectionProviderBean3 = beanLoader.getBean(QualifiedCollectionProviderBean.class, "any");
+        assertNotNull(qualifiedCollectionProviderBean3);
+
+        assertNotSame(qualifiedCollectionProviderBean1, qualifiedCollectionProviderBean2);
+        assertNotSame(qualifiedCollectionProviderBean2, qualifiedCollectionProviderBean3);
+    }
+
+    @Test
     public void checkRainbowBean() {
         final RainbowBean rainbowBean = beanLoader.getBean(RainbowBean.class);
 
@@ -845,6 +862,23 @@ public class BeanInjectionTest {
         final SingletonBean singletonBean = beanLoader.getBean(SingletonBean.class);
 
         assertNotNull(singletonBean);
+    }
+
+    @Test
+    public void checkSingletonCollectionProviderBean() {
+        final SingletonCollectionProviderBean singletonCollectionProviderBean = beanLoader.getBean(SingletonCollectionProviderBean.class);
+        assertNotNull(singletonCollectionProviderBean);
+
+        final CollectionProvider<CarBean> blueCarBeanCollectionProvider = singletonCollectionProviderBean.getBlueCarBeanCollectionProvider();
+        assertNotNull(blueCarBeanCollectionProvider);
+
+        final Collection<CarBean> carBeans = blueCarBeanCollectionProvider.get();
+        assertNotNull(carBeans);
+        assertEquals(1, carBeans.size());
+
+        final CarBean carBean = carBeans.iterator().next();
+        assertNotNull(carBean);
+        assertEquals(BlueCarBean.class, carBean.getClass());
     }
 
     @Test

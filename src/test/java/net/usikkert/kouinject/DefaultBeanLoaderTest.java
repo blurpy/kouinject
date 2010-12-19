@@ -55,6 +55,7 @@ import net.usikkert.kouinject.testbeans.notscanned.provider.ProviderInjectionWit
 import net.usikkert.kouinject.testbeans.notscanned.provider.ProviderInjectionWithWildcard;
 import net.usikkert.kouinject.testbeans.notscanned.provider.ProviderInjectionWithoutTypeArgument;
 import net.usikkert.kouinject.testbeans.scanned.BlueCarBean;
+import net.usikkert.kouinject.testbeans.scanned.CarBean;
 import net.usikkert.kouinject.testbeans.scanned.FieldBean;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.ProviderBean;
@@ -70,6 +71,7 @@ import net.usikkert.kouinject.testbeans.scanned.collection.HungryBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.HungryQualifierBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungryBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungryQualifierBean;
+import net.usikkert.kouinject.testbeans.scanned.collectionprovider.SingletonCollectionProviderBean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder1.Folder1Bean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder2.Folder2Bean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder3.Folder3Bean;
@@ -920,6 +922,44 @@ public class DefaultBeanLoaderTest {
 
         assertSame(singletonBean1, singletonBean2);
         assertNotSame(redBean1, redBean2);
+    }
+
+    @Test
+    public void singletonCollectionProviderShouldGiveOnlyOneInstance() {
+        final SingletonCollectionProviderBean singletonCollectionProviderBean1 = beanLoader.getBean(SingletonCollectionProviderBean.class);
+        assertNotNull(singletonCollectionProviderBean1);
+
+        final SingletonCollectionProviderBean singletonCollectionProviderBean2 = beanLoader.getBean(SingletonCollectionProviderBean.class);
+        assertNotNull(singletonCollectionProviderBean2);
+
+        assertSame(singletonCollectionProviderBean1, singletonCollectionProviderBean2);
+    }
+
+    @Test
+    public void singletonCollectionProviderShouldGiveUniqueInstancesOfInjectedPrototype() {
+        final SingletonCollectionProviderBean singletonCollectionProviderBean = beanLoader.getBean(SingletonCollectionProviderBean.class);
+        assertNotNull(singletonCollectionProviderBean);
+
+        final CollectionProvider<CarBean> blueCarBeanCollectionProvider = singletonCollectionProviderBean.getBlueCarBeanCollectionProvider();
+        assertNotNull(blueCarBeanCollectionProvider);
+
+        // First car bean
+        final Collection<CarBean> carBeans1 = blueCarBeanCollectionProvider.get();
+        assertNotNull(carBeans1);
+        assertEquals(1, carBeans1.size());
+        final CarBean carBean1 = carBeans1.iterator().next();
+        assertNotNull(carBean1);
+        assertEquals(BlueCarBean.class, carBean1.getClass());
+
+        // Second car bean
+        final Collection<CarBean> carBeans2 = blueCarBeanCollectionProvider.get();
+        assertNotNull(carBeans2);
+        assertEquals(1, carBeans2.size());
+        final CarBean carBean2 = carBeans2.iterator().next();
+        assertNotNull(carBean2);
+        assertEquals(BlueCarBean.class, carBean2.getClass());
+
+        assertNotSame(carBean1, carBean2);
     }
 
     private DefaultBeanLoader createBeanLoaderWithBasePackages(final String... basePackages) {
