@@ -22,19 +22,11 @@
 
 package net.usikkert.kouinject.testbeans.scanned.scope.inheritance;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
-
-import net.usikkert.kouinject.annotation.Component;
-
 /**
  * Bean for testing correct handling of scope and qualifier with inheritance.
  *
  * @author Christian Ihle
  */
-@Named("fifth")
-@Singleton
-@Component
-public class FifthLayer extends FourthLayer {
+public abstract class FourthLayerBean extends ThirdLayerBean {
 
 }

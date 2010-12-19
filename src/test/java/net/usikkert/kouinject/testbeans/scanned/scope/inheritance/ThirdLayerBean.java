@@ -22,11 +22,17 @@
 
 package net.usikkert.kouinject.testbeans.scanned.scope.inheritance;
 
+import javax.inject.Named;
+
+import net.usikkert.kouinject.annotation.Component;
+
 /**
  * Bean for testing correct handling of scope and qualifier with inheritance.
  *
  * @author Christian Ihle
  */
-public abstract class FourthLayer extends ThirdLayer {
+@Named("third")
+@Component
+public class ThirdLayerBean extends SecondLayerBean {
 
 }

@@ -23,6 +23,7 @@
 package net.usikkert.kouinject.testbeans.scanned.scope.inheritance;
 
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import net.usikkert.kouinject.annotation.Component;
 
@@ -31,8 +32,9 @@ import net.usikkert.kouinject.annotation.Component;
  *
  * @author Christian Ihle
  */
-@Named("third")
+@Named("first")
+@Singleton
 @Component
-public class ThirdLayer extends SecondLayer {
+public class FirstLayerBean implements Layer {
 
 }
