@@ -57,6 +57,7 @@ import net.usikkert.kouinject.testbeans.scanned.collection.HamburgerBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.HotDogBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.HungryBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.HungryQualifierBean;
+import net.usikkert.kouinject.testbeans.scanned.collectionprovider.HavingCollectionProviderBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.MaxAndMinCollectionProviderBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungryBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungryQualifierBean;
@@ -502,6 +503,22 @@ public class BeanInjectionTest {
 
         final HamburgerBean hamburgerBean3 = beanLoader.getBean(HamburgerBean.class, "any");
         assertNotNull(hamburgerBean3);
+    }
+
+    @Test
+    public void checkHavingCollectionProviderBean() {
+        final HavingCollectionProviderBean havingCollectionProviderBean = beanLoader.getBean(HavingCollectionProviderBean.class);
+        assertNotNull(havingCollectionProviderBean);
+
+        final QualifiedCollectionProviderBean qualifiedCollectionProviderBean = havingCollectionProviderBean.getQualifiedCollectionProviderBean();
+        assertNotNull(qualifiedCollectionProviderBean);
+
+        final CollectionProvider<AppleBean> appleBeanCollectionProvider = qualifiedCollectionProviderBean.getAppleBeanCollectionProvider();
+        assertNotNull(appleBeanCollectionProvider);
+
+        final Collection<AppleBean> appleBeans = appleBeanCollectionProvider.get();
+        assertNotNull(appleBeans);
+        assertEquals(1, appleBeans.size());
     }
 
     @Test

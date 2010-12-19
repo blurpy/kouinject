@@ -20,26 +20,25 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.collectionprovider;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import net.usikkert.kouinject.annotation.Component;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * Bean used for testing injection of a bean with a collection provider.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+@Component
+public class HavingCollectionProviderBean {
 
-    ALL(77),
-    SCANNED(56),
-    SCANNED_WITHOUT_QUALIFIER(38);
+    @Inject @Named("qualifier")
+    private QualifiedCollectionProviderBean qualifiedCollectionProviderBean;
 
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
-    }
-
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    public QualifiedCollectionProviderBean getQualifiedCollectionProviderBean() {
+        return qualifiedCollectionProviderBean;
     }
 }
