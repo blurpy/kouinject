@@ -20,26 +20,34 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.collectionprovider;
+
+import javax.inject.Inject;
+
+import net.usikkert.kouinject.CollectionProvider;
+import net.usikkert.kouinject.annotation.Any;
+import net.usikkert.kouinject.annotation.Component;
+import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * Bean used for testing injection of the minimum and maximum number of beans.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+@Component
+public class MaxAndMinCollectionProviderBean {
 
-    ALL(73),
-    SCANNED(53),
-    SCANNED_WITHOUT_QUALIFIER(36);
+    @Inject @Any
+    private CollectionProvider<Object> allBeansCollectionProvider;
 
-    private final int numberOfBeans;
+    @Inject
+    private CollectionProvider<HelloBean> helloBeanCollectionProvider;
 
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
+    public CollectionProvider<Object> getAllBeansCollectionProvider() {
+        return allBeansCollectionProvider;
     }
 
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    public CollectionProvider<HelloBean> getHelloBeanCollectionProvider() {
+        return helloBeanCollectionProvider;
     }
 }

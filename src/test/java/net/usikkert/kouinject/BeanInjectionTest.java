@@ -28,6 +28,7 @@ import java.util.Collection;
 
 import javax.inject.Provider;
 
+import net.usikkert.kouinject.testbeans.BeanCount;
 import net.usikkert.kouinject.testbeans.scanned.AllInjectionTypesBean;
 import net.usikkert.kouinject.testbeans.scanned.BlueCarBean;
 import net.usikkert.kouinject.testbeans.scanned.CarBean;
@@ -56,6 +57,7 @@ import net.usikkert.kouinject.testbeans.scanned.collection.HamburgerBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.HotDogBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.HungryBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.HungryQualifierBean;
+import net.usikkert.kouinject.testbeans.scanned.collectionprovider.MaxAndMinCollectionProviderBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungryBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungryQualifierBean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder1.Folder1Bean;
@@ -597,6 +599,31 @@ public class BeanInjectionTest {
         final LastBean lastBean = beanLoader.getBean(LastBean.class);
 
         assertNotNull(lastBean.getEverythingBean());
+    }
+
+    @Test
+    public void checkMaxAndMinCollectionProviderBean() {
+        final MaxAndMinCollectionProviderBean maxAndMinCollectionProviderBean = beanLoader.getBean(MaxAndMinCollectionProviderBean.class);
+
+        // HelloBean
+        final CollectionProvider<HelloBean> helloBeanCollectionProvider = maxAndMinCollectionProviderBean.getHelloBeanCollectionProvider();
+        assertNotNull(helloBeanCollectionProvider);
+
+        final Collection<HelloBean> helloBeans = helloBeanCollectionProvider.get();
+        assertNotNull(helloBeans);
+        assertEquals(1, helloBeans.size());
+        assertNotNull(helloBeans.iterator().next());
+
+        // All beans
+        final CollectionProvider<Object> allBeansCollectionProvider = maxAndMinCollectionProviderBean.getAllBeansCollectionProvider();
+        assertNotNull(allBeansCollectionProvider);
+
+        final Collection<Object> allBeans = allBeansCollectionProvider.get();
+        assertEquals(BeanCount.SCANNED.getNumberOfBeans(), allBeans.size());
+
+        for (final Object bean : allBeans) {
+            assertNotNull(bean);
+        }
     }
 
     @Test(expected = IllegalArgumentException.class)
