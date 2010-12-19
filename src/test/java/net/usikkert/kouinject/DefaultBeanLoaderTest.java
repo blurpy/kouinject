@@ -46,6 +46,7 @@ import net.usikkert.kouinject.testbeans.notscanned.collection.CollectionInjectio
 import net.usikkert.kouinject.testbeans.notscanned.collection.CollectionInjectionWithoutTypeArgument;
 import net.usikkert.kouinject.testbeans.notscanned.collection.ListInjection;
 import net.usikkert.kouinject.testbeans.notscanned.collection.SetInjection;
+import net.usikkert.kouinject.testbeans.notscanned.collectionprovider.CollectionProviderInjectionWithNoMatchingBeans;
 import net.usikkert.kouinject.testbeans.notscanned.date.DateBean;
 import net.usikkert.kouinject.testbeans.notscanned.instance.Instance1Bean;
 import net.usikkert.kouinject.testbeans.notscanned.instance.Instance2Bean;
@@ -546,6 +547,22 @@ public class DefaultBeanLoaderTest {
         final DefaultBeanLoader loader = createBeanLoaderWithBeans(beans);
 
         loader.getBean(CollectionInjectionWithNoMatchingBeans.class);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void injectionOfCollectionProviderWithNoMatchingBeansShouldFail() {
+        final Set<BeanKey> beans = new HashSet<BeanKey>();
+        beans.add(new BeanKey(CollectionProviderInjectionWithNoMatchingBeans.class));
+
+        final DefaultBeanLoader loader = createBeanLoaderWithBeans(beans);
+
+        final CollectionProviderInjectionWithNoMatchingBeans collectionProvider =
+                loader.getBean(CollectionProviderInjectionWithNoMatchingBeans.class);
+        final CollectionProvider<TheInterface> theInterfaceCollectionProvider =
+                collectionProvider.getTheInterfaceCollectionProvider();
+
+        // Fails at a later stage due to lazy-loading
+        theInterfaceCollectionProvider.get();
     }
 
     @Test
