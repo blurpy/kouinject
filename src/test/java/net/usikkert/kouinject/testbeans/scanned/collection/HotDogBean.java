@@ -35,6 +35,6 @@ import net.usikkert.kouinject.annotation.Component;
 @Named("fastFood")
 @Singleton
 @Component
-public class HotdogBean implements Food {
+public class HotDogBean implements Food {
 
 }

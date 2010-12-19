@@ -63,7 +63,7 @@ import net.usikkert.kouinject.testbeans.scanned.collection.CheeseBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.FishBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.Food;
 import net.usikkert.kouinject.testbeans.scanned.collection.HamburgerBean;
-import net.usikkert.kouinject.testbeans.scanned.collection.HotdogBean;
+import net.usikkert.kouinject.testbeans.scanned.collection.HotDogBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.HungryBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.HungryQualifierBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungryBean;
@@ -669,8 +669,8 @@ public class DefaultBeanLoaderTest {
         assertNotNull(fastFoodBeans1);
         assertEquals(2, fastFoodBeans1.size());
 
-        final HotdogBean hotdogBean1 = getBean(HotdogBean.class, fastFoodBeans1);
-        assertNotNull(hotdogBean1);
+        final HotDogBean hotDogBean1 = getBean(HotDogBean.class, fastFoodBeans1);
+        assertNotNull(hotDogBean1);
         final HamburgerBean hamburgerBean1 = getBean(HamburgerBean.class, fastFoodBeans1);
         assertNotNull(hamburgerBean1);
 
@@ -679,13 +679,13 @@ public class DefaultBeanLoaderTest {
         assertNotNull(fastFoodBeans2);
         assertEquals(2, fastFoodBeans2.size());
 
-        final HotdogBean hotdogBean2 = getBean(HotdogBean.class, fastFoodBeans2);
-        assertNotNull(hotdogBean2);
+        final HotDogBean hotDogBean2 = getBean(HotDogBean.class, fastFoodBeans2);
+        assertNotNull(hotDogBean2);
         final HamburgerBean hamburgerBean2 = getBean(HamburgerBean.class, fastFoodBeans2);
         assertNotNull(hamburgerBean2);
 
-        // Hotdog is singleton
-        assertSame(hotdogBean1, hotdogBean2);
+        // HotDog is singleton
+        assertSame(hotDogBean1, hotDogBean2);
 
         // Hamburger is prototype
         assertNotSame(hamburgerBean1, hamburgerBean2);
@@ -783,8 +783,8 @@ public class DefaultBeanLoaderTest {
         assertNotNull(fastFoodBeans1);
         assertEquals(2, fastFoodBeans1.size());
 
-        final HotdogBean hotdogBean1 = getBean(HotdogBean.class, fastFoodBeans1);
-        assertNotNull(hotdogBean1);
+        final HotDogBean hotDogBean1 = getBean(HotDogBean.class, fastFoodBeans1);
+        assertNotNull(hotDogBean1);
         final HamburgerBean hamburgerBean1 = getBean(HamburgerBean.class, fastFoodBeans1);
         assertNotNull(hamburgerBean1);
 
@@ -796,13 +796,13 @@ public class DefaultBeanLoaderTest {
         assertNotNull(fastFoodBeans2);
         assertEquals(2, fastFoodBeans2.size());
 
-        final HotdogBean hotdogBean2 = getBean(HotdogBean.class, fastFoodBeans2);
-        assertNotNull(hotdogBean2);
+        final HotDogBean hotDogBean2 = getBean(HotDogBean.class, fastFoodBeans2);
+        assertNotNull(hotDogBean2);
         final HamburgerBean hamburgerBean2 = getBean(HamburgerBean.class, fastFoodBeans2);
         assertNotNull(hamburgerBean2);
 
-        // Hotdog is singleton
-        assertSame(hotdogBean1, hotdogBean2);
+        // HotDog is singleton
+        assertSame(hotDogBean1, hotDogBean2);
 
         // Hamburger is prototype
         assertNotSame(hamburgerBean1, hamburgerBean2);

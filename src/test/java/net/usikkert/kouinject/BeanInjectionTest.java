@@ -53,7 +53,7 @@ import net.usikkert.kouinject.testbeans.scanned.collection.CheeseBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.FishBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.Food;
 import net.usikkert.kouinject.testbeans.scanned.collection.HamburgerBean;
-import net.usikkert.kouinject.testbeans.scanned.collection.HotdogBean;
+import net.usikkert.kouinject.testbeans.scanned.collection.HotDogBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.HungryBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.HungryQualifierBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungryBean;
@@ -508,15 +508,15 @@ public class BeanInjectionTest {
     }
 
     @Test
-    public void checkHotdogBean() {
-        final HotdogBean hotdogBean1 = beanLoader.getBean(HotdogBean.class);
-        assertNotNull(hotdogBean1);
+    public void checkHotDogBean() {
+        final HotDogBean hotDogBean1 = beanLoader.getBean(HotDogBean.class);
+        assertNotNull(hotDogBean1);
 
-        final HotdogBean hotdogBean2 = beanLoader.getBean(HotdogBean.class, "fastfood");
-        assertNotNull(hotdogBean2);
+        final HotDogBean hotDogBean2 = beanLoader.getBean(HotDogBean.class, "fastfood");
+        assertNotNull(hotDogBean2);
 
-        final HotdogBean hotdogBean3 = beanLoader.getBean(HotdogBean.class, "any");
-        assertNotNull(hotdogBean3);
+        final HotDogBean hotDogBean3 = beanLoader.getBean(HotDogBean.class, "any");
+        assertNotNull(hotDogBean3);
     }
 
     @Test
@@ -556,7 +556,7 @@ public class BeanInjectionTest {
         final Collection<Food> fastFoodBeans = hungryQualifierBean.getFastFoodBeans();
         assertNotNull(fastFoodBeans);
         assertEquals(2, fastFoodBeans.size());
-        assertTrue(containsBean(HotdogBean.class, fastFoodBeans));
+        assertTrue(containsBean(HotDogBean.class, fastFoodBeans));
         assertTrue(containsBean(HamburgerBean.class, fastFoodBeans));
 
         final Collection<Food> allFoodBeans = hungryQualifierBean.getAllFoodBeans();
@@ -565,7 +565,7 @@ public class BeanInjectionTest {
         assertTrue(containsBean(CheeseBean.class, allFoodBeans));
         assertTrue(containsBean(FishBean.class, allFoodBeans));
         assertTrue(containsBean(BananaBean.class, allFoodBeans));
-        assertTrue(containsBean(HotdogBean.class, allFoodBeans));
+        assertTrue(containsBean(HotDogBean.class, allFoodBeans));
         assertTrue(containsBean(HamburgerBean.class, allFoodBeans));
         assertTrue(containsBean(AppleBean.class, allFoodBeans));
 
@@ -729,7 +729,7 @@ public class BeanInjectionTest {
         final Collection<Food> fastFoodBeans = fastFoodBeansProvider.get();
         assertNotNull(fastFoodBeans);
         assertEquals(2, fastFoodBeans.size());
-        assertTrue(containsBean(HotdogBean.class, fastFoodBeans));
+        assertTrue(containsBean(HotDogBean.class, fastFoodBeans));
         assertTrue(containsBean(HamburgerBean.class, fastFoodBeans));
 
         // All food
@@ -742,7 +742,7 @@ public class BeanInjectionTest {
         assertTrue(containsBean(CheeseBean.class, allFoodBeans));
         assertTrue(containsBean(FishBean.class, allFoodBeans));
         assertTrue(containsBean(BananaBean.class, allFoodBeans));
-        assertTrue(containsBean(HotdogBean.class, allFoodBeans));
+        assertTrue(containsBean(HotDogBean.class, allFoodBeans));
         assertTrue(containsBean(HamburgerBean.class, allFoodBeans));
         assertTrue(containsBean(AppleBean.class, allFoodBeans));
 
