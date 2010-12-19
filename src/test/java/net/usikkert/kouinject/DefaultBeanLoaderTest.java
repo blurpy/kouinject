@@ -51,6 +51,7 @@ import net.usikkert.kouinject.testbeans.notscanned.date.DateBean;
 import net.usikkert.kouinject.testbeans.notscanned.instance.Instance1Bean;
 import net.usikkert.kouinject.testbeans.notscanned.instance.Instance2Bean;
 import net.usikkert.kouinject.testbeans.notscanned.instance.Instance3Bean;
+import net.usikkert.kouinject.testbeans.notscanned.provider.ProviderInjectionWithNoMatchingBeans;
 import net.usikkert.kouinject.testbeans.notscanned.provider.ProviderInjectionWithWildcard;
 import net.usikkert.kouinject.testbeans.notscanned.provider.ProviderInjectionWithoutTypeArgument;
 import net.usikkert.kouinject.testbeans.scanned.BlueCarBean;
@@ -556,13 +557,27 @@ public class DefaultBeanLoaderTest {
 
         final DefaultBeanLoader loader = createBeanLoaderWithBeans(beans);
 
-        final CollectionProviderInjectionWithNoMatchingBeans collectionProvider =
+        final CollectionProviderInjectionWithNoMatchingBeans collectionProviderBean =
                 loader.getBean(CollectionProviderInjectionWithNoMatchingBeans.class);
         final CollectionProvider<TheInterface> theInterfaceCollectionProvider =
-                collectionProvider.getTheInterfaceCollectionProvider();
+                collectionProviderBean.getTheInterfaceCollectionProvider();
 
         // Fails at a later stage due to lazy-loading
         theInterfaceCollectionProvider.get();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void injectionOfProviderWithNoMatchingBeansShouldFail() {
+        final Set<BeanKey> beans = new HashSet<BeanKey>();
+        beans.add(new BeanKey(ProviderInjectionWithNoMatchingBeans.class));
+
+        final DefaultBeanLoader loader = createBeanLoaderWithBeans(beans);
+
+        final ProviderInjectionWithNoMatchingBeans providerBean = loader.getBean(ProviderInjectionWithNoMatchingBeans.class);
+        final Provider<TheInterface> theInterfaceProvider = providerBean.getTheInterfaceProvider();
+
+        // Fails at a later stage due to lazy-loading
+        theInterfaceProvider.get();
     }
 
     @Test

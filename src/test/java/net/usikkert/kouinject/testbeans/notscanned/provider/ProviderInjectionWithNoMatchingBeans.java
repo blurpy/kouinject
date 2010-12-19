@@ -20,26 +20,26 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.notscanned.provider;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+
+import net.usikkert.kouinject.annotation.Component;
+import net.usikkert.kouinject.testbeans.notscanned.TheInterface;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * Bean for testing error handling when trying to inject a {@link Provider} of beans with no matches.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+@Component
+public class ProviderInjectionWithNoMatchingBeans {
 
-    ALL(74),
-    SCANNED(53),
-    SCANNED_WITHOUT_QUALIFIER(36);
+    @Inject
+    private Provider<TheInterface> theInterfaceProvider;
 
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
-    }
-
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    public Provider<TheInterface> getTheInterfaceProvider() {
+        return theInterfaceProvider;
     }
 }
