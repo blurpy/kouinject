@@ -2,7 +2,7 @@
 - KouInject CHANGES
 
 
-* Version 1.0 (xx.12.2010):
+* Version 1.0 (20.12.2010):
  - Added CollectionProvider for lazy-loading of collections of beans
  - Fix for singletons in some cases getting instantiated too many times when used with a qualifier
  - Improved logging
