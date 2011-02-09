@@ -141,6 +141,7 @@
         <configuration>
           <links>
             <url>http://atinject.googlecode.com/svn/tags/1/javadoc/</url>
+            <url>http://download.oracle.com/javase/6/docs/api/</url>
           </links>
         </configuration>
       </plugin>
