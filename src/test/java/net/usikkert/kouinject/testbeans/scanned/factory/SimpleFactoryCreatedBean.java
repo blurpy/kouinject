@@ -22,14 +22,11 @@
 
 package net.usikkert.kouinject.testbeans.scanned.factory;
 
-import net.usikkert.kouinject.annotation.Component;
-
 /**
  * A bean created using a factory.
  *
  * @author Christian Ihle
  */
-@Component
 public class SimpleFactoryCreatedBean {
 
     private boolean createdByFactory;
