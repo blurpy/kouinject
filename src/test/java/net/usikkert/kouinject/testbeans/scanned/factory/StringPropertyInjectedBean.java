@@ -20,26 +20,37 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.factory;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * A bean for testing qualifiers when created using a factory method.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+//@Component TODO fails until factory support is implemented
+public class StringPropertyInjectedBean {
 
-    ALL(81),
-    SCANNED(60),
-    SCANNED_WITHOUT_QUALIFIER(42);
+    @Inject @Named("some.property")
+    private String someProperty;
 
-    private final int numberOfBeans;
+    @Inject @Named("color")
+    private String color;
 
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
+    @Inject @Named("some.thing")
+    private String someThing;
+
+    public String getSomeProperty() {
+        return someProperty;
     }
 
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    public String getColor() {
+        return color;
+    }
+
+    public String getSomeThing() {
+        return someThing;
     }
 }

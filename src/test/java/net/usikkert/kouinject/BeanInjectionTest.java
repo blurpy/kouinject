@@ -23,11 +23,13 @@
 package net.usikkert.kouinject;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 import java.util.Collection;
 
 import javax.inject.Provider;
 
+import net.usikkert.kouinject.factory.FactoryContext;
 import net.usikkert.kouinject.testbeans.BeanCount;
 import net.usikkert.kouinject.testbeans.scanned.AllInjectionTypesBean;
 import net.usikkert.kouinject.testbeans.scanned.BlueCarBean;
@@ -66,6 +68,8 @@ import net.usikkert.kouinject.testbeans.scanned.collectionprovider.SingletonColl
 import net.usikkert.kouinject.testbeans.scanned.factory.SimpleFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.SimpleFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.SimpleFactoryCreatedBeanUsingBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.StringPropertyFactoryBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.StringPropertyInjectedBean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder1.Folder1Bean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder2.Folder2Bean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder3.Folder3Bean;
@@ -963,6 +967,30 @@ public class BeanInjectionTest {
         assertNotNull(staticBean);
         assertNull(staticBean.getFieldBean());
         assertNull(staticBean.getSetterBean());
+    }
+
+    @Test
+    public void checkStringPropertyFactoryBean() {
+        final StringPropertyFactoryBean stringPropertyFactoryBean = beanLoader.getBean(StringPropertyFactoryBean.class);
+        assertNotNull(stringPropertyFactoryBean);
+
+        final FactoryContext factoryContext = mock(FactoryContext.class);
+        when(factoryContext.getQualifier()).thenReturn("some.property");
+
+        final String stringProperty = stringPropertyFactoryBean.createStringProperty(factoryContext);
+        assertEquals("This is some property", stringProperty);
+    }
+
+    // TODO
+    @Test
+    @Ignore("Factory not implemented yet. The injector can't create the bean alone, so it's deactivated.")
+    public void checkStringPropertyInjectedBean() {
+        final StringPropertyInjectedBean stringPropertyInjectedBean = beanLoader.getBean(StringPropertyInjectedBean.class);
+        assertNotNull(stringPropertyInjectedBean);
+
+        assertEquals("Pink", stringPropertyInjectedBean.getColor());
+        assertEquals("This is some property", stringPropertyInjectedBean.getSomeProperty());
+        assertEquals("This is something else", stringPropertyInjectedBean.getSomeThing());
     }
 
     @Test
