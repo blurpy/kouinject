@@ -63,6 +63,9 @@ import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungr
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungryQualifierBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.QualifiedCollectionProviderBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.SingletonCollectionProviderBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.SimpleFactoryBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.SimpleFactoryCreatedBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.SimpleFactoryCreatedBeanUsingBean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder1.Folder1Bean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder2.Folder2Bean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder3.Folder3Bean;
@@ -95,6 +98,7 @@ import net.usikkert.kouinject.testbeans.scanned.scope.inheritance.SecondLayerBea
 import net.usikkert.kouinject.testbeans.scanned.scope.inheritance.ThirdLayerBean;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -872,6 +876,37 @@ public class BeanInjectionTest {
 
         assertNotNull(setterBean);
         assertNotNull(setterBean.getFieldBean());
+    }
+
+    @Test
+    public void checkSimpleFactoryBean() {
+        final SimpleFactoryBean simpleFactoryBean = beanLoader.getBean(SimpleFactoryBean.class);
+        assertNotNull(simpleFactoryBean);
+
+        final SimpleFactoryCreatedBean simpleFactoryCreatedBean = simpleFactoryBean.createBean();
+        assertNotNull(simpleFactoryCreatedBean);
+        assertTrue(simpleFactoryCreatedBean.isCreatedByFactory());
+    }
+
+    // TODO
+    @Test
+    @Ignore("Factory not implemented yet, returns false in isCreatedByFactory()")
+    public void checkSimpleFactoryCreatedBean() {
+        final SimpleFactoryCreatedBean simpleFactoryCreatedBean = beanLoader.getBean(SimpleFactoryCreatedBean.class);
+
+        assertNotNull(simpleFactoryCreatedBean);
+        assertTrue(simpleFactoryCreatedBean.isCreatedByFactory());
+    }
+
+    // TODO
+    @Test
+    @Ignore("Factory not implemented yet, returns false in isCreatedByFactory()")
+    public void checkSimpleFactoryCreatedBeanUsingBean() {
+        final SimpleFactoryCreatedBeanUsingBean simpleFactoryCreatedBeanUsingBean = beanLoader.getBean(SimpleFactoryCreatedBeanUsingBean.class);
+        assertNotNull(simpleFactoryCreatedBeanUsingBean);
+
+        final SimpleFactoryCreatedBean simpleFactoryCreatedBean = simpleFactoryCreatedBeanUsingBean.getSimpleFactoryCreatedBean();
+        assertTrue(simpleFactoryCreatedBean.isCreatedByFactory());
     }
 
     @Test
