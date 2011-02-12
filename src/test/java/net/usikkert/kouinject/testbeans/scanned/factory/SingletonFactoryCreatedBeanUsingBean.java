@@ -20,26 +20,29 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.factory;
+
+import javax.inject.Inject;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * A bean using a singleton bean created by a factory.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+//@Component TODO fails until factory support is implemented
+public class SingletonFactoryCreatedBeanUsingBean {
 
-    ALL(80),
-    SCANNED(59),
-    SCANNED_WITHOUT_QUALIFIER(41);
+    @Inject
+    private SingletonFactoryCreatedBean singletonFactoryCreatedBean1;
 
-    private final int numberOfBeans;
+    @Inject
+    private SingletonFactoryCreatedBean singletonFactoryCreatedBean2;
 
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
+    public SingletonFactoryCreatedBean getSingletonFactoryCreatedBean1() {
+        return singletonFactoryCreatedBean1;
     }
 
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    public SingletonFactoryCreatedBean getSingletonFactoryCreatedBean2() {
+        return singletonFactoryCreatedBean2;
     }
 }

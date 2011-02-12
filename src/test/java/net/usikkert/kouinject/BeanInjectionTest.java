@@ -68,6 +68,9 @@ import net.usikkert.kouinject.testbeans.scanned.collectionprovider.SingletonColl
 import net.usikkert.kouinject.testbeans.scanned.factory.SimpleFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.SimpleFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.SimpleFactoryCreatedBeanUsingBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.SingletonFactoryBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.SingletonFactoryCreatedBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.SingletonFactoryCreatedBeanUsingBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.StringPropertyFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.StringPropertyInjectedBean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder1.Folder1Bean;
@@ -894,7 +897,7 @@ public class BeanInjectionTest {
 
     // TODO
     @Test
-    @Ignore("Factory not implemented yet, returns false in isCreatedByFactory()")
+    @Ignore("Factory not implemented yet. The injector can't create the bean alone, so it's deactivated.")
     public void checkSimpleFactoryCreatedBean() {
         final SimpleFactoryCreatedBean simpleFactoryCreatedBean = beanLoader.getBean(SimpleFactoryCreatedBean.class);
 
@@ -904,7 +907,7 @@ public class BeanInjectionTest {
 
     // TODO
     @Test
-    @Ignore("Factory not implemented yet, returns false in isCreatedByFactory()")
+    @Ignore("Factory not implemented yet. The injector can't create the bean alone, so it's deactivated.")
     public void checkSimpleFactoryCreatedBeanUsingBean() {
         final SimpleFactoryCreatedBeanUsingBean simpleFactoryCreatedBeanUsingBean = beanLoader.getBean(SimpleFactoryCreatedBeanUsingBean.class);
         assertNotNull(simpleFactoryCreatedBeanUsingBean);
@@ -935,6 +938,44 @@ public class BeanInjectionTest {
         final CarBean carBean = carBeans.iterator().next();
         assertNotNull(carBean);
         assertEquals(BlueCarBean.class, carBean.getClass());
+    }
+
+    @Test
+    public void checkSingletonFactoryBean() {
+        final SingletonFactoryBean singletonFactoryBean = beanLoader.getBean(SingletonFactoryBean.class);
+        assertNotNull(singletonFactoryBean);
+
+        final SingletonFactoryCreatedBean singletonBean = singletonFactoryBean.createSingletonBean();
+        assertNotNull(singletonBean);
+        assertTrue(singletonBean.isCreatedByFactory());
+    }
+
+    // TODO
+    @Test
+    @Ignore("Factory not implemented yet. The injector can't create the bean alone, so it's deactivated.")
+    public void checkSingletonFactoryCreatedBean() {
+        final SingletonFactoryCreatedBean singletonFactoryCreatedBean = beanLoader.getBean(SingletonFactoryCreatedBean.class);
+
+        assertNotNull(singletonFactoryCreatedBean);
+        assertTrue(singletonFactoryCreatedBean.isCreatedByFactory());
+    }
+
+    // TODO
+    @Test
+    @Ignore("Factory not implemented yet. The injector can't create the bean alone, so it's deactivated.")
+    public void checkSingletonFactoryCreatedBeanUsingBean() {
+        final SingletonFactoryCreatedBeanUsingBean singletonFactoryCreatedBeanUsingBean = beanLoader.getBean(SingletonFactoryCreatedBeanUsingBean.class);
+        assertNotNull(singletonFactoryCreatedBeanUsingBean);
+
+        final SingletonFactoryCreatedBean singletonFactoryCreatedBean1 = singletonFactoryCreatedBeanUsingBean.getSingletonFactoryCreatedBean1();
+        assertNotNull(singletonFactoryCreatedBean1);
+
+        final SingletonFactoryCreatedBean singletonFactoryCreatedBean2 = singletonFactoryCreatedBeanUsingBean.getSingletonFactoryCreatedBean2();
+        assertNotNull(singletonFactoryCreatedBean2);
+
+        // Singleton
+        assertSame(singletonFactoryCreatedBean1, singletonFactoryCreatedBean2);
+        assertTrue(singletonFactoryCreatedBean1.isCreatedByFactory());
     }
 
     @Test
