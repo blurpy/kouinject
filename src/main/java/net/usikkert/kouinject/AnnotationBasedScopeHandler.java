@@ -23,14 +23,18 @@
 package net.usikkert.kouinject;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Scope;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang.Validate;
+
 /**
- * Class for finding the scope of a bean class.
+ * Class for finding the scope of beans and factory methods.
  *
  * @author Christian Ihle
  */
@@ -53,7 +57,31 @@ public class AnnotationBasedScopeHandler {
      * @return If the bean is a singleton.
      */
     public boolean isSingleton(final Class<?> beanClass) {
-        final Annotation scope = getScope(beanClass);
+        return isSingletonInternal(beanClass);
+    }
+
+    /**
+     * Checks if the factory method has a singleton scope.
+     *
+     * <p>Rules:</p>
+     * <ul>
+     *   <li>There can be at most 1 scope annotation.</li>
+     *   <li>If no scope annotations are found, then <code>false</code> is returned.</li>
+     *   <li>If the {@link Singleton} annotation is found, then <code>true</code> is returned.</li>
+     *   <li>If any other scope annotation is found, then an exception is thrown.</li>
+     * </ul>
+     *
+     * @param factoryMethod The factory method to check the scope of.
+     * @return If the factory method creates a singleton.
+     */
+    public boolean isSingleton(final Method factoryMethod) {
+        return isSingletonInternal(factoryMethod);
+    }
+
+    private boolean isSingletonInternal(final AnnotatedElement annotatedElement) {
+        Validate.notNull(annotatedElement, "Can't find scope of null");
+
+        final Annotation scope = getScope(annotatedElement);
 
         if (scope instanceof Singleton) {
             return true;
@@ -63,10 +91,10 @@ public class AnnotationBasedScopeHandler {
             return false;
         }
 
-        throw new UnsupportedOperationException("Unknown scope on " + beanClass + " " + scope);
+        throw new UnsupportedOperationException("Unknown scope on " + annotatedElement + " " + scope);
     }
 
-    private Annotation getScope(final Class<?> beanClass) {
+    private Annotation getScope(final AnnotatedElement beanClass) {
         final List<Annotation> matches = new ArrayList<Annotation>();
         final Annotation[] annotations = beanClass.getAnnotations();
 

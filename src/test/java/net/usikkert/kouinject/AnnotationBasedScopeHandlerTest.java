@@ -24,8 +24,14 @@ package net.usikkert.kouinject;
 
 import static org.junit.Assert.*;
 
+import java.lang.reflect.Method;
+
+import net.usikkert.kouinject.testbeans.notscanned.notloaded.NoScopeOnMethodBean;
+import net.usikkert.kouinject.testbeans.notscanned.notloaded.SingletonScopeOnMethodBean;
 import net.usikkert.kouinject.testbeans.notscanned.notloaded.TooManyScopesBean;
+import net.usikkert.kouinject.testbeans.notscanned.notloaded.TooManyScopesOnMethodBean;
 import net.usikkert.kouinject.testbeans.notscanned.notloaded.UnknownScopeBean;
+import net.usikkert.kouinject.testbeans.notscanned.notloaded.UnknownScopeOnMethodBean;
 import net.usikkert.kouinject.testbeans.scanned.CarBean;
 import net.usikkert.kouinject.testbeans.scanned.scope.SingletonBean;
 
@@ -57,12 +63,36 @@ public class AnnotationBasedScopeHandlerTest {
     }
 
     @Test(expected = UnsupportedOperationException.class)
-    public void isSingletonShouldThrowExceptionIfUnknownScope() {
+    public void isSingletonShouldThrowExceptionIfUnknownScopeOnBean() {
         assertFalse(scopeHandler.isSingleton(UnknownScopeBean.class));
     }
 
     @Test(expected = UnsupportedOperationException.class)
-    public void isSingletonShouldThrowExceptionIfMoreThanOneScope() {
+    public void isSingletonShouldThrowExceptionIfMoreThanOneScopeOnBean() {
         assertFalse(scopeHandler.isSingleton(TooManyScopesBean.class));
+    }
+
+    @Test
+    public void isSingletonShouldBeFalseOnMethodWithoutSingletonAnnotation() throws NoSuchMethodException {
+        assertFalse(scopeHandler.isSingleton(getMethod(NoScopeOnMethodBean.class, "methodWithNoScope")));
+    }
+
+    @Test
+    public void isSingletonShouldBeTrueOnMethodWithSingletonAnnotation() throws NoSuchMethodException {
+        assertTrue(scopeHandler.isSingleton(getMethod(SingletonScopeOnMethodBean.class, "methodWithSingletonScope")));
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void isSingletonShouldThrowExceptionIfUnknownScopeOnMethod() throws NoSuchMethodException {
+        assertFalse(scopeHandler.isSingleton(getMethod(UnknownScopeOnMethodBean.class, "methodWithUnknownScope")));
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void isSingletonShouldThrowExceptionIfMoreThanOneScopeOnMethod() throws NoSuchMethodException {
+        assertFalse(scopeHandler.isSingleton(getMethod(TooManyScopesOnMethodBean.class, "methodWithTooManyScopes")));
+    }
+
+    private Method getMethod(final Class<?> aClass, final String name) throws NoSuchMethodException {
+        return aClass.getDeclaredMethod(name);
     }
 }
