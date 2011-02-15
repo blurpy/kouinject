@@ -20,26 +20,22 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.qualifier;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * ColorBean created by a factory, for testing injection of a mix between injector managed and factory managed beans.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+public class OrangeBean implements ColorBean {
 
-    ALL(81),
-    SCANNED(60),
-    SCANNED_WITHOUT_QUALIFIER(42);
+    private boolean createdByFactory;
 
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
+    public boolean isCreatedByFactory() {
+        return createdByFactory;
     }
 
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    public void setCreatedByFactory(final boolean createdByFactory) {
+        this.createdByFactory = createdByFactory;
     }
 }

@@ -20,26 +20,27 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.factory;
+
+import javax.inject.Named;
+
+import net.usikkert.kouinject.annotation.Component;
+import net.usikkert.kouinject.annotation.Produces;
+import net.usikkert.kouinject.testbeans.scanned.qualifier.OrangeBean;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * Creates a new ColorBean, for testing qualifiers and injection with interface of bean from factory.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+@Component
+public class OrangeFactoryBean {
 
-    ALL(81),
-    SCANNED(60),
-    SCANNED_WITHOUT_QUALIFIER(42);
+    @Produces @Named("orange")
+    public OrangeBean createOrangeBean() {
+        final OrangeBean orangeBean = new OrangeBean();
+        orangeBean.setCreatedByFactory(true);
 
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
-    }
-
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+        return orangeBean;
     }
 }

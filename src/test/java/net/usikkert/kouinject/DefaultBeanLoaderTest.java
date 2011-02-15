@@ -82,6 +82,7 @@ import net.usikkert.kouinject.testbeans.scanned.qualifier.BlueBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.ColorBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.DarkYellowBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.GreenBean;
+import net.usikkert.kouinject.testbeans.scanned.qualifier.OrangeBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.RedBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.YellowBean;
 import net.usikkert.kouinject.testbeans.scanned.scope.PinkSingletonBean;
@@ -97,6 +98,7 @@ import net.usikkert.kouinject.testbeans.scanned.scope.inheritance.SecondLayerBea
 import net.usikkert.kouinject.testbeans.scanned.scope.inheritance.ThirdLayerBean;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -458,7 +460,9 @@ public class DefaultBeanLoaderTest {
         assertTrue(containsBean(BlueCarBean.class, beans));
     }
 
+    // TODO
     @Test
+    @Ignore("Factory not implemented yet. The injector can't create the bean alone, so it's deactivated.")
     public void getBeansWithObjectAndAnyQualifierShouldReturnAllBeans() {
         final Collection<Object> beans = beanLoader.getBeans(Object.class, "any");
 
@@ -467,20 +471,30 @@ public class DefaultBeanLoaderTest {
 
         assertTrue(containsBean(BlueBean.class, beans)); // Bean with qualifier
         assertTrue(containsBean(HelloBean.class, beans)); // Bean without qualifier
+        assertTrue(containsBean(OrangeBean.class, beans)); // Bean created with factory
+
+        final OrangeBean orangeBean = getBean(OrangeBean.class, beans);
+        assertTrue(orangeBean.isCreatedByFactory());
     }
 
+    // TODO
     @Test
+    @Ignore("Factory not implemented yet. The injector can't create the bean alone, so it's deactivated.")
     public void getBeansWithColorBeanAndAnyQualifierShouldReturnAllColorBeans() {
         final Collection<ColorBean> beans = beanLoader.getBeans(ColorBean.class, "any");
 
         assertNotNull(beans);
-        assertEquals(5, beans.size());
+        assertEquals(6, beans.size());
 
         assertTrue(containsBean(BlueBean.class, beans));
         assertTrue(containsBean(GreenBean.class, beans));
         assertTrue(containsBean(RedBean.class, beans));
         assertTrue(containsBean(YellowBean.class, beans));
         assertTrue(containsBean(DarkYellowBean.class, beans));
+        assertTrue(containsBean(OrangeBean.class, beans));
+
+        final OrangeBean orangeBean = getBean(OrangeBean.class, beans);
+        assertTrue(orangeBean.isCreatedByFactory());
     }
 
     @Test(expected = IllegalArgumentException.class)
