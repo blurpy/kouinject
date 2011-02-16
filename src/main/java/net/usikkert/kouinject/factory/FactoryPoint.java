@@ -38,9 +38,17 @@ import net.usikkert.kouinject.beandata.BeanKey;
 public interface FactoryPoint<T> {
 
     /**
+     * The key describing the actual bean containing this factory member.
+     *
+     * @return The key for getting an instance of the factory with this factory point.
+     */
+    BeanKey getFactoryKey();
+
+    /**
      * Creates a new instance of the return type of this factory point, and injects the parameters if there are any.
      *
      * @param object The actual factory object to use when creating the instance with this factory point.
+     *               Use {@link #getFactoryKey()}.
      * @param parameters The parameters to inject into the factory point.
      * @return An instance of {@link #getReturnType()}.
      */
