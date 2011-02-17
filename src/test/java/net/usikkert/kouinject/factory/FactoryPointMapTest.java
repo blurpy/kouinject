@@ -38,17 +38,17 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Test of {@link FactoryMap}.
+ * Test of {@link FactoryPointMap}.
  *
  * @author Christian Ihle
  */
-public class FactoryMapTest {
+public class FactoryPointMapTest {
 
-    private FactoryMap map;
+    private FactoryPointMap map;
 
     @Before
-    public void createFactoryMap() {
-        map = new FactoryMap();
+    public void createFactoryPointMap() {
+        map = new FactoryPointMap();
     }
 
     @Test

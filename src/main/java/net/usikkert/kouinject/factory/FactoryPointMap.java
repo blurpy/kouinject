@@ -37,16 +37,16 @@ import org.apache.commons.lang.Validate;
  *
  * @author Christian Ihle
  */
-public class FactoryMap {
+public class FactoryPointMap {
 
     /** Map with the factory point as value, and the bean it creates as key. */
-    private final Map<BeanKey, FactoryPoint> factoryMap;
+    private final Map<BeanKey, FactoryPoint> factoryPointMap;
 
     /**
-     * Creates a new instance of this factory map, ready to use.
+     * Creates a new instance of this factory point map, ready to use.
      */
-    public FactoryMap() {
-        this.factoryMap = new HashMap<BeanKey, FactoryPoint>();
+    public FactoryPointMap() {
+        this.factoryPointMap = new HashMap<BeanKey, FactoryPoint>();
     }
 
     /**
@@ -63,7 +63,7 @@ public class FactoryMap {
             throw new IllegalArgumentException("Cannot add already existing factory point: " + factoryPoint);
         }
 
-        factoryMap.put(returnType, factoryPoint);
+        factoryPointMap.put(returnType, factoryPoint);
     }
 
     /**
@@ -81,7 +81,7 @@ public class FactoryMap {
 
         final List<BeanKey> matches = new ArrayList<BeanKey>();
 
-        for (final BeanKey bean : factoryMap.keySet()) {
+        for (final BeanKey bean : factoryPointMap.keySet()) {
             if (beanNeeded.canInject(bean)) {
                 matches.add(bean);
             }
@@ -101,16 +101,16 @@ public class FactoryMap {
             throw new IllegalStateException("Too many matching factory points found for " + beanNeeded + " " + matches);
         }
 
-        return factoryMap.get(matches.get(0));
+        return factoryPointMap.get(matches.get(0));
     }
 
     /**
      * Returns the number of factory points in the map.
      *
-     * @return The size of the factory map.
+     * @return The size of the factory point map.
      */
     public synchronized int size() {
-        return factoryMap.size();
+        return factoryPointMap.size();
     }
 
     /**
@@ -136,7 +136,7 @@ public class FactoryMap {
 
         final Collection<BeanKey> matches = new ArrayList<BeanKey>();
 
-        for (final BeanKey bean : factoryMap.keySet()) {
+        for (final BeanKey bean : factoryPointMap.keySet()) {
             if (beansNeeded.canInject(bean)) {
                 matches.add(bean);
             }
