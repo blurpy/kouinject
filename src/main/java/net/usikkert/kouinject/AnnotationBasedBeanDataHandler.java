@@ -55,7 +55,6 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
 
     private static final Class<Inject> INJECTION_ANNOTATION = Inject.class;
 
-    private final AnnotationBasedQualifierHandler qualifierHandler = new AnnotationBasedQualifierHandler();
     private final AnnotationBasedScopeHandler scopeHandler = new AnnotationBasedScopeHandler();
     private final ReflectionUtils reflectionUtils = new ReflectionUtils();
     private final BeanHelper beanHelper = new BeanHelper();
