@@ -89,6 +89,81 @@ public class BeanHelperBean {
 
     private Collection<?> collectionWithWildCard;
 
+    // ConstructorWithNoParameters
+    public BeanHelperBean() {
+
+    }
+
+    // ConstructorWithSingleParameter
+    public BeanHelperBean(final TheInterface theInterface) {
+
+    }
+
+    // PrivateConstructor
+    private BeanHelperBean(final SomeEnum someEnum) {
+
+    }
+
+    // ConstructorWithQualifiedParameter
+    public BeanHelperBean(@Named("ping") final TheInterfaceUser theInterfaceUser) {
+
+    }
+
+    // ConstructorWithSeveralParameters
+    public BeanHelperBean(final DateBean dateBean,
+                          @Green final ColorBean colorBean,
+                          @Named("excellent") final CoffeeBean coffeeBean) {
+
+    }
+
+    // ConstructorWithProvider
+    public BeanHelperBean(final Provider<RedBean> redBeanProvider,
+                          @Named("great") final Provider<NoBean> noBeanProvider) {
+
+    }
+
+    // ConstructorWithProviderWithoutGenericType
+    public BeanHelperBean(final Provider provider, final HelloBean helloBean) {
+
+    }
+
+    // ConstructorWithProviderWithGenericWildCard
+    public BeanHelperBean(final Provider<?> provider, final JavaBean javaBean) {
+
+    }
+
+    // ConstructorWithCollectionProvider
+    public BeanHelperBean(final CollectionProvider<YellowBean> yellowBeanCollectionProvider,
+                          @Named("awesome") final CollectionProvider<QualifierBean> qualifierBeanCollectionProvider) {
+
+    }
+
+    // ConstructorWithCollectionProviderWithoutGenericType
+    public BeanHelperBean(final CollectionProvider collectionProvider, final HelloBean helloBean) {
+
+    }
+
+    // ConstructorWithCollectionProviderWithGenericWildCard
+    public BeanHelperBean(final CollectionProvider<?> collectionProvider, final JavaBean javaBean) {
+
+    }
+
+    // ConstructorWithCollection
+    public BeanHelperBean(final Collection<GreenBean> greenBeanCollection,
+                          @Named("best") final Collection<CarBean> carBeanCollection) {
+
+    }
+
+    // ConstructorWithCollectionWithoutGenericType
+    public BeanHelperBean(final Collection collection, final HelloBean helloBean) {
+
+    }
+
+    // ConstructorWithCollectionWithGenericWildCard
+    public BeanHelperBean(final Collection<?> collection, final JavaBean javaBean) {
+
+    }
+
     @Produces
     public void voidFactoryMethod() {
 
