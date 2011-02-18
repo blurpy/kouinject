@@ -23,10 +23,23 @@
 package net.usikkert.kouinject.util;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import javax.inject.Provider;
 
 import net.usikkert.kouinject.AnnotationBasedQualifierHandler;
+import net.usikkert.kouinject.CollectionProvider;
 import net.usikkert.kouinject.beandata.BeanKey;
+import net.usikkert.kouinject.beandata.CollectionBeanKey;
+import net.usikkert.kouinject.beandata.CollectionProviderBeanKey;
+import net.usikkert.kouinject.beandata.ProviderBeanKey;
 
 import org.apache.commons.lang.Validate;
 
@@ -58,5 +71,118 @@ public class BeanHelper {
         final String qualifier = qualifierHandler.getQualifier(factoryMethod, annotations);
 
         return new BeanKey(returnType, qualifier);
+    }
+
+    /**
+     * Gets all the parameters of a method, with associated qualifiers, as a list of bean keys.
+     *
+     * @param method The method to find the parameters of.
+     * @return The methods parameters as bean keys.
+     */
+    public List<BeanKey> findParameterKeys(final Method method) {
+        Validate.notNull(method, "Method can not be null");
+
+        final Class<?>[] parameterTypes = method.getParameterTypes();
+        final Type[] genericParameterTypes = method.getGenericParameterTypes();
+        final Annotation[][] parameterAnnotations = method.getParameterAnnotations();
+
+        return findParameterKeys(method, parameterTypes, genericParameterTypes, parameterAnnotations);
+    }
+
+    /**
+     * Gets all the parameters of a constructor, with associated qualifiers, as a list of bean keys.
+     *
+     * @param constructor The constructor to find the parameters of.
+     * @return The constructor parameters as bean keys.
+     */
+    public List<BeanKey> findParameterKeys(final Constructor<?> constructor) {
+        Validate.notNull(constructor, "Constructor can not be null");
+
+        final Class<?>[] parameterTypes = constructor.getParameterTypes();
+        final Type[] genericParameterTypes = constructor.getGenericParameterTypes();
+        final Annotation[][] parameterAnnotations = constructor.getParameterAnnotations();
+
+        return findParameterKeys(constructor, parameterTypes, genericParameterTypes, parameterAnnotations);
+    }
+
+    /**
+     * Gets the type from the field, with associated qualifier, as a bean key.
+     *
+     * @param field The field to find the type of.
+     * @return The field as a bean key.
+     */
+    public BeanKey findFieldKey(final Field field) {
+        Validate.notNull(field, "Field can not be null");
+
+        final Class<?> type = field.getType();
+        final Type genericType = field.getGenericType();
+        final Annotation[] annotations = field.getAnnotations();
+
+        return findParameterKey(field, type, genericType, annotations);
+    }
+
+    private List<BeanKey> findParameterKeys(final Object parameterOwner, final Class<?>[] parameterTypes,
+                                            final Type[] genericParameterTypes, final Annotation[][] annotations) {
+        final List<BeanKey> parameters = new ArrayList<BeanKey>();
+
+        for (int i = 0; i < parameterTypes.length; i++) {
+            final Class<?> parameterClass = parameterTypes[i];
+            final Type parameterType = genericParameterTypes[i];
+
+            final BeanKey parameter = findParameterKey(parameterOwner, parameterClass, parameterType, annotations[i]);
+            parameters.add(parameter);
+        }
+
+        return parameters;
+    }
+
+    private BeanKey findParameterKey(final Object parameterOwner, final Class<?> parameterClass,
+                                     final Type parameterType, final Annotation[] annotations) {
+        final String qualifier = qualifierHandler.getQualifier(parameterOwner, annotations);
+
+        if (isProvider(parameterClass)) {
+            final Class<?> beanClassFromProvider = getBeanClassFromGenericType(parameterOwner, parameterType);
+            return new ProviderBeanKey(beanClassFromProvider, qualifier);
+        }
+
+        else if (isCollection(parameterClass)) {
+            final Class<?> beanClassFromCollection = getBeanClassFromGenericType(parameterOwner, parameterType);
+            return new CollectionBeanKey(beanClassFromCollection, qualifier);
+        }
+
+        else if (isCollectionProvider(parameterClass)) {
+            final Class<?> beanClassFromCollectionProvider = getBeanClassFromGenericType(parameterOwner, parameterType);
+            return new CollectionProviderBeanKey(beanClassFromCollectionProvider, qualifier);
+        }
+
+        else {
+            return new BeanKey(parameterClass, qualifier);
+        }
+    }
+
+    private Class<?> getBeanClassFromGenericType(final Object parameterOwner, final Type genericParameterType) {
+        if (genericParameterType instanceof ParameterizedType) {
+            final ParameterizedType parameterizedType = (ParameterizedType) genericParameterType;
+            final Type[] typeArguments = parameterizedType.getActualTypeArguments();
+            final Type firstTypeArgument = typeArguments[0];
+
+            if (firstTypeArgument instanceof Class<?>) {
+                return (Class<?>) firstTypeArgument;
+            }
+        }
+
+        throw new IllegalArgumentException("Generic class used without type argument: " + parameterOwner);
+    }
+
+    private boolean isProvider(final Class<?> parameterType) {
+        return Provider.class.equals(parameterType);
+    }
+
+    private boolean isCollection(final Class<?> parameterType) {
+        return Collection.class.equals(parameterType);
+    }
+
+    private boolean isCollectionProvider(final Class<?> parameterType) {
+        return CollectionProvider.class.equals(parameterType);
     }
 }
