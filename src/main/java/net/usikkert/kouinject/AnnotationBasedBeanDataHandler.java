@@ -22,29 +22,22 @@
 
 package net.usikkert.kouinject;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
 import net.usikkert.kouinject.beandata.BeanData;
 import net.usikkert.kouinject.beandata.BeanKey;
-import net.usikkert.kouinject.beandata.CollectionBeanKey;
-import net.usikkert.kouinject.beandata.CollectionProviderBeanKey;
 import net.usikkert.kouinject.beandata.ConstructorData;
 import net.usikkert.kouinject.beandata.FieldData;
 import net.usikkert.kouinject.beandata.InjectionPoint;
 import net.usikkert.kouinject.beandata.MethodData;
-import net.usikkert.kouinject.beandata.ProviderBeanKey;
+import net.usikkert.kouinject.util.BeanHelper;
 
 import org.apache.commons.lang.Validate;
 
@@ -65,6 +58,7 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
     private final AnnotationBasedQualifierHandler qualifierHandler = new AnnotationBasedQualifierHandler();
     private final AnnotationBasedScopeHandler scopeHandler = new AnnotationBasedScopeHandler();
     private final ReflectionUtils reflectionUtils = new ReflectionUtils();
+    private final BeanHelper beanHelper = new BeanHelper();
 
     /**
      * {@inheritDoc}
@@ -88,9 +82,8 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
         }
 
         final Constructor<?> constructor = findConstructor(beanClass);
-        final ConstructorData constructorData = createConstructorData(constructor);
 
-        return constructorData;
+        return createConstructorData(constructor);
     }
 
     private List<InjectionPoint> findInjectionPoints(final List<Member> allMembers, final List<Method> allMethods) {
@@ -124,46 +117,15 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
     }
 
     private boolean fieldNeedsInjection(final Field field) {
-        return !reflectionUtils.isStatic(field)
-             && !reflectionUtils.isFinal(field)
-             && field.isAnnotationPresent(INJECTION_ANNOTATION);
+        return !reflectionUtils.isStatic(field) &&
+               !reflectionUtils.isFinal(field) &&
+               field.isAnnotationPresent(INJECTION_ANNOTATION);
     }
 
     private FieldData createFieldData(final Field field) {
-        final BeanKey dependency = findDependency(field);
-        final FieldData fieldData = new FieldData(field, dependency);
+        final BeanKey dependency = beanHelper.findFieldKey(field);
 
-        return fieldData;
-    }
-
-    private BeanKey findDependency(final Field field) {
-        final Class<?> fieldBeanClass = field.getType();
-        final String qualifier = qualifierHandler.getQualifier(field, field.getAnnotations());
-
-        if (isProvider(fieldBeanClass)) {
-            final Type genericType = field.getGenericType();
-            final Class<?> beanClassFromProvider = getBeanClassFromGenericType(field, genericType);
-
-            return new ProviderBeanKey(beanClassFromProvider, qualifier);
-        }
-
-        else if (isCollection(fieldBeanClass)) {
-            final Type genericType = field.getGenericType();
-            final Class<?> beanClassFromCollection = getBeanClassFromGenericType(field, genericType);
-
-            return new CollectionBeanKey(beanClassFromCollection, qualifier);
-        }
-
-        else if (isCollectionProvider(fieldBeanClass)) {
-            final Type genericType = field.getGenericType();
-            final Class<?> beanClassFromCollectionProvider = getBeanClassFromGenericType(field, genericType);
-
-            return new CollectionProviderBeanKey(beanClassFromCollectionProvider, qualifier);
-        }
-
-        else {
-            return new BeanKey(fieldBeanClass, qualifier);
-        }
+        return new FieldData(field, dependency);
     }
 
     private boolean methodNeedsInjection(final Method method) {
@@ -171,18 +133,9 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
     }
 
     private MethodData createMethodData(final Method method) {
-        final List<BeanKey> dependencies = findDependencies(method);
-        final MethodData methodData = new MethodData(method, dependencies);
+        final List<BeanKey> dependencies = beanHelper.findParameterKeys(method);
 
-        return methodData;
-    }
-
-    private List<BeanKey> findDependencies(final Method method) {
-        final Class<?>[] parameterTypes = method.getParameterTypes();
-        final Type[] genericParameterTypes = method.getGenericParameterTypes();
-        final Annotation[][] parameterAnnotations = method.getParameterAnnotations();
-
-        return findDependencies(method, parameterTypes, genericParameterTypes, parameterAnnotations);
+        return new MethodData(method, dependencies);
     }
 
     private Constructor<?> findConstructor(final Class<?> beanClass) {
@@ -218,85 +171,8 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
     }
 
     private ConstructorData createConstructorData(final Constructor<?> constructor) {
-        final List<BeanKey> dependencies = findDependencies(constructor);
-        final ConstructorData constructorData = new ConstructorData(constructor, dependencies);
+        final List<BeanKey> dependencies = beanHelper.findParameterKeys(constructor);
 
-        return constructorData;
-    }
-
-    private List<BeanKey> findDependencies(final Constructor<?> constructor) {
-        final Class<?>[] parameterTypes = constructor.getParameterTypes();
-        final Type[] genericParameterTypes = constructor.getGenericParameterTypes();
-        final Annotation[][] parameterAnnotations = constructor.getParameterAnnotations();
-
-        return findDependencies(constructor, parameterTypes, genericParameterTypes, parameterAnnotations);
-    }
-
-    private List<BeanKey> findDependencies(final Object parameterOwner, final Class<?>[] parameterTypes,
-            final Type[] genericParameterTypes, final Annotation[][] annotations) {
-        final List<BeanKey> dependencies = new ArrayList<BeanKey>();
-
-        for (int i = 0; i < parameterTypes.length; i++) {
-            final Class<?> parameterClass = parameterTypes[i];
-            final Type parameterType = genericParameterTypes[i];
-
-            final BeanKey dependency = findDependency(parameterOwner, parameterClass, parameterType, annotations[i]);
-            dependencies.add(dependency);
-        }
-
-        return dependencies;
-    }
-
-    private BeanKey findDependency(final Object parameterOwner, final Class<?> parameterClass,
-            final Type parameterType, final Annotation[] annotations) {
-        final String qualifier = qualifierHandler.getQualifier(parameterOwner, annotations);
-
-        if (isProvider(parameterClass)) {
-            final Class<?> beanClassFromProvider = getBeanClassFromGenericType(parameterOwner, parameterType);
-
-            return new ProviderBeanKey(beanClassFromProvider, qualifier);
-        }
-
-        else if (isCollection(parameterClass)) {
-            final Class<?> beanClassFromCollection = getBeanClassFromGenericType(parameterOwner, parameterType);
-
-            return new CollectionBeanKey(beanClassFromCollection, qualifier);
-        }
-
-        else if (isCollectionProvider(parameterClass)) {
-            final Class<?> beanClassFromCollectionProvider = getBeanClassFromGenericType(parameterOwner, parameterType);
-
-            return new CollectionProviderBeanKey(beanClassFromCollectionProvider, qualifier);
-        }
-
-        else {
-            return new BeanKey(parameterClass, qualifier);
-        }
-    }
-
-    private boolean isProvider(final Class<?> parameterType) {
-        return Provider.class.equals(parameterType);
-    }
-
-    private boolean isCollection(final Class<?> parameterType) {
-        return Collection.class.equals(parameterType);
-    }
-
-    private boolean isCollectionProvider(final Class<?> parameterType) {
-        return CollectionProvider.class.equals(parameterType);
-    }
-
-    private Class<?> getBeanClassFromGenericType(final Object parameterOwner, final Type genericParameterType) {
-        if (genericParameterType instanceof ParameterizedType) {
-            final ParameterizedType parameterizedType = (ParameterizedType) genericParameterType;
-            final Type[] typeArguments = parameterizedType.getActualTypeArguments();
-            final Type firstTypeArgument = typeArguments[0];
-
-            if (firstTypeArgument instanceof Class<?>) {
-                return (Class<?>) firstTypeArgument;
-            }
-        }
-
-        throw new IllegalArgumentException("Generic class used without type argument: " + parameterOwner);
+        return new ConstructorData(constructor, dependencies);
     }
 }
