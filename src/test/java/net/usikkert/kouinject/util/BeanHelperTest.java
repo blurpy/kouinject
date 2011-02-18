@@ -32,11 +32,11 @@ import javax.inject.Provider;
 
 import net.usikkert.kouinject.CollectionProvider;
 import net.usikkert.kouinject.beandata.BeanKey;
+import net.usikkert.kouinject.testbeans.notscanned.BeanHelperBean;
 import net.usikkert.kouinject.testbeans.notscanned.SomeEnum;
 import net.usikkert.kouinject.testbeans.notscanned.TheInterface;
 import net.usikkert.kouinject.testbeans.notscanned.TheInterfaceUser;
 import net.usikkert.kouinject.testbeans.notscanned.date.DateBean;
-import net.usikkert.kouinject.testbeans.notscanned.factory.FactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.CarBean;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
@@ -377,10 +377,10 @@ public class BeanHelperTest {
     }
 
     private Method getMethod(final String methodName, final Class<?>... parameters) throws NoSuchMethodException {
-        return FactoryBean.class.getDeclaredMethod(methodName, parameters);
+        return BeanHelperBean.class.getDeclaredMethod(methodName, parameters);
     }
 
     private Field getField(final String fieldName) throws NoSuchFieldException {
-        return FactoryBean.class.getDeclaredField(fieldName);
+        return BeanHelperBean.class.getDeclaredField(fieldName);
     }
 }

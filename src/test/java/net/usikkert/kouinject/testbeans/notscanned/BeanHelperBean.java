@@ -20,7 +20,7 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans.notscanned.factory;
+package net.usikkert.kouinject.testbeans.notscanned;
 
 import java.util.Collection;
 
@@ -48,13 +48,11 @@ import net.usikkert.kouinject.testbeans.scanned.qualifier.RedBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.YellowBean;
 
 /**
- * A factory bean with test methods.
- *
- * TODO rename
+ * A bean for testing the bean helper.
  *
  * @author Christian Ihle
  */
-public class FactoryBean {
+public class BeanHelperBean {
 
     private TheInterface field;
 
