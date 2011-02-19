@@ -20,26 +20,53 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.factory;
+
+import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
+import net.usikkert.kouinject.testbeans.scanned.qualifier.ColorBean;
+import net.usikkert.kouinject.testbeans.scanned.qualifier.RedBean;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * A bean with parameters created using a factory.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+public class ThreeParametersFactoryCreatedBean {
 
-    ALL(85),
-    SCANNED(64),
-    SCANNED_WITHOUT_QUALIFIER(46);
+    private boolean createdByFactory;
+    private ColorBean colorBean;
+    private CoffeeBean coffeeBean;
+    private RedBean redBean;
 
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
+    public boolean isCreatedByFactory() {
+        return createdByFactory;
     }
 
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    public void setCreatedByFactory(final boolean createdByFactory) {
+        this.createdByFactory = createdByFactory;
+    }
+
+    public ColorBean getColorBean() {
+        return colorBean;
+    }
+
+    public void setColorBean(final ColorBean colorBean) {
+        this.colorBean = colorBean;
+    }
+
+    public CoffeeBean getCoffeeBean() {
+        return coffeeBean;
+    }
+
+    public void setCoffeeBean(final CoffeeBean coffeeBean) {
+        this.coffeeBean = coffeeBean;
+    }
+
+    public RedBean getRedBean() {
+        return redBean;
+    }
+
+    public void setRedBean(final RedBean redBean) {
+        this.redBean = redBean;
     }
 }

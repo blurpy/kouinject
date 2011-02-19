@@ -20,26 +20,33 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.factory;
+
+import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * A bean with a single parameter created using a factory.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+public class OneParameterFactoryCreatedBean {
 
-    ALL(85),
-    SCANNED(64),
-    SCANNED_WITHOUT_QUALIFIER(46);
+    private boolean createdByFactory;
+    private HelloBean helloBean;
 
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
+    public boolean isCreatedByFactory() {
+        return createdByFactory;
     }
 
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    public void setCreatedByFactory(final boolean createdByFactory) {
+        this.createdByFactory = createdByFactory;
+    }
+
+    public void setHelloBean(final HelloBean helloBean) {
+        this.helloBean = helloBean;
+    }
+
+    public HelloBean getHelloBean() {
+        return helloBean;
     }
 }

@@ -20,26 +20,41 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.factory;
+
+import java.util.Collection;
+
+import javax.inject.Provider;
+
+import net.usikkert.kouinject.CollectionProvider;
+import net.usikkert.kouinject.annotation.Component;
+import net.usikkert.kouinject.annotation.Produces;
+import net.usikkert.kouinject.testbeans.scanned.FieldBean;
+import net.usikkert.kouinject.testbeans.scanned.HelloBean;
+import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
+import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * Test of factory points with different types of parameters.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+@Component
+public class DifferentTypesFactoryBean {
 
-    ALL(85),
-    SCANNED(64),
-    SCANNED_WITHOUT_QUALIFIER(46);
+    @Produces
+    public DifferentTypesFactoryCreatedBean createBean(final HelloBean helloBean,
+                                                       final CollectionProvider<FieldBean> fieldBeanCollectionProvider,
+                                                       final Provider<CoffeeBean> coffeeBeanProvider,
+                                                       final Collection<JavaBean> javaBeanCollection) {
+        final DifferentTypesFactoryCreatedBean bean = new DifferentTypesFactoryCreatedBean();
 
-    private final int numberOfBeans;
+        bean.setHelloBean(helloBean);
+        bean.setCoffeeBeanProvider(coffeeBeanProvider);
+        bean.setFieldBeanCollectionProvider(fieldBeanCollectionProvider);
+        bean.setJavaBeanCollection(javaBeanCollection);
+        bean.setCreatedByFactory(true);
 
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
-    }
-
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+        return bean;
     }
 }

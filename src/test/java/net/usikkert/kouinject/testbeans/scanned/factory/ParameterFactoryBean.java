@@ -20,26 +20,47 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.factory;
+
+import javax.inject.Named;
+
+import net.usikkert.kouinject.annotation.Component;
+import net.usikkert.kouinject.annotation.Produces;
+import net.usikkert.kouinject.testbeans.scanned.HelloBean;
+import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
+import net.usikkert.kouinject.testbeans.scanned.qualifier.Blue;
+import net.usikkert.kouinject.testbeans.scanned.qualifier.ColorBean;
+import net.usikkert.kouinject.testbeans.scanned.qualifier.RedBean;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * Test of factory points with parameters.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+@Component
+public class ParameterFactoryBean {
 
-    ALL(85),
-    SCANNED(64),
-    SCANNED_WITHOUT_QUALIFIER(46);
+    @Produces
+    public OneParameterFactoryCreatedBean createBeanWithOneParameter(final HelloBean helloBean) {
+        final OneParameterFactoryCreatedBean bean = new OneParameterFactoryCreatedBean();
 
-    private final int numberOfBeans;
+        bean.setHelloBean(helloBean);
+        bean.setCreatedByFactory(true);
 
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
+        return bean;
     }
 
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    @Produces
+    public ThreeParametersFactoryCreatedBean createBeanWithThreeParameters(@Blue final ColorBean colorBean,
+                                                                           final CoffeeBean coffeeBean,
+                                                                           @Named("red") final RedBean redBean) {
+        final ThreeParametersFactoryCreatedBean bean = new ThreeParametersFactoryCreatedBean();
+
+        bean.setColorBean(colorBean);
+        bean.setCoffeeBean(coffeeBean);
+        bean.setRedBean(redBean);
+        bean.setCreatedByFactory(true);
+
+        return bean;
     }
 }
