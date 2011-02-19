@@ -69,6 +69,11 @@ public class AnnotationBasedFactoryPointHandlerTest {
     }
 
     @Test
+    public void getFactoryPointsShouldFindPrivateFactoryMethods() {
+        fail("Not implemented");
+    }
+
+    @Test
     public void getFactoryPointsShouldNotReturnMethodsWithoutProducesAnnotation() {
         fail("Not implemented");
     }
