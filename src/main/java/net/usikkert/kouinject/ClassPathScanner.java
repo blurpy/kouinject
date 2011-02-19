@@ -33,6 +33,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.logging.Logger;
 
+import net.usikkert.kouinject.util.ReflectionUtils;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 

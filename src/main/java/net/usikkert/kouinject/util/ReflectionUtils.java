@@ -20,7 +20,7 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject;
+package net.usikkert.kouinject.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;

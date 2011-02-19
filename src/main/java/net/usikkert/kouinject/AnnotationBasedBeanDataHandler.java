@@ -38,6 +38,7 @@ import net.usikkert.kouinject.beandata.FieldData;
 import net.usikkert.kouinject.beandata.InjectionPoint;
 import net.usikkert.kouinject.beandata.MethodData;
 import net.usikkert.kouinject.util.BeanHelper;
+import net.usikkert.kouinject.util.ReflectionUtils;
 
 import org.apache.commons.lang.Validate;
 
