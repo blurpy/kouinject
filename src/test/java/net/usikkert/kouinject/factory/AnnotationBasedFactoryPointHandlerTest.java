@@ -214,7 +214,7 @@ public class AnnotationBasedFactoryPointHandlerTest {
         checkBeanKey(factoryPoint1.getParameters().get(0), HelloBean.class, null);
 
         final FactoryPoint<?> factoryPoint2 = factoryPoints.get(1);
-        checkBeanKey(factoryPoint2.getReturnType(), ThreeParametersFactoryCreatedBean.class, "second");
+        checkBeanKey(factoryPoint2.getReturnType(), ThreeParametersFactoryCreatedBean.class, null);
         checkBeanKey(factoryPoint2.getFactoryKey(), ParameterFactoryBean.class, null);
         assertFalse(factoryPoint2.isSingleton());
 

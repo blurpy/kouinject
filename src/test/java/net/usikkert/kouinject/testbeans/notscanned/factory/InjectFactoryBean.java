@@ -35,7 +35,7 @@ public class InjectFactoryBean {
 
     @Produces
     @Inject
-    public static Object createBean() {
+    public Object createBean() {
         return null;
     }
 }
