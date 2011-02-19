@@ -30,7 +30,7 @@ import net.usikkert.kouinject.beandata.BeanKey;
  * This interface represents a factory point like a method or a field.
  *
  * <p>A factory point creates new instances of beans, and defines their qualifiers
- * and scope. Methods may also inject dependencies for usage when creating the beans.</p>
+ * and scope. Methods may also inject parameters for usage when creating the beans.</p>
  *
  * @author Christian Ihle
  * @param <T> The type of class this factory point can create instances of.
@@ -47,19 +47,20 @@ public interface FactoryPoint<T> {
     /**
      * Creates a new instance of the return type of this factory point, and injects the parameters if there are any.
      *
-     * @param object The actual factory object to use when creating the instance with this factory point.
-     *               Use {@link #getFactoryKey()}.
-     * @param parameters The parameters to inject into the factory point.
+     * @param factoryInstance The actual factory object to use when creating the bean with this factory point.
+     *                        Use {@link #getFactoryKey()}.
+     * @param factoryPointParameters Instances of the parameters to inject into the factory point.
+     *                               Use {@link #getParameters()}.
      * @return An instance of {@link #getReturnType()}.
      */
-    T create(final Object object, final Object[] parameters);
+    T create(final Object factoryInstance, final Object... factoryPointParameters);
 
     /**
-     * Gets the dependencies (parameters) required to execute the factory point.
+     * Gets the keys to the parameters required to execute this factory point.
      *
-     * @return A list of the required dependencies.
+     * @return A list of the required parameters.
      */
-    List<BeanKey> getDependencies();
+    List<BeanKey> getParameters();
 
     /**
      * The class and qualifier of the object created by this factory point.
