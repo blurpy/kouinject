@@ -22,7 +22,15 @@
 
 package net.usikkert.kouinject.factory;
 
+import static org.junit.Assert.*;
+
+import java.util.List;
+
+import net.usikkert.kouinject.beandata.BeanKey;
+import net.usikkert.kouinject.testbeans.scanned.HelloBean;
+
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -30,6 +38,7 @@ import org.junit.Test;
  *
  * @author Christian Ihle
  */
+@Ignore("Not implemented")
 public class AnnotationBasedFactoryPointHandlerTest {
 
     private AnnotationBasedFactoryPointHandler handler;
@@ -40,7 +49,87 @@ public class AnnotationBasedFactoryPointHandlerTest {
     }
 
     @Test
-    public void getFactoryPoints() {
-        handler.getFactoryPoints(null);
+    public void getFactoryPointsShouldHandleNoFactoryMethods() {
+        final BeanKey factory = new BeanKey(HelloBean.class);
+
+        final List<FactoryPoint> factoryPoints = handler.getFactoryPoints(factory);
+
+        assertNotNull(factoryPoints);
+        assertTrue(factoryPoints.isEmpty());
+    }
+
+    @Test
+    public void getFactoryPointsShouldFindSingleFactoryMethod() {
+        fail("Not implemented");
+    }
+
+    @Test
+    public void getFactoryPointsShouldFindMultipleFactoryMethods() {
+        fail("Not implemented");
+    }
+
+    @Test
+    public void getFactoryPointsShouldNotReturnMethodsWithoutProducesAnnotation() {
+        fail("Not implemented");
+    }
+
+    @Test
+    public void getFactoryPointsShouldFindTheReturnTypeOfTheMethod() {
+        fail("Not implemented");
+    }
+
+    @Test
+    public void getFactoryPointsShouldSetTheFactoryKey() {
+        fail("Not implemented");
+    }
+
+    @Test
+    public void getFactoryPointsShouldFindTheScopeOfTheMethod() {
+        fail("Not implemented");
+    }
+
+    @Test
+    public void getFactoryPointsShouldFindTheQualifierOfTheMethod() {
+        fail("Not implemented");
+    }
+
+    @Test
+    public void getFactoryPointsShouldFindTheCorrectParameters() {
+        fail("Not implemented");
+    }
+
+    @Test
+    public void getFactoryPointsShouldFindQualifiersOnTheParameters() {
+        fail("Not implemented");
+    }
+
+    @Test
+    public void getFactoryPointsShouldFindProviderParameters() {
+        fail("Not implemented");
+    }
+
+    @Test
+    public void getFactoryPointsShouldFindCollectionProviderParameters() {
+        fail("Not implemented");
+    }
+
+    @Test
+    public void getFactoryPointsShouldFindCollectionParameters() {
+        fail("Not implemented");
+    }
+
+    @Test
+    public void getFactoryPointsShouldHandleOverriddenMethods() {
+        fail("Not implemented");
+    }
+
+    @Test
+    public void getFactoryPointsShouldIgnoreStaticMethods() {
+        fail("Not implemented");
+    }
+
+    @Test
+    public void getFactoryPointsShouldFailIfInjectAnnotationPresent() {
+        fail("Not implemented");
     }
 }

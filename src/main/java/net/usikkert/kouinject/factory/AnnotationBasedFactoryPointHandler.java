@@ -22,9 +22,12 @@
 
 package net.usikkert.kouinject.factory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.usikkert.kouinject.beandata.BeanKey;
+
+import org.apache.commons.lang.Validate;
 
 /**
  * Implementation of {@link FactoryPointHandler} that uses annotations and reflection to scan beans
@@ -42,6 +45,8 @@ public class AnnotationBasedFactoryPointHandler implements FactoryPointHandler {
      */
     @Override
     public List<FactoryPoint> getFactoryPoints(final BeanKey factoryBean) {
-        return null;
+        Validate.notNull(factoryBean, "Factory bean can not be null");
+
+        return new ArrayList<FactoryPoint>();
     }
 }
