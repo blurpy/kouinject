@@ -22,10 +22,18 @@
 
 package net.usikkert.kouinject.factory;
 
+import java.lang.reflect.Member;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import net.usikkert.kouinject.AnnotationBasedScopeHandler;
+import net.usikkert.kouinject.annotation.Produces;
 import net.usikkert.kouinject.beandata.BeanKey;
+import net.usikkert.kouinject.util.BeanHelper;
+import net.usikkert.kouinject.util.ReflectionUtils;
 
 import org.apache.commons.lang.Validate;
 
@@ -40,6 +48,13 @@ import org.apache.commons.lang.Validate;
  */
 public class AnnotationBasedFactoryPointHandler implements FactoryPointHandler {
 
+    private static final Class<Produces> FACTORY_ANNOTATION = Produces.class;
+    private static final Class<Inject> INJECTION_ANNOTATION = Inject.class;
+
+    private final AnnotationBasedScopeHandler scopeHandler = new AnnotationBasedScopeHandler();
+    private final ReflectionUtils reflectionUtils = new ReflectionUtils();
+    private final BeanHelper beanHelper = new BeanHelper();
+
     /**
      * {@inheritDoc}
      */
@@ -47,6 +62,51 @@ public class AnnotationBasedFactoryPointHandler implements FactoryPointHandler {
     public List<FactoryPoint> getFactoryPoints(final BeanKey factoryBean) {
         Validate.notNull(factoryBean, "Factory bean can not be null");
 
-        return new ArrayList<FactoryPoint>();
+        final List<Method> allMethods = reflectionUtils.findAllMethods(factoryBean.getBeanClass());
+        final List<Member> allMembers = reflectionUtils.findAllMembers(factoryBean.getBeanClass());
+
+        return findAllFactoryPoints(allMembers, allMethods, factoryBean);
+    }
+
+    private List<FactoryPoint> findAllFactoryPoints(final List<Member> allMembers, final List<Method> allMethods,
+                                                    final BeanKey factoryBean) {
+        final List<FactoryPoint> factoryPoints = new ArrayList<FactoryPoint>();
+
+        for (final Member member : allMembers) {
+            if (member instanceof Method) {
+                final Method method = (Method) member;
+
+                if (methodIsFactoryPoint(method) && !reflectionUtils.isOverridden(method, allMethods)) {
+                    failIfInjectionPoint(method);
+
+                    final FactoryPointMethod factoryPointMethod = createFactoryPointMethod(method, factoryBean);
+                    factoryPoints.add(factoryPointMethod);
+                }
+            }
+        }
+
+        return factoryPoints;
+    }
+
+    private void failIfInjectionPoint(final Method method) {
+        if (methodIsInjectionPoint(method)) {
+            throw new UnsupportedOperationException("A factory point can't also be an injection point: " + method);
+        }
+    }
+
+    private boolean methodIsFactoryPoint(final Method method) {
+        return !reflectionUtils.isStatic(method) && method.isAnnotationPresent(FACTORY_ANNOTATION);
+    }
+
+    private boolean methodIsInjectionPoint(final Method method) {
+        return method.isAnnotationPresent(INJECTION_ANNOTATION);
+    }
+
+    private FactoryPointMethod createFactoryPointMethod(final Method method, final BeanKey factoryBean) {
+        final List<BeanKey> parameters = beanHelper.findParameterKeys(method);
+        final BeanKey returnType = beanHelper.findFactoryReturnType(method);
+        final boolean singleton = scopeHandler.isSingleton(method);
+
+        return new FactoryPointMethod(method, factoryBean, returnType, parameters, singleton);
     }
 }

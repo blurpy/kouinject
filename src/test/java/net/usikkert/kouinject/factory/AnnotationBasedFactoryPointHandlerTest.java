@@ -57,7 +57,6 @@ import net.usikkert.kouinject.testbeans.scanned.qualifier.OrangeBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.RedBean;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -65,7 +64,6 @@ import org.junit.Test;
  *
  * @author Christian Ihle
  */
-@Ignore("Not implemented")
 public class AnnotationBasedFactoryPointHandlerTest {
 
     private AnnotationBasedFactoryPointHandler handler;
