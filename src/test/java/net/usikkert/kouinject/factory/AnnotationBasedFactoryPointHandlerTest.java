@@ -27,11 +27,15 @@ import static org.junit.Assert.*;
 import java.util.List;
 
 import net.usikkert.kouinject.beandata.BeanKey;
+import net.usikkert.kouinject.testbeans.notscanned.factory.InjectFactoryBean;
+import net.usikkert.kouinject.testbeans.notscanned.factory.StaticFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.EverythingBean;
 import net.usikkert.kouinject.testbeans.scanned.FieldBean;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.ChildFactoryBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.ChildFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.DifferentTypesFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.DifferentTypesFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.FirstMultipleFactoryCreatedBean;
@@ -39,6 +43,7 @@ import net.usikkert.kouinject.testbeans.scanned.factory.MultipleFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.OneParameterFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.OrangeFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.ParameterFactoryBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.ParentFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.PrivateFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.PrivateFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.SecondMultipleFactoryCreatedBean;
@@ -254,17 +259,41 @@ public class AnnotationBasedFactoryPointHandlerTest {
 
     @Test
     public void getFactoryPointsShouldHandleOverriddenMethods() {
-        fail("Not implemented");
+        final BeanKey factory = new BeanKey(ChildFactoryBean.class);
+
+        final List<FactoryPoint> factoryPoints = handler.getFactoryPoints(factory);
+
+        assertNotNull(factoryPoints);
+        assertEquals(2, factoryPoints.size());
+
+        final FactoryPoint factoryPoint1 = factoryPoints.get(0);
+        checkBeanKey(factoryPoint1.getReturnType(), ParentFactoryCreatedBean.class, "parent");
+        checkBeanKey(factoryPoint1.getFactoryKey(), ChildFactoryBean.class, null);
+        assertFalse(factoryPoint1.isSingleton());
+        assertTrue(factoryPoint1.getParameters().isEmpty());
+
+        final FactoryPoint factoryPoint2 = factoryPoints.get(1);
+        checkBeanKey(factoryPoint2.getReturnType(), ChildFactoryCreatedBean.class, "child");
+        checkBeanKey(factoryPoint2.getFactoryKey(), ChildFactoryBean.class, null);
+        assertFalse(factoryPoint2.isSingleton());
+        assertTrue(factoryPoint2.getParameters().isEmpty());
     }
 
     @Test
     public void getFactoryPointsShouldIgnoreStaticMethods() {
-        fail("Not implemented");
+        final BeanKey factory = new BeanKey(StaticFactoryBean.class);
+
+        final List<FactoryPoint> factoryPoints = handler.getFactoryPoints(factory);
+
+        assertNotNull(factoryPoints);
+        assertTrue(factoryPoints.isEmpty());
     }
 
-    @Test
+    @Test(expected = UnsupportedOperationException.class)
     public void getFactoryPointsShouldFailIfInjectAnnotationPresent() {
-        fail("Not implemented");
+        final BeanKey factory = new BeanKey(InjectFactoryBean.class);
+
+        handler.getFactoryPoints(factory);
     }
 
     @Test

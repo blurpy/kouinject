@@ -20,26 +20,22 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.notscanned.factory;
+
+import javax.inject.Inject;
+
+import net.usikkert.kouinject.annotation.Produces;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * A factory bean with inject annotation on the factory point. That's not valid.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+public class InjectFactoryBean {
 
-    ALL(86),
-    SCANNED(65),
-    SCANNED_WITHOUT_QUALIFIER(47);
-
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
-    }
-
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    @Produces
+    @Inject
+    public static Object createBean() {
+        return null;
     }
 }

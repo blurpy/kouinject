@@ -20,26 +20,37 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.factory;
+
+import javax.inject.Named;
+
+import net.usikkert.kouinject.annotation.Component;
+import net.usikkert.kouinject.annotation.Produces;
+import net.usikkert.kouinject.testbeans.notscanned.factory.OverriddenFactoryCreatedBean;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * Test of inheritance in factory beans.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+@Component
+public class ChildFactoryBean extends ParentFactoryBean {
 
-    ALL(86),
-    SCANNED(65),
-    SCANNED_WITHOUT_QUALIFIER(47);
+    // Overrides method without @Produces
+    @Override
+    @Produces @Named("child")
+    public ChildFactoryCreatedBean createChildBean() {
+        final ChildFactoryCreatedBean bean = new ChildFactoryCreatedBean();
+        bean.setCreatedByChild(true);
 
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
+        return bean;
     }
 
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    // Overrides method with @Produces
+    @Override
+    @Named("child")
+    public OverriddenFactoryCreatedBean createOverriddenBean() {
+        throw new UnsupportedOperationException("Method without @Produces overriding method" +
+                " with @Produces should never be called");
     }
 }

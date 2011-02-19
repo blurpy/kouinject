@@ -20,26 +20,31 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.factory;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * A bean created using a child factory.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+public class ChildFactoryCreatedBean {
 
-    ALL(86),
-    SCANNED(65),
-    SCANNED_WITHOUT_QUALIFIER(47);
+    private boolean createdByParent;
+    private boolean createdByChild;
 
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
+    public boolean isCreatedByChild() {
+        return createdByChild;
     }
 
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    public void setCreatedByChild(final boolean createdByChild) {
+        this.createdByChild = createdByChild;
+    }
+
+    public boolean isCreatedByParent() {
+        return createdByParent;
+    }
+
+    public void setCreatedByParent(final boolean createdByParent) {
+        this.createdByParent = createdByParent;
     }
 }
