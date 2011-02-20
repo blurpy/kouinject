@@ -34,6 +34,7 @@ import net.usikkert.kouinject.beandata.BeanData;
 import net.usikkert.kouinject.beandata.BeanKey;
 import net.usikkert.kouinject.beandata.ConstructorData;
 import net.usikkert.kouinject.beandata.InjectionPoint;
+import net.usikkert.kouinject.factory.FactoryPoint;
 import net.usikkert.kouinject.factory.FactoryPointHandler;
 import net.usikkert.kouinject.factory.FactoryPointMap;
 
@@ -98,6 +99,8 @@ public class DefaultBeanLoader implements BeanLoader {
             LOG.finest("Loading bean-data for: " + bean);
             final BeanData beanData = beanDataHandler.getBeanData(bean.getBeanClass(), false);
             beanDataMap.addBeanData(bean, beanData);
+            final List<FactoryPoint> factoryPoints = factoryPointHandler.getFactoryPoints(bean);
+            factoryPointMap.addFactoryPoints(factoryPoints);
         }
 
         final long stop = System.currentTimeMillis();
@@ -124,7 +127,8 @@ public class DefaultBeanLoader implements BeanLoader {
         final BeanKey dependency = new BeanKey(beanClass, qualifier);
         LOG.finer("Requesting: " + dependency);
 
-        if (!beanDataMap.containsBeanData(dependency)) {
+        // TODO fail if in both
+        if (!beanDataMap.containsBeanData(dependency) && !factoryPointMap.containsFactoryPoint(dependency)) {
             throw new IllegalArgumentException("No registered bean-data for: " + dependency);
         }
 
@@ -233,14 +237,32 @@ public class DefaultBeanLoader implements BeanLoader {
 
         beansInCreation.addBean(dependency);
 
-        final BeanData beanData = findBeanData(dependency);
-        final BeanKey beanKeyForBeanData = beanDataMap.getBeanKeyForBeanData(beanData);
-        LOG.finer("Mapping " + dependency + " to " + beanKeyForBeanData);
+        final Object instance;
 
-        final Object instance = instantiateBean(beanData);
+        // TODO clean?
+        if (factoryPointMap.containsFactoryPoint(dependency)) {
+            final FactoryPoint factoryPoint = factoryPointMap.getFactoryPoint(dependency);
+            final BeanKey returnType = factoryPoint.getReturnType();
+            LOG.finer("Mapping " + dependency + " to " + returnType);
 
-        if (beanData.isSingleton()) {
-            addBean(instance, beanKeyForBeanData.getQualifier());
+            final BeanKey factoryKey = factoryPoint.getFactoryKey();
+            final Object factoryInstance = getBean(factoryKey.getBeanClass(), factoryKey.getQualifier());
+
+            instance = invokeFactoryPoint(factoryPoint, factoryInstance);
+
+            if (factoryPoint.isSingleton()) {
+                addBean(instance, returnType.getQualifier());
+            }
+        } else {
+            final BeanData beanData = findBeanData(dependency);
+            final BeanKey beanKeyForBeanData = beanDataMap.getBeanKeyForBeanData(beanData);
+            LOG.finer("Mapping " + dependency + " to " + beanKeyForBeanData);
+
+            instance = instantiateBean(beanData);
+
+            if (beanData.isSingleton()) {
+                addBean(instance, beanKeyForBeanData.getQualifier());
+            }
         }
 
         beansInCreation.removeBean(dependency);
@@ -275,6 +297,24 @@ public class DefaultBeanLoader implements BeanLoader {
 
         final Object instance = constructor.createInstance(beansForConstructor);
         LOG.finer("Constructor invoked: " + constructor);
+
+        return instance;
+    }
+
+    private Object invokeFactoryPoint(final FactoryPoint<?> factoryPoint, final Object factoryInstance) {
+        LOG.finer("Invoking factory point: " + factoryPoint);
+
+        final List<BeanKey> parameters = factoryPoint.getParameters();
+        final Object[] beansForFactoryPoint = new Object[parameters.size()];
+
+        for (int i = 0; i < parameters.size(); i++) {
+            final BeanKey parameter = parameters.get(i);
+            final Object bean = findBeanOrCreateProvider(parameter);
+            beansForFactoryPoint[i] = bean;
+        }
+
+        final Object instance = factoryPoint.create(factoryInstance, beansForFactoryPoint);
+        LOG.finer("Factory point invoked: " + factoryPoint);
 
         return instance;
     }

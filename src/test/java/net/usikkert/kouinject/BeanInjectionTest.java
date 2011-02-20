@@ -667,9 +667,7 @@ public class BeanInjectionTest {
         beanLoader.getBean(NoBean.class);
     }
 
-    // TODO
     @Test
-    @Ignore("Factory not implemented yet. The injector can't create the bean alone, so it's deactivated.")
     public void checkOrangeBean() {
         final OrangeBean orangeBean1 = beanLoader.getBean(OrangeBean.class);
         assertNotNull(orangeBean1);
@@ -929,9 +927,7 @@ public class BeanInjectionTest {
         assertTrue(simpleFactoryCreatedBean.isCreatedByFactory());
     }
 
-    // TODO
     @Test
-    @Ignore("Factory not implemented yet. The injector can't create the bean alone, so it's deactivated.")
     public void checkSimpleFactoryCreatedBean() {
         final SimpleFactoryCreatedBean simpleFactoryCreatedBean = beanLoader.getBean(SimpleFactoryCreatedBean.class);
 
@@ -939,9 +935,7 @@ public class BeanInjectionTest {
         assertTrue(simpleFactoryCreatedBean.isCreatedByFactory());
     }
 
-    // TODO
     @Test
-    @Ignore("Factory not implemented yet. The injector can't create the bean alone, so it's deactivated.")
     public void checkSimpleFactoryCreatedBeanUsingBean() {
         final SimpleFactoryCreatedBeanUsingBean simpleFactoryCreatedBeanUsingBean = beanLoader.getBean(SimpleFactoryCreatedBeanUsingBean.class);
         assertNotNull(simpleFactoryCreatedBeanUsingBean);
@@ -984,9 +978,7 @@ public class BeanInjectionTest {
         assertTrue(singletonBean.isCreatedByFactory());
     }
 
-    // TODO
     @Test
-    @Ignore("Factory not implemented yet. The injector can't create the bean alone, so it's deactivated.")
     public void checkSingletonFactoryCreatedBean() {
         final SingletonFactoryCreatedBean singletonFactoryCreatedBean = beanLoader.getBean(SingletonFactoryCreatedBean.class);
 
@@ -994,9 +986,7 @@ public class BeanInjectionTest {
         assertTrue(singletonFactoryCreatedBean.isCreatedByFactory());
     }
 
-    // TODO
     @Test
-    @Ignore("Factory not implemented yet. The injector can't create the bean alone, so it's deactivated.")
     public void checkSingletonFactoryCreatedBeanUsingBean() {
         final SingletonFactoryCreatedBeanUsingBean singletonFactoryCreatedBeanUsingBean = beanLoader.getBean(SingletonFactoryCreatedBeanUsingBean.class);
         assertNotNull(singletonFactoryCreatedBeanUsingBean);

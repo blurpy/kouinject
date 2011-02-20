@@ -24,12 +24,14 @@ package net.usikkert.kouinject.testbeans.scanned.factory;
 
 import javax.inject.Inject;
 
+import net.usikkert.kouinject.annotation.Component;
+
 /**
  * A bean using a singleton bean created by a factory.
  *
  * @author Christian Ihle
  */
-//@Component TODO fails until factory support is implemented
+@Component
 public class SingletonFactoryCreatedBeanUsingBean {
 
     @Inject
