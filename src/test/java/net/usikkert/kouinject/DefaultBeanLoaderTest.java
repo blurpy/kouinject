@@ -100,7 +100,6 @@ import net.usikkert.kouinject.testbeans.scanned.scope.inheritance.SecondLayerBea
 import net.usikkert.kouinject.testbeans.scanned.scope.inheritance.ThirdLayerBean;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -462,9 +461,7 @@ public class DefaultBeanLoaderTest {
         assertTrue(containsBean(BlueCarBean.class, beans));
     }
 
-    // TODO
     @Test
-    @Ignore("Factory not implemented yet. The injector can't create the bean alone, so it's deactivated.")
     public void getBeansWithObjectAndAnyQualifierShouldReturnAllBeans() {
         final Collection<Object> beans = beanLoader.getBeans(Object.class, "any");
 
@@ -479,9 +476,7 @@ public class DefaultBeanLoaderTest {
         assertTrue(orangeBean.isCreatedByFactory());
     }
 
-    // TODO
     @Test
-    @Ignore("Factory not implemented yet. The injector can't create the bean alone, so it's deactivated.")
     public void getBeansWithColorBeanAndAnyQualifierShouldReturnAllColorBeans() {
         final Collection<ColorBean> beans = beanLoader.getBeans(ColorBean.class, "any");
 

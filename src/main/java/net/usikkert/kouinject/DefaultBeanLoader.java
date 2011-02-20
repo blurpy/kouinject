@@ -153,7 +153,9 @@ public class DefaultBeanLoader implements BeanLoader {
 
         final BeanKey dependency = new BeanKey(beanClass, qualifier);
         LOG.finer("Requesting: " + dependency);
-        final Collection<BeanKey> beanKeys = beanDataMap.findBeanKeys(dependency);
+        final Collection<BeanKey> beanKeys = new ArrayList<BeanKey>();
+        beanKeys.addAll(beanDataMap.findBeanKeys(dependency));
+        beanKeys.addAll(factoryPointMap.findFactoryPointKeys(dependency));
 
         if (beanKeys.isEmpty()) {
             throw new IllegalArgumentException("No registered bean-data for: " + dependency);

@@ -190,9 +190,7 @@ public class BeanInjectionTest {
         assertTrue(animalBean.isFieldsThenMethodsInjectedInAnimalBean());
     }
 
-    // TODO
     @Test
-    @Ignore("Factory not implemented yet. The injector can't create the bean alone, so it's deactivated.")
     public void checkAnyBean() {
         final AnyBean anyBean = beanLoader.getBean(AnyBean.class);
 
@@ -1034,7 +1032,9 @@ public class BeanInjectionTest {
         assertNull(staticBean.getSetterBean());
     }
 
+    // TODO
     @Test
+    @Ignore("Deactivated until FactoryContext is supported by the factory")
     public void checkStringPropertyFactoryBean() {
         final StringPropertyFactoryBean stringPropertyFactoryBean = beanLoader.getBean(StringPropertyFactoryBean.class);
         assertNotNull(stringPropertyFactoryBean);
@@ -1048,7 +1048,7 @@ public class BeanInjectionTest {
 
     // TODO
     @Test
-    @Ignore("Factory not implemented yet. The injector can't create the bean alone, so it's deactivated.")
+    @Ignore("Deactivated until FactoryContext is supported by the factory")
     public void checkStringPropertyInjectedBean() {
         final StringPropertyInjectedBean stringPropertyInjectedBean = beanLoader.getBean(StringPropertyInjectedBean.class);
         assertNotNull(stringPropertyInjectedBean);

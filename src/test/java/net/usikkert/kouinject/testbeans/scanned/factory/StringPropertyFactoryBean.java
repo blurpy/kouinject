@@ -27,7 +27,6 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import net.usikkert.kouinject.annotation.Any;
-import net.usikkert.kouinject.annotation.Component;
 import net.usikkert.kouinject.annotation.Produces;
 import net.usikkert.kouinject.factory.FactoryContext;
 
@@ -39,7 +38,7 @@ import org.apache.commons.lang.Validate;
  *
  * @author Christian Ihle
  */
-@Component
+//@Component TODO deactivated until FactoryContext is supported by the factory
 public class StringPropertyFactoryBean {
 
     private static final String PROPERTY_FILE = "FactoryTestProperties.properties";
