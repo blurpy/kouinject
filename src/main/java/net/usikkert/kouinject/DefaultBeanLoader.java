@@ -34,22 +34,16 @@ import net.usikkert.kouinject.beandata.BeanData;
 import net.usikkert.kouinject.beandata.BeanKey;
 import net.usikkert.kouinject.beandata.ConstructorData;
 import net.usikkert.kouinject.beandata.InjectionPoint;
+import net.usikkert.kouinject.factory.FactoryPointHandler;
+import net.usikkert.kouinject.factory.FactoryPointMap;
 
 import org.apache.commons.lang.Validate;
 
 /**
  * Default implementation of the {@link BeanLoader}.
  *
- * <p>Example of how to use:</p>
- *
- * <pre>
- *   ClassLocator classLocator = new ClassPathScanner();
- *   BeanLocator beanLocator = new AnnotationBasedBeanLocator(classLocator, "basepackage.to.scan");
- *   BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
- *   BeanLoader beanLoader = new DefaultBeanLoader(beanDataHandler, beanLocator);
- * </pre>
- *
- * <p>It's recommended to use the {@link DefaultInjector} unless you have special requirements.</p>
+ * <p>It's recommended to use the {@link DefaultInjector} instead of using this class directly,
+ * unless you have special requirements.</p>
  *
  * @author Christian Ihle
  */
@@ -62,23 +56,31 @@ public class DefaultBeanLoader implements BeanLoader {
     private final BeansInCreation beansInCreation;
     private final BeanDataHandler beanDataHandler;
     private final BeanLocator beanLocator;
+    private final FactoryPointMap factoryPointMap;
+    private final FactoryPointHandler factoryPointHandler;
 
     /**
-     * Constructs a new instance of this {@link BeanLoader} with the specified {@link BeanDataHandler}
-     * and {@link BeanLocator}. Detected beans will be scanned and prepared, but not instantiated.
+     * Constructs a new instance of this {@link BeanLoader} with the specified {@link BeanDataHandler},
+     * {@link BeanLocator} and {@link FactoryPointHandler}. Detected beans will be scanned and prepared,
+     * but not instantiated.
      *
      * @param beanDataHandler The handler to use for finding the meta-data required to instantiate beans.
      * @param beanLocator The locator to use for getting the beans to load.
+     * @param factoryPointHandler The handler to use for finding the meta-data required for using factories.
      */
-    public DefaultBeanLoader(final BeanDataHandler beanDataHandler, final BeanLocator beanLocator) {
+    public DefaultBeanLoader(final BeanDataHandler beanDataHandler, final BeanLocator beanLocator,
+                             final FactoryPointHandler factoryPointHandler) {
         Validate.notNull(beanDataHandler, "Bean-data handler can not be null");
         Validate.notNull(beanLocator, "Bean locator can not be null");
+        Validate.notNull(factoryPointHandler, "Factory point handler can not be null");
 
         this.beanDataHandler = beanDataHandler;
         this.beanLocator = beanLocator;
+        this.factoryPointHandler = factoryPointHandler;
         this.singletonMap = new SingletonMap();
         this.beanDataMap = new BeanDataMap();
         this.beansInCreation = new BeansInCreation();
+        this.factoryPointMap = new FactoryPointMap();
 
         loadBeanData();
     }

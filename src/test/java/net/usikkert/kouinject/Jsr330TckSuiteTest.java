@@ -28,6 +28,8 @@ import java.util.Set;
 import junit.framework.Test;
 
 import net.usikkert.kouinject.beandata.BeanKey;
+import net.usikkert.kouinject.factory.AnnotationBasedFactoryPointHandler;
+import net.usikkert.kouinject.factory.FactoryPointHandler;
 
 import org.atinject.tck.Tck;
 import org.atinject.tck.auto.Car;
@@ -68,7 +70,8 @@ public class Jsr330TckSuiteTest {
         };
 
         final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
-        final BeanLoader beanLoader = new DefaultBeanLoader(beanDataHandler, beanLocator);
+        final FactoryPointHandler factoryPointHandler = new AnnotationBasedFactoryPointHandler();
+        final BeanLoader beanLoader = new DefaultBeanLoader(beanDataHandler, beanLocator, factoryPointHandler);
 
         final Car car = beanLoader.getBean(Car.class);
 

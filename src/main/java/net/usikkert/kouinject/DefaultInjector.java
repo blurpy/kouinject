@@ -24,6 +24,9 @@ package net.usikkert.kouinject;
 
 import java.util.Collection;
 
+import net.usikkert.kouinject.factory.AnnotationBasedFactoryPointHandler;
+import net.usikkert.kouinject.factory.FactoryPointHandler;
+
 /**
  * An {@link Injector} using classpath scanning to detect beans, and annotations for
  * setup of beans and the dependency injections.
@@ -45,7 +48,9 @@ public class DefaultInjector implements Injector {
         final ClassLocator classLocator = new ClassPathScanner();
         final BeanLocator beanLocator = new AnnotationBasedBeanLocator(classLocator, basePackages);
         final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
-        beanLoader = new DefaultBeanLoader(beanDataHandler, beanLocator);
+        final FactoryPointHandler factoryPointHandler = new AnnotationBasedFactoryPointHandler();
+
+        beanLoader = new DefaultBeanLoader(beanDataHandler, beanLocator, factoryPointHandler);
     }
 
     /**

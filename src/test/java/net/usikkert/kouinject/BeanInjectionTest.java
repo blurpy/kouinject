@@ -29,7 +29,9 @@ import java.util.Collection;
 
 import javax.inject.Provider;
 
+import net.usikkert.kouinject.factory.AnnotationBasedFactoryPointHandler;
 import net.usikkert.kouinject.factory.FactoryContext;
+import net.usikkert.kouinject.factory.FactoryPointHandler;
 import net.usikkert.kouinject.testbeans.BeanCount;
 import net.usikkert.kouinject.testbeans.scanned.AllInjectionTypesBean;
 import net.usikkert.kouinject.testbeans.scanned.BlueCarBean;
@@ -1106,8 +1108,9 @@ public class BeanInjectionTest {
         final BeanLocator beanLocator = new AnnotationBasedBeanLocator(
                 classLocator, basePackages);
         final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
+        final FactoryPointHandler factoryPointHandler = new AnnotationBasedFactoryPointHandler();
 
-        return new DefaultBeanLoader(beanDataHandler, beanLocator);
+        return new DefaultBeanLoader(beanDataHandler, beanLocator, factoryPointHandler);
     }
 
     private boolean containsBean(final Class<?> bean, final Collection<?> collection) {
