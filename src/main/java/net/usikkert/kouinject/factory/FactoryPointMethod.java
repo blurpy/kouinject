@@ -146,4 +146,9 @@ public class FactoryPointMethod<T> implements FactoryPoint<T> {
     public Method getMethod() {
         return method;
     }
+
+    @Override
+    public String toString() {
+        return "[factory point method] " + method.toGenericString() + " - " + parameters;
+    }
 }
