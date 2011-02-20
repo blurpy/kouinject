@@ -25,6 +25,8 @@ package net.usikkert.kouinject.factory;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 import net.usikkert.kouinject.beandata.BeanKey;
@@ -82,6 +84,28 @@ public class FactoryPointMapTest {
 
         map.addFactoryPoint(createFactoryPoint(HelloBean.class));
         assertEquals(3, map.size());
+    }
+
+    @Test
+    public void addFactoryPointsShouldAddAllTheFactoryPoints() {
+        assertEquals(0, map.size());
+
+        final FactoryPoint factoryPoint1 = createFactoryPoint(SetterBean.class);
+        final FactoryPoint factoryPoint2 = createFactoryPoint(FieldBean.class);
+        final FactoryPoint factoryPoint3 = createFactoryPoint(HelloBean.class);
+
+        map.addFactoryPoints(Arrays.asList(factoryPoint1, factoryPoint2, factoryPoint3));
+
+        assertEquals(3, map.size());
+    }
+
+    @Test
+    public void addFactoryPointShouldHandleEmptyList() {
+        assertEquals(0, map.size());
+
+        map.addFactoryPoints(new ArrayList<FactoryPoint>());
+
+        assertEquals(0, map.size());
     }
 
     @Test

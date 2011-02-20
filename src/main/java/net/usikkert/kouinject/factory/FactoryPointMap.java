@@ -67,6 +67,19 @@ public class FactoryPointMap {
     }
 
     /**
+     * Adds all the factory points in the list to the map.
+     *
+     * @param factoryPoints The factory points to add.
+     */
+    public synchronized void addFactoryPoints(final List<FactoryPoint> factoryPoints) {
+        Validate.notNull(factoryPoints, "FactoryPoints can not be null");
+
+        for (final FactoryPoint factoryPoint : factoryPoints) {
+            addFactoryPoint(factoryPoint);
+        }
+    }
+
+    /**
      * Gets a factory point from the map.
      *
      * @param beanNeeded The type of bean to get a factory point for.
