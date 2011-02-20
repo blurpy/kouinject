@@ -95,7 +95,7 @@ public class FactoryPointMap {
         final List<BeanKey> matches = new ArrayList<BeanKey>();
 
         for (final BeanKey bean : factoryPointMap.keySet()) {
-            if (beanNeeded.canInject(bean)) {
+            if (beanNeeded.canInjectFromFactory(bean)) {
                 matches.add(bean);
             }
         }

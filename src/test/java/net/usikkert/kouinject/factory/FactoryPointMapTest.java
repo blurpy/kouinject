@@ -161,6 +161,18 @@ public class FactoryPointMapTest {
     }
 
     @Test
+    public void containsFactoryPointShouldAcceptMatchingBeanTypeOfAnyQualifierIfFactoryPointHasTheAnyQualifier() {
+        assertEquals(0, map.size());
+
+        map.addFactoryPoint(createFactoryPoint(SetterBean.class, "any"));
+        assertEquals(1, map.size());
+
+        assertTrue(map.containsFactoryPoint(new BeanKey(SetterBean.class)));
+        assertTrue(map.containsFactoryPoint(new BeanKey(SetterBean.class, "wrong")));
+        assertTrue(map.containsFactoryPoint(new BeanKey(SetterBean.class, "any")));
+    }
+
+    @Test
     public void findFactoryPointKeysWithoutQualifierShouldReturnBeanKeysWithoutQualifier() {
         addTestFactoryPoints();
 

@@ -150,20 +150,47 @@ public class BeanKey {
         }
 
         if (beanClass.isAssignableFrom(bean.getBeanClass())) {
-            if (qualifier == null && bean.getQualifier() == null) {
+            if (isTheSameQualifier(qualifier, bean.getQualifier())) {
                 return true;
             }
 
-            else if (qualifier != null && qualifier.equalsIgnoreCase(bean.getQualifier())) {
-                return true;
-            }
-
-            else if (qualifier != null && qualifier.equalsIgnoreCase(ANY_QUALIFIER)) {
+            else if (isTheSameQualifier(qualifier, ANY_QUALIFIER)) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * If this key represents a field or parameter marked for injection,
+     * could the bean, if created by a factory, be injected?
+     *
+     * <p>The same rules as {@link #canInject(BeanKey)} apply, with one exception. Factories may also
+     * specify the <code>any</code> qualifier to create beans for any injection point of a matching type.</p>
+     *
+     * @param factoryCreatedBean The factory-created bean to check.
+     * @return If the factory-created bean can be injected into this key.
+     */
+    public boolean canInjectFromFactory(final BeanKey factoryCreatedBean) {
+        if (factoryCreatedBean == null) {
+            return false;
+        }
+
+        if (canInject(factoryCreatedBean)) {
+            return true;
+        }
+
+        return beanClass.isAssignableFrom(factoryCreatedBean.getBeanClass()) &&
+               isTheSameQualifier(factoryCreatedBean.getQualifier(), ANY_QUALIFIER);
+    }
+
+    private boolean isTheSameQualifier(final String actualQualifier, final String expectedQualifier) {
+        if (actualQualifier == null && expectedQualifier == null) {
+            return true;
+        }
+
+        return actualQualifier != null && actualQualifier.equalsIgnoreCase(expectedQualifier);
     }
 
     /**

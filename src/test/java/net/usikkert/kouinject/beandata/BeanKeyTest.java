@@ -129,6 +129,8 @@ public class BeanKeyTest {
         final BeanKey green = new BeanKey(GreenBean.class);
 
         assertFalse(green.canInject(null));
+
+        assertFalse(green.canInjectFromFactory(null));
     }
 
     @Test
@@ -142,6 +144,10 @@ public class BeanKeyTest {
         assertTrue(theColorField.canInject(theGreenBean));
         assertTrue(theColorField.canInject(theColorBean));
         assertFalse(theColorField.canInject(theObjectBean));
+
+        assertTrue(theColorField.canInjectFromFactory(theGreenBean));
+        assertTrue(theColorField.canInjectFromFactory(theColorBean));
+        assertFalse(theColorField.canInjectFromFactory(theObjectBean));
     }
 
     @Test
@@ -155,6 +161,10 @@ public class BeanKeyTest {
         assertFalse(theColorField.canInject(theGreenBean));
         assertTrue(theColorField.canInject(theColorBean));
         assertFalse(theColorField.canInject(theObjectBean));
+
+        assertFalse(theColorField.canInjectFromFactory(theGreenBean));
+        assertTrue(theColorField.canInjectFromFactory(theColorBean));
+        assertFalse(theColorField.canInjectFromFactory(theObjectBean));
     }
 
     @Test
@@ -168,6 +178,10 @@ public class BeanKeyTest {
         assertTrue(theColorField.canInject(theGreenBean));
         assertFalse(theColorField.canInject(theColorBean));
         assertFalse(theColorField.canInject(theObjectBean));
+
+        assertTrue(theColorField.canInjectFromFactory(theGreenBean));
+        assertFalse(theColorField.canInjectFromFactory(theColorBean));
+        assertFalse(theColorField.canInjectFromFactory(theObjectBean));
     }
 
     @Test
@@ -181,6 +195,10 @@ public class BeanKeyTest {
         assertFalse(theColorField.canInject(theGreenBean));
         assertTrue(theColorField.canInject(theColorBean));
         assertFalse(theColorField.canInject(theObjectBean));
+
+        assertFalse(theColorField.canInjectFromFactory(theGreenBean));
+        assertTrue(theColorField.canInjectFromFactory(theColorBean));
+        assertFalse(theColorField.canInjectFromFactory(theObjectBean));
     }
 
     @Test
@@ -194,6 +212,10 @@ public class BeanKeyTest {
         assertFalse(theColorField.canInject(theGreenBean));
         assertTrue(theColorField.canInject(theColorBean));
         assertFalse(theColorField.canInject(theObjectBean));
+
+        assertFalse(theColorField.canInjectFromFactory(theGreenBean));
+        assertTrue(theColorField.canInjectFromFactory(theColorBean));
+        assertFalse(theColorField.canInjectFromFactory(theObjectBean));
     }
 
     @Test
@@ -207,6 +229,10 @@ public class BeanKeyTest {
         assertFalse(theColorField.canInject(theGreenBean));
         assertFalse(theColorField.canInject(theColorBean));
         assertFalse(theColorField.canInject(theObjectBean));
+
+        assertFalse(theColorField.canInjectFromFactory(theGreenBean));
+        assertFalse(theColorField.canInjectFromFactory(theColorBean));
+        assertFalse(theColorField.canInjectFromFactory(theObjectBean));
     }
 
     @Test
@@ -220,6 +246,10 @@ public class BeanKeyTest {
         assertFalse(theColorField.canInject(theGreenBean));
         assertFalse(theColorField.canInject(theColorBean));
         assertFalse(theColorField.canInject(theObjectBean));
+
+        assertFalse(theColorField.canInjectFromFactory(theGreenBean));
+        assertFalse(theColorField.canInjectFromFactory(theColorBean));
+        assertFalse(theColorField.canInjectFromFactory(theObjectBean));
     }
 
     @Test
@@ -228,6 +258,8 @@ public class BeanKeyTest {
         final BeanKey theColorField = new BeanKey(ColorBean.class);
 
         assertTrue(theColorField.canInject(theGreenBean));
+
+        assertTrue(theColorField.canInjectFromFactory(theGreenBean));
     }
 
     @Test
@@ -236,6 +268,8 @@ public class BeanKeyTest {
         final BeanKey theColorField = new BeanKey(ColorBean.class, "green");
 
         assertTrue(theColorField.canInject(theGreenBean));
+
+        assertTrue(theColorField.canInjectFromFactory(theGreenBean));
     }
 
     @Test
@@ -244,6 +278,8 @@ public class BeanKeyTest {
         final BeanKey theColorField = new BeanKey(ColorBean.class, "any");
 
         assertTrue(theColorField.canInject(theGreenBean));
+
+        assertTrue(theColorField.canInjectFromFactory(theGreenBean));
     }
 
     @Test
@@ -252,22 +288,28 @@ public class BeanKeyTest {
         final BeanKey theColorField = new BeanKey(ColorBean.class, "any");
 
         assertTrue(theColorField.canInject(theGreenBean));
+
+        assertTrue(theColorField.canInjectFromFactory(theGreenBean));
     }
 
     @Test
-    public void cantInjectSubclassWhenBeanHasAnyQualifierAndFieldHasNone() {
+    public void cantInjectSubclassWhenBeanHasAnyQualifierAndFieldHasNoneExceptIfFactory() {
         final BeanKey theGreenBean = new BeanKey(GreenBean.class, "any");
         final BeanKey theColorField = new BeanKey(ColorBean.class);
 
         assertFalse(theColorField.canInject(theGreenBean));
+
+        assertTrue(theColorField.canInjectFromFactory(theGreenBean));
     }
 
     @Test
-    public void cantInjectSubclassWhenBeanHasAnyQualifierAndFieldHasOtherQualifier() {
+    public void cantInjectSubclassWhenBeanHasAnyQualifierAndFieldHasOtherQualifierExceptIfFactory() {
         final BeanKey theGreenBean = new BeanKey(GreenBean.class, "any");
         final BeanKey theColorField = new BeanKey(ColorBean.class, "green");
 
         assertFalse(theColorField.canInject(theGreenBean));
+
+        assertTrue(theColorField.canInjectFromFactory(theGreenBean));
     }
 
     @Test

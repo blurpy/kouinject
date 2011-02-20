@@ -25,12 +25,14 @@ package net.usikkert.kouinject.testbeans.scanned.factory;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import net.usikkert.kouinject.annotation.Component;
+
 /**
  * A bean for testing qualifiers when created using a factory method.
  *
  * @author Christian Ihle
  */
-//@Component TODO fails until factory support is implemented
+//@Component //TODO fails until factory support is implemented
 public class StringPropertyInjectedBean {
 
     @Inject @Named("some.property")
