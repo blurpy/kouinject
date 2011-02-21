@@ -181,8 +181,8 @@ public class BeanKey {
             return true;
         }
 
-        return beanClass.isAssignableFrom(factoryCreatedBean.getBeanClass()) &&
-               factoryCreatedBean.hasTheAnyQualifier();
+        return beanClass.isAssignableFrom(factoryCreatedBean.getBeanClass())
+                && factoryCreatedBean.hasTheAnyQualifier();
     }
 
     /**

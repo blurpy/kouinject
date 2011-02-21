@@ -131,8 +131,8 @@ public class DefaultBeanLoader implements BeanLoader {
 
         // TODO fail if in both
         // TODO better way to handle FactoryContext?
-        if (!beanDataMap.containsBeanData(dependency) && !factoryPointMap.containsFactoryPoint(dependency) &&
-                !beanClass.equals(FactoryContext.class)) {
+        if (!beanDataMap.containsBeanData(dependency) && !factoryPointMap.containsFactoryPoint(dependency)
+                && !beanClass.equals(FactoryContext.class)) {
             throw new IllegalArgumentException("No registered bean-data for: " + dependency);
         }
 
@@ -259,7 +259,9 @@ public class DefaultBeanLoader implements BeanLoader {
             if (factoryPoint.isSingleton()) {
                 addBean(instance, returnType.getQualifier());
             }
-        } else {
+        }
+
+        else {
             final BeanData beanData = findBeanData(dependency);
             final BeanKey beanKeyForBeanData = beanDataMap.getBeanKeyForBeanData(beanData);
             LOG.finer("Mapping " + dependency + " to " + beanKeyForBeanData);
@@ -329,7 +331,9 @@ public class DefaultBeanLoader implements BeanLoader {
     private Object getBeanOrFactoryContext(final BeanKey parameter, final BeanKey dependency) {
         if (parameter.getBeanClass().equals(FactoryContext.class)) {
             return new FactoryContextImpl(dependency.getQualifier());
-        } else {
+        }
+
+        else {
             return findBeanOrCreateProvider(parameter);
         }
     }

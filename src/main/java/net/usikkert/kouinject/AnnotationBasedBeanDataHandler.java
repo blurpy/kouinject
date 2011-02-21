@@ -117,9 +117,9 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
     }
 
     private boolean fieldNeedsInjection(final Field field) {
-        return !reflectionUtils.isStatic(field) &&
-               !reflectionUtils.isFinal(field) &&
-               field.isAnnotationPresent(INJECTION_ANNOTATION);
+        return !reflectionUtils.isStatic(field)
+                && !reflectionUtils.isFinal(field)
+                && field.isAnnotationPresent(INJECTION_ANNOTATION);
     }
 
     private FieldData createFieldData(final Field field) {
