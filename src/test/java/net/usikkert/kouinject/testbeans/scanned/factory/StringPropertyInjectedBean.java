@@ -32,7 +32,7 @@ import net.usikkert.kouinject.annotation.Component;
  *
  * @author Christian Ihle
  */
-//@Component //TODO fails until factory support is implemented
+@Component
 public class StringPropertyInjectedBean {
 
     @Inject @Named("some.property")

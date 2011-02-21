@@ -29,9 +29,9 @@ package net.usikkert.kouinject.testbeans;
  */
 public enum BeanCount {
 
-    ALL(87),
-    SCANNED(78),
-    SCANNED_WITHOUT_QUALIFIER(56);
+    ALL(89),
+    SCANNED(80),
+    SCANNED_WITHOUT_QUALIFIER(58);
 
     private final int numberOfBeans;
 

@@ -313,6 +313,33 @@ public class BeanKeyTest {
     }
 
     @Test
+    public void hasTheAnyQualifierShouldReturnFalseOnNull() {
+        final BeanKey theGreenBean = new BeanKey(GreenBean.class);
+
+        assertNull(theGreenBean.getQualifier());
+        assertFalse(theGreenBean.hasTheAnyQualifier());
+    }
+
+    @Test
+    public void hasTheAnyQualifierShouldReturnFalseWhenNotAny() {
+        final BeanKey theGreenBean = new BeanKey(GreenBean.class, "green");
+
+        assertEquals("green", theGreenBean.getQualifier());
+        assertFalse(theGreenBean.hasTheAnyQualifier());
+    }
+
+    @Test
+    public void hasTheAnyQualifierShouldReturnTrueWhenAny() {
+        final BeanKey theGreenBean = new BeanKey(GreenBean.class, "any");
+        assertEquals("any", theGreenBean.getQualifier());
+        assertTrue(theGreenBean.hasTheAnyQualifier());
+
+        final BeanKey theColorBean = new BeanKey(ColorBean.class, "ANY");
+        assertEquals("ANY", theColorBean.getQualifier());
+        assertTrue(theColorBean.hasTheAnyQualifier());
+    }
+
+    @Test
     public void defaultBeanKey() {
         final BeanKey theGreenBean = new BeanKey(GreenBean.class, "none");
         assertFalse(theGreenBean.isProvider());

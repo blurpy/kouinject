@@ -109,7 +109,6 @@ import net.usikkert.kouinject.testbeans.scanned.scope.inheritance.SecondLayerBea
 import net.usikkert.kouinject.testbeans.scanned.scope.inheritance.ThirdLayerBean;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -1032,9 +1031,7 @@ public class BeanInjectionTest {
         assertNull(staticBean.getSetterBean());
     }
 
-    // TODO
     @Test
-    @Ignore("Deactivated until FactoryContext is supported by the factory")
     public void checkStringPropertyFactoryBean() {
         final StringPropertyFactoryBean stringPropertyFactoryBean = beanLoader.getBean(StringPropertyFactoryBean.class);
         assertNotNull(stringPropertyFactoryBean);
@@ -1046,9 +1043,7 @@ public class BeanInjectionTest {
         assertEquals("This is some property", stringProperty);
     }
 
-    // TODO
     @Test
-    @Ignore("Deactivated until FactoryContext is supported by the factory")
     public void checkStringPropertyInjectedBean() {
         final StringPropertyInjectedBean stringPropertyInjectedBean = beanLoader.getBean(StringPropertyInjectedBean.class);
         assertNotNull(stringPropertyInjectedBean);

@@ -141,6 +141,9 @@ public class FactoryPointMap {
      * Searches for all the factory points that can create matching beans, and returns
      * the keys. These keys can be used to get the actual factory points.
      *
+     * <p>Does not return factory points with the any qualifier, as they will often report a match without
+     * actually knowing what to do with the incoming qualifier.</p>
+     *
      * @param beansNeeded The types of beans to get factory point keys for.
      * @return A collection of factory point keys.
      */
@@ -149,9 +152,9 @@ public class FactoryPointMap {
 
         final Collection<BeanKey> matches = new ArrayList<BeanKey>();
 
-        for (final BeanKey bean : factoryPointMap.keySet()) {
-            if (beansNeeded.canInject(bean)) {
-                matches.add(bean);
+        for (final BeanKey factoryPointKey : factoryPointMap.keySet()) {
+            if (beansNeeded.canInject(factoryPointKey) && !factoryPointKey.hasTheAnyQualifier()) {
+                matches.add(factoryPointKey);
             }
         }
 

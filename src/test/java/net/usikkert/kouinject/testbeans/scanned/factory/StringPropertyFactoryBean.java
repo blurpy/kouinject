@@ -39,7 +39,7 @@ import org.apache.commons.lang.Validate;
  *
  * @author Christian Ihle
  */
-//@Component // TODO deactivated until FactoryContext is supported by the factory
+@Component
 public class StringPropertyFactoryBean {
 
     private static final String PROPERTY_FILE = "FactoryTestProperties.properties";

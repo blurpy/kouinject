@@ -197,6 +197,34 @@ public class FactoryPointMapTest {
     }
 
     @Test
+    public void findFactoryPointKeysShouldNotReturnBeanKeysWithTheAnyQualifier() {
+        addTestFactoryPoints();
+        map.addFactoryPoint(createFactoryPoint(String.class, "any"));
+
+        final Collection<BeanKey> beanKeys = map.findFactoryPointKeys(new BeanKey(Object.class, "Green"));
+
+        assertNotNull(beanKeys);
+        assertEquals(1, beanKeys.size());
+        assertTrue(beanKeys.contains(new BeanKey(GreenBean.class, "Green")));
+    }
+
+    @Test
+    public void findFactoryPointKeysShouldNotReturnBeanKeysWithTheAnyQualifierEvenWhenAskingForAny() {
+        addTestFactoryPoints();
+        map.addFactoryPoint(createFactoryPoint(String.class, "any"));
+        assertEquals(5, map.size());
+
+        final Collection<BeanKey> beanKeys = map.findFactoryPointKeys(new BeanKey(Object.class, "any"));
+
+        assertNotNull(beanKeys);
+        assertEquals(4, beanKeys.size());
+
+        for (final BeanKey beanKey : beanKeys) {
+            assertFalse(beanKey.hasTheAnyQualifier());
+        }
+    }
+
+    @Test
     public void findFactoryPointKeysShouldHandleNoMatches() {
         addTestFactoryPoints();
 

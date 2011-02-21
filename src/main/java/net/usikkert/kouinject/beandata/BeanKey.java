@@ -154,7 +154,7 @@ public class BeanKey {
                 return true;
             }
 
-            else if (isTheSameQualifier(qualifier, ANY_QUALIFIER)) {
+            else if (hasTheAnyQualifier()) {
                 return true;
             }
         }
@@ -182,7 +182,16 @@ public class BeanKey {
         }
 
         return beanClass.isAssignableFrom(factoryCreatedBean.getBeanClass()) &&
-               isTheSameQualifier(factoryCreatedBean.getQualifier(), ANY_QUALIFIER);
+               factoryCreatedBean.hasTheAnyQualifier();
+    }
+
+    /**
+     * Checks if this bean key has the <code>any</code> qualifier.
+     *
+     * @return If this bean key has the <code>any</code> qualifier.
+     */
+    public boolean hasTheAnyQualifier() {
+        return isTheSameQualifier(qualifier, ANY_QUALIFIER);
     }
 
     private boolean isTheSameQualifier(final String actualQualifier, final String expectedQualifier) {
