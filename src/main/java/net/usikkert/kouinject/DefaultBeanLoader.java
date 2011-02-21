@@ -34,6 +34,8 @@ import net.usikkert.kouinject.beandata.BeanData;
 import net.usikkert.kouinject.beandata.BeanKey;
 import net.usikkert.kouinject.beandata.ConstructorData;
 import net.usikkert.kouinject.beandata.InjectionPoint;
+import net.usikkert.kouinject.factory.FactoryContext;
+import net.usikkert.kouinject.factory.FactoryContextImpl;
 import net.usikkert.kouinject.factory.FactoryPoint;
 import net.usikkert.kouinject.factory.FactoryPointHandler;
 import net.usikkert.kouinject.factory.FactoryPointMap;
@@ -128,7 +130,9 @@ public class DefaultBeanLoader implements BeanLoader {
         LOG.finer("Requesting: " + dependency);
 
         // TODO fail if in both
-        if (!beanDataMap.containsBeanData(dependency) && !factoryPointMap.containsFactoryPoint(dependency)) {
+        // TODO better way to handle FactoryContext?
+        if (!beanDataMap.containsBeanData(dependency) && !factoryPointMap.containsFactoryPoint(dependency) &&
+                !beanClass.equals(FactoryContext.class)) {
             throw new IllegalArgumentException("No registered bean-data for: " + dependency);
         }
 
@@ -250,7 +254,7 @@ public class DefaultBeanLoader implements BeanLoader {
             final BeanKey factoryKey = factoryPoint.getFactoryKey();
             final Object factoryInstance = getBean(factoryKey.getBeanClass(), factoryKey.getQualifier());
 
-            instance = invokeFactoryPoint(factoryPoint, factoryInstance);
+            instance = invokeFactoryPoint(factoryPoint, factoryInstance, dependency);
 
             if (factoryPoint.isSingleton()) {
                 addBean(instance, returnType.getQualifier());
@@ -303,7 +307,8 @@ public class DefaultBeanLoader implements BeanLoader {
         return instance;
     }
 
-    private Object invokeFactoryPoint(final FactoryPoint<?> factoryPoint, final Object factoryInstance) {
+    private Object invokeFactoryPoint(final FactoryPoint<?> factoryPoint, final Object factoryInstance,
+                                      final BeanKey dependency) {
         LOG.finer("Invoking factory point: " + factoryPoint);
 
         final List<BeanKey> parameters = factoryPoint.getParameters();
@@ -311,7 +316,7 @@ public class DefaultBeanLoader implements BeanLoader {
 
         for (int i = 0; i < parameters.size(); i++) {
             final BeanKey parameter = parameters.get(i);
-            final Object bean = findBeanOrCreateProvider(parameter);
+            final Object bean = getBeanOrFactoryContext(parameter, dependency);
             beansForFactoryPoint[i] = bean;
         }
 
@@ -319,6 +324,14 @@ public class DefaultBeanLoader implements BeanLoader {
         LOG.finer("Factory point invoked: " + factoryPoint);
 
         return instance;
+    }
+
+    private Object getBeanOrFactoryContext(final BeanKey parameter, final BeanKey dependency) {
+        if (parameter.getBeanClass().equals(FactoryContext.class)) {
+            return new FactoryContextImpl(dependency.getQualifier());
+        } else {
+            return findBeanOrCreateProvider(parameter);
+        }
     }
 
     private void autowireBean(final BeanData beanData, final Object instance) {
