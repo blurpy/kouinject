@@ -74,6 +74,8 @@ import net.usikkert.kouinject.testbeans.scanned.collection.HungryQualifierBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungryBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungryQualifierBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.SingletonCollectionProviderBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.SimpleFactoryCreatedBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.SingletonFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder1.Folder1Bean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder2.Folder2Bean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder3.Folder3Bean;
@@ -470,10 +472,36 @@ public class DefaultBeanLoaderTest {
 
         assertTrue(containsBean(BlueBean.class, beans)); // Bean with qualifier
         assertTrue(containsBean(HelloBean.class, beans)); // Bean without qualifier
-        assertTrue(containsBean(OrangeBean.class, beans)); // Bean created with factory
+    }
+
+    @Test
+    public void getBeansWithObjectAndAnyQualifierShouldReturnBeansFromFactories() {
+        final Collection<Object> beans = beanLoader.getBeans(Object.class, "any");
+
+        assertNotNull(beans);
+        assertEquals(BeanCount.SCANNED.getNumberOfBeans(), beans.size());
+
+        assertTrue(containsBean(OrangeBean.class, beans)); // Bean with qualifier created with factory
+        assertTrue(containsBean(SimpleFactoryCreatedBean.class, beans)); // Bean without qualifier created with factory
 
         final OrangeBean orangeBean = getBean(OrangeBean.class, beans);
         assertTrue(orangeBean.isCreatedByFactory());
+
+        final SimpleFactoryCreatedBean simpleFactoryCreatedBean = getBean(SimpleFactoryCreatedBean.class, beans);
+        assertTrue(simpleFactoryCreatedBean.isCreatedByFactory());
+    }
+
+    @Test
+    public void getBeansWithObjectAndAnyQualifierShouldNotReturnBeansFromFactoryWithAnyQualifier() {
+        final Collection<Object> beans = beanLoader.getBeans(Object.class, "any");
+
+        assertNotNull(beans);
+        assertEquals(BeanCount.SCANNED.getNumberOfBeans(), beans.size());
+
+        for (final Object bean : beans) {
+            assertFalse(bean.getClass().equals(String.class));
+            assertFalse(bean.getClass().equals(Integer.class));
+        }
     }
 
     @Test
@@ -971,6 +999,32 @@ public class DefaultBeanLoaderTest {
         assertEquals(BlueCarBean.class, carBean2.getClass());
 
         assertNotSame(carBean1, carBean2);
+    }
+
+    @Test
+    public void prototypeScopedFactoryCreatedBeanShouldReturnUniqueInstances() {
+        final SimpleFactoryCreatedBean bean1 = beanLoader.getBean(SimpleFactoryCreatedBean.class);
+        assertNotNull(bean1);
+        assertTrue(bean1.isCreatedByFactory());
+
+        final SimpleFactoryCreatedBean bean2 = beanLoader.getBean(SimpleFactoryCreatedBean.class);
+        assertNotNull(bean2);
+        assertTrue(bean2.isCreatedByFactory());
+
+        assertNotSame(bean1, bean2);
+    }
+
+    @Test
+    public void singletonScopedFactoryCreatedBeanShouldReturnSameInstance() {
+        final SingletonFactoryCreatedBean bean1 = beanLoader.getBean(SingletonFactoryCreatedBean.class);
+        assertNotNull(bean1);
+        assertTrue(bean1.isCreatedByFactory());
+
+        final SingletonFactoryCreatedBean bean2 = beanLoader.getBean(SingletonFactoryCreatedBean.class);
+        assertNotNull(bean2);
+        assertTrue(bean2.isCreatedByFactory());
+
+        assertSame(bean1, bean2);
     }
 
     private DefaultBeanLoader createBeanLoaderWithBasePackages(final String... basePackages) {

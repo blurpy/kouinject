@@ -23,7 +23,6 @@
 package net.usikkert.kouinject;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 import java.util.Collection;
 
@@ -31,6 +30,7 @@ import javax.inject.Provider;
 
 import net.usikkert.kouinject.factory.AnnotationBasedFactoryPointHandler;
 import net.usikkert.kouinject.factory.FactoryContext;
+import net.usikkert.kouinject.factory.FactoryContextImpl;
 import net.usikkert.kouinject.factory.FactoryPointHandler;
 import net.usikkert.kouinject.testbeans.BeanCount;
 import net.usikkert.kouinject.testbeans.scanned.AllInjectionTypesBean;
@@ -67,6 +67,8 @@ import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungr
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungryQualifierBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.QualifiedCollectionProviderBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.SingletonCollectionProviderBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.IntegerPropertyFactoryBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.IntegerPropertyInjectedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.OrangeFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.SimpleFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.SimpleFactoryCreatedBean;
@@ -611,6 +613,27 @@ public class BeanInjectionTest {
     }
 
     @Test
+    public void checkIntegerPropertyFactoryBean() {
+        final IntegerPropertyFactoryBean integerPropertyFactoryBean = beanLoader.getBean(IntegerPropertyFactoryBean.class);
+        assertNotNull(integerPropertyFactoryBean);
+
+        final FactoryContext factoryContext = new FactoryContextImpl("some.integer");
+
+        final Integer integerProperty = integerPropertyFactoryBean.createIntegerProperty(factoryContext);
+        assertTrue(integerProperty.equals(123));
+    }
+
+    @Test
+    public void checkIntegerPropertyInjectedBean() {
+        final IntegerPropertyInjectedBean integerPropertyInjectedBean = beanLoader.getBean(IntegerPropertyInjectedBean.class);
+        assertNotNull(integerPropertyInjectedBean);
+
+        assertTrue(integerPropertyInjectedBean.getPrice().equals(50));
+        assertTrue(integerPropertyInjectedBean.getSomeInteger().equals(123));
+        assertTrue(integerPropertyInjectedBean.getSomeOtherInteger().equals(987654321));
+    }
+
+    @Test
     public void checkInterfaceBean() {
         final InterfaceBean interfaceBean = beanLoader.getBean(InterfaceBean.class);
         assertNotNull(interfaceBean);
@@ -1036,8 +1059,7 @@ public class BeanInjectionTest {
         final StringPropertyFactoryBean stringPropertyFactoryBean = beanLoader.getBean(StringPropertyFactoryBean.class);
         assertNotNull(stringPropertyFactoryBean);
 
-        final FactoryContext factoryContext = mock(FactoryContext.class);
-        when(factoryContext.getQualifier()).thenReturn("some.property");
+        final FactoryContext factoryContext = new FactoryContextImpl("some.property");
 
         final String stringProperty = stringPropertyFactoryBean.createStringProperty(factoryContext);
         assertEquals("This is some property", stringProperty);

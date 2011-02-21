@@ -20,26 +20,39 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.factory;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import net.usikkert.kouinject.annotation.Component;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * Test of having an alternative bean created by a factory with Any, in addition to the string bean.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+@Component
+public class IntegerPropertyInjectedBean {
 
-    ALL(91),
-    SCANNED(82),
-    SCANNED_WITHOUT_QUALIFIER(60);
+    @Inject @Named("some.integer")
+    private Integer someInteger;
 
-    private final int numberOfBeans;
+    @Inject @Named("price")
+    private Integer price;
 
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
+    @Inject @Named("some.other.integer")
+    private Integer someOtherInteger;
+
+    public Integer getSomeInteger() {
+        return someInteger;
     }
 
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    public Integer getPrice() {
+        return price;
+    }
+
+    public Integer getSomeOtherInteger() {
+        return someOtherInteger;
     }
 }
