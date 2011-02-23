@@ -68,9 +68,13 @@ import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungr
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.QualifiedCollectionProviderBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.SingletonCollectionProviderBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.CdRecorderBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.ChildFactoryBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.ChildFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.IntegerPropertyFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.IntegerPropertyInjectedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.OrangeFactoryBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.ParentFactoryBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.ParentFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.RecorderBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.SimpleFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.SimpleFactoryCreatedBean;
@@ -342,6 +346,50 @@ public class BeanInjectionTest {
         assertNotNull(childBean.getFieldBean());
         assertNotNull(childBean.getHelloBean());
         assertNotNull(childBean.getCoffeeBean());
+    }
+
+    @Test
+    public void checkChildFactoryBean() {
+        final ChildFactoryBean childFactoryBean = beanLoader.getBean(ChildFactoryBean.class);
+        assertNotNull(childFactoryBean);
+
+        final ParentFactoryBean parentFactoryBean = beanLoader.getBean(ParentFactoryBean.class);
+        assertNotNull(parentFactoryBean);
+        assertEquals(ChildFactoryBean.class, parentFactoryBean.getClass());
+
+        // Verifies expected method inheritance. The same result should also be returned through the bean loader
+        final ChildFactoryCreatedBean childBean = childFactoryBean.createChildBean();
+        assertTrue(childBean.isCreatedByChild());
+        assertFalse(childBean.isCreatedByParent());
+
+        final ParentFactoryCreatedBean parentBean = childFactoryBean.createParentBean();
+        assertFalse(parentBean.isCreatedByChild());
+        assertTrue(parentBean.isCreatedByParent());
+
+        try {
+            childFactoryBean.createOverriddenBean();
+            fail("Should have failed");
+        } catch (UnsupportedOperationException e) {
+            // OK
+        }
+    }
+
+    @Test
+    public void checkChildFactoryCreatedBean() {
+        final ChildFactoryCreatedBean bean1 = beanLoader.getBean(ChildFactoryCreatedBean.class);
+        assertNotNull(bean1);
+        assertTrue(bean1.isCreatedByChild());
+        assertFalse(bean1.isCreatedByParent());
+
+        final ChildFactoryCreatedBean bean2 = beanLoader.getBean(ChildFactoryCreatedBean.class, "child");
+        assertNotNull(bean2);
+        assertTrue(bean2.isCreatedByChild());
+        assertFalse(bean2.isCreatedByParent());
+
+        final ChildFactoryCreatedBean bean3 = beanLoader.getBean(ChildFactoryCreatedBean.class, "any");
+        assertNotNull(bean3);
+        assertTrue(bean3.isCreatedByChild());
+        assertFalse(bean3.isCreatedByParent());
     }
 
     @Test
@@ -747,6 +795,24 @@ public class BeanInjectionTest {
         assertNotNull(organismBean.getFieldBean2InOrganismBean());
 
         assertTrue(organismBean.isFieldsThenMethodsInjectedInOrganismBean());
+    }
+
+    @Test
+    public void checkParentFactoryCreatedBean() {
+        final ParentFactoryCreatedBean bean1 = beanLoader.getBean(ParentFactoryCreatedBean.class);
+        assertNotNull(bean1);
+        assertTrue(bean1.isCreatedByParent());
+        assertFalse(bean1.isCreatedByChild());
+
+        final ParentFactoryCreatedBean bean2 = beanLoader.getBean(ParentFactoryCreatedBean.class, "parent");
+        assertNotNull(bean2);
+        assertTrue(bean2.isCreatedByParent());
+        assertFalse(bean2.isCreatedByChild());
+
+        final ParentFactoryCreatedBean bean3 = beanLoader.getBean(ParentFactoryCreatedBean.class, "any");
+        assertNotNull(bean3);
+        assertTrue(bean3.isCreatedByParent());
+        assertFalse(bean3.isCreatedByChild());
     }
 
     @Test

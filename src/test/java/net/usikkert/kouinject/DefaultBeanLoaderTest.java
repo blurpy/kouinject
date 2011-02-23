@@ -50,6 +50,7 @@ import net.usikkert.kouinject.testbeans.notscanned.collection.ListInjection;
 import net.usikkert.kouinject.testbeans.notscanned.collection.SetInjection;
 import net.usikkert.kouinject.testbeans.notscanned.collectionprovider.CollectionProviderInjectionWithNoMatchingBeans;
 import net.usikkert.kouinject.testbeans.notscanned.date.DateBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.OverriddenFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.notscanned.instance.Instance1Bean;
 import net.usikkert.kouinject.testbeans.notscanned.instance.Instance2Bean;
 import net.usikkert.kouinject.testbeans.notscanned.instance.Instance3Bean;
@@ -1045,6 +1046,11 @@ public class DefaultBeanLoaderTest {
         assertEquals(2, recorderBeans.size());
         assertTrue(containsBean(CdRecorderBean.class, recorderBeans));
         assertTrue(containsBean(TapeRecorderBean.class, recorderBeans));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void overriddenFactoryMethodShouldNotCreateBean() {
+        beanLoader.getBean(OverriddenFactoryCreatedBean.class, "any");
     }
 
     private DefaultBeanLoader createBeanLoaderWithBasePackages(final String... basePackages) {

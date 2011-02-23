@@ -25,7 +25,6 @@ package net.usikkert.kouinject.testbeans.scanned.factory;
 import javax.inject.Named;
 
 import net.usikkert.kouinject.annotation.Produces;
-import net.usikkert.kouinject.testbeans.notscanned.factory.OverriddenFactoryCreatedBean;
 
 /**
  * Test of inheritance in factory beans.
