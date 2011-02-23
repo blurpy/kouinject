@@ -70,12 +70,21 @@ import net.usikkert.kouinject.testbeans.scanned.collectionprovider.SingletonColl
 import net.usikkert.kouinject.testbeans.scanned.factory.CdRecorderBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.ChildFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.ChildFactoryCreatedBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.DifferentTypesFactoryBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.DifferentTypesFactoryCreatedBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.FirstMultipleFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.IntegerPropertyFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.IntegerPropertyInjectedBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.MultipleFactoryBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.OneParameterFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.OrangeFactoryBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.ParameterFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.ParentFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.ParentFactoryCreatedBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.PrivateFactoryBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.PrivateFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.RecorderBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.SecondMultipleFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.SimpleFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.SimpleFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.SimpleFactoryCreatedBeanUsingBean;
@@ -85,6 +94,9 @@ import net.usikkert.kouinject.testbeans.scanned.factory.SingletonFactoryCreatedB
 import net.usikkert.kouinject.testbeans.scanned.factory.StringPropertyFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.StringPropertyInjectedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.TapeRecorderBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.TapeRecorderFactoryBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.ThirdMultipleFactoryCreatedBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.ThreeParametersFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder1.Folder1Bean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder2.Folder2Bean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder3.Folder3Bean;
@@ -426,6 +438,30 @@ public class BeanInjectionTest {
     }
 
     @Test
+    public void checkDifferentTypesFactoryBean() {
+        final DifferentTypesFactoryBean bean = beanLoader.getBean(DifferentTypesFactoryBean.class);
+        assertNotNull(bean);
+
+        final DifferentTypesFactoryCreatedBean createdBean = bean.createBean(null, null, null, null);
+        assertNotNull(createdBean);
+        assertTrue(createdBean.isCreatedByFactory());
+        assertNull(createdBean.getHelloBean());
+    }
+
+    @Test
+    public void checkDifferentTypesFactoryCreatedBean() {
+        final DifferentTypesFactoryCreatedBean bean = beanLoader.getBean(DifferentTypesFactoryCreatedBean.class);
+
+        assertNotNull(bean);
+        assertTrue(bean.isCreatedByFactory());
+
+        assertNotNull(bean.getHelloBean());
+        assertNotNull(bean.getCoffeeBeanProvider());
+        assertNotNull(bean.getJavaBeanCollection());
+        assertNotNull(bean.getFieldBeanCollectionProvider());
+    }
+
+    @Test
     public void checkEverythingBean() {
         final EverythingBean everythingBean = beanLoader.getBean(EverythingBean.class);
 
@@ -503,6 +539,14 @@ public class BeanInjectionTest {
         assertEquals(FirstLayerBean.class, firstLayer1.getClass());
         assertEquals(FirstLayerBean.class, firstLayer2.getClass());
         assertEquals(FirstLayerBean.class, firstLayer3.getClass());
+    }
+
+    @Test
+    public void checkFirstMultipleFactoryCreatedBean() {
+        final FirstMultipleFactoryCreatedBean bean = beanLoader.getBean(FirstMultipleFactoryCreatedBean.class);
+
+        assertNotNull(bean);
+        assertTrue(bean.isCreatedByFactory());
     }
 
     @Test
@@ -746,9 +790,36 @@ public class BeanInjectionTest {
         }
     }
 
+    @Test
+    public void checkMultipleFactoryBean() {
+        final MultipleFactoryBean bean = beanLoader.getBean(MultipleFactoryBean.class);
+        assertNotNull(bean);
+
+        final FirstMultipleFactoryCreatedBean firstBean = bean.createFirstBean();
+        assertNotNull(firstBean);
+        assertTrue(firstBean.isCreatedByFactory());
+
+        final SecondMultipleFactoryCreatedBean secondBean = bean.createSecondBean();
+        assertNotNull(secondBean);
+        assertTrue(secondBean.isCreatedByFactory());
+
+        final ThirdMultipleFactoryCreatedBean thirdBean = bean.createThirdBean();
+        assertNotNull(thirdBean);
+        assertTrue(thirdBean.isCreatedByFactory());
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void checkNoBean() {
         beanLoader.getBean(NoBean.class);
+    }
+
+    @Test
+    public void checkOneParameterFactoryCreatedBean() {
+        final OneParameterFactoryCreatedBean bean = beanLoader.getBean(OneParameterFactoryCreatedBean.class);
+
+        assertNotNull(bean);
+        assertTrue(bean.isCreatedByFactory());
+        assertNotNull(bean.getHelloBean());
     }
 
     @Test
@@ -795,6 +866,22 @@ public class BeanInjectionTest {
         assertNotNull(organismBean.getFieldBean2InOrganismBean());
 
         assertTrue(organismBean.isFieldsThenMethodsInjectedInOrganismBean());
+    }
+
+    @Test
+    public void checkParameterFactoryBean() {
+        final ParameterFactoryBean bean = beanLoader.getBean(ParameterFactoryBean.class);
+        assertNotNull(bean);
+
+        final OneParameterFactoryCreatedBean beanWithOneParameter = bean.createBeanWithOneParameter(null);
+        assertNotNull(beanWithOneParameter);
+        assertTrue(beanWithOneParameter.isCreatedByFactory());
+        assertNull(beanWithOneParameter.getHelloBean());
+
+        final ThreeParametersFactoryCreatedBean beanWithThreeParameters = bean.createBeanWithThreeParameters(null, null, null);
+        assertNotNull(beanWithThreeParameters);
+        assertTrue(beanWithThreeParameters.isCreatedByFactory());
+        assertNull(beanWithThreeParameters.getCoffeeBean());
     }
 
     @Test
@@ -855,6 +942,20 @@ public class BeanInjectionTest {
     public void checkPinkSingletonBean() {
         final PinkSingletonBean pinkSingletonBean = beanLoader.getBean(PinkSingletonBean.class);
         assertNotNull(pinkSingletonBean);
+    }
+
+    @Test
+    public void checkPrivateFactoryBean() {
+        final PrivateFactoryBean bean = beanLoader.getBean(PrivateFactoryBean.class);
+        assertNotNull(bean);
+    }
+
+    @Test
+    public void checkPrivateFactoryCreatedBean() {
+        final PrivateFactoryCreatedBean bean = beanLoader.getBean(PrivateFactoryCreatedBean.class);
+
+        assertNotNull(bean);
+        assertTrue(bean.isCreatedByFactory());
     }
 
     @Test
@@ -1009,6 +1110,14 @@ public class BeanInjectionTest {
             = secondCircularDependencyBean.getFirstCircularDependencyBeanProvider();
         assertNotNull(firstCircularDependencyBeanProvider);
         assertNotNull(firstCircularDependencyBeanProvider.get());
+    }
+
+    @Test
+    public void checkSecondMultipleFactoryCreatedBean() {
+        final SecondMultipleFactoryCreatedBean bean = beanLoader.getBean(SecondMultipleFactoryCreatedBean.class);
+
+        assertNotNull(bean);
+        assertTrue(bean.isCreatedByFactory());
     }
 
     @Test
@@ -1172,6 +1281,16 @@ public class BeanInjectionTest {
     }
 
     @Test
+    public void checkTapeRecorderFactoryBean() {
+        final TapeRecorderFactoryBean bean = beanLoader.getBean(TapeRecorderFactoryBean.class);
+        assertNotNull(bean);
+
+        final TapeRecorderBean tapeRecorderBean = bean.createBean();
+        assertNotNull(tapeRecorderBean);
+        assertTrue(tapeRecorderBean.isCreatedByFactory());
+    }
+
+    @Test
     public void checkThirdLayer() {
         final Layer thirdLayer1 = beanLoader.getBean(Layer.class, "third");
         final Layer thirdLayer2 = beanLoader.getBean(FirstLayerBean.class, "third");
@@ -1189,6 +1308,29 @@ public class BeanInjectionTest {
         assertEquals(ThirdLayerBean.class, thirdLayer3.getClass());
         assertEquals(ThirdLayerBean.class, thirdLayer4.getClass());
         assertEquals(ThirdLayerBean.class, thirdLayer5.getClass());
+    }
+
+    @Test
+    public void checkThirdMultipleFactoryCreatedBean() {
+        final ThirdMultipleFactoryCreatedBean bean = beanLoader.getBean(ThirdMultipleFactoryCreatedBean.class);
+
+        assertNotNull(bean);
+        assertTrue(bean.isCreatedByFactory());
+    }
+
+    @Test
+    public void checkThreeParametersFactoryCreatedBean() {
+        final ThreeParametersFactoryCreatedBean bean = beanLoader.getBean(ThreeParametersFactoryCreatedBean.class);
+
+        assertNotNull(bean);
+        assertTrue(bean.isCreatedByFactory());
+
+        assertNotNull(bean.getCoffeeBean());
+        assertNotNull(bean.getRedBean());
+
+        final ColorBean colorBean = bean.getColorBean();
+        assertNotNull(colorBean);
+        assertEquals(BlueBean.class, colorBean.getClass());
     }
 
     @Test
