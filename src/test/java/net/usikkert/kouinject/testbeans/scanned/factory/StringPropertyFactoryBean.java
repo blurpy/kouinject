@@ -54,6 +54,7 @@ public class StringPropertyFactoryBean {
     @Produces @Any
     public String createStringProperty(final FactoryContext factoryContext) {
         final String qualifier = factoryContext.getQualifier();
+        Validate.notNull(qualifier, "Qualifier can not be null");
         final String property = properties.getProperty(qualifier);
         Validate.notNull(property, "Property '" + qualifier + "' was not found in " + PROPERTY_FILE);
 

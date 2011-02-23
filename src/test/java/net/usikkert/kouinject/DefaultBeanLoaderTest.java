@@ -1053,6 +1053,58 @@ public class DefaultBeanLoaderTest {
         beanLoader.getBean(OverriddenFactoryCreatedBean.class, "any");
     }
 
+    @Test
+    public void shouldGetStringsFromStringFactory() {
+        final String someProperty = beanLoader.getBean(String.class, "some.property");
+        assertEquals("This is some property", someProperty);
+
+        final String color = beanLoader.getBean(String.class, "color");
+        assertEquals("Pink", color);
+
+        final String someThing = beanLoader.getBean(String.class, "some.thing");
+        assertEquals("This is something else", someThing);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldGetNoMatchForCollectionOfStringsWithAnyInStringFactory() {
+        beanLoader.getBeans(String.class, "any");
+    }
+
+    @Test
+    public void shouldTreatAnyLikeNormalQualifierInStringFactory() {
+        try {
+            beanLoader.getBean(String.class, "any");
+            fail("Should have failed");
+        } catch (RuntimeException e) {
+            // The factory throws an exception, but it could have returned some value instead
+            assertEquals("Property 'any' was not found in FactoryTestProperties.properties",
+                    e.getCause().getCause().getMessage());
+        }
+    }
+
+    @Test
+    public void shouldTreatNoQualifierLikeNormalInStringFactory() {
+        try {
+            beanLoader.getBean(String.class);
+            fail("Should have failed");
+        } catch (RuntimeException e) {
+            // The factory throws an exception, but it could have returned some value instead
+            assertEquals("Qualifier can not be null", e.getCause().getCause().getMessage());
+        }
+    }
+
+    @Test
+    public void shouldGetIntegersFromIntegerFactory() {
+        final Integer someInteger = beanLoader.getBean(Integer.class, "some.integer");
+        assertEquals(Integer.valueOf(123), someInteger);
+
+        final Integer price = beanLoader.getBean(Integer.class, "price");
+        assertEquals(Integer.valueOf(50), price);
+
+        final Integer someOtherInteger = beanLoader.getBean(Integer.class, "some.other.integer");
+        assertEquals(Integer.valueOf(987654321), someOtherInteger);
+    }
+
     private DefaultBeanLoader createBeanLoaderWithBasePackages(final String... basePackages) {
         final ClassLocator classLocator = new ClassPathScanner();
         final BeanLocator beanLocator = new AnnotationBasedBeanLocator(
