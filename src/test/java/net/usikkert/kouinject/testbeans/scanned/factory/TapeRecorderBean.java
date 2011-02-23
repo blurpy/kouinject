@@ -20,26 +20,22 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.factory;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * An implementation that will be created by a factory.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+public class TapeRecorderBean implements RecorderBean {
 
-    ALL(93),
-    SCANNED(85),
-    SCANNED_WITHOUT_QUALIFIER(61);
+    private boolean createdByFactory;
 
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
+    public boolean isCreatedByFactory() {
+        return createdByFactory;
     }
 
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    public void setCreatedByFactory(final boolean createdByFactory) {
+        this.createdByFactory = createdByFactory;
     }
 }

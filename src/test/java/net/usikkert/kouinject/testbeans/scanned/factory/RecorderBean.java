@@ -20,26 +20,13 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.factory;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * Interface for testing with one implementation created by a factory, and another by the injector.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+public interface RecorderBean {
 
-    ALL(93),
-    SCANNED(85),
-    SCANNED_WITHOUT_QUALIFIER(61);
-
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
-    }
-
-    public int getNumberOfBeans() {
-        return numberOfBeans;
-    }
 }

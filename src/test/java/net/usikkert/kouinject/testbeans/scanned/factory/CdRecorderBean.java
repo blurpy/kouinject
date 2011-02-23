@@ -20,26 +20,19 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.factory;
+
+import javax.inject.Named;
+
+import net.usikkert.kouinject.annotation.Component;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * An implementation that will be created by the injector.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+@Named("cd")
+@Component
+public class CdRecorderBean implements RecorderBean {
 
-    ALL(93),
-    SCANNED(85),
-    SCANNED_WITHOUT_QUALIFIER(61);
-
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
-    }
-
-    public int getNumberOfBeans() {
-        return numberOfBeans;
-    }
 }

@@ -74,8 +74,11 @@ import net.usikkert.kouinject.testbeans.scanned.collection.HungryQualifierBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungryBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungryQualifierBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.SingletonCollectionProviderBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.CdRecorderBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.RecorderBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.SimpleFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.SingletonFactoryCreatedBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.TapeRecorderBean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder1.Folder1Bean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder2.Folder2Bean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder3.Folder3Bean;
@@ -102,6 +105,7 @@ import net.usikkert.kouinject.testbeans.scanned.scope.inheritance.SecondLayerBea
 import net.usikkert.kouinject.testbeans.scanned.scope.inheritance.ThirdLayerBean;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -1025,6 +1029,22 @@ public class DefaultBeanLoaderTest {
         assertTrue(bean2.isCreatedByFactory());
 
         assertSame(bean1, bean2);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    @Ignore("error handling not implemented") // TODO
+    public void getBeanWithOneMatchOfImplementationFromFactoryAndOneMatchOfImplementationFromInjectorShouldFail() {
+        beanLoader.getBean(RecorderBean.class, "any");
+    }
+
+    @Test
+    public void getBeansWithOneMatchOfImplementationFromFactoryAndOneMatchOfImplementationFromInjectorShouldWork() {
+        final Collection<RecorderBean> recorderBeans = beanLoader.getBeans(RecorderBean.class, "any");
+
+        assertNotNull(recorderBeans);
+        assertEquals(2, recorderBeans.size());
+        assertTrue(containsBean(CdRecorderBean.class, recorderBeans));
+        assertTrue(containsBean(TapeRecorderBean.class, recorderBeans));
     }
 
     private DefaultBeanLoader createBeanLoaderWithBasePackages(final String... basePackages) {

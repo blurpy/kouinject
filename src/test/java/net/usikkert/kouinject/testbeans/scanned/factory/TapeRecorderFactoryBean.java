@@ -20,26 +20,26 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.factory;
+
+import javax.inject.Named;
+
+import net.usikkert.kouinject.annotation.Component;
+import net.usikkert.kouinject.annotation.Produces;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * Factory for testing a factory created implementation of an interface.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+@Component
+public class TapeRecorderFactoryBean {
 
-    ALL(93),
-    SCANNED(85),
-    SCANNED_WITHOUT_QUALIFIER(61);
+    @Produces @Named("tape")
+    public TapeRecorderBean createBean() {
+        final TapeRecorderBean bean = new TapeRecorderBean();
+        bean.setCreatedByFactory(true);
 
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
-    }
-
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+        return bean;
     }
 }

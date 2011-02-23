@@ -67,9 +67,11 @@ import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungr
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungryQualifierBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.QualifiedCollectionProviderBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.SingletonCollectionProviderBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.CdRecorderBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.IntegerPropertyFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.IntegerPropertyInjectedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.OrangeFactoryBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.RecorderBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.SimpleFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.SimpleFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.SimpleFactoryCreatedBeanUsingBean;
@@ -78,6 +80,7 @@ import net.usikkert.kouinject.testbeans.scanned.factory.SingletonFactoryCreatedB
 import net.usikkert.kouinject.testbeans.scanned.factory.SingletonFactoryCreatedBeanUsingBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.StringPropertyFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.StringPropertyInjectedBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.TapeRecorderBean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder1.Folder1Bean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder2.Folder2Bean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder3.Folder3Bean;
@@ -308,6 +311,19 @@ public class BeanInjectionTest {
 
         assertNotNull(carBean);
         assertEquals(CarBean.class, carBean.getClass());
+    }
+
+    @Test
+    public void checkCdRecorderBean() {
+        final CdRecorderBean cdRecorderBean1 = beanLoader.getBean(CdRecorderBean.class);
+        assertNotNull(cdRecorderBean1);
+
+        final CdRecorderBean cdRecorderBean2 = beanLoader.getBean(CdRecorderBean.class, "cd");
+        assertNotNull(cdRecorderBean2);
+
+        final RecorderBean cdRecorderBean3 = beanLoader.getBean(RecorderBean.class, "cd");
+        assertNotNull(cdRecorderBean3);
+        assertEquals(CdRecorderBean.class, cdRecorderBean3.getClass());
     }
 
     @Test
@@ -1073,6 +1089,20 @@ public class BeanInjectionTest {
         assertEquals("Pink", stringPropertyInjectedBean.getColor());
         assertEquals("This is some property", stringPropertyInjectedBean.getSomeProperty());
         assertEquals("This is something else", stringPropertyInjectedBean.getSomeThing());
+    }
+
+    @Test
+    public void checkTapeRecorderBean() {
+        final TapeRecorderBean tapeRecorderBean1 = beanLoader.getBean(TapeRecorderBean.class);
+        assertNotNull(tapeRecorderBean1);
+        assertTrue(tapeRecorderBean1.isCreatedByFactory());
+
+        final TapeRecorderBean tapeRecorderBean2 = beanLoader.getBean(TapeRecorderBean.class, "tape");
+        assertNotNull(tapeRecorderBean2);
+
+        final RecorderBean tapeRecorderBean3 = beanLoader.getBean(RecorderBean.class, "tape");
+        assertNotNull(tapeRecorderBean3);
+        assertEquals(TapeRecorderBean.class, tapeRecorderBean3.getClass());
     }
 
     @Test
