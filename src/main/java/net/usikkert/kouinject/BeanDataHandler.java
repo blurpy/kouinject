@@ -23,6 +23,7 @@
 package net.usikkert.kouinject;
 
 import net.usikkert.kouinject.beandata.BeanData;
+import net.usikkert.kouinject.beandata.BeanKey;
 
 /**
  * Interface for getting meta-data from beans.
@@ -32,13 +33,13 @@ import net.usikkert.kouinject.beandata.BeanData;
 public interface BeanDataHandler {
 
     /**
-     * Gets meta-data for a bean with the given class. This meta-data contains information about
+     * Gets meta-data for a bean with the given key. This meta-data contains information about
      * constructors, methods and fields that are marked for dependency injection.
      *
-     * @param beanClass The class to get meta-data from.
+     * @param beanKey The key containing the class to get meta-data from.
      * @param skipConstructor If finding the correct constructor to use when creating an instance of
      * this class should be skipped.
      * @return Class meta-data.
      */
-    BeanData getBeanData(Class<?> beanClass, boolean skipConstructor);
+    BeanData getBeanData(BeanKey beanKey, boolean skipConstructor);
 }

@@ -90,10 +90,28 @@ public class AnnotationBasedBeanDataHandlerTest {
     }
 
     @Test
-    public void getBeanDataShouldDetectFieldsAndDependenciesForInjection() {
-        final BeanData beanData = handler.getBeanData(FieldBean.class, false);
+    public void getBeanDataShouldSetBeanKeyWithoutQualifier() {
+        final BeanKey beanKey = new BeanKey(FieldBean.class);
+        final BeanData beanData = handler.getBeanData(beanKey, false);
 
-        assertEquals(FieldBean.class, beanData.getBeanClass());
+        assertSame(beanKey, beanData.getBeanKey());
+        assertEquals(FieldBean.class, beanKey.getBeanClass());
+        assertNull(beanKey.getQualifier());
+    }
+
+    @Test
+    public void getBeanDataShouldSetBeanKeyWithQualifier() {
+        final BeanKey beanKey = new BeanKey(SetterBean.class, "setter");
+        final BeanData beanData = handler.getBeanData(beanKey, false);
+
+        assertSame(beanKey, beanData.getBeanKey());
+        assertEquals(SetterBean.class, beanKey.getBeanClass());
+        assertEquals("setter", beanKey.getQualifier());
+    }
+
+    @Test
+    public void getBeanDataShouldDetectFieldsAndDependenciesForInjection() {
+        final BeanData beanData = handler.getBeanData(new BeanKey(FieldBean.class), false);
 
         final List<BeanKey> dependencies = beanData.getDependencies();
         assertEquals(3, dependencies.size());
@@ -117,9 +135,7 @@ public class AnnotationBasedBeanDataHandlerTest {
 
     @Test
     public void getBeanDataShouldDetectInheritedFieldsAndDependenciesForInjection() {
-        final BeanData beanData = handler.getBeanData(ChildBean.class, false);
-
-        assertEquals(ChildBean.class, beanData.getBeanClass());
+        final BeanData beanData = handler.getBeanData(new BeanKey(ChildBean.class), false);
 
         final List<BeanKey> dependencies = beanData.getDependencies();
         assertEquals(3, dependencies.size());
@@ -143,9 +159,7 @@ public class AnnotationBasedBeanDataHandlerTest {
 
     @Test
     public void getBeanDataShouldDetectMethodsAndDependenciesForInjection() {
-        final BeanData beanData = handler.getBeanData(JavaBean.class, false);
-
-        assertEquals(JavaBean.class, beanData.getBeanClass());
+        final BeanData beanData = handler.getBeanData(new BeanKey(JavaBean.class), false);
 
         final List<BeanKey> dependencies = beanData.getDependencies();
         assertEquals(2, dependencies.size());
@@ -166,9 +180,7 @@ public class AnnotationBasedBeanDataHandlerTest {
 
     @Test
     public void getBeanDataShouldDetectInheritedAndOverriddenMethodsAndDependenciesForInjection() {
-        final BeanData beanData = handler.getBeanData(CatBean.class, false);
-
-        assertEquals(CatBean.class, beanData.getBeanClass());
+        final BeanData beanData = handler.getBeanData(new BeanKey(CatBean.class), false);
 
         final List<BeanKey> dependencies = beanData.getDependencies();
         assertEquals(20, dependencies.size());
@@ -212,9 +224,7 @@ public class AnnotationBasedBeanDataHandlerTest {
 
     @Test
     public void getBeanDataShouldDetectCorrectConstructorAndDependenciesForInjection() {
-        final BeanData beanData = handler.getBeanData(ConstructorBean.class, false);
-
-        assertEquals(ConstructorBean.class, beanData.getBeanClass());
+        final BeanData beanData = handler.getBeanData(new BeanKey(ConstructorBean.class), false);
 
         final List<BeanKey> dependencies = beanData.getDependencies();
         assertEquals(2, dependencies.size());
@@ -232,9 +242,7 @@ public class AnnotationBasedBeanDataHandlerTest {
 
     @Test
     public void getBeanDataShouldDetectConstructorAndFieldsAndMethodsAtTheSameTime() {
-        final BeanData beanData = handler.getBeanData(EverythingBean.class, false);
-
-        assertEquals(EverythingBean.class, beanData.getBeanClass());
+        final BeanData beanData = handler.getBeanData(new BeanKey(EverythingBean.class), false);
 
         final List<BeanKey> dependencies = beanData.getDependencies();
         assertEquals(8, dependencies.size());
@@ -265,9 +273,7 @@ public class AnnotationBasedBeanDataHandlerTest {
 
     @Test
     public void getBeanDataShouldDetectQualifiersInConstructors() {
-        final BeanData beanData = handler.getBeanData(QualifierBean.class, false);
-
-        assertEquals(QualifierBean.class, beanData.getBeanClass());
+        final BeanData beanData = handler.getBeanData(new BeanKey(QualifierBean.class), false);
 
         final ConstructorData constructor = beanData.getConstructor();
         assertEquals(2, constructor.getDependencies().size());
@@ -283,7 +289,7 @@ public class AnnotationBasedBeanDataHandlerTest {
 
     @Test
     public void getBeanDataShouldDetectQualifiersInFields() {
-        final BeanData beanData = handler.getBeanData(QualifierBean.class, false);
+        final BeanData beanData = handler.getBeanData(new BeanKey(QualifierBean.class), false);
 
         final List<FieldData> fields = beanData.getFields();
         assertEquals(2, fields.size());
@@ -305,7 +311,7 @@ public class AnnotationBasedBeanDataHandlerTest {
 
     @Test
     public void getBeanDataShouldDetectQualifiersInMethods() {
-        final BeanData beanData = handler.getBeanData(QualifierBean.class, false);
+        final BeanData beanData = handler.getBeanData(new BeanKey(QualifierBean.class), false);
 
         final List<MethodData> methods = beanData.getMethods();
         assertEquals(1, methods.size());
@@ -323,9 +329,7 @@ public class AnnotationBasedBeanDataHandlerTest {
 
     @Test
     public void getBeanDataShouldDetectDependenciesInProviders() {
-        final BeanData beanData = handler.getBeanData(ProviderBean.class, false);
-
-        assertEquals(ProviderBean.class, beanData.getBeanClass());
+        final BeanData beanData = handler.getBeanData(new BeanKey(ProviderBean.class), false);
 
         final List<BeanKey> dependencies = beanData.getDependencies();
         assertEquals(3, dependencies.size());
@@ -346,9 +350,7 @@ public class AnnotationBasedBeanDataHandlerTest {
 
     @Test
     public void getBeanDataShouldDetectDependenciesInCollections() {
-        final BeanData beanData = handler.getBeanData(HungryBean.class, false);
-
-        assertEquals(HungryBean.class, beanData.getBeanClass());
+        final BeanData beanData = handler.getBeanData(new BeanKey(HungryBean.class), false);
 
         final List<BeanKey> dependencies = beanData.getDependencies();
         assertEquals(3, dependencies.size());
@@ -366,9 +368,7 @@ public class AnnotationBasedBeanDataHandlerTest {
 
     @Test
     public void getBeanDataShouldDetectQualifiersForCollections() {
-        final BeanData beanData = handler.getBeanData(HungryQualifierBean.class, false);
-
-        assertEquals(HungryQualifierBean.class, beanData.getBeanClass());
+        final BeanData beanData = handler.getBeanData(new BeanKey(HungryQualifierBean.class), false);
 
         final List<BeanKey> dependencies = beanData.getDependencies();
         assertEquals(3, dependencies.size());
@@ -401,9 +401,7 @@ public class AnnotationBasedBeanDataHandlerTest {
 
     @Test
     public void getBeanDataShouldDetectDependenciesInCollectionProviders() {
-        final BeanData beanData = handler.getBeanData(ProvidedHungryBean.class, false);
-
-        assertEquals(ProvidedHungryBean.class, beanData.getBeanClass());
+        final BeanData beanData = handler.getBeanData(new BeanKey(ProvidedHungryBean.class), false);
 
         final List<BeanKey> dependencies = beanData.getDependencies();
         assertEquals(3, dependencies.size());
@@ -421,9 +419,7 @@ public class AnnotationBasedBeanDataHandlerTest {
 
     @Test
     public void getBeanDataShouldDetectQualifiersForCollectionProviders() {
-        final BeanData beanData = handler.getBeanData(ProvidedHungryQualifierBean.class, false);
-
-        assertEquals(ProvidedHungryQualifierBean.class, beanData.getBeanClass());
+        final BeanData beanData = handler.getBeanData(new BeanKey(ProvidedHungryQualifierBean.class), false);
 
         final List<BeanKey> dependencies = beanData.getDependencies();
         assertEquals(3, dependencies.size());
@@ -456,39 +452,37 @@ public class AnnotationBasedBeanDataHandlerTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void getBeanDataShouldFailIfCollectionProviderIsUsedWithWildcard() {
-        handler.getBeanData(CollectionProviderInjectionWithWildcard.class, false);
+        handler.getBeanData(new BeanKey(CollectionProviderInjectionWithWildcard.class), false);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getBeanDataShouldFailIfCollectionProviderIsUsedWithoutTypeArgument() {
-        handler.getBeanData(CollectionProviderInjectionWithoutTypeArgument.class, false);
+        handler.getBeanData(new BeanKey(CollectionProviderInjectionWithoutTypeArgument.class), false);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getBeanDataShouldFailIfCollectionIsUsedWithWildcard() {
-        handler.getBeanData(CollectionInjectionWithWildcard.class, false);
+        handler.getBeanData(new BeanKey(CollectionInjectionWithWildcard.class), false);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getBeanDataShouldFailIfCollectionIsUsedWithoutTypeArgument() {
-        handler.getBeanData(CollectionInjectionWithoutTypeArgument.class, false);
+        handler.getBeanData(new BeanKey(CollectionInjectionWithoutTypeArgument.class), false);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getBeanDataShouldFailIfProviderIsUsedWithWildcard() {
-        handler.getBeanData(ProviderInjectionWithWildcard.class, false);
+        handler.getBeanData(new BeanKey(ProviderInjectionWithWildcard.class), false);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getBeanDataShouldFailIfProviderIsUsedWithoutTypeArgument() {
-        handler.getBeanData(ProviderInjectionWithoutTypeArgument.class, false);
+        handler.getBeanData(new BeanKey(ProviderInjectionWithoutTypeArgument.class), false);
     }
 
     @Test
     public void getBeanDataShouldSupportIgnoringConstructor() {
-        final BeanData beanData = handler.getBeanData(ConstructorBean.class, true);
-
-        assertEquals(ConstructorBean.class, beanData.getBeanClass());
+        final BeanData beanData = handler.getBeanData(new BeanKey(ConstructorBean.class), true);
 
         final List<BeanKey> dependencies = beanData.getDependencies();
         assertEquals(0, dependencies.size());
@@ -499,9 +493,7 @@ public class AnnotationBasedBeanDataHandlerTest {
 
     @Test
     public void getBeanDataShouldHandleClassesWithoutAnnotations() {
-        final BeanData beanData = handler.getBeanData(ClassPathScanner.class, false);
-
-        assertEquals(ClassPathScanner.class, beanData.getBeanClass());
+        final BeanData beanData = handler.getBeanData(new BeanKey(ClassPathScanner.class), false);
 
         final List<BeanKey> dependencies = beanData.getDependencies();
         assertEquals(0, dependencies.size());
@@ -518,9 +510,7 @@ public class AnnotationBasedBeanDataHandlerTest {
 
     @Test
     public void getBeanDataShouldIgnoreStatics() {
-        final BeanData beanData = handler.getBeanData(StaticBean.class, false);
-
-        assertEquals(StaticBean.class, beanData.getBeanClass());
+        final BeanData beanData = handler.getBeanData(new BeanKey(StaticBean.class), false);
 
         final List<BeanKey> dependencies = beanData.getDependencies();
         assertEquals(0, dependencies.size());
@@ -528,9 +518,7 @@ public class AnnotationBasedBeanDataHandlerTest {
 
     @Test
     public void getBeanDataShouldIgnoreFinalFields() {
-        final BeanData beanData = handler.getBeanData(FinalBean.class, false);
-
-        assertEquals(FinalBean.class, beanData.getBeanClass());
+        final BeanData beanData = handler.getBeanData(new BeanKey(FinalBean.class), false);
 
         final List<BeanKey> dependencies = beanData.getDependencies();
         assertEquals(0, dependencies.size());
@@ -538,36 +526,36 @@ public class AnnotationBasedBeanDataHandlerTest {
 
     @Test
     public void getBeanDataShouldDetectSingletons() {
-        final BeanData beanData = handler.getBeanData(SingletonBean.class, false);
+        final BeanData beanData = handler.getBeanData(new BeanKey(SingletonBean.class), false);
 
         assertTrue(beanData.isSingleton());
     }
 
     @Test
     public void getBeanDataShouldDetectNonSingletons() {
-        final BeanData beanData = handler.getBeanData(CarBean.class, false);
+        final BeanData beanData = handler.getBeanData(new BeanKey(CarBean.class), false);
 
         assertFalse(beanData.isSingleton());
     }
 
     @Test(expected = RuntimeException.class)
     public void getBeanDataShouldAbortIfNoMatchingConstructorIsFound() {
-        handler.getBeanData(NoMatchingConstructorBean.class, false);
+        handler.getBeanData(new BeanKey(NoMatchingConstructorBean.class), false);
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void getBeanDataShouldAbortIfTooManyMatchingConstructorsAreFound() {
-        handler.getBeanData(TooManyMatchingConstructorsBean.class, false);
+        handler.getBeanData(new BeanKey(TooManyMatchingConstructorsBean.class), false);
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void getBeanDataShouldAbortIfTooManyQualifiersAreUsedOnTheSameField() {
-        handler.getBeanData(TooManyQualifiersBean.class, false);
+        handler.getBeanData(new BeanKey(TooManyQualifiersBean.class), false);
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void getBeanDataShouldAbortIfNamedQualifierIsUsedWithoutName() {
-        handler.getBeanData(NamedQualifierUsedWithoutNameBean.class, false);
+        handler.getBeanData(new BeanKey(NamedQualifierUsedWithoutNameBean.class), false);
     }
 
     private void assertNoQualifiers(final List<BeanKey> dependencies) {

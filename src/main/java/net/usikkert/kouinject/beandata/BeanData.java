@@ -34,27 +34,27 @@ import org.apache.commons.lang.Validate;
  */
 public class BeanData {
 
-    private final Class<?> beanClass;
+    private final BeanKey beanKey;
     private final ConstructorData constructor;
     private final List<InjectionPoint> injectionPoints;
     private final List<BeanKey> dependencies;
     private final boolean isSingleton;
 
     /**
-     * Constructs a new BeanData instance for describing the defined class.
+     * Constructs a new BeanData instance for describing the defined bean key.
      *
-     * @param beanClass The class this BeanData will describe.
+     * @param beanKey The key for the class this BeanData will describe.
      * @param constructor Optional meta-data for the constructor to invoke on beanClass.
      *                     If this is null then the bean can not be instantiated.
      * @param injectionPoints Meta-data for the injection points in beanClass that requires dependency injection.
      * @param isSingleton If this bean is a singleton.
      */
-    public BeanData(final Class<?> beanClass, final ConstructorData constructor,
+    public BeanData(final BeanKey beanKey, final ConstructorData constructor,
             final List<InjectionPoint> injectionPoints, final boolean isSingleton) {
-        Validate.notNull(beanClass, "Bean class can not be null");
+        Validate.notNull(beanKey, "Bean key can not be null");
         Validate.notNull(injectionPoints, "Injection points can not be null");
 
-        this.beanClass = beanClass;
+        this.beanKey = beanKey;
         this.constructor = constructor;
         this.injectionPoints = injectionPoints;
         this.isSingleton = isSingleton;
@@ -64,17 +64,17 @@ public class BeanData {
     }
 
     /**
-     * The class this BeanData describes the meta-data of.
+     * The bean key this BeanData describes the meta-data of.
      *
-     * @return The class this BeanData describes.
+     * @return The bean key this BeanData describes.
      */
-    public Class<?> getBeanClass() {
-        return beanClass;
+    public BeanKey getBeanKey() {
+        return beanKey;
     }
 
     /**
      * Gets the meta-data describing the constructor to invoke to create a new instance of the class
-     * defined in {@link #getBeanClass()}.
+     * defined in {@link #getBeanKey()}.
      *
      * @return The constructor meta-data.
      */
@@ -83,7 +83,7 @@ public class BeanData {
     }
 
     /**
-     * Gets the meta-data describing the fields in {@link #getBeanClass()} requiring dependency injection.
+     * Gets the meta-data describing the fields in {@link #getBeanKey()} requiring dependency injection.
      *
      * @return The meta-data of the fields.
      */
@@ -100,7 +100,7 @@ public class BeanData {
     }
 
     /**
-     * Gets the meta-data describing the methods in {@link #getBeanClass()} requiring dependency injection.
+     * Gets the meta-data describing the methods in {@link #getBeanKey()} requiring dependency injection.
      *
      * @return The meta-data of the methods.
      */
@@ -117,7 +117,7 @@ public class BeanData {
     }
 
     /**
-     * Gets the meta-data describing the injection points in {@link #getBeanClass()} requiring dependency injection.
+     * Gets the meta-data describing the injection points in {@link #getBeanKey()} requiring dependency injection.
      *
      * @return The meta-data of the injection points.
      */
@@ -127,7 +127,7 @@ public class BeanData {
 
     /**
      * Gets a list of all the required dependencies for dependency injection in the constructor,
-     * fields and methods of {@link #getBeanClass()}.
+     * fields and methods of {@link #getBeanKey()}.
      *
      * @return All required dependencies.
      */
@@ -168,6 +168,6 @@ public class BeanData {
 
     @Override
     public String toString() {
-        return "[singleton=" + isSingleton + "] " + beanClass;
+        return "[singleton=" + isSingleton + "] " + beanKey;
     }
 }

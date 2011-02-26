@@ -25,7 +25,6 @@ package net.usikkert.kouinject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -53,12 +52,12 @@ public class BeanDataMap {
     /**
      * Adds bean-data to the map.
      *
-     * @param description The description of the bean-data.
      * @param beanData The bean-data to add.
      */
-    public synchronized void addBeanData(final BeanKey description, final BeanData beanData) {
-        Validate.notNull(description, "Description can not be null");
+    public synchronized void addBeanData(final BeanData beanData) {
         Validate.notNull(beanData, "BeanData can not be null");
+
+        final BeanKey description = beanData.getBeanKey();
 
         if (containsBeanData(description)) {
             throw new IllegalArgumentException("Cannot add already existing bean-data: " + description);
@@ -81,11 +80,8 @@ public class BeanDataMap {
         Validate.notNull(beanNeeded, "Bean needed can not be null");
 
         final List<BeanKey> matches = new ArrayList<BeanKey>();
-        final Iterator<BeanKey> iterator = beanDataMap.keySet().iterator();
 
-        while (iterator.hasNext()) {
-            final BeanKey bean = iterator.next();
-
+        for (final BeanKey bean : beanDataMap.keySet()) {
             if (beanNeeded.canInject(bean)) {
                 matches.add(bean);
             }
@@ -141,36 +137,13 @@ public class BeanDataMap {
         Validate.notNull(description, "Description can not be null");
 
         final Collection<BeanKey> matches = new ArrayList<BeanKey>();
-        final Iterator<BeanKey> iterator = beanDataMap.keySet().iterator();
 
-        while (iterator.hasNext()) {
-            final BeanKey bean = iterator.next();
-
+        for (final BeanKey bean : beanDataMap.keySet()) {
             if (description.canInject(bean)) {
                 matches.add(bean);
             }
         }
 
         return matches;
-    }
-
-    /**
-     * Returns the exact key used to access the bean-data parameter.
-     *
-     * @param beanData The bean-data to get the bean-key for.
-     * @return The bean-key that matches the bean-data in this map.
-     */
-    public synchronized BeanKey getBeanKeyForBeanData(final BeanData beanData) {
-        Validate.notNull(beanData, "Bean-data can not be null");
-
-        for (final BeanKey beanKey : beanDataMap.keySet()) {
-            final BeanData data = beanDataMap.get(beanKey);
-
-            if (data == beanData) {
-                return beanKey;
-            }
-        }
-
-        throw new IllegalArgumentException("Bean-data not registered in map: " + beanData);
     }
 }

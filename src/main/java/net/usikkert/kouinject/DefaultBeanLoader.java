@@ -99,8 +99,8 @@ public class DefaultBeanLoader implements BeanLoader {
 
         for (final BeanKey bean : detectedBeans) {
             LOG.finest("Loading bean-data for: " + bean);
-            final BeanData beanData = beanDataHandler.getBeanData(bean.getBeanClass(), false);
-            beanDataMap.addBeanData(bean, beanData);
+            final BeanData beanData = beanDataHandler.getBeanData(bean, false);
+            beanDataMap.addBeanData(beanData);
             final List<FactoryPoint> factoryPoints = factoryPointHandler.getFactoryPoints(bean);
             factoryPointMap.addFactoryPoints(factoryPoints);
         }
@@ -224,7 +224,7 @@ public class DefaultBeanLoader implements BeanLoader {
         singletonMap.addSingleton(bean, beanToAdd);
 
         if (!beanDataMap.containsBeanData(bean)) {
-            beanDataMap.addBeanData(bean, beanDataHandler.getBeanData(beanClass, false));
+            beanDataMap.addBeanData(beanDataHandler.getBeanData(bean, false));
         }
 
         LOG.fine("Singleton added: " + bean);
@@ -263,7 +263,7 @@ public class DefaultBeanLoader implements BeanLoader {
 
         else {
             final BeanData beanData = findBeanData(dependency);
-            final BeanKey beanKeyForBeanData = beanDataMap.getBeanKeyForBeanData(beanData);
+            final BeanKey beanKeyForBeanData = beanData.getBeanKey();
             LOG.finer("Mapping " + dependency + " to " + beanKeyForBeanData);
 
             instance = instantiateBean(beanData);

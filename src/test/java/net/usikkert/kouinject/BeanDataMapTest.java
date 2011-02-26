@@ -34,7 +34,6 @@ import net.usikkert.kouinject.testbeans.scanned.CarBean;
 import net.usikkert.kouinject.testbeans.scanned.FieldBean;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.SetterBean;
-import net.usikkert.kouinject.testbeans.scanned.notloaded.NoBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.GreenBean;
 
 import org.junit.Before;
@@ -58,10 +57,7 @@ public class BeanDataMapTest {
     public void addBeanDataShouldPutTheBeanInTheMap() {
         assertEquals(0, map.size());
 
-        final BeanData beanData = createBeanData(Object.class);
-        final BeanKey bean = new BeanKey(Object.class);
-
-        map.addBeanData(bean, beanData);
+        map.addBeanData(createBeanData(Object.class));
 
         assertEquals(1, map.size());
     }
@@ -71,32 +67,22 @@ public class BeanDataMapTest {
         assertEquals(0, map.size());
 
         final BeanData beanData = createBeanData(Object.class);
-        final BeanKey bean = new BeanKey(Object.class);
 
-        map.addBeanData(bean, beanData);
-        map.addBeanData(bean, beanData);
+        map.addBeanData(beanData);
+        map.addBeanData(beanData);
     }
 
     @Test
     public void addBeanDataShouldAcceptSeveralDifferentBeans() {
         assertEquals(0, map.size());
 
-        final BeanData setterBean = createBeanData(SetterBean.class);
-        final BeanKey setterBeanDependency = new BeanKey(SetterBean.class);
-
-        map.addBeanData(setterBeanDependency, setterBean);
+        map.addBeanData(createBeanData(SetterBean.class));
         assertEquals(1, map.size());
 
-        final BeanData fieldBean = createBeanData(FieldBean.class);
-        final BeanKey fieldBeanDependency = new BeanKey(FieldBean.class);
-
-        map.addBeanData(fieldBeanDependency, fieldBean);
+        map.addBeanData(createBeanData(FieldBean.class));
         assertEquals(2, map.size());
 
-        final BeanData helloBean = createBeanData(HelloBean.class);
-        final BeanKey helloBeanDependency = new BeanKey(HelloBean.class);
-
-        map.addBeanData(helloBeanDependency, helloBean);
+        map.addBeanData(createBeanData(HelloBean.class));
         assertEquals(3, map.size());
     }
 
@@ -104,21 +90,25 @@ public class BeanDataMapTest {
     public void getBeanDataShouldFindTheCorrectBeanData() {
         addTestBeans();
 
-        final BeanData setterBean = map.getBeanData(new BeanKey(SetterBean.class));
+        final BeanKey setterBeanKey = new BeanKey(SetterBean.class);
+        final BeanData setterBean = map.getBeanData(setterBeanKey);
         assertNotNull(setterBean);
-        assertTrue(setterBean.getBeanClass().equals(SetterBean.class));
+        assertTrue(setterBean.getBeanKey().equals(setterBeanKey));
 
-        final BeanData fieldBean = map.getBeanData(new BeanKey(FieldBean.class));
+        final BeanKey fieldBeanKey = new BeanKey(FieldBean.class);
+        final BeanData fieldBean = map.getBeanData(fieldBeanKey);
         assertNotNull(fieldBean);
-        assertTrue(fieldBean.getBeanClass().equals(FieldBean.class));
+        assertTrue(fieldBean.getBeanKey().equals(fieldBeanKey));
 
-        final BeanData helloBean = map.getBeanData(new BeanKey(HelloBean.class));
+        final BeanKey helloBeanKey = new BeanKey(HelloBean.class);
+        final BeanData helloBean = map.getBeanData(helloBeanKey);
         assertNotNull(helloBean);
-        assertTrue(helloBean.getBeanClass().equals(HelloBean.class));
+        assertTrue(helloBean.getBeanKey().equals(helloBeanKey));
 
-        final BeanData greenBean = map.getBeanData(new BeanKey(GreenBean.class, "Green"));
+        final BeanKey greenBeanKey = new BeanKey(GreenBean.class, "Green");
+        final BeanData greenBean = map.getBeanData(greenBeanKey);
         assertNotNull(greenBean);
-        assertTrue(greenBean.getBeanClass().equals(GreenBean.class));
+        assertTrue(greenBean.getBeanKey().equals(greenBeanKey));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -186,55 +176,18 @@ public class BeanDataMapTest {
         assertEquals(0, beanKeys.size());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void getBeanKeyForBeanDataShouldFailIfNoMatches() {
-        addTestBeans();
-
-        map.getBeanKeyForBeanData(createBeanData(NoBean.class));
-    }
-
-    @Test
-    public void getBeanKeyForBeanDataShouldReturnTheCorrectKey() {
-        addTestBeans();
-
-        final BeanKey setterBeanKey = map.getBeanKeyForBeanData(map.getBeanData(new BeanKey(SetterBean.class)));
-        assertBeanKey(setterBeanKey, SetterBean.class, null);
-
-        final BeanKey fieldBeanKey = map.getBeanKeyForBeanData(map.getBeanData(new BeanKey(FieldBean.class)));
-        assertBeanKey(fieldBeanKey, FieldBean.class, null);
-
-        final BeanKey helloBeanKey = map.getBeanKeyForBeanData(map.getBeanData(new BeanKey(HelloBean.class)));
-        assertBeanKey(helloBeanKey, HelloBean.class, null);
-
-        final BeanKey greenBeanKey = map.getBeanKeyForBeanData(map.getBeanData(new BeanKey(GreenBean.class)));
-        assertBeanKey(greenBeanKey, GreenBean.class, "Green");
-    }
-
-    private void assertBeanKey(final BeanKey beanKey, final Class<?> expectedClass, final String expectedQualifier) {
-        assertNotNull(beanKey);
-        assertEquals(expectedClass, beanKey.getBeanClass());
-        assertEquals(expectedQualifier, beanKey.getQualifier());
-    }
-
     private void addTestBeans() {
-        final BeanData setterBean = createBeanData(SetterBean.class);
-        final BeanKey setterBeanDependency = new BeanKey(SetterBean.class);
-        map.addBeanData(setterBeanDependency, setterBean);
-
-        final BeanData fieldBean = createBeanData(FieldBean.class);
-        final BeanKey fieldBeanDependency = new BeanKey(FieldBean.class);
-        map.addBeanData(fieldBeanDependency, fieldBean);
-
-        final BeanData helloBean = createBeanData(HelloBean.class);
-        final BeanKey helloBeanDependency = new BeanKey(HelloBean.class);
-        map.addBeanData(helloBeanDependency, helloBean);
-
-        final BeanData greenBean = createBeanData(GreenBean.class);
-        final BeanKey greenBeanDependency = new BeanKey(GreenBean.class, "Green");
-        map.addBeanData(greenBeanDependency, greenBean);
+        map.addBeanData(createBeanData(SetterBean.class));
+        map.addBeanData(createBeanData(FieldBean.class));
+        map.addBeanData(createBeanData(HelloBean.class));
+        map.addBeanData(createBeanData(GreenBean.class, "Green"));
     }
 
     private BeanData createBeanData(final Class<?> beanClass) {
-        return new BeanData(beanClass, null, new ArrayList<InjectionPoint>(), false);
+        return createBeanData(beanClass, null);
+    }
+
+    private BeanData createBeanData(final Class<?> beanClass, final String qualifier) {
+        return new BeanData(new BeanKey(beanClass, qualifier), null, new ArrayList<InjectionPoint>(), false);
     }
 }

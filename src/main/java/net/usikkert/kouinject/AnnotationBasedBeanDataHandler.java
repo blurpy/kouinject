@@ -64,8 +64,9 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
      * {@inheritDoc}
      */
     @Override
-    public BeanData getBeanData(final Class<?> beanClass, final boolean skipConstructor) {
-        Validate.notNull(beanClass, "Bean class can not be null");
+    public BeanData getBeanData(final BeanKey beanKey, final boolean skipConstructor) {
+        Validate.notNull(beanKey, "Bean key can not be null");
+        final Class<?> beanClass = beanKey.getBeanClass();
 
         final List<Method> allMethods = reflectionUtils.findAllMethods(beanClass);
         final List<Member> allMembers = reflectionUtils.findAllMembers(beanClass);
@@ -73,7 +74,7 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
         final ConstructorData constructorData = createConstructorDataIfNeeded(beanClass, skipConstructor);
         final boolean singleton = scopeHandler.isSingleton(beanClass);
 
-        return new BeanData(beanClass, constructorData, injectionPoints, singleton);
+        return new BeanData(beanKey, constructorData, injectionPoints, singleton);
     }
 
     private ConstructorData createConstructorDataIfNeeded(final Class<?> beanClass, final boolean skipConstructor) {
