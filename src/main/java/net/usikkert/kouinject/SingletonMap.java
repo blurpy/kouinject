@@ -24,7 +24,6 @@ package net.usikkert.kouinject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -76,11 +75,8 @@ public class SingletonMap {
         Validate.notNull(singletonNeeded, "Singleton needed can not be null");
 
         final List<BeanKey> matches = new ArrayList<BeanKey>();
-        final Iterator<BeanKey> iterator = singletons.keySet().iterator();
 
-        while (iterator.hasNext()) {
-            final BeanKey singleton = iterator.next();
-
+        for (final BeanKey singleton : singletons.keySet()) {
             if (singletonNeeded.canInject(singleton)) {
                 matches.add(singleton);
             }

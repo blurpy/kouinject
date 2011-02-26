@@ -85,8 +85,7 @@ public class ConstructorData {
         constructor.setAccessible(true);
 
         try {
-            final Object newInstance = constructor.newInstance(parameters);
-            return newInstance;
+            return constructor.newInstance(parameters);
         }
 
         catch (final InstantiationException e) {

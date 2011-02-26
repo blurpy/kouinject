@@ -250,7 +250,7 @@ public class BeanKey {
         final StringBuilder toStringBuilder = new StringBuilder();
 
         if (qualifier != null) {
-            toStringBuilder.append("[q=" + qualifier + "] ");
+            toStringBuilder.append("[q=").append(qualifier).append("] ");
         }
 
         toStringBuilder.append(beanClass.toString());

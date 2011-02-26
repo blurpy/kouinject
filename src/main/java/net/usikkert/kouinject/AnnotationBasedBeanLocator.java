@@ -88,8 +88,7 @@ public class AnnotationBasedBeanLocator implements BeanLocator {
 
     private String getQualifier(final Class<?> clazz) {
         final Annotation[] annotations = clazz.getAnnotations();
-        final String qualifier = qualifierHandler.getQualifier(clazz, annotations);
 
-        return qualifier;
+        return qualifierHandler.getQualifier(clazz, annotations);
     }
 }
