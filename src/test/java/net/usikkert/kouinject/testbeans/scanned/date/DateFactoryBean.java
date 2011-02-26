@@ -20,26 +20,23 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.date;
+
+import java.util.Date;
+
+import net.usikkert.kouinject.annotation.Component;
+import net.usikkert.kouinject.annotation.Produces;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * Date factory, for exposing a JDK class as a bean.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+@Component
+public class DateFactoryBean {
 
-    ALL(94),
-    SCANNED(88),
-    SCANNED_WITHOUT_QUALIFIER(64);
-
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
-    }
-
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    @Produces
+    public Date createDate() {
+        return new Date();
     }
 }

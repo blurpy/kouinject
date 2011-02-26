@@ -26,7 +26,6 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -49,11 +48,10 @@ import net.usikkert.kouinject.testbeans.notscanned.collection.CollectionInjectio
 import net.usikkert.kouinject.testbeans.notscanned.collection.ListInjection;
 import net.usikkert.kouinject.testbeans.notscanned.collection.SetInjection;
 import net.usikkert.kouinject.testbeans.notscanned.collectionprovider.CollectionProviderInjectionWithNoMatchingBeans;
-import net.usikkert.kouinject.testbeans.notscanned.date.DateBean;
-import net.usikkert.kouinject.testbeans.scanned.factory.OverriddenFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.notscanned.instance.Instance1Bean;
 import net.usikkert.kouinject.testbeans.notscanned.instance.Instance2Bean;
 import net.usikkert.kouinject.testbeans.notscanned.instance.Instance3Bean;
+import net.usikkert.kouinject.testbeans.notscanned.mock.MockFactoryBean;
 import net.usikkert.kouinject.testbeans.notscanned.provider.ProviderInjectionWithNoMatchingBeans;
 import net.usikkert.kouinject.testbeans.notscanned.provider.ProviderInjectionWithWildcard;
 import net.usikkert.kouinject.testbeans.notscanned.provider.ProviderInjectionWithoutTypeArgument;
@@ -76,6 +74,7 @@ import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungr
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungryQualifierBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.SingletonCollectionProviderBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.CdRecorderBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.OverriddenFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.RecorderBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.SimpleFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.SingletonFactoryCreatedBean;
@@ -85,7 +84,6 @@ import net.usikkert.kouinject.testbeans.scanned.folder.folder2.Folder2Bean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder3.Folder3Bean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractBeanImpl;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.interfacebean.InterfaceBean;
-import net.usikkert.kouinject.testbeans.scanned.notloaded.NoBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.BlueBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.ColorBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.DarkYellowBean;
@@ -123,17 +121,6 @@ public class DefaultBeanLoaderTest {
         beanLoader = createBeanLoaderWithBasePackages("net.usikkert.kouinject.testbeans.scanned");
     }
 
-    @Test
-    public void addBeanShouldMakeBeanAvailableButNotAutowire() {
-        final NoBean noBean = new NoBean();
-        beanLoader.addBean(noBean);
-
-        final NoBean noBeanFromBeanLoader = beanLoader.getBean(NoBean.class);
-        assertNotNull(noBeanFromBeanLoader);
-        assertNull(noBeanFromBeanLoader.getHelloBean());
-        assertNull(noBeanFromBeanLoader.getCoffeeBean());
-    }
-
     @Test(expected = IllegalArgumentException.class)
     public void getBeanShouldDetectMissingDependencies() {
         final Set<BeanKey> beans = new HashSet<BeanKey>();
@@ -148,23 +135,27 @@ public class DefaultBeanLoaderTest {
     public void beanLoaderShouldHandleMocks() {
         final Set<BeanKey> beans = new HashSet<BeanKey>();
         beans.add(new BeanKey(FieldBean.class));
+        beans.add(new BeanKey(MockFactoryBean.class));
 
         final DefaultBeanLoader loader = createBeanLoaderWithBeans(beans);
 
-        final HelloBean helloBean = mock(HelloBean.class);
-        loader.addBean(helloBean);
-
-        final AbstractBeanImpl abstractBean = mock(AbstractBeanImpl.class);
-        loader.addBean(abstractBean);
-
-        final InterfaceBean interfaceBean = mock(InterfaceBean.class);
-        loader.addBean(interfaceBean);
-
         final FieldBean fieldBean = loader.getBean(FieldBean.class);
+        assertNotNull(fieldBean);
+        assertNotNull(fieldBean.getHelloBean());
+        assertNotNull(fieldBean.getAbstractBean());
+        assertNotNull(fieldBean.getInterfaceBean());
 
-        assertSame(helloBean, fieldBean.getHelloBean());
-        assertSame(abstractBean, fieldBean.getAbstractBean());
-        assertSame(interfaceBean, fieldBean.getInterfaceBean());
+        final HelloBean helloBean = loader.getBean(HelloBean.class);
+        assertNotNull(helloBean);
+        assertTrue(helloBean.toString().contains("Mock for HelloBean"));
+
+        final AbstractBeanImpl abstractBean = loader.getBean(AbstractBeanImpl.class);
+        assertNotNull(abstractBean);
+        assertTrue(abstractBean.toString().contains("Mock for AbstractBeanImpl"));
+
+        final InterfaceBean interfaceBean = loader.getBean(InterfaceBean.class);
+        assertNotNull(interfaceBean);
+        assertTrue(interfaceBean.toString().contains("Mock for InterfaceBean"));
     }
 
     @Test(expected = IllegalStateException.class)
@@ -718,20 +709,6 @@ public class DefaultBeanLoaderTest {
                 "net.usikkert.kouinject.testbeans.scanned.folder.folder1");
 
         newBeanLoader.getBeans(Object.class);
-    }
-
-    @Test
-    public void addBeanShouldMakeAnyObjectAvailableForInjection() {
-        final DefaultBeanLoader newBeanLoader =
-                createBeanLoaderWithBasePackages("net.usikkert.kouinject.testbeans.notscanned.date");
-
-        final Date date = new Date();
-        newBeanLoader.addBean(date);
-
-        final DateBean dateBean = newBeanLoader.getBean(DateBean.class);
-
-        assertNotNull(dateBean);
-        assertSame(date, dateBean.getDate());
     }
 
     @Test

@@ -2,6 +2,12 @@
 - KouInject CHANGES
 
 
+* Version 1.1 (xx.xx.2011):
+ - Updated copyright to include 2011
+ - Added support for factory methods with @Produces
+ - Removed addBean() method on DefaultBeanLoader
+
+
 * Version 1.0 (20.12.2010):
  - Added CollectionProvider for lazy-loading of collections of beans
  - Fix for singletons in some cases getting instantiated too many times when used with a qualifier

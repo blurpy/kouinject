@@ -1,4 +1,3 @@
-
 /***************************************************************************
  *   Copyright 2009-2011 by Christian Ihle                                 *
  *   kontakt@usikkert.net                                                  *
@@ -20,25 +19,34 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans.notscanned.date;
+package net.usikkert.kouinject.testbeans.notscanned.mock;
 
-import javax.inject.Inject;
-import java.util.Date;
+import static org.mockito.Mockito.*;
 
-import net.usikkert.kouinject.annotation.Component;
+import net.usikkert.kouinject.annotation.Produces;
+import net.usikkert.kouinject.testbeans.scanned.HelloBean;
+import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractBeanImpl;
+import net.usikkert.kouinject.testbeans.scanned.hierarchy.interfacebean.InterfaceBean;
 
 /**
- * Bean used for testing injection of objects that aren't normally beans.
+ * Factory bean that creates mocks, for testing mock handling.
  *
  * @author Christian Ihle
  */
-@Component
-public class DateBean {
+public class MockFactoryBean {
 
-    @Inject
-    private Date date;
+    @Produces
+    public HelloBean createHelloBean() {
+        return mock(HelloBean.class);
+    }
 
-    public Date getDate() {
-        return date;
+    @Produces
+    public AbstractBeanImpl createAbstractBean() {
+        return mock(AbstractBeanImpl.class);
+    }
+
+    @Produces
+    public InterfaceBean createInterfaceBean() {
+        return mock(InterfaceBean.class);
     }
 }

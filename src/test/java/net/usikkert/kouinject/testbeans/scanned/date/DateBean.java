@@ -20,26 +20,26 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.date;
+
+import java.util.Date;
+
+import javax.inject.Inject;
+
+import net.usikkert.kouinject.annotation.Component;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * Bean used for testing injection of objects that aren't normally beans.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+@Component
+public class DateBean {
 
-    ALL(94),
-    SCANNED(88),
-    SCANNED_WITHOUT_QUALIFIER(64);
+    @Inject
+    private Date date;
 
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
-    }
-
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    public Date getDate() {
+        return date;
     }
 }

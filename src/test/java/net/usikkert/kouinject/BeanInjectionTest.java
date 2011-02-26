@@ -25,6 +25,7 @@ package net.usikkert.kouinject;
 import static org.junit.Assert.*;
 
 import java.util.Collection;
+import java.util.Date;
 
 import javax.inject.Provider;
 
@@ -67,6 +68,8 @@ import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungr
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungryQualifierBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.QualifiedCollectionProviderBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.SingletonCollectionProviderBean;
+import net.usikkert.kouinject.testbeans.scanned.date.DateBean;
+import net.usikkert.kouinject.testbeans.scanned.date.DateFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.CdRecorderBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.ChildFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.ChildFactoryCreatedBean;
@@ -418,6 +421,29 @@ public class BeanInjectionTest {
 
         assertNotNull(constructorBean.getHelloBean());
         assertNotNull(constructorBean.getSetterBean());
+    }
+
+    @Test
+    public void checkDate() {
+        final Date date = beanLoader.getBean(Date.class);
+        assertNotNull(date);
+    }
+
+    @Test
+    public void checkDateBean() {
+        final DateBean dateBean = beanLoader.getBean(DateBean.class);
+
+        assertNotNull(dateBean);
+        assertNotNull(dateBean.getDate());
+    }
+
+    @Test
+    public void checkDateFactoryBean() {
+        final DateFactoryBean dateFactoryBean = beanLoader.getBean(DateFactoryBean.class);
+        assertNotNull(dateFactoryBean);
+
+        final Date date = dateFactoryBean.createDate();
+        assertNotNull(date);
     }
 
     @Test

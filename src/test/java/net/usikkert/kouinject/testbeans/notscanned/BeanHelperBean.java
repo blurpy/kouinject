@@ -30,14 +30,11 @@ import javax.inject.Singleton;
 
 import net.usikkert.kouinject.CollectionProvider;
 import net.usikkert.kouinject.annotation.Produces;
-import net.usikkert.kouinject.testbeans.notscanned.SomeEnum;
-import net.usikkert.kouinject.testbeans.notscanned.TheInterface;
-import net.usikkert.kouinject.testbeans.notscanned.TheInterfaceUser;
-import net.usikkert.kouinject.testbeans.notscanned.date.DateBean;
 import net.usikkert.kouinject.testbeans.scanned.CarBean;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
+import net.usikkert.kouinject.testbeans.scanned.date.DateBean;
 import net.usikkert.kouinject.testbeans.scanned.notloaded.NoBean;
 import net.usikkert.kouinject.testbeans.scanned.notloaded.QualifierBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.Blue;
