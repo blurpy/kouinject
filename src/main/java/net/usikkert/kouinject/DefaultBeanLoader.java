@@ -129,10 +129,7 @@ public class DefaultBeanLoader implements BeanLoader {
         final BeanKey dependency = new BeanKey(beanClass, qualifier);
         LOG.finer("Requesting: " + dependency);
 
-        // TODO fail if in both
-        // TODO better way to handle FactoryContext?
-        if (!beanDataMap.containsBeanData(dependency) && !factoryPointMap.containsFactoryPoint(dependency)
-                && !beanClass.equals(FactoryContext.class)) {
+        if (!beanCanBeCreated(dependency)) {
             throw new IllegalArgumentException("No registered bean-data for: " + dependency);
         }
 
@@ -182,6 +179,20 @@ public class DefaultBeanLoader implements BeanLoader {
     @SuppressWarnings("unchecked")
     private <T> Collection<T> getBeans(final BeanKey beanKey) {
         return (Collection<T>) getBeans(beanKey.getBeanClass(), beanKey.getQualifier());
+    }
+
+    private boolean beanCanBeCreated(final BeanKey dependency) {
+        final boolean isStandaloneBean = beanDataMap.containsBeanData(dependency);
+        final boolean isFactoryCreatedBean = factoryPointMap.containsFactoryPoint(dependency);
+        final boolean isFactoryContext = dependency.getBeanClass().equals(FactoryContext.class);
+
+        if (isStandaloneBean && isFactoryCreatedBean) {
+            throw new IllegalStateException("Requested bean is both a standalone bean and a factory created bean: " + dependency
+                    + "\n standalone: " + beanDataMap.getBeanData(dependency)
+                    + "\n factory: " + factoryPointMap.getFactoryPoint(dependency));
+        }
+
+        return isStandaloneBean || isFactoryCreatedBean || isFactoryContext;
     }
 
     private Object findOrCreateBean(final BeanKey dependency) {

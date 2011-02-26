@@ -104,7 +104,6 @@ import net.usikkert.kouinject.testbeans.scanned.scope.inheritance.SecondLayerBea
 import net.usikkert.kouinject.testbeans.scanned.scope.inheritance.ThirdLayerBean;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -1010,7 +1009,6 @@ public class DefaultBeanLoaderTest {
     }
 
     @Test(expected = IllegalStateException.class)
-    @Ignore("error handling not implemented") // TODO
     public void getBeanWithOneMatchOfImplementationFromFactoryAndOneMatchOfImplementationFromInjectorShouldFail() {
         beanLoader.getBean(RecorderBean.class, "any");
     }
