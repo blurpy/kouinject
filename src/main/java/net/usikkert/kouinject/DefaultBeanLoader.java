@@ -395,29 +395,4 @@ public class DefaultBeanLoader implements BeanLoader {
 
         return getBean(dependency);
     }
-
-    private class CreatedBean {
-
-        private final Object instance;
-        private final boolean singleton;
-        private final String qualifier;
-
-        public CreatedBean(final Object instance, final boolean singleton, final String qualifier) {
-            this.instance = instance;
-            this.singleton = singleton;
-            this.qualifier = qualifier;
-        }
-
-        public Object getInstance() {
-            return instance;
-        }
-
-        public boolean isSingleton() {
-            return singleton;
-        }
-
-        public String getQualifier() {
-            return qualifier;
-        }
-    }
 }
