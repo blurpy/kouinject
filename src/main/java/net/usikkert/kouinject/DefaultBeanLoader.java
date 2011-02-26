@@ -139,6 +139,11 @@ public class DefaultBeanLoader implements BeanLoader {
         return (T) findOrCreateBean(dependency);
     }
 
+    @SuppressWarnings("unchecked")
+    private <T> T getBean(final BeanKey beanKey) {
+        return (T) getBean(beanKey.getBeanClass(), beanKey.getQualifier());
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -174,8 +179,13 @@ public class DefaultBeanLoader implements BeanLoader {
         return beans;
     }
 
+    @SuppressWarnings("unchecked")
+    private <T> Collection<T> getBeans(final BeanKey beanKey) {
+        return (Collection<T>) getBeans(beanKey.getBeanClass(), beanKey.getQualifier());
+    }
+
     private Object findOrCreateBean(final BeanKey dependency) {
-        final Object bean = findBean(dependency, false);
+        final Object bean = singletonMap.getSingleton(dependency, false);
 
         if (bean != null) {
             LOG.finer("Mapping " + dependency + " to existing singleton " + bean.getClass());
@@ -243,43 +253,44 @@ public class DefaultBeanLoader implements BeanLoader {
 
         beansInCreation.addBean(dependency);
 
-        final Object instance;
+        final CreatedBean createdBean = createBeanUsingFactoryOrInjector(dependency);
 
-        // TODO clean?
-        if (factoryPointMap.containsFactoryPoint(dependency)) {
-            final FactoryPoint factoryPoint = factoryPointMap.getFactoryPoint(dependency);
-            final BeanKey returnType = factoryPoint.getReturnType();
-            LOG.finer("Mapping " + dependency + " to " + returnType);
-
-            final BeanKey factoryKey = factoryPoint.getFactoryKey();
-            final Object factoryInstance = getBean(factoryKey.getBeanClass(), factoryKey.getQualifier());
-
-            instance = invokeFactoryPoint(factoryPoint, factoryInstance, dependency);
-
-            if (factoryPoint.isSingleton()) {
-                addBean(instance, returnType.getQualifier());
-            }
-        }
-
-        else {
-            final BeanData beanData = findBeanData(dependency);
-            final BeanKey beanKeyForBeanData = beanData.getBeanKey();
-            LOG.finer("Mapping " + dependency + " to " + beanKeyForBeanData);
-
-            instance = instantiateBean(beanData);
-
-            if (beanData.isSingleton()) {
-                addBean(instance, beanKeyForBeanData.getQualifier());
-            }
+        if (createdBean.isSingleton()) {
+            addBean(createdBean.getInstance(), createdBean.getQualifier());
         }
 
         beansInCreation.removeBean(dependency);
 
-        return instance;
+        return createdBean.getInstance();
     }
 
-    private BeanData findBeanData(final BeanKey beanNeeded) {
-        return beanDataMap.getBeanData(beanNeeded);
+    private CreatedBean createBeanUsingFactoryOrInjector(final BeanKey dependency) {
+        if (factoryPointMap.containsFactoryPoint(dependency)) {
+            return createBeanUsingFactory(dependency);
+        } else {
+            return createBeanUsingInjector(dependency);
+        }
+    }
+
+    private CreatedBean createBeanUsingInjector(final BeanKey dependency) {
+        final BeanData beanData = beanDataMap.getBeanData(dependency);
+        final BeanKey beanKeyForBeanData = beanData.getBeanKey();
+        LOG.finer("Mapping " + dependency + " to " + beanKeyForBeanData);
+
+        final Object beanInstance = instantiateBean(beanData);
+
+        return new CreatedBean(beanInstance, beanData.isSingleton(), beanKeyForBeanData.getQualifier());
+    }
+
+    private CreatedBean createBeanUsingFactory(final BeanKey dependency) {
+        final FactoryPoint factoryPoint = factoryPointMap.getFactoryPoint(dependency);
+        final BeanKey returnType = factoryPoint.getReturnType();
+        LOG.finer("Mapping " + dependency + " to " + returnType);
+
+        final Object factoryInstance = getBean(factoryPoint.getFactoryKey());
+        final Object beanInstance = invokeFactoryPoint(factoryPoint, factoryInstance, dependency);
+
+        return new CreatedBean(beanInstance, factoryPoint.isSingleton(), returnType.getQualifier());
     }
 
     private Object instantiateBean(final BeanData beanData) {
@@ -364,28 +375,49 @@ public class DefaultBeanLoader implements BeanLoader {
             return new Provider<Object>() {
                 @Override
                 public Object get() {
-                    return getBean(dependency.getBeanClass(), dependency.getQualifier());
+                    return getBean(dependency);
                 }
             };
         }
 
         if (dependency.isCollection()) {
-            return getBeans(dependency.getBeanClass(), dependency.getQualifier());
+            return getBeans(dependency);
         }
 
         if (dependency.isCollectionProvider()) {
             return new CollectionProvider() {
                 @Override
                 public Collection get() {
-                    return getBeans(dependency.getBeanClass(), dependency.getQualifier());
+                    return getBeans(dependency);
                 }
             };
         }
 
-        return getBean(dependency.getBeanClass(), dependency.getQualifier());
+        return getBean(dependency);
     }
 
-    private Object findBean(final BeanKey beanNeeded, final boolean throwEx) {
-        return singletonMap.getSingleton(beanNeeded, throwEx);
+    private class CreatedBean {
+
+        private final Object instance;
+        private final boolean singleton;
+        private final String qualifier;
+
+        public CreatedBean(final Object instance, final boolean singleton, final String qualifier) {
+            this.instance = instance;
+            this.singleton = singleton;
+            this.qualifier = qualifier;
+        }
+
+        public Object getInstance() {
+            return instance;
+        }
+
+        public boolean isSingleton() {
+            return singleton;
+        }
+
+        public String getQualifier() {
+            return qualifier;
+        }
     }
 }
