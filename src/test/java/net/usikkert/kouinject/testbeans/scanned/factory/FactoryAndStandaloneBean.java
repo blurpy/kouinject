@@ -20,26 +20,28 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.factory;
+
+import javax.inject.Named;
+
+import net.usikkert.kouinject.annotation.Component;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * A bean that is both created by the injector, and by a factory, with different qualifiers and different scope.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+@Named("standalone")
+@Component
+public class FactoryAndStandaloneBean {
 
-    ALL(96),
-    SCANNED(91),
-    SCANNED_WITHOUT_QUALIFIER(65);
+    private boolean createdByFactory;
 
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
+    public boolean isCreatedByFactory() {
+        return createdByFactory;
     }
 
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    public void setCreatedByFactory(final boolean createdByFactory) {
+        this.createdByFactory = createdByFactory;
     }
 }

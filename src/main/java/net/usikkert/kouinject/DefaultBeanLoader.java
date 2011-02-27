@@ -99,8 +99,10 @@ public class DefaultBeanLoader implements BeanLoader {
 
         for (final BeanKey bean : detectedBeans) {
             LOG.finest("Loading bean-data for: " + bean);
+
             final BeanData beanData = beanDataHandler.getBeanData(bean, false);
             beanDataMap.addBeanData(beanData);
+
             final List<FactoryPoint> factoryPoints = factoryPointHandler.getFactoryPoints(bean);
             factoryPointMap.addFactoryPoints(factoryPoints);
         }
@@ -159,6 +161,7 @@ public class DefaultBeanLoader implements BeanLoader {
 
         final BeanKey dependency = new BeanKey(beanClass, qualifier);
         LOG.finer("Requesting: " + dependency);
+
         final Collection<BeanKey> beanKeys = new ArrayList<BeanKey>();
         beanKeys.addAll(beanDataMap.findBeanKeys(dependency));
         beanKeys.addAll(factoryPointMap.findFactoryPointKeys(dependency));

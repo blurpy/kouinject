@@ -75,6 +75,8 @@ import net.usikkert.kouinject.testbeans.scanned.factory.ChildFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.ChildFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.DifferentTypesFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.DifferentTypesFactoryCreatedBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.FactoryAndStandaloneBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.FactoryAndStandaloneBeanFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.FirstMultipleFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.IntegerPropertyFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.IntegerPropertyInjectedBean;
@@ -499,6 +501,41 @@ public class BeanInjectionTest {
         assertNotNull(everythingBean.getSetterBean());
         assertNotNull(everythingBean.getInterfaceBeanImpl());
         assertNotNull(everythingBean.getAbstractBeanImpl());
+    }
+
+    @Test
+    public void checkFactoryAndStandaloneBean() {
+        final FactoryAndStandaloneBean standalone1 = beanLoader.getBean(FactoryAndStandaloneBean.class, "standalone");
+        assertNotNull(standalone1);
+        assertFalse(standalone1.isCreatedByFactory());
+
+        final FactoryAndStandaloneBean standalone2 = beanLoader.getBean(FactoryAndStandaloneBean.class, "standalone");
+        assertNotNull(standalone2);
+        assertFalse(standalone2.isCreatedByFactory());
+
+        // Standalone has prototype scope
+        assertNotSame(standalone1, standalone2);
+
+        final FactoryAndStandaloneBean factory1 = beanLoader.getBean(FactoryAndStandaloneBean.class, "factory");
+        assertNotNull(factory1);
+        assertTrue(factory1.isCreatedByFactory());
+
+        final FactoryAndStandaloneBean factory2 = beanLoader.getBean(FactoryAndStandaloneBean.class, "factory");
+        assertNotNull(factory2);
+        assertTrue(factory2.isCreatedByFactory());
+
+        // Factory has singleton scope
+        assertSame(factory1, factory2);
+    }
+
+    @Test
+    public void checkFactoryAndStandaloneBeanFactoryBean() {
+        final FactoryAndStandaloneBeanFactoryBean bean = beanLoader.getBean(FactoryAndStandaloneBeanFactoryBean.class);
+        assertNotNull(bean);
+
+        final FactoryAndStandaloneBean factoryAndStandaloneBean = bean.createBean();
+        assertNotNull(factoryAndStandaloneBean);
+        assertTrue(factoryAndStandaloneBean.isCreatedByFactory());
     }
 
     @Test

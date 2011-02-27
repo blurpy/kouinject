@@ -20,26 +20,27 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.factory;
+
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+import net.usikkert.kouinject.annotation.Component;
+import net.usikkert.kouinject.annotation.Produces;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * Factory for creating the factory instance of {@link FactoryAndStandaloneBean}.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+@Component
+public class FactoryAndStandaloneBeanFactoryBean {
 
-    ALL(96),
-    SCANNED(91),
-    SCANNED_WITHOUT_QUALIFIER(65);
+    @Produces @Singleton @Named("factory")
+    public FactoryAndStandaloneBean createBean() {
+        final FactoryAndStandaloneBean bean = new FactoryAndStandaloneBean();
+        bean.setCreatedByFactory(true);
 
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
-    }
-
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+        return bean;
     }
 }
