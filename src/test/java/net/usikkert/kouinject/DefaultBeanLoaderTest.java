@@ -74,6 +74,8 @@ import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungr
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungryQualifierBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.SingletonCollectionProviderBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.CdRecorderBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.FactoryAndStandaloneBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.MiscQualifierBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.OverriddenFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.RecorderBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.SimpleFactoryCreatedBean;
@@ -1078,6 +1080,48 @@ public class DefaultBeanLoaderTest {
 
         final Integer someOtherInteger = beanLoader.getBean(Integer.class, "some.other.integer");
         assertEquals(Integer.valueOf(987654321), someOtherInteger);
+    }
+
+    @Test
+    public void shouldFindBothInstancesOfBeanThatIsBothStandaloneAndFactoryCreated() {
+        final Collection<FactoryAndStandaloneBean> beans = beanLoader.getBeans(FactoryAndStandaloneBean.class);
+        assertNotNull(beans);
+        assertEquals(2, beans.size());
+
+        boolean foundStandalone = false;
+        boolean foundFactoryCreated = false;
+
+        for (final FactoryAndStandaloneBean bean : beans) {
+            if (bean.isCreatedByFactory()) {
+                foundFactoryCreated = true;
+            } else {
+                foundStandalone = true;
+            }
+        }
+
+        assertTrue(foundStandalone);
+        assertTrue(foundFactoryCreated);
+    }
+
+    @Test
+    public void shouldFindBothInstancesOfBeanThatIsCreatedTwiceByFactory() {
+        final Collection<MiscQualifierBean> beans = beanLoader.getBeans(MiscQualifierBean.class);
+        assertNotNull(beans);
+        assertEquals(2, beans.size());
+
+        boolean foundMilk = false;
+        boolean foundCookie = false;
+
+        for (final MiscQualifierBean bean : beans) {
+            if (bean.getQualifier().equals("cookie")) {
+                foundCookie = true;
+            } else if (bean.getQualifier().equals("milk")) {
+                foundMilk = true;
+            }
+        }
+
+        assertTrue(foundMilk);
+        assertTrue(foundCookie);
     }
 
     private DefaultBeanLoader createBeanLoaderWithBasePackages(final String... basePackages) {

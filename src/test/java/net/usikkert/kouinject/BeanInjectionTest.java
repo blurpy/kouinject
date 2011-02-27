@@ -80,6 +80,8 @@ import net.usikkert.kouinject.testbeans.scanned.factory.FactoryAndStandaloneBean
 import net.usikkert.kouinject.testbeans.scanned.factory.FirstMultipleFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.IntegerPropertyFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.IntegerPropertyInjectedBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.MiscQualifierBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.MiscQualifierBeanFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.MultipleFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.OneParameterFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.OrangeFactoryBean;
@@ -851,6 +853,31 @@ public class BeanInjectionTest {
         for (final Object bean : allBeans) {
             assertNotNull(bean);
         }
+    }
+
+    @Test
+    public void checkMiscQualifierBean() {
+        final MiscQualifierBean milk = beanLoader.getBean(MiscQualifierBean.class, "milk");
+        assertNotNull(milk);
+        assertEquals("milk", milk.getQualifier());
+
+        final MiscQualifierBean cookie = beanLoader.getBean(MiscQualifierBean.class, "cookie");
+        assertNotNull(cookie);
+        assertEquals("cookie", cookie.getQualifier());
+    }
+
+    @Test
+    public void checkMiscQualifierBeanFactoryBean() {
+        final MiscQualifierBeanFactoryBean bean = beanLoader.getBean(MiscQualifierBeanFactoryBean.class);
+        assertNotNull(bean);
+
+        final MiscQualifierBean milk = bean.createBeanWithMilk();
+        assertNotNull(milk);
+        assertEquals("milk", milk.getQualifier());
+
+        final MiscQualifierBean cookie = bean.createBeanWithCookie();
+        assertNotNull(cookie);
+        assertEquals("cookie", cookie.getQualifier());
     }
 
     @Test
