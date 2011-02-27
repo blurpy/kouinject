@@ -256,7 +256,9 @@ public class DefaultBeanLoader implements BeanLoader {
     private CreatedBean createBeanUsingFactoryOrInjector(final BeanKey dependency) {
         if (factoryPointMap.containsFactoryPoint(dependency)) {
             return createBeanUsingFactory(dependency);
-        } else {
+        }
+
+        else {
             return createBeanUsingInjector(dependency);
         }
     }

@@ -50,14 +50,29 @@ public class CreatedBean {
         this.qualifier = qualifier;
     }
 
+    /**
+     * Gets the instance of this created bean.
+     *
+     * @return The instance of this bean.
+     */
     public Object getInstance() {
         return instance;
     }
 
+    /**
+     * Checks if the bean is a singleton.
+     *
+     * @return If the bean is a singleton.
+     */
     public boolean isSingleton() {
         return singleton;
     }
 
+    /**
+     * Gets the qualifier of the bean. May be <code>null</code>.
+     *
+     * @return The qualifier of the bean.
+     */
     public String getQualifier() {
         return qualifier;
     }
