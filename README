@@ -5,7 +5,7 @@ KouInject is a dependency injection framework for Java.
 Run 'mvn package' to build. The generated .jar file can be found in the target folder.
 
 
-Copyright 2009-2010 Christian Ihle
+Copyright 2009-2011 Christian Ihle
 kontakt@usikkert.net
 http://kouinject.googlecode.com/
 
