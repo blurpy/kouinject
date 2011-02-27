@@ -20,26 +20,31 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.factory;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * A bean created by a factory, with another factory created bean as a parameter.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+public class FactoryParameterFactoryCreatedBean {
 
-    ALL(97),
-    SCANNED(95),
-    SCANNED_WITHOUT_QUALIFIER(67);
+    private OneParameterFactoryCreatedBean oneParameterFactoryCreatedBean;
+    private boolean createdByFactory;
 
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
+    public OneParameterFactoryCreatedBean getOneParameterFactoryCreatedBean() {
+        return oneParameterFactoryCreatedBean;
     }
 
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    public void setOneParameterFactoryCreatedBean(final OneParameterFactoryCreatedBean oneParameterFactoryCreatedBean) {
+        this.oneParameterFactoryCreatedBean = oneParameterFactoryCreatedBean;
+    }
+
+    public boolean isCreatedByFactory() {
+        return createdByFactory;
+    }
+
+    public void setCreatedByFactory(final boolean createdByFactory) {
+        this.createdByFactory = createdByFactory;
     }
 }

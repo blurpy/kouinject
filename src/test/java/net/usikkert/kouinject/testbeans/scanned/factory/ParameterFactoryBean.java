@@ -63,4 +63,13 @@ public class ParameterFactoryBean {
 
         return bean;
     }
+
+    @Produces
+    public FactoryParameterFactoryCreatedBean createBeanWithFactoryParameter(final OneParameterFactoryCreatedBean oneParameterFactoryCreatedBean) {
+        final FactoryParameterFactoryCreatedBean bean = new FactoryParameterFactoryCreatedBean();
+        bean.setOneParameterFactoryCreatedBean(oneParameterFactoryCreatedBean);
+        bean.setCreatedByFactory(true);
+
+        return bean;
+    }
 }

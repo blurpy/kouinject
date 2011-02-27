@@ -77,6 +77,7 @@ import net.usikkert.kouinject.testbeans.scanned.factory.DifferentTypesFactoryBea
 import net.usikkert.kouinject.testbeans.scanned.factory.DifferentTypesFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.FactoryAndStandaloneBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.FactoryAndStandaloneBeanFactoryBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.FactoryParameterFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.FirstMultipleFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.IntegerPropertyFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.IntegerPropertyInjectedBean;
@@ -565,6 +566,15 @@ public class BeanInjectionTest {
     }
 
     @Test
+    public void checkFactoryParameterFactoryCreatedBean() {
+        final FactoryParameterFactoryCreatedBean bean = beanLoader.getBean(FactoryParameterFactoryCreatedBean.class);
+
+        assertNotNull(bean);
+        assertTrue(bean.isCreatedByFactory());
+        assertNotNull(bean.getOneParameterFactoryCreatedBean());
+    }
+
+    @Test
     public void checkFieldBean() {
         final FieldBean fieldBean = beanLoader.getBean(FieldBean.class);
 
@@ -996,6 +1006,11 @@ public class BeanInjectionTest {
         assertNotNull(beanWithThreeParameters);
         assertTrue(beanWithThreeParameters.isCreatedByFactory());
         assertNull(beanWithThreeParameters.getCoffeeBean());
+
+        final FactoryParameterFactoryCreatedBean beanWithFactoryParameter = bean.createBeanWithFactoryParameter(null);
+        assertNotNull(beanWithFactoryParameter);
+        assertTrue(beanWithFactoryParameter.isCreatedByFactory());
+        assertNull(beanWithFactoryParameter.getOneParameterFactoryCreatedBean());
     }
 
     @Test

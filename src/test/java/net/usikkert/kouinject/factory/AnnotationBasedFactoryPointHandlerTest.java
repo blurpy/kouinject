@@ -38,6 +38,7 @@ import net.usikkert.kouinject.testbeans.scanned.factory.ChildFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.ChildFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.DifferentTypesFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.DifferentTypesFactoryCreatedBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.FactoryParameterFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.FirstMultipleFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.MultipleFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.OneParameterFactoryCreatedBean;
@@ -201,8 +202,9 @@ public class AnnotationBasedFactoryPointHandlerTest {
         final List<FactoryPoint> factoryPoints = handler.getFactoryPoints(factory);
 
         assertNotNull(factoryPoints);
-        assertEquals(2, factoryPoints.size());
+        assertEquals(3, factoryPoints.size());
 
+        // 1
         final FactoryPoint<?> factoryPoint1 = factoryPoints.get(0);
         checkBeanKey(factoryPoint1.getReturnType(), OneParameterFactoryCreatedBean.class, null);
         checkBeanKey(factoryPoint1.getFactoryKey(), ParameterFactoryBean.class, null);
@@ -211,6 +213,7 @@ public class AnnotationBasedFactoryPointHandlerTest {
         assertEquals(1, factoryPoint1.getParameters().size());
         checkBeanKey(factoryPoint1.getParameters().get(0), HelloBean.class, null);
 
+        // 2
         final FactoryPoint<?> factoryPoint2 = factoryPoints.get(1);
         checkBeanKey(factoryPoint2.getReturnType(), ThreeParametersFactoryCreatedBean.class, null);
         checkBeanKey(factoryPoint2.getFactoryKey(), ParameterFactoryBean.class, null);
@@ -220,6 +223,15 @@ public class AnnotationBasedFactoryPointHandlerTest {
         checkBeanKey(factoryPoint2.getParameters().get(0), ColorBean.class, "Blue");
         checkBeanKey(factoryPoint2.getParameters().get(1), CoffeeBean.class, null);
         checkBeanKey(factoryPoint2.getParameters().get(2), RedBean.class, "red");
+
+        // 3
+        final FactoryPoint<?> factoryPoint3 = factoryPoints.get(2);
+        checkBeanKey(factoryPoint3.getReturnType(), FactoryParameterFactoryCreatedBean.class, null);
+        checkBeanKey(factoryPoint3.getFactoryKey(), ParameterFactoryBean.class, null);
+        assertFalse(factoryPoint3.isSingleton());
+
+        assertEquals(1, factoryPoint3.getParameters().size());
+        checkBeanKey(factoryPoint3.getParameters().get(0), OneParameterFactoryCreatedBean.class, null);
     }
 
     @Test
