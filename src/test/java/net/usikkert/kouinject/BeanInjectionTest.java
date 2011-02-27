@@ -73,14 +73,18 @@ import net.usikkert.kouinject.testbeans.scanned.date.DateFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.CdRecorderBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.ChildFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.ChildFactoryCreatedBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.ConstructorFactoryCreatedBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.DifferentMembersFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.DifferentTypesFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.DifferentTypesFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.FactoryAndStandaloneBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.FactoryAndStandaloneBeanFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.FactoryParameterFactoryCreatedBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.FieldFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.FirstMultipleFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.IntegerPropertyFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.IntegerPropertyInjectedBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.LotsOfInjectionsFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.MiscQualifierBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.MiscQualifierBeanFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.MultipleFactoryBean;
@@ -93,6 +97,7 @@ import net.usikkert.kouinject.testbeans.scanned.factory.PrivateFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.PrivateFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.RecorderBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.SecondMultipleFactoryCreatedBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.SetterFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.SimpleFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.SimpleFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.SimpleFactoryCreatedBeanUsingBean;
@@ -453,6 +458,12 @@ public class BeanInjectionTest {
     }
 
     @Test
+    public void checkConstructorFactoryCreatedBean() {
+        final ConstructorFactoryCreatedBean bean = beanLoader.getBean(ConstructorFactoryCreatedBean.class);
+        assertNotNull(bean);
+    }
+
+    @Test
     public void checkDate() {
         final Date date = beanLoader.getBean(Date.class);
         assertNotNull(date);
@@ -490,6 +501,16 @@ public class BeanInjectionTest {
         final ColorBean darkYellowBean4 = beanLoader.getBean(ColorBean.class, "darkYellow");
         assertNotNull(darkYellowBean4);
         assertTrue(darkYellowBean4.getClass().equals(DarkYellowBean.class));
+    }
+
+    @Test
+    public void checkDifferentMembersFactoryBean() {
+        final DifferentMembersFactoryBean bean = beanLoader.getBean(DifferentMembersFactoryBean.class);
+        assertNotNull(bean);
+
+        assertNotNull(bean.createConstructorFactoryCreatedBean());
+        assertNotNull(bean.createFieldFactoryCreatedBean());
+        assertNotNull(bean.createSetterFactoryCreatedBean());
     }
 
     @Test
@@ -583,6 +604,12 @@ public class BeanInjectionTest {
         assertNotNull(fieldBean.getHelloBean());
         assertNotNull(fieldBean.getAbstractBean());
         assertNotNull(fieldBean.getInterfaceBean());
+    }
+
+    @Test
+    public void checkFieldFactoryCreatedBean() {
+        final FieldFactoryCreatedBean bean = beanLoader.getBean(FieldFactoryCreatedBean.class);
+        assertNotNull(bean);
     }
 
     @Test
@@ -868,6 +895,31 @@ public class BeanInjectionTest {
         final LastBean lastBean = beanLoader.getBean(LastBean.class);
 
         assertNotNull(lastBean.getEverythingBean());
+    }
+
+    @Test
+    public void checkLong50() {
+        final Long bean = beanLoader.getBean(Long.class, "50");
+
+        assertNotNull(bean);
+        assertEquals(Long.valueOf(50L), bean);
+    }
+
+    @Test
+    public void checkLotsOfInjectionsFactoryBean() {
+        final LotsOfInjectionsFactoryBean bean = beanLoader.getBean(LotsOfInjectionsFactoryBean.class);
+        assertNotNull(bean);
+
+        final Long long50 = bean.create50();
+        assertEquals(Long.valueOf(50L), long50);
+
+        assertNotNull(bean.getConstructorBean());
+        assertNotNull(bean.getFieldBean());
+        assertNotNull(bean.getSetterBean());
+
+        assertNotNull(bean.getConstructorFactoryCreatedBean());
+        assertNotNull(bean.getFieldFactoryCreatedBean());
+        assertNotNull(bean.getSetterFactoryCreatedBean());
     }
 
     @Test
@@ -1261,6 +1313,12 @@ public class BeanInjectionTest {
 
         assertNotNull(setterBean);
         assertNotNull(setterBean.getFieldBean());
+    }
+
+    @Test
+    public void checkSetterFactoryCreatedBean() {
+        final SetterFactoryCreatedBean bean = beanLoader.getBean(SetterFactoryCreatedBean.class);
+        assertNotNull(bean);
     }
 
     @Test
