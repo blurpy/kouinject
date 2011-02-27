@@ -1,14 +1,5 @@
 
 - KouInject TODO
 
- - Add java configuration api
- - Add manual override of bean matching
- - Initialize and destroy methods in singletons
- - Support for registering custom annotations
- - Test adding a custom thread scope
- - Optional eager load of singletons
- - Injection in static members
- - @Value annotation for injecton of properties
- - @Produces annotation for defining factories for beans
  - Add tests for classpath scanning in jar-files, and windows
  - Fix findbugs warnings
