@@ -568,10 +568,12 @@ public class BeanInjectionTest {
     @Test
     public void checkFactoryParameterFactoryCreatedBean() {
         final FactoryParameterFactoryCreatedBean bean = beanLoader.getBean(FactoryParameterFactoryCreatedBean.class);
-
         assertNotNull(bean);
         assertTrue(bean.isCreatedByFactory());
-        assertNotNull(bean.getOneParameterFactoryCreatedBean());
+
+        final OneParameterFactoryCreatedBean oneParameterFactoryCreatedBean = bean.getOneParameterFactoryCreatedBean();
+        assertNotNull(oneParameterFactoryCreatedBean);
+        assertTrue(oneParameterFactoryCreatedBean.isCreatedByFactory());
     }
 
     @Test
@@ -828,6 +830,10 @@ public class BeanInjectionTest {
 
         final Integer integerProperty = integerPropertyFactoryBean.createIntegerProperty(factoryContext);
         assertTrue(integerProperty.equals(123));
+
+        // Prototype scope
+        final IntegerPropertyFactoryBean integerPropertyFactoryBean2 = beanLoader.getBean(IntegerPropertyFactoryBean.class);
+        assertNotSame(integerPropertyFactoryBean, integerPropertyFactoryBean2);
     }
 
     @Test
@@ -1383,6 +1389,10 @@ public class BeanInjectionTest {
 
         final String stringProperty = stringPropertyFactoryBean.createStringProperty(factoryContext);
         assertEquals("This is some property", stringProperty);
+
+        // Singleton scope
+        final StringPropertyFactoryBean stringPropertyFactoryBean2 = beanLoader.getBean(StringPropertyFactoryBean.class);
+        assertSame(stringPropertyFactoryBean, stringPropertyFactoryBean2);
     }
 
     @Test

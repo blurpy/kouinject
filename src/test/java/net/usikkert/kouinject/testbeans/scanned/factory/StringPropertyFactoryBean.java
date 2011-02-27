@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import javax.inject.Singleton;
+
 import net.usikkert.kouinject.annotation.Any;
 import net.usikkert.kouinject.annotation.Component;
 import net.usikkert.kouinject.annotation.Produces;
@@ -35,11 +37,12 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.Validate;
 
 /**
- * Test of using {@link FactoryContext} in a factory method.
+ * Test of using {@link FactoryContext} in a factory method, and singleton scope.
  *
  * @author Christian Ihle
  */
 @Component
+@Singleton
 public class StringPropertyFactoryBean {
 
     private static final String PROPERTY_FILE = "FactoryTestProperties.properties";
