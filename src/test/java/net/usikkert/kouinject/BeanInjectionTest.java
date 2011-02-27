@@ -166,6 +166,7 @@ public class BeanInjectionTest {
     public void checkAllInjectionTypesBean() {
         final AllInjectionTypesBean allInjectionTypesBean = beanLoader.getBean(AllInjectionTypesBean.class);
 
+        // Standalone bean
         final HelloBean helloBean = allInjectionTypesBean.getHelloBean();
         assertNotNull(helloBean);
 
@@ -187,6 +188,29 @@ public class BeanInjectionTest {
         assertNotNull(helloBeanCollectionFromProvider);
         assertEquals(1, helloBeanCollectionFromProvider.size());
         assertNotNull(helloBeanCollectionFromProvider.iterator().next());
+
+        // Factory created bean
+        final SimpleFactoryCreatedBean factoryBean = allInjectionTypesBean.getSimpleFactoryCreatedBean();
+        assertNotNull(factoryBean);
+
+        final Collection<SimpleFactoryCreatedBean> factoryBeanCollection = allInjectionTypesBean.getSimpleFactoryCreatedBeanCollection();
+        assertNotNull(factoryBeanCollection);
+        assertEquals(1, factoryBeanCollection.size());
+        assertNotNull(factoryBeanCollection.iterator().next());
+
+        final Provider<SimpleFactoryCreatedBean> factoryBeanProvider = allInjectionTypesBean.getSimpleFactoryCreatedBeanProvider();
+        assertNotNull(factoryBeanProvider);
+
+        final SimpleFactoryCreatedBean factoryBeanFromProvider = factoryBeanProvider.get();
+        assertNotNull(factoryBeanFromProvider);
+
+        final CollectionProvider<SimpleFactoryCreatedBean> factoryBeanCollectionProvider = allInjectionTypesBean.getSimpleFactoryCreatedBeanCollectionProvider();
+        assertNotNull(factoryBeanCollectionProvider);
+
+        final Collection<SimpleFactoryCreatedBean> factoryBeanCollectionFromProvider = factoryBeanCollectionProvider.get();
+        assertNotNull(factoryBeanCollectionFromProvider);
+        assertEquals(1, factoryBeanCollectionFromProvider.size());
+        assertNotNull(factoryBeanCollectionFromProvider.iterator().next());
     }
 
     @Test

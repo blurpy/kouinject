@@ -29,6 +29,7 @@ import javax.inject.Provider;
 
 import net.usikkert.kouinject.CollectionProvider;
 import net.usikkert.kouinject.annotation.Component;
+import net.usikkert.kouinject.testbeans.scanned.factory.SimpleFactoryCreatedBean;
 
 /**
  * Bean for testing all the different types of injection at the same time.
@@ -50,6 +51,18 @@ public class AllInjectionTypesBean {
     @Inject
     private CollectionProvider<HelloBean> helloBeanCollectionProvider;
 
+    @Inject
+    private SimpleFactoryCreatedBean simpleFactoryCreatedBean;
+
+    @Inject
+    private Provider<SimpleFactoryCreatedBean> simpleFactoryCreatedBeanProvider;
+
+    @Inject
+    private Collection<SimpleFactoryCreatedBean> simpleFactoryCreatedBeanCollection;
+
+    @Inject
+    private CollectionProvider<SimpleFactoryCreatedBean> simpleFactoryCreatedBeanCollectionProvider;
+
     public HelloBean getHelloBean() {
         return helloBean;
     }
@@ -64,5 +77,21 @@ public class AllInjectionTypesBean {
 
     public CollectionProvider<HelloBean> getHelloBeanCollectionProvider() {
         return helloBeanCollectionProvider;
+    }
+
+    public SimpleFactoryCreatedBean getSimpleFactoryCreatedBean() {
+        return simpleFactoryCreatedBean;
+    }
+
+    public Provider<SimpleFactoryCreatedBean> getSimpleFactoryCreatedBeanProvider() {
+        return simpleFactoryCreatedBeanProvider;
+    }
+
+    public Collection<SimpleFactoryCreatedBean> getSimpleFactoryCreatedBeanCollection() {
+        return simpleFactoryCreatedBeanCollection;
+    }
+
+    public CollectionProvider<SimpleFactoryCreatedBean> getSimpleFactoryCreatedBeanCollectionProvider() {
+        return simpleFactoryCreatedBeanCollectionProvider;
     }
 }
