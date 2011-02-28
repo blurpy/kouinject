@@ -79,15 +79,18 @@ import net.usikkert.kouinject.testbeans.scanned.factory.DifferentTypesFactoryBea
 import net.usikkert.kouinject.testbeans.scanned.factory.DifferentTypesFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.FactoryAndStandaloneBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.FactoryAndStandaloneBeanFactoryBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.FactoryCreatedBeanUsingBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.FactoryParameterFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.FieldFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.FirstMultipleFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.IntegerPropertyFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.IntegerPropertyInjectedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.LotsOfInjectionsFactoryBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.MiscFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.MiscQualifierBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.MiscQualifierBeanFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.MultipleFactoryBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.NestedFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.OneParameterFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.OrangeFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.ParameterFactoryBean;
@@ -587,6 +590,25 @@ public class BeanInjectionTest {
     }
 
     @Test
+    public void checkFactoryCreatedBeanUsingBean() {
+        final FactoryCreatedBeanUsingBean bean = beanLoader.getBean(FactoryCreatedBeanUsingBean.class);
+        assertNotNull(bean);
+
+        final SimpleFactoryCreatedBean simpleFactoryCreatedBean = bean.getSimpleFactoryCreatedBean();
+        assertNotNull(simpleFactoryCreatedBean);
+        assertTrue(simpleFactoryCreatedBean.isCreatedByFactory());
+
+        final FactoryParameterFactoryCreatedBean factoryParameterFactoryCreatedBean = bean.getFactoryParameterFactoryCreatedBean();
+        assertNotNull(factoryParameterFactoryCreatedBean);
+        assertTrue(factoryParameterFactoryCreatedBean.isCreatedByFactory());
+
+        final OneParameterFactoryCreatedBean oneParameterFactoryCreatedBean = factoryParameterFactoryCreatedBean.getOneParameterFactoryCreatedBean();
+        assertNotNull(oneParameterFactoryCreatedBean);
+        assertTrue(oneParameterFactoryCreatedBean.isCreatedByFactory());
+        assertNotNull(oneParameterFactoryCreatedBean.getHelloBean());
+    }
+
+    @Test
     public void checkFactoryParameterFactoryCreatedBean() {
         final FactoryParameterFactoryCreatedBean bean = beanLoader.getBean(FactoryParameterFactoryCreatedBean.class);
         assertNotNull(bean);
@@ -948,6 +970,16 @@ public class BeanInjectionTest {
     }
 
     @Test
+    public void checkMiscFactoryBean() {
+        final MiscFactoryBean bean = beanLoader.getBean(MiscFactoryBean.class);
+        assertNotNull(bean);
+
+        final NestedFactoryCreatedBean nestedFactoryCreatedBean = bean.createBean(null);
+        assertNotNull(nestedFactoryCreatedBean);
+        assertNull(nestedFactoryCreatedBean.getFactoryCreatedBeanUsingBean());
+    }
+
+    @Test
     public void checkMiscQualifierBean() {
         final MiscQualifierBean milk = beanLoader.getBean(MiscQualifierBean.class, "milk");
         assertNotNull(milk);
@@ -988,6 +1020,35 @@ public class BeanInjectionTest {
         final ThirdMultipleFactoryCreatedBean thirdBean = bean.createThirdBean();
         assertNotNull(thirdBean);
         assertTrue(thirdBean.isCreatedByFactory());
+    }
+
+    @Test
+    public void checkNestedFactoryCreatedBean() {
+        // Factory created bean, level 1
+        final NestedFactoryCreatedBean bean = beanLoader.getBean(NestedFactoryCreatedBean.class);
+        assertNotNull(bean);
+
+        // Standalone bean, level 2
+        final FactoryCreatedBeanUsingBean factoryCreatedBeanUsingBean = bean.getFactoryCreatedBeanUsingBean();
+        assertNotNull(factoryCreatedBeanUsingBean);
+
+        // Factory created bean, level 3
+        final SimpleFactoryCreatedBean simpleFactoryCreatedBean = factoryCreatedBeanUsingBean.getSimpleFactoryCreatedBean();
+        assertNotNull(simpleFactoryCreatedBean);
+        assertTrue(simpleFactoryCreatedBean.isCreatedByFactory());
+
+        // Factory created bean, level 3
+        final FactoryParameterFactoryCreatedBean factoryParameterFactoryCreatedBean = factoryCreatedBeanUsingBean.getFactoryParameterFactoryCreatedBean();
+        assertNotNull(factoryParameterFactoryCreatedBean);
+        assertTrue(factoryParameterFactoryCreatedBean.isCreatedByFactory());
+
+        // Factory created bean, level 4
+        final OneParameterFactoryCreatedBean oneParameterFactoryCreatedBean = factoryParameterFactoryCreatedBean.getOneParameterFactoryCreatedBean();
+        assertNotNull(oneParameterFactoryCreatedBean);
+        assertTrue(oneParameterFactoryCreatedBean.isCreatedByFactory());
+
+        // Standalone bean, level 5
+        assertNotNull(oneParameterFactoryCreatedBean.getHelloBean());
     }
 
     @Test(expected = IllegalArgumentException.class)
