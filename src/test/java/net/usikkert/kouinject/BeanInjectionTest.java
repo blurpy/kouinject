@@ -536,9 +536,9 @@ public class BeanInjectionTest {
         assertTrue(bean.isCreatedByFactory());
 
         assertNotNull(bean.getHelloBean());
-        assertNotNull(bean.getCoffeeBeanProvider());
-        assertNotNull(bean.getJavaBeanCollection());
-        assertNotNull(bean.getFieldBeanCollectionProvider());
+        assertNotNull(bean.getCoffeeBeanProvider().get());
+        assertEquals(1, bean.getJavaBeanCollection().size());
+        assertEquals(1, bean.getFieldBeanCollectionProvider().get().size());
     }
 
     @Test
