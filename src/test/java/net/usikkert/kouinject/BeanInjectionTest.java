@@ -23,6 +23,7 @@
 package net.usikkert.kouinject;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 import java.util.Collection;
 import java.util.Date;
@@ -974,7 +975,7 @@ public class BeanInjectionTest {
         final MiscFactoryBean bean = beanLoader.getBean(MiscFactoryBean.class);
         assertNotNull(bean);
 
-        final NestedFactoryCreatedBean nestedFactoryCreatedBean = bean.createBean(null);
+        final NestedFactoryCreatedBean nestedFactoryCreatedBean = bean.createBean(mock(Provider.class));
         assertNotNull(nestedFactoryCreatedBean);
         assertNull(nestedFactoryCreatedBean.getFactoryCreatedBeanUsingBean());
     }

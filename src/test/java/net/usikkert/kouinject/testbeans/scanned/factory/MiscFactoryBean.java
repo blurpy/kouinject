@@ -22,6 +22,8 @@
 
 package net.usikkert.kouinject.testbeans.scanned.factory;
 
+import javax.inject.Provider;
+
 import net.usikkert.kouinject.annotation.Component;
 import net.usikkert.kouinject.annotation.Produces;
 
@@ -34,7 +36,7 @@ import net.usikkert.kouinject.annotation.Produces;
 public class MiscFactoryBean {
 
     @Produces
-    public NestedFactoryCreatedBean createBean(final FactoryCreatedBeanUsingBean factoryCreatedBeanUsingBean) {
-        return new NestedFactoryCreatedBean(factoryCreatedBeanUsingBean);
+    public NestedFactoryCreatedBean createBean(final Provider<FactoryCreatedBeanUsingBean> factoryCreatedBeanUsingBeanProvider) {
+        return new NestedFactoryCreatedBean(factoryCreatedBeanUsingBeanProvider.get());
     }
 }
