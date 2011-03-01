@@ -1124,6 +1124,11 @@ public class DefaultBeanLoaderTest {
         assertTrue(foundCookie);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldFailToHandleFactoryWithGenerics() {
+        createBeanLoaderWithBasePackages("net.usikkert.kouinject.testbeans.notscanned.factory.stuff");
+    }
+
     private DefaultBeanLoader createBeanLoaderWithBasePackages(final String... basePackages) {
         final ClassLocator classLocator = new ClassPathScanner();
         final BeanLocator beanLocator = new AnnotationBasedBeanLocator(

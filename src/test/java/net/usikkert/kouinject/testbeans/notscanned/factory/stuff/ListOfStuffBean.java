@@ -20,31 +20,33 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.notscanned.factory.stuff;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import net.usikkert.kouinject.annotation.Component;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * A bean injecting 2 different lists.This will fail until generics are supported.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+@Component
+public class ListOfStuffBean {
 
-    // All components
-    ALL(103),
+    @Inject
+    private List<OneStuffBean> oneStuffBeans;
 
-    // All components and those created by factories
-    SCANNED(104),
+    @Inject
+    private List<TwoStuffBean> twoStuffBeans;
 
-    // All components and those created by factories, without a qualifier
-    SCANNED_WITHOUT_QUALIFIER(75);
-
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
+    public List<OneStuffBean> getOneStuffBeans() {
+        return oneStuffBeans;
     }
 
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    public List<TwoStuffBean> getTwoStuffBeans() {
+        return twoStuffBeans;
     }
 }

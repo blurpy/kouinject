@@ -20,31 +20,13 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.notscanned.factory.stuff;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * A stuff bean, for testing generics.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+public class OneStuffBean {
 
-    // All components
-    ALL(103),
-
-    // All components and those created by factories
-    SCANNED(104),
-
-    // All components and those created by factories, without a qualifier
-    SCANNED_WITHOUT_QUALIFIER(75);
-
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
-    }
-
-    public int getNumberOfBeans() {
-        return numberOfBeans;
-    }
 }
