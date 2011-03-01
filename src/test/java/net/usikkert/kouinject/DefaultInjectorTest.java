@@ -30,6 +30,7 @@ import net.usikkert.kouinject.testbeans.BeanCount;
 import net.usikkert.kouinject.testbeans.notscanned.TheInterfaceUser;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.HungryBean;
+import net.usikkert.kouinject.testbeans.scanned.factory.SimpleFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.BlueBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.ColorBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.RedBean;
@@ -107,5 +108,13 @@ public class DefaultInjectorTest {
         catch (IllegalArgumentException e) {
             // ok
         }
+    }
+
+    @Test
+    public void getBeanShouldFindFactoryCreatedBean() {
+        final SimpleFactoryCreatedBean bean = injector.getBean(SimpleFactoryCreatedBean.class);
+
+        assertNotNull(bean);
+        assertTrue(bean.isCreatedByFactory());
     }
 }
