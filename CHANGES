@@ -2,7 +2,7 @@
 - KouInject CHANGES
 
 
-* Version 1.1 (xx.xx.2011):
+* Version 1.1 (01.03.2011):
  - Updated copyright to include 2011
  - Updated to Commons Lang 2.6
  - Added support for factory methods with @Produces
