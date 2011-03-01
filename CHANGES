@@ -4,7 +4,12 @@
 
 * Version 1.1 (xx.xx.2011):
  - Updated copyright to include 2011
+ - Updated to Commons Lang 2.6
  - Added support for factory methods with @Produces
+ - Updated @Any to work on factory methods
+ - Added FactoryContext for getting the qualifier of injection point in factory method
+ - BeanData got a reference to BeanKey instead of just the bean Class
+ - Moved ReflectionUtils to util package
  - Removed addBean() method on DefaultBeanLoader
 
 
