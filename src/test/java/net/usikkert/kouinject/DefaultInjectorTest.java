@@ -146,7 +146,8 @@ public class DefaultInjectorTest {
 
     @Test
     public void getBeansShouldFindBeansWithActiveProfile() {
-        injector = new DefaultInjector(Arrays.asList("ProfileA", "ProfileB", "ProfileC"), "net.usikkert.kouinject.testbeans.scanned");
+        injector = new DefaultInjector(Arrays.asList("ProfileA", "ProfileB", "ProfileC", "Production"),
+                "net.usikkert.kouinject.testbeans.scanned");
 
         final Collection<Object> beans = injector.getBeans(Object.class, "any");
 

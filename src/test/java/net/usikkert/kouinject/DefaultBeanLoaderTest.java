@@ -93,6 +93,8 @@ import net.usikkert.kouinject.testbeans.scanned.folder.folder2.Folder2Bean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder3.Folder3Bean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractBeanImpl;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.interfacebean.InterfaceBean;
+import net.usikkert.kouinject.testbeans.scanned.profile.DevelopmentBean;
+import net.usikkert.kouinject.testbeans.scanned.profile.EnvironmentBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.ProfileABean;
 import net.usikkert.kouinject.testbeans.scanned.profile.ProfileACBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.ProfileBBean;
@@ -503,7 +505,7 @@ public class DefaultBeanLoaderTest {
     public void getBeansWithObjectAndAnyQualifierShouldReturnBeansWithActiveProfiles() {
         final DefaultBeanLoader loader = createBeanLoaderWithBasePackagesAndProfiles(
                 Arrays.asList("net.usikkert.kouinject.testbeans.scanned"),
-                Arrays.asList("ProfileA", "ProfileB", "ProfileC"));
+                Arrays.asList("ProfileA", "ProfileB", "ProfileC", "Development"));
 
         final Collection<Object> beans = loader.getBeans(Object.class, "any");
 
@@ -514,6 +516,7 @@ public class DefaultBeanLoaderTest {
         assertTrue(containsBean(ProfileBBean.class, beans));
         assertTrue(containsBean(ProfileCBean.class, beans));
         assertTrue(containsBean(ProfileACBean.class, beans));
+        assertTrue(containsBean(DevelopmentBean.class, beans));
     }
 
     @Test
@@ -1197,8 +1200,13 @@ public class DefaultBeanLoaderTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void getBeanShouldNotReturnProfiledBeanWhenNoProfilesAreActive() {
+    public void getBeanShouldNotReturnProfiledBeanWhenNoProfilesAreActive1() {
         beanLoader.getBean(ProfileABean.class);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getBeanShouldNotReturnProfiledBeanWhenNoProfilesAreActive2() {
+        beanLoader.getBean(EnvironmentBean.class);
     }
 
     @Test(expected = IllegalArgumentException.class)

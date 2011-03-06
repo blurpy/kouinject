@@ -126,6 +126,10 @@ import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding2.OrganismBe
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding2.PetBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding2.pets.CatBean;
 import net.usikkert.kouinject.testbeans.scanned.notloaded.NoBean;
+import net.usikkert.kouinject.testbeans.scanned.profile.DevelopmentBean;
+import net.usikkert.kouinject.testbeans.scanned.profile.EnvironmentBean;
+import net.usikkert.kouinject.testbeans.scanned.profile.EnvironmentUsingBean;
+import net.usikkert.kouinject.testbeans.scanned.profile.ProductionBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.ProfileABean;
 import net.usikkert.kouinject.testbeans.scanned.profile.ProfileACBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.ProfileBBean;
@@ -511,6 +515,18 @@ public class BeanInjectionTest {
     }
 
     @Test
+    public void checkDevelopmentBean() {
+        injector = new DefaultInjector(Arrays.asList("development"), "net.usikkert.kouinject.testbeans.scanned");
+
+        final DevelopmentBean developmentBean = injector.getBean(DevelopmentBean.class);
+        assertNotNull(developmentBean);
+
+        final EnvironmentBean environmentBean = injector.getBean(EnvironmentBean.class);
+        assertNotNull(environmentBean);
+        assertEquals(DevelopmentBean.class, environmentBean.getClass());
+    }
+
+    @Test
     public void checkDifferentMembersFactoryBean() {
         final DifferentMembersFactoryBean bean = injector.getBean(DifferentMembersFactoryBean.class);
         assertNotNull(bean);
@@ -542,6 +558,30 @@ public class BeanInjectionTest {
         assertNotNull(bean.getCoffeeBeanProvider().get());
         assertEquals(1, bean.getJavaBeanCollection().size());
         assertEquals(1, bean.getFieldBeanCollectionProvider().get().size());
+    }
+
+    @Test
+    public void checkEnvironmentUsingBeanWithDevelopmentProfile() {
+        injector = new DefaultInjector(Arrays.asList("development"), "net.usikkert.kouinject.testbeans.scanned");
+
+        final EnvironmentUsingBean environmentUsingBean = injector.getBean(EnvironmentUsingBean.class);
+        assertNotNull(environmentUsingBean);
+
+        final EnvironmentBean environmentBean = environmentUsingBean.getEnvironmentBean();
+        assertNotNull(environmentBean);
+        assertEquals(DevelopmentBean.class, environmentBean.getClass());
+    }
+
+    @Test
+    public void checkEnvironmentUsingBeanWithProductionProfile() {
+        injector = new DefaultInjector(Arrays.asList("production"), "net.usikkert.kouinject.testbeans.scanned");
+
+        final EnvironmentUsingBean environmentUsingBean = injector.getBean(EnvironmentUsingBean.class);
+        assertNotNull(environmentUsingBean);
+
+        final EnvironmentBean environmentBean = environmentUsingBean.getEnvironmentBean();
+        assertNotNull(environmentBean);
+        assertEquals(ProductionBean.class, environmentBean.getClass());
     }
 
     @Test
@@ -1208,6 +1248,18 @@ public class BeanInjectionTest {
 
         assertNotNull(bean);
         assertTrue(bean.isCreatedByFactory());
+    }
+
+    @Test
+    public void checkProductionBean() {
+        injector = new DefaultInjector(Arrays.asList("production"), "net.usikkert.kouinject.testbeans.scanned");
+
+        final ProductionBean productionBean = injector.getBean(ProductionBean.class);
+        assertNotNull(productionBean);
+
+        final EnvironmentBean environmentBean = injector.getBean(EnvironmentBean.class);
+        assertNotNull(environmentBean);
+        assertEquals(ProductionBean.class, environmentBean.getClass());
     }
 
     @Test
