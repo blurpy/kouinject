@@ -29,7 +29,7 @@ import net.usikkert.kouinject.annotation.Component;
  *
  * @author Christian Ihle
  */
-//@Component TODO
+@Component
 @ProfileA
 @ProfileC
 public class ProfileACBean {
