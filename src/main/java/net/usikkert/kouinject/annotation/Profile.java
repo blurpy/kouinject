@@ -42,7 +42,7 @@ import java.lang.annotation.Target;
  *
  * <pre>
  *   &#064;Documented
- *   &#064;Retention(RUNTIME)
+ *   &#064;Retention(RetentionPolicy.RUNTIME)
  *   &#064;Target(ElementType.TYPE)
  *   &#064;Profile
  *   public @interface Production {}
