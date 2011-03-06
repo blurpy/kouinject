@@ -26,8 +26,10 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.inject.Provider;
@@ -91,6 +93,10 @@ import net.usikkert.kouinject.testbeans.scanned.folder.folder2.Folder2Bean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder3.Folder3Bean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractBeanImpl;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.interfacebean.InterfaceBean;
+import net.usikkert.kouinject.testbeans.scanned.profile.ProfileABean;
+import net.usikkert.kouinject.testbeans.scanned.profile.ProfileACBean;
+import net.usikkert.kouinject.testbeans.scanned.profile.ProfileBBean;
+import net.usikkert.kouinject.testbeans.scanned.profile.ProfileCBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.BlueBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.ColorBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.DarkYellowBean;
@@ -491,6 +497,23 @@ public class DefaultBeanLoaderTest {
 
         final SimpleFactoryCreatedBean simpleFactoryCreatedBean = getBean(SimpleFactoryCreatedBean.class, beans);
         assertTrue(simpleFactoryCreatedBean.isCreatedByFactory());
+    }
+
+    @Test
+    public void getBeansWithObjectAndAnyQualifierShouldReturnBeansWithActiveProfiles() {
+        final DefaultBeanLoader loader = createBeanLoaderWithBasePackagesAndProfiles(
+                Arrays.asList("net.usikkert.kouinject.testbeans.scanned"),
+                Arrays.asList("ProfileA", "ProfileB", "ProfileC"));
+
+        final Collection<Object> beans = loader.getBeans(Object.class, "any");
+
+        assertNotNull(beans);
+        assertEquals(BeanCount.SCANNED_WITH_PROFILED.getNumberOfBeans(), beans.size());
+
+        assertTrue(containsBean(ProfileABean.class, beans));
+        assertTrue(containsBean(ProfileBBean.class, beans));
+        assertTrue(containsBean(ProfileCBean.class, beans));
+        assertTrue(containsBean(ProfileACBean.class, beans));
     }
 
     @Test
@@ -1134,11 +1157,69 @@ public class DefaultBeanLoaderTest {
         createBeanLoaderWithBasePackages("net.usikkert.kouinject.testbeans.notscanned.factory.stuff");
     }
 
+    @Test
+    public void getBeanShouldReturnBeanWithOneOfActiveProfiles() {
+        final DefaultBeanLoader loader = createBeanLoaderWithBasePackagesAndProfiles(
+                Arrays.asList("net.usikkert.kouinject.testbeans.scanned"),
+                Arrays.asList("ProfileA", "ProfileB", "ProfileC"));
+
+        final ProfileABean profileABean = loader.getBean(ProfileABean.class);
+        assertNotNull(profileABean);
+
+        final ProfileBBean profileBBean = loader.getBean(ProfileBBean.class);
+        assertNotNull(profileBBean);
+
+        final ProfileCBean profileCBean = loader.getBean(ProfileCBean.class);
+        assertNotNull(profileCBean);
+
+        final ProfileACBean profileACBean = loader.getBean(ProfileACBean.class);
+        assertNotNull(profileACBean);
+    }
+
+    @Test
+    public void getBeanShouldReturnBeanWithActiveProfile() {
+        final DefaultBeanLoader loader = createBeanLoaderWithBasePackagesAndProfiles(
+                Arrays.asList("net.usikkert.kouinject.testbeans.scanned"),
+                Arrays.asList("ProfileA"));
+
+        final ProfileABean profileABean = loader.getBean(ProfileABean.class);
+        assertNotNull(profileABean);
+    }
+
+    @Test
+    public void getBeanShouldReturnBeanWhereOneOfSeveralProfilesMatchWithActiveProfile() {
+        final DefaultBeanLoader loader = createBeanLoaderWithBasePackagesAndProfiles(
+                Arrays.asList("net.usikkert.kouinject.testbeans.scanned"),
+                Arrays.asList("ProfileC"));
+
+        final ProfileACBean profileACBean = loader.getBean(ProfileACBean.class);
+        assertNotNull(profileACBean);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getBeanShouldNotReturnProfiledBeanWhenNoProfilesAreActive() {
+        beanLoader.getBean(ProfileABean.class);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getBeanShouldNotReturnProfiledBeanWhenDifferentProfileIsActive() {
+        final DefaultBeanLoader loader = createBeanLoaderWithBasePackagesAndProfiles(
+                Arrays.asList("net.usikkert.kouinject.testbeans.scanned"),
+                Arrays.asList("ProfileB"));
+
+        loader.getBean(ProfileABean.class);
+    }
+
     private DefaultBeanLoader createBeanLoaderWithBasePackages(final String... basePackages) {
+        return createBeanLoaderWithBasePackagesAndProfiles(Arrays.asList(basePackages), new ArrayList<String>());
+    }
+
+    private DefaultBeanLoader createBeanLoaderWithBasePackagesAndProfiles(final List<String> basePackages, final List<String> profiles) {
         final ClassLocator classLocator = new ClassPathScanner();
-        final ProfileLocator profileLocator = new InputBasedProfileLocator(new ArrayList<String>());
+        final ProfileLocator profileLocator = new InputBasedProfileLocator(profiles);
         final ProfileHandler profileHandler = new AnnotationBasedProfileHandler(profileLocator);
-        final BeanLocator beanLocator = new AnnotationBasedBeanLocator(classLocator, profileHandler, basePackages);
+        final BeanLocator beanLocator = new AnnotationBasedBeanLocator(classLocator, profileHandler,
+                basePackages.toArray(new String[basePackages.size()]));
         final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
         final FactoryPointHandler factoryPointHandler = new AnnotationBasedFactoryPointHandler();
 
