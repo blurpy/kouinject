@@ -30,10 +30,8 @@ import java.util.Date;
 
 import javax.inject.Provider;
 
-import net.usikkert.kouinject.factory.AnnotationBasedFactoryPointHandler;
 import net.usikkert.kouinject.factory.FactoryContext;
 import net.usikkert.kouinject.factory.FactoryContextImpl;
-import net.usikkert.kouinject.factory.FactoryPointHandler;
 import net.usikkert.kouinject.testbeans.BeanCount;
 import net.usikkert.kouinject.testbeans.scanned.AllInjectionTypesBean;
 import net.usikkert.kouinject.testbeans.scanned.BlueCarBean;
@@ -156,25 +154,25 @@ import org.junit.Test;
  */
 public class BeanInjectionTest {
 
-    private DefaultBeanLoader beanLoader;
+    private Injector injector;
 
     @Before
     public void setupBeanLoader() {
-        beanLoader = createBeanLoaderWithBasePackages("net.usikkert.kouinject.testbeans.scanned");
+        injector = new DefaultInjector("net.usikkert.kouinject.testbeans.scanned");
     }
 
     @Test
     public void checkAbstractBean() {
-        final AbstractBean abstractBean = beanLoader.getBean(AbstractBean.class);
+        final AbstractBean abstractBean = injector.getBean(AbstractBean.class);
         assertNotNull(abstractBean);
 
-        final AbstractBeanImpl abstractBeanImpl = beanLoader.getBean(AbstractBeanImpl.class);
+        final AbstractBeanImpl abstractBeanImpl = injector.getBean(AbstractBeanImpl.class);
         assertNotNull(abstractBeanImpl);
     }
 
     @Test
     public void checkAllInjectionTypesBean() {
-        final AllInjectionTypesBean allInjectionTypesBean = beanLoader.getBean(AllInjectionTypesBean.class);
+        final AllInjectionTypesBean allInjectionTypesBean = injector.getBean(AllInjectionTypesBean.class);
 
         // Standalone bean
         final HelloBean helloBean = allInjectionTypesBean.getHelloBean();
@@ -225,7 +223,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkAnimalBean() {
-        final AnimalBean animalBean = beanLoader.getBean(AnimalBean.class);
+        final AnimalBean animalBean = injector.getBean(AnimalBean.class);
         assertNotNull(animalBean);
         assertTrue(animalBean.getClass().equals(AnimalBean.class));
 
@@ -253,7 +251,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkAnyBean() {
-        final AnyBean anyBean = beanLoader.getBean(AnyBean.class);
+        final AnyBean anyBean = injector.getBean(AnyBean.class);
 
         assertNotNull(anyBean.getHelloBean());
         assertNotNull(anyBean.getRedBean());
@@ -273,54 +271,54 @@ public class BeanInjectionTest {
 
     @Test
     public void checkAppleBean() {
-        final AppleBean appleBean1 = beanLoader.getBean(AppleBean.class);
+        final AppleBean appleBean1 = injector.getBean(AppleBean.class);
         assertNotNull(appleBean1);
         assertNotNull(appleBean1.getSingletonBean());
 
-        final AppleBean appleBean2 = beanLoader.getBean(AppleBean.class, "roundfood");
+        final AppleBean appleBean2 = injector.getBean(AppleBean.class, "roundfood");
         assertNotNull(appleBean2);
 
-        final AppleBean appleBean3 = beanLoader.getBean(AppleBean.class, "any");
+        final AppleBean appleBean3 = injector.getBean(AppleBean.class, "any");
         assertNotNull(appleBean3);
 
-        final Food appleBean4 = beanLoader.getBean(Food.class, "RoundFood");
+        final Food appleBean4 = injector.getBean(Food.class, "RoundFood");
         assertNotNull(appleBean4);
         assertTrue(appleBean4 instanceof AppleBean);
     }
 
     @Test
     public void checkBananaBean() {
-        final BananaBean bananaBean = beanLoader.getBean(BananaBean.class);
+        final BananaBean bananaBean = injector.getBean(BananaBean.class);
         assertNotNull(bananaBean);
     }
 
     @Test
     public void checkBlueBean() {
-        final BlueBean blueBean1 = beanLoader.getBean(BlueBean.class);
+        final BlueBean blueBean1 = injector.getBean(BlueBean.class);
         assertNotNull(blueBean1);
 
-        final BlueBean blueBean2 = beanLoader.getBean(BlueBean.class, "Blue");
+        final BlueBean blueBean2 = injector.getBean(BlueBean.class, "Blue");
         assertNotNull(blueBean2);
 
-        final ColorBean blueBean3 = beanLoader.getBean(ColorBean.class, "Blue");
+        final ColorBean blueBean3 = injector.getBean(ColorBean.class, "Blue");
         assertTrue(blueBean3 instanceof BlueBean);
     }
 
     @Test
     public void checkBlueCarBean() {
-        final BlueCarBean blueCarBean1 = beanLoader.getBean(BlueCarBean.class);
+        final BlueCarBean blueCarBean1 = injector.getBean(BlueCarBean.class);
         assertNotNull(blueCarBean1);
 
-        final BlueCarBean blueCarBean2 = beanLoader.getBean(BlueCarBean.class, "Blue");
+        final BlueCarBean blueCarBean2 = injector.getBean(BlueCarBean.class, "Blue");
         assertNotNull(blueCarBean2);
 
-        final CarBean blueCarBean3 = beanLoader.getBean(CarBean.class, "Blue");
+        final CarBean blueCarBean3 = injector.getBean(CarBean.class, "Blue");
         assertTrue(blueCarBean3 instanceof BlueCarBean);
     }
 
     @Test
     public void checkCatBean() {
-        final CatBean catBean = beanLoader.getBean(CatBean.class);
+        final CatBean catBean = injector.getBean(CatBean.class);
         assertNotNull(catBean);
         assertTrue(catBean.getClass().equals(CatBean.class));
 
@@ -364,7 +362,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkCarBean() {
-        final CarBean carBean = beanLoader.getBean(CarBean.class);
+        final CarBean carBean = injector.getBean(CarBean.class);
 
         assertNotNull(carBean);
         assertEquals(CarBean.class, carBean.getClass());
@@ -372,20 +370,20 @@ public class BeanInjectionTest {
 
     @Test
     public void checkCdRecorderBean() {
-        final CdRecorderBean cdRecorderBean1 = beanLoader.getBean(CdRecorderBean.class);
+        final CdRecorderBean cdRecorderBean1 = injector.getBean(CdRecorderBean.class);
         assertNotNull(cdRecorderBean1);
 
-        final CdRecorderBean cdRecorderBean2 = beanLoader.getBean(CdRecorderBean.class, "cd");
+        final CdRecorderBean cdRecorderBean2 = injector.getBean(CdRecorderBean.class, "cd");
         assertNotNull(cdRecorderBean2);
 
-        final RecorderBean cdRecorderBean3 = beanLoader.getBean(RecorderBean.class, "cd");
+        final RecorderBean cdRecorderBean3 = injector.getBean(RecorderBean.class, "cd");
         assertNotNull(cdRecorderBean3);
         assertEquals(CdRecorderBean.class, cdRecorderBean3.getClass());
     }
 
     @Test
     public void checkCheeseBean() {
-        final CheeseBean cheeseBean = beanLoader.getBean(CheeseBean.class);
+        final CheeseBean cheeseBean = injector.getBean(CheeseBean.class);
 
         assertNotNull(cheeseBean);
         assertNotNull(cheeseBean.getRedBean());
@@ -394,7 +392,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkChildBean() {
-        final ChildBean childBean = beanLoader.getBean(ChildBean.class);
+        final ChildBean childBean = injector.getBean(ChildBean.class);
 
         assertNotNull(childBean.getFieldBean());
         assertNotNull(childBean.getHelloBean());
@@ -403,10 +401,10 @@ public class BeanInjectionTest {
 
     @Test
     public void checkChildFactoryBean() {
-        final ChildFactoryBean childFactoryBean = beanLoader.getBean(ChildFactoryBean.class);
+        final ChildFactoryBean childFactoryBean = injector.getBean(ChildFactoryBean.class);
         assertNotNull(childFactoryBean);
 
-        final ParentFactoryBean parentFactoryBean = beanLoader.getBean(ParentFactoryBean.class);
+        final ParentFactoryBean parentFactoryBean = injector.getBean(ParentFactoryBean.class);
         assertNotNull(parentFactoryBean);
         assertEquals(ChildFactoryBean.class, parentFactoryBean.getClass());
 
@@ -429,17 +427,17 @@ public class BeanInjectionTest {
 
     @Test
     public void checkChildFactoryCreatedBean() {
-        final ChildFactoryCreatedBean bean1 = beanLoader.getBean(ChildFactoryCreatedBean.class);
+        final ChildFactoryCreatedBean bean1 = injector.getBean(ChildFactoryCreatedBean.class);
         assertNotNull(bean1);
         assertTrue(bean1.isCreatedByChild());
         assertFalse(bean1.isCreatedByParent());
 
-        final ChildFactoryCreatedBean bean2 = beanLoader.getBean(ChildFactoryCreatedBean.class, "child");
+        final ChildFactoryCreatedBean bean2 = injector.getBean(ChildFactoryCreatedBean.class, "child");
         assertNotNull(bean2);
         assertTrue(bean2.isCreatedByChild());
         assertFalse(bean2.isCreatedByParent());
 
-        final ChildFactoryCreatedBean bean3 = beanLoader.getBean(ChildFactoryCreatedBean.class, "any");
+        final ChildFactoryCreatedBean bean3 = injector.getBean(ChildFactoryCreatedBean.class, "any");
         assertNotNull(bean3);
         assertTrue(bean3.isCreatedByChild());
         assertFalse(bean3.isCreatedByParent());
@@ -447,7 +445,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkCoffeeBean() {
-        final CoffeeBean coffeeBean = beanLoader.getBean(CoffeeBean.class);
+        final CoffeeBean coffeeBean = injector.getBean(CoffeeBean.class);
 
         assertNotNull(coffeeBean.getHelloBean());
         assertNotNull(coffeeBean.getJavaBean());
@@ -455,7 +453,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkConstructorBean() {
-        final ConstructorBean constructorBean = beanLoader.getBean(ConstructorBean.class);
+        final ConstructorBean constructorBean = injector.getBean(ConstructorBean.class);
 
         assertNotNull(constructorBean.getHelloBean());
         assertNotNull(constructorBean.getSetterBean());
@@ -463,19 +461,19 @@ public class BeanInjectionTest {
 
     @Test
     public void checkConstructorFactoryCreatedBean() {
-        final ConstructorFactoryCreatedBean bean = beanLoader.getBean(ConstructorFactoryCreatedBean.class);
+        final ConstructorFactoryCreatedBean bean = injector.getBean(ConstructorFactoryCreatedBean.class);
         assertNotNull(bean);
     }
 
     @Test
     public void checkDate() {
-        final Date date = beanLoader.getBean(Date.class);
+        final Date date = injector.getBean(Date.class);
         assertNotNull(date);
     }
 
     @Test
     public void checkDateBean() {
-        final DateBean dateBean = beanLoader.getBean(DateBean.class);
+        final DateBean dateBean = injector.getBean(DateBean.class);
 
         assertNotNull(dateBean);
         assertNotNull(dateBean.getDate());
@@ -483,7 +481,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkDateFactoryBean() {
-        final DateFactoryBean dateFactoryBean = beanLoader.getBean(DateFactoryBean.class);
+        final DateFactoryBean dateFactoryBean = injector.getBean(DateFactoryBean.class);
         assertNotNull(dateFactoryBean);
 
         final Date date = dateFactoryBean.createDate();
@@ -492,24 +490,24 @@ public class BeanInjectionTest {
 
     @Test
     public void checkDarkYellowBean() {
-        final DarkYellowBean darkYellowBean1 = beanLoader.getBean(DarkYellowBean.class);
+        final DarkYellowBean darkYellowBean1 = injector.getBean(DarkYellowBean.class);
         assertNotNull(darkYellowBean1);
 
-        final DarkYellowBean darkYellowBean2 = beanLoader.getBean(DarkYellowBean.class, "darkYellow");
+        final DarkYellowBean darkYellowBean2 = injector.getBean(DarkYellowBean.class, "darkYellow");
         assertNotNull(darkYellowBean2);
 
-        final YellowBean darkYellowBean3 = beanLoader.getBean(YellowBean.class, "darkYellow");
+        final YellowBean darkYellowBean3 = injector.getBean(YellowBean.class, "darkYellow");
         assertNotNull(darkYellowBean3);
         assertTrue(darkYellowBean3.getClass().equals(DarkYellowBean.class));
 
-        final ColorBean darkYellowBean4 = beanLoader.getBean(ColorBean.class, "darkYellow");
+        final ColorBean darkYellowBean4 = injector.getBean(ColorBean.class, "darkYellow");
         assertNotNull(darkYellowBean4);
         assertTrue(darkYellowBean4.getClass().equals(DarkYellowBean.class));
     }
 
     @Test
     public void checkDifferentMembersFactoryBean() {
-        final DifferentMembersFactoryBean bean = beanLoader.getBean(DifferentMembersFactoryBean.class);
+        final DifferentMembersFactoryBean bean = injector.getBean(DifferentMembersFactoryBean.class);
         assertNotNull(bean);
 
         assertNotNull(bean.createConstructorFactoryCreatedBean());
@@ -519,7 +517,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkDifferentTypesFactoryBean() {
-        final DifferentTypesFactoryBean bean = beanLoader.getBean(DifferentTypesFactoryBean.class);
+        final DifferentTypesFactoryBean bean = injector.getBean(DifferentTypesFactoryBean.class);
         assertNotNull(bean);
 
         final DifferentTypesFactoryCreatedBean createdBean = bean.createBean(null, null, null, null);
@@ -530,7 +528,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkDifferentTypesFactoryCreatedBean() {
-        final DifferentTypesFactoryCreatedBean bean = beanLoader.getBean(DifferentTypesFactoryCreatedBean.class);
+        final DifferentTypesFactoryCreatedBean bean = injector.getBean(DifferentTypesFactoryCreatedBean.class);
 
         assertNotNull(bean);
         assertTrue(bean.isCreatedByFactory());
@@ -543,7 +541,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkEverythingBean() {
-        final EverythingBean everythingBean = beanLoader.getBean(EverythingBean.class);
+        final EverythingBean everythingBean = injector.getBean(EverythingBean.class);
 
         assertNotNull(everythingBean.getCoffeeBean());
         assertNotNull(everythingBean.getConstructorBean());
@@ -557,22 +555,22 @@ public class BeanInjectionTest {
 
     @Test
     public void checkFactoryAndStandaloneBean() {
-        final FactoryAndStandaloneBean standalone1 = beanLoader.getBean(FactoryAndStandaloneBean.class, "standalone");
+        final FactoryAndStandaloneBean standalone1 = injector.getBean(FactoryAndStandaloneBean.class, "standalone");
         assertNotNull(standalone1);
         assertFalse(standalone1.isCreatedByFactory());
 
-        final FactoryAndStandaloneBean standalone2 = beanLoader.getBean(FactoryAndStandaloneBean.class, "standalone");
+        final FactoryAndStandaloneBean standalone2 = injector.getBean(FactoryAndStandaloneBean.class, "standalone");
         assertNotNull(standalone2);
         assertFalse(standalone2.isCreatedByFactory());
 
         // Standalone has prototype scope
         assertNotSame(standalone1, standalone2);
 
-        final FactoryAndStandaloneBean factory1 = beanLoader.getBean(FactoryAndStandaloneBean.class, "factory");
+        final FactoryAndStandaloneBean factory1 = injector.getBean(FactoryAndStandaloneBean.class, "factory");
         assertNotNull(factory1);
         assertTrue(factory1.isCreatedByFactory());
 
-        final FactoryAndStandaloneBean factory2 = beanLoader.getBean(FactoryAndStandaloneBean.class, "factory");
+        final FactoryAndStandaloneBean factory2 = injector.getBean(FactoryAndStandaloneBean.class, "factory");
         assertNotNull(factory2);
         assertTrue(factory2.isCreatedByFactory());
 
@@ -582,7 +580,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkFactoryAndStandaloneBeanFactoryBean() {
-        final FactoryAndStandaloneBeanFactoryBean bean = beanLoader.getBean(FactoryAndStandaloneBeanFactoryBean.class);
+        final FactoryAndStandaloneBeanFactoryBean bean = injector.getBean(FactoryAndStandaloneBeanFactoryBean.class);
         assertNotNull(bean);
 
         final FactoryAndStandaloneBean factoryAndStandaloneBean = bean.createBean();
@@ -592,7 +590,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkFactoryCreatedBeanUsingBean() {
-        final FactoryCreatedBeanUsingBean bean = beanLoader.getBean(FactoryCreatedBeanUsingBean.class);
+        final FactoryCreatedBeanUsingBean bean = injector.getBean(FactoryCreatedBeanUsingBean.class);
         assertNotNull(bean);
 
         final SimpleFactoryCreatedBean simpleFactoryCreatedBean = bean.getSimpleFactoryCreatedBean();
@@ -611,7 +609,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkFactoryParameterFactoryCreatedBean() {
-        final FactoryParameterFactoryCreatedBean bean = beanLoader.getBean(FactoryParameterFactoryCreatedBean.class);
+        final FactoryParameterFactoryCreatedBean bean = injector.getBean(FactoryParameterFactoryCreatedBean.class);
         assertNotNull(bean);
         assertTrue(bean.isCreatedByFactory());
 
@@ -622,7 +620,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkFieldBean() {
-        final FieldBean fieldBean = beanLoader.getBean(FieldBean.class);
+        final FieldBean fieldBean = injector.getBean(FieldBean.class);
 
         assertNotNull(fieldBean.getHelloBean());
         assertNotNull(fieldBean.getAbstractBean());
@@ -631,20 +629,20 @@ public class BeanInjectionTest {
 
     @Test
     public void checkFieldFactoryCreatedBean() {
-        final FieldFactoryCreatedBean bean = beanLoader.getBean(FieldFactoryCreatedBean.class);
+        final FieldFactoryCreatedBean bean = injector.getBean(FieldFactoryCreatedBean.class);
         assertNotNull(bean);
     }
 
     @Test
     public void checkFifthLayer() {
-        final Layer fifthLayer1 = beanLoader.getBean(Layer.class, "fifth");
-        final Layer fifthLayer2 = beanLoader.getBean(FirstLayerBean.class, "fifth");
-        final Layer fifthLayer3 = beanLoader.getBean(SecondLayerBean.class, "fifth");
-        final Layer fifthLayer4 = beanLoader.getBean(ThirdLayerBean.class, "fifth");
-        final Layer fifthLayer5 = beanLoader.getBean(FourthLayerBean.class, "fifth");
-        final Layer fifthLayer6 = beanLoader.getBean(FifthLayerBean.class);
-        final Layer fifthLayer7 = beanLoader.getBean(FifthLayerBean.class, "fifth");
-        final Layer fifthLayer8 = beanLoader.getBean(FifthLayerBean.class, "any");
+        final Layer fifthLayer1 = injector.getBean(Layer.class, "fifth");
+        final Layer fifthLayer2 = injector.getBean(FirstLayerBean.class, "fifth");
+        final Layer fifthLayer3 = injector.getBean(SecondLayerBean.class, "fifth");
+        final Layer fifthLayer4 = injector.getBean(ThirdLayerBean.class, "fifth");
+        final Layer fifthLayer5 = injector.getBean(FourthLayerBean.class, "fifth");
+        final Layer fifthLayer6 = injector.getBean(FifthLayerBean.class);
+        final Layer fifthLayer7 = injector.getBean(FifthLayerBean.class, "fifth");
+        final Layer fifthLayer8 = injector.getBean(FifthLayerBean.class, "any");
 
         assertSame(fifthLayer1, fifthLayer2);
         assertSame(fifthLayer2, fifthLayer3);
@@ -666,23 +664,23 @@ public class BeanInjectionTest {
 
     @Test
     public void checkFinalBean() {
-        final FinalBean finalBean = beanLoader.getBean(FinalBean.class);
+        final FinalBean finalBean = injector.getBean(FinalBean.class);
 
         assertNull(finalBean.getFieldBean());
     }
 
     @Test
     public void checkFirstCircularDependencyBean() {
-        final FirstCircularDependencyBean firstCircularDependencyBean = beanLoader.getBean(FirstCircularDependencyBean.class);
+        final FirstCircularDependencyBean firstCircularDependencyBean = injector.getBean(FirstCircularDependencyBean.class);
 
         assertNotNull(firstCircularDependencyBean.getSecondCircularDependencyBean());
     }
 
     @Test
     public void checkFirstLayer() {
-        final Layer firstLayer1 = beanLoader.getBean(Layer.class, "first");
-        final Layer firstLayer2 = beanLoader.getBean(FirstLayerBean.class);
-        final Layer firstLayer3 = beanLoader.getBean(FirstLayerBean.class, "first");
+        final Layer firstLayer1 = injector.getBean(Layer.class, "first");
+        final Layer firstLayer2 = injector.getBean(FirstLayerBean.class);
+        final Layer firstLayer3 = injector.getBean(FirstLayerBean.class, "first");
 
         assertSame(firstLayer1, firstLayer2);
         assertSame(firstLayer2, firstLayer3);
@@ -694,7 +692,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkFirstMultipleFactoryCreatedBean() {
-        final FirstMultipleFactoryCreatedBean bean = beanLoader.getBean(FirstMultipleFactoryCreatedBean.class);
+        final FirstMultipleFactoryCreatedBean bean = injector.getBean(FirstMultipleFactoryCreatedBean.class);
 
         assertNotNull(bean);
         assertTrue(bean.isCreatedByFactory());
@@ -702,27 +700,27 @@ public class BeanInjectionTest {
 
     @Test
     public void checkFishBean() {
-        final FishBean fishBean = beanLoader.getBean(FishBean.class);
+        final FishBean fishBean = injector.getBean(FishBean.class);
         assertNotNull(fishBean);
     }
 
     @Test
     public void checkFolder1Bean() {
-        final Folder1Bean folder1Bean = beanLoader.getBean(Folder1Bean.class);
+        final Folder1Bean folder1Bean = injector.getBean(Folder1Bean.class);
 
         assertNotNull(folder1Bean);
     }
 
     @Test
     public void checkFolder2Bean() {
-        final Folder2Bean folder2Bean = beanLoader.getBean(Folder2Bean.class);
+        final Folder2Bean folder2Bean = injector.getBean(Folder2Bean.class);
 
         assertNotNull(folder2Bean);
     }
 
     @Test
     public void checkFolder3Bean() {
-        final Folder3Bean folder3Bean = beanLoader.getBean(Folder3Bean.class);
+        final Folder3Bean folder3Bean = injector.getBean(Folder3Bean.class);
 
         assertNotNull(folder3Bean);
         assertNotNull(folder3Bean.getFolder1Bean());
@@ -731,7 +729,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkGarageBean() {
-        final GarageBean garageBean = beanLoader.getBean(GarageBean.class);
+        final GarageBean garageBean = injector.getBean(GarageBean.class);
 
         final CarBean carBean = garageBean.getCarBean();
         assertNotNull(carBean);
@@ -758,31 +756,31 @@ public class BeanInjectionTest {
 
     @Test
     public void checkGreenBean() {
-        final GreenBean greenBean1 = beanLoader.getBean(GreenBean.class);
+        final GreenBean greenBean1 = injector.getBean(GreenBean.class);
         assertNotNull(greenBean1);
 
-        final GreenBean greenBean2 = beanLoader.getBean(GreenBean.class, "Green");
+        final GreenBean greenBean2 = injector.getBean(GreenBean.class, "Green");
         assertNotNull(greenBean2);
 
-        final ColorBean greenBean3 = beanLoader.getBean(ColorBean.class, "Green");
+        final ColorBean greenBean3 = injector.getBean(ColorBean.class, "Green");
         assertTrue(greenBean3 instanceof GreenBean);
     }
 
     @Test
     public void checkHamburgerBean() {
-        final HamburgerBean hamburgerBean1 = beanLoader.getBean(HamburgerBean.class);
+        final HamburgerBean hamburgerBean1 = injector.getBean(HamburgerBean.class);
         assertNotNull(hamburgerBean1);
 
-        final HamburgerBean hamburgerBean2 = beanLoader.getBean(HamburgerBean.class, "fastfood");
+        final HamburgerBean hamburgerBean2 = injector.getBean(HamburgerBean.class, "fastfood");
         assertNotNull(hamburgerBean2);
 
-        final HamburgerBean hamburgerBean3 = beanLoader.getBean(HamburgerBean.class, "any");
+        final HamburgerBean hamburgerBean3 = injector.getBean(HamburgerBean.class, "any");
         assertNotNull(hamburgerBean3);
     }
 
     @Test
     public void checkHavingCollectionProviderBean() {
-        final HavingCollectionProviderBean havingCollectionProviderBean = beanLoader.getBean(HavingCollectionProviderBean.class);
+        final HavingCollectionProviderBean havingCollectionProviderBean = injector.getBean(HavingCollectionProviderBean.class);
         assertNotNull(havingCollectionProviderBean);
 
         final QualifiedCollectionProviderBean qualifiedCollectionProviderBean = havingCollectionProviderBean.getQualifiedCollectionProviderBean();
@@ -798,26 +796,26 @@ public class BeanInjectionTest {
 
     @Test
     public void checkHelloBean() {
-        final HelloBean helloBean = beanLoader.getBean(HelloBean.class);
+        final HelloBean helloBean = injector.getBean(HelloBean.class);
 
         assertNotNull(helloBean);
     }
 
     @Test
     public void checkHotDogBean() {
-        final HotDogBean hotDogBean1 = beanLoader.getBean(HotDogBean.class);
+        final HotDogBean hotDogBean1 = injector.getBean(HotDogBean.class);
         assertNotNull(hotDogBean1);
 
-        final HotDogBean hotDogBean2 = beanLoader.getBean(HotDogBean.class, "fastfood");
+        final HotDogBean hotDogBean2 = injector.getBean(HotDogBean.class, "fastfood");
         assertNotNull(hotDogBean2);
 
-        final HotDogBean hotDogBean3 = beanLoader.getBean(HotDogBean.class, "any");
+        final HotDogBean hotDogBean3 = injector.getBean(HotDogBean.class, "any");
         assertNotNull(hotDogBean3);
     }
 
     @Test
     public void checkHungryBean() {
-        final HungryBean hungryBean = beanLoader.getBean(HungryBean.class);
+        final HungryBean hungryBean = injector.getBean(HungryBean.class);
 
         assertNotNull(hungryBean);
 
@@ -845,7 +843,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkHungryQualifierBean() {
-        final HungryQualifierBean hungryQualifierBean = beanLoader.getBean(HungryQualifierBean.class);
+        final HungryQualifierBean hungryQualifierBean = injector.getBean(HungryQualifierBean.class);
 
         assertNotNull(hungryQualifierBean);
 
@@ -873,7 +871,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkIntegerPropertyFactoryBean() {
-        final IntegerPropertyFactoryBean integerPropertyFactoryBean = beanLoader.getBean(IntegerPropertyFactoryBean.class);
+        final IntegerPropertyFactoryBean integerPropertyFactoryBean = injector.getBean(IntegerPropertyFactoryBean.class);
         assertNotNull(integerPropertyFactoryBean);
 
         final FactoryContext factoryContext = new FactoryContextImpl("some.integer");
@@ -882,13 +880,13 @@ public class BeanInjectionTest {
         assertTrue(integerProperty.equals(123));
 
         // Prototype scope
-        final IntegerPropertyFactoryBean integerPropertyFactoryBean2 = beanLoader.getBean(IntegerPropertyFactoryBean.class);
+        final IntegerPropertyFactoryBean integerPropertyFactoryBean2 = injector.getBean(IntegerPropertyFactoryBean.class);
         assertNotSame(integerPropertyFactoryBean, integerPropertyFactoryBean2);
     }
 
     @Test
     public void checkIntegerPropertyInjectedBean() {
-        final IntegerPropertyInjectedBean integerPropertyInjectedBean = beanLoader.getBean(IntegerPropertyInjectedBean.class);
+        final IntegerPropertyInjectedBean integerPropertyInjectedBean = injector.getBean(IntegerPropertyInjectedBean.class);
         assertNotNull(integerPropertyInjectedBean);
 
         assertTrue(integerPropertyInjectedBean.getPrice().equals(50));
@@ -898,16 +896,16 @@ public class BeanInjectionTest {
 
     @Test
     public void checkInterfaceBean() {
-        final InterfaceBean interfaceBean = beanLoader.getBean(InterfaceBean.class);
+        final InterfaceBean interfaceBean = injector.getBean(InterfaceBean.class);
         assertNotNull(interfaceBean);
 
-        final InterfaceBeanImpl interfaceBeanImpl = beanLoader.getBean(InterfaceBeanImpl.class);
+        final InterfaceBeanImpl interfaceBeanImpl = injector.getBean(InterfaceBeanImpl.class);
         assertNotNull(interfaceBeanImpl);
     }
 
     @Test
     public void checkJavaBean() {
-        final JavaBean javaBean = beanLoader.getBean(JavaBean.class);
+        final JavaBean javaBean = injector.getBean(JavaBean.class);
 
         assertNotNull(javaBean.getFieldBean());
         assertNotNull(javaBean.getHelloBean());
@@ -915,14 +913,14 @@ public class BeanInjectionTest {
 
     @Test
     public void checkLastBean() {
-        final LastBean lastBean = beanLoader.getBean(LastBean.class);
+        final LastBean lastBean = injector.getBean(LastBean.class);
 
         assertNotNull(lastBean.getEverythingBean());
     }
 
     @Test
     public void checkLong50() {
-        final Long bean = beanLoader.getBean(Long.class, "50");
+        final Long bean = injector.getBean(Long.class, "50");
 
         assertNotNull(bean);
         assertEquals(Long.valueOf(50L), bean);
@@ -930,7 +928,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkLotsOfInjectionsFactoryBean() {
-        final LotsOfInjectionsFactoryBean bean = beanLoader.getBean(LotsOfInjectionsFactoryBean.class);
+        final LotsOfInjectionsFactoryBean bean = injector.getBean(LotsOfInjectionsFactoryBean.class);
         assertNotNull(bean);
 
         final Long long50 = bean.create50();
@@ -947,7 +945,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkMaxAndMinCollectionProviderBean() {
-        final MaxAndMinCollectionProviderBean maxAndMinCollectionProviderBean = beanLoader.getBean(MaxAndMinCollectionProviderBean.class);
+        final MaxAndMinCollectionProviderBean maxAndMinCollectionProviderBean = injector.getBean(MaxAndMinCollectionProviderBean.class);
 
         // HelloBean
         final CollectionProvider<HelloBean> helloBeanCollectionProvider = maxAndMinCollectionProviderBean.getHelloBeanCollectionProvider();
@@ -972,7 +970,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkMiscFactoryBean() {
-        final MiscFactoryBean bean = beanLoader.getBean(MiscFactoryBean.class);
+        final MiscFactoryBean bean = injector.getBean(MiscFactoryBean.class);
         assertNotNull(bean);
 
         final NestedFactoryCreatedBean nestedFactoryCreatedBean = bean.createBean(mock(Provider.class));
@@ -982,18 +980,18 @@ public class BeanInjectionTest {
 
     @Test
     public void checkMiscQualifierBean() {
-        final MiscQualifierBean milk = beanLoader.getBean(MiscQualifierBean.class, "milk");
+        final MiscQualifierBean milk = injector.getBean(MiscQualifierBean.class, "milk");
         assertNotNull(milk);
         assertEquals("milk", milk.getQualifier());
 
-        final MiscQualifierBean cookie = beanLoader.getBean(MiscQualifierBean.class, "cookie");
+        final MiscQualifierBean cookie = injector.getBean(MiscQualifierBean.class, "cookie");
         assertNotNull(cookie);
         assertEquals("cookie", cookie.getQualifier());
     }
 
     @Test
     public void checkMiscQualifierBeanFactoryBean() {
-        final MiscQualifierBeanFactoryBean bean = beanLoader.getBean(MiscQualifierBeanFactoryBean.class);
+        final MiscQualifierBeanFactoryBean bean = injector.getBean(MiscQualifierBeanFactoryBean.class);
         assertNotNull(bean);
 
         final MiscQualifierBean milk = bean.createBeanWithMilk();
@@ -1007,7 +1005,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkMultipleFactoryBean() {
-        final MultipleFactoryBean bean = beanLoader.getBean(MultipleFactoryBean.class);
+        final MultipleFactoryBean bean = injector.getBean(MultipleFactoryBean.class);
         assertNotNull(bean);
 
         final FirstMultipleFactoryCreatedBean firstBean = bean.createFirstBean();
@@ -1026,7 +1024,7 @@ public class BeanInjectionTest {
     @Test
     public void checkNestedFactoryCreatedBean() {
         // Factory created bean, level 1
-        final NestedFactoryCreatedBean bean = beanLoader.getBean(NestedFactoryCreatedBean.class);
+        final NestedFactoryCreatedBean bean = injector.getBean(NestedFactoryCreatedBean.class);
         assertNotNull(bean);
 
         // Standalone bean, level 2
@@ -1054,12 +1052,12 @@ public class BeanInjectionTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void checkNoBean() {
-        beanLoader.getBean(NoBean.class);
+        injector.getBean(NoBean.class);
     }
 
     @Test
     public void checkOneParameterFactoryCreatedBean() {
-        final OneParameterFactoryCreatedBean bean = beanLoader.getBean(OneParameterFactoryCreatedBean.class);
+        final OneParameterFactoryCreatedBean bean = injector.getBean(OneParameterFactoryCreatedBean.class);
 
         assertNotNull(bean);
         assertTrue(bean.isCreatedByFactory());
@@ -1068,15 +1066,15 @@ public class BeanInjectionTest {
 
     @Test
     public void checkOrangeBean() {
-        final OrangeBean orangeBean1 = beanLoader.getBean(OrangeBean.class);
+        final OrangeBean orangeBean1 = injector.getBean(OrangeBean.class);
         assertNotNull(orangeBean1);
         assertTrue(orangeBean1.isCreatedByFactory());
 
-        final OrangeBean orangeBean2 = beanLoader.getBean(OrangeBean.class, "orange");
+        final OrangeBean orangeBean2 = injector.getBean(OrangeBean.class, "orange");
         assertNotNull(orangeBean2);
         assertTrue(orangeBean2.isCreatedByFactory());
 
-        final ColorBean orangeBean3 = beanLoader.getBean(ColorBean.class, "orange");
+        final ColorBean orangeBean3 = injector.getBean(ColorBean.class, "orange");
         assertNotNull(orangeBean3);
         assertTrue(orangeBean3.getClass().equals(OrangeBean.class));
         assertTrue(((OrangeBean) orangeBean3).isCreatedByFactory());
@@ -1084,7 +1082,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkOrangeFactoryBean() {
-        final OrangeFactoryBean orangeFactoryBean = beanLoader.getBean(OrangeFactoryBean.class);
+        final OrangeFactoryBean orangeFactoryBean = injector.getBean(OrangeFactoryBean.class);
         assertNotNull(orangeFactoryBean);
 
         final OrangeBean orangeBean = orangeFactoryBean.createOrangeBean();
@@ -1094,7 +1092,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkOrganismBean() {
-        final OrganismBean organismBean = beanLoader.getBean(OrganismBean.class);
+        final OrganismBean organismBean = injector.getBean(OrganismBean.class);
         assertNotNull(organismBean);
         assertTrue(organismBean.getClass().equals(OrganismBean.class));
 
@@ -1114,7 +1112,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkParameterFactoryBean() {
-        final ParameterFactoryBean bean = beanLoader.getBean(ParameterFactoryBean.class);
+        final ParameterFactoryBean bean = injector.getBean(ParameterFactoryBean.class);
         assertNotNull(bean);
 
         final OneParameterFactoryCreatedBean beanWithOneParameter = bean.createBeanWithOneParameter(null);
@@ -1135,17 +1133,17 @@ public class BeanInjectionTest {
 
     @Test
     public void checkParentFactoryCreatedBean() {
-        final ParentFactoryCreatedBean bean1 = beanLoader.getBean(ParentFactoryCreatedBean.class);
+        final ParentFactoryCreatedBean bean1 = injector.getBean(ParentFactoryCreatedBean.class);
         assertNotNull(bean1);
         assertTrue(bean1.isCreatedByParent());
         assertFalse(bean1.isCreatedByChild());
 
-        final ParentFactoryCreatedBean bean2 = beanLoader.getBean(ParentFactoryCreatedBean.class, "parent");
+        final ParentFactoryCreatedBean bean2 = injector.getBean(ParentFactoryCreatedBean.class, "parent");
         assertNotNull(bean2);
         assertTrue(bean2.isCreatedByParent());
         assertFalse(bean2.isCreatedByChild());
 
-        final ParentFactoryCreatedBean bean3 = beanLoader.getBean(ParentFactoryCreatedBean.class, "any");
+        final ParentFactoryCreatedBean bean3 = injector.getBean(ParentFactoryCreatedBean.class, "any");
         assertNotNull(bean3);
         assertTrue(bean3.isCreatedByParent());
         assertFalse(bean3.isCreatedByChild());
@@ -1153,7 +1151,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkPetBean() {
-        final PetBean petBean = beanLoader.getBean(PetBean.class);
+        final PetBean petBean = injector.getBean(PetBean.class);
         assertNotNull(petBean);
         assertTrue(petBean.getClass().equals(PetBean.class));
 
@@ -1189,19 +1187,19 @@ public class BeanInjectionTest {
 
     @Test
     public void checkPinkSingletonBean() {
-        final PinkSingletonBean pinkSingletonBean = beanLoader.getBean(PinkSingletonBean.class);
+        final PinkSingletonBean pinkSingletonBean = injector.getBean(PinkSingletonBean.class);
         assertNotNull(pinkSingletonBean);
     }
 
     @Test
     public void checkPrivateFactoryBean() {
-        final PrivateFactoryBean bean = beanLoader.getBean(PrivateFactoryBean.class);
+        final PrivateFactoryBean bean = injector.getBean(PrivateFactoryBean.class);
         assertNotNull(bean);
     }
 
     @Test
     public void checkPrivateFactoryCreatedBean() {
-        final PrivateFactoryCreatedBean bean = beanLoader.getBean(PrivateFactoryCreatedBean.class);
+        final PrivateFactoryCreatedBean bean = injector.getBean(PrivateFactoryCreatedBean.class);
 
         assertNotNull(bean);
         assertTrue(bean.isCreatedByFactory());
@@ -1209,7 +1207,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkPrototypeWithSingletonBean() {
-        final PrototypeWithSingletonBean prototypeWithSingletonBean = beanLoader.getBean(PrototypeWithSingletonBean.class);
+        final PrototypeWithSingletonBean prototypeWithSingletonBean = injector.getBean(PrototypeWithSingletonBean.class);
         assertNotNull(prototypeWithSingletonBean);
 
         final SingletonBean singletonBean1 = prototypeWithSingletonBean.getSingletonBean1();
@@ -1221,7 +1219,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkProvidedHungryBean() {
-        final ProvidedHungryBean providedHungryBean = beanLoader.getBean(ProvidedHungryBean.class);
+        final ProvidedHungryBean providedHungryBean = injector.getBean(ProvidedHungryBean.class);
         assertNotNull(providedHungryBean);
 
         // Field
@@ -1260,7 +1258,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkProvidedHungryQualifierBean() {
-        final ProvidedHungryQualifierBean providedHungryQualifierBean = beanLoader.getBean(ProvidedHungryQualifierBean.class);
+        final ProvidedHungryQualifierBean providedHungryQualifierBean = injector.getBean(ProvidedHungryQualifierBean.class);
         assertNotNull(providedHungryQualifierBean);
 
         // Fast food
@@ -1299,7 +1297,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkProviderBean() {
-        final ProviderBean providerBean = beanLoader.getBean(ProviderBean.class);
+        final ProviderBean providerBean = injector.getBean(ProviderBean.class);
 
         final Provider<ConstructorBean> constructorBeanProvider = providerBean.getConstructorBeanProvider();
         assertNotNull(constructorBeanProvider);
@@ -1316,13 +1314,13 @@ public class BeanInjectionTest {
 
     @Test
     public void checkQualifiedCollectionProviderBean() {
-        final QualifiedCollectionProviderBean qualifiedCollectionProviderBean1 = beanLoader.getBean(QualifiedCollectionProviderBean.class);
+        final QualifiedCollectionProviderBean qualifiedCollectionProviderBean1 = injector.getBean(QualifiedCollectionProviderBean.class);
         assertNotNull(qualifiedCollectionProviderBean1);
 
-        final QualifiedCollectionProviderBean qualifiedCollectionProviderBean2 = beanLoader.getBean(QualifiedCollectionProviderBean.class, "qualifier");
+        final QualifiedCollectionProviderBean qualifiedCollectionProviderBean2 = injector.getBean(QualifiedCollectionProviderBean.class, "qualifier");
         assertNotNull(qualifiedCollectionProviderBean2);
 
-        final QualifiedCollectionProviderBean qualifiedCollectionProviderBean3 = beanLoader.getBean(QualifiedCollectionProviderBean.class, "any");
+        final QualifiedCollectionProviderBean qualifiedCollectionProviderBean3 = injector.getBean(QualifiedCollectionProviderBean.class, "any");
         assertNotNull(qualifiedCollectionProviderBean3);
 
         assertNotSame(qualifiedCollectionProviderBean1, qualifiedCollectionProviderBean2);
@@ -1331,7 +1329,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkRainbowBean() {
-        final RainbowBean rainbowBean = beanLoader.getBean(RainbowBean.class);
+        final RainbowBean rainbowBean = injector.getBean(RainbowBean.class);
 
         assertTrue(rainbowBean.getBlueBean() instanceof BlueBean);
         assertTrue(rainbowBean.getGreenBean() instanceof GreenBean);
@@ -1341,19 +1339,19 @@ public class BeanInjectionTest {
 
     @Test
     public void checkRedBean() {
-        final RedBean redBean1 = beanLoader.getBean(RedBean.class);
+        final RedBean redBean1 = injector.getBean(RedBean.class);
         assertNotNull(redBean1);
 
-        final RedBean redBean2 = beanLoader.getBean(RedBean.class, "red");
+        final RedBean redBean2 = injector.getBean(RedBean.class, "red");
         assertNotNull(redBean2);
 
-        final ColorBean redBean3 = beanLoader.getBean(ColorBean.class, "red");
+        final ColorBean redBean3 = injector.getBean(ColorBean.class, "red");
         assertTrue(redBean3 instanceof RedBean);
     }
 
     @Test
     public void checkSecondCircularDependencyBean() {
-        final SecondCircularDependencyBean secondCircularDependencyBean = beanLoader.getBean(SecondCircularDependencyBean.class);
+        final SecondCircularDependencyBean secondCircularDependencyBean = injector.getBean(SecondCircularDependencyBean.class);
 
         final Provider<FirstCircularDependencyBean> firstCircularDependencyBeanProvider
             = secondCircularDependencyBean.getFirstCircularDependencyBeanProvider();
@@ -1363,7 +1361,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkSecondMultipleFactoryCreatedBean() {
-        final SecondMultipleFactoryCreatedBean bean = beanLoader.getBean(SecondMultipleFactoryCreatedBean.class);
+        final SecondMultipleFactoryCreatedBean bean = injector.getBean(SecondMultipleFactoryCreatedBean.class);
 
         assertNotNull(bean);
         assertTrue(bean.isCreatedByFactory());
@@ -1371,7 +1369,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkSetterBean() {
-        final SetterBean setterBean = beanLoader.getBean(SetterBean.class);
+        final SetterBean setterBean = injector.getBean(SetterBean.class);
 
         assertNotNull(setterBean);
         assertNotNull(setterBean.getFieldBean());
@@ -1379,13 +1377,13 @@ public class BeanInjectionTest {
 
     @Test
     public void checkSetterFactoryCreatedBean() {
-        final SetterFactoryCreatedBean bean = beanLoader.getBean(SetterFactoryCreatedBean.class);
+        final SetterFactoryCreatedBean bean = injector.getBean(SetterFactoryCreatedBean.class);
         assertNotNull(bean);
     }
 
     @Test
     public void checkSimpleFactoryBean() {
-        final SimpleFactoryBean simpleFactoryBean = beanLoader.getBean(SimpleFactoryBean.class);
+        final SimpleFactoryBean simpleFactoryBean = injector.getBean(SimpleFactoryBean.class);
         assertNotNull(simpleFactoryBean);
 
         final SimpleFactoryCreatedBean simpleFactoryCreatedBean = simpleFactoryBean.createBean();
@@ -1395,7 +1393,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkSimpleFactoryCreatedBean() {
-        final SimpleFactoryCreatedBean simpleFactoryCreatedBean = beanLoader.getBean(SimpleFactoryCreatedBean.class);
+        final SimpleFactoryCreatedBean simpleFactoryCreatedBean = injector.getBean(SimpleFactoryCreatedBean.class);
 
         assertNotNull(simpleFactoryCreatedBean);
         assertTrue(simpleFactoryCreatedBean.isCreatedByFactory());
@@ -1403,7 +1401,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkSimpleFactoryCreatedBeanUsingBean() {
-        final SimpleFactoryCreatedBeanUsingBean simpleFactoryCreatedBeanUsingBean = beanLoader.getBean(SimpleFactoryCreatedBeanUsingBean.class);
+        final SimpleFactoryCreatedBeanUsingBean simpleFactoryCreatedBeanUsingBean = injector.getBean(SimpleFactoryCreatedBeanUsingBean.class);
         assertNotNull(simpleFactoryCreatedBeanUsingBean);
 
         final SimpleFactoryCreatedBean simpleFactoryCreatedBean = simpleFactoryCreatedBeanUsingBean.getSimpleFactoryCreatedBean();
@@ -1412,14 +1410,14 @@ public class BeanInjectionTest {
 
     @Test
     public void checkSingletonBean() {
-        final SingletonBean singletonBean = beanLoader.getBean(SingletonBean.class);
+        final SingletonBean singletonBean = injector.getBean(SingletonBean.class);
 
         assertNotNull(singletonBean);
     }
 
     @Test
     public void checkSingletonCollectionProviderBean() {
-        final SingletonCollectionProviderBean singletonCollectionProviderBean = beanLoader.getBean(SingletonCollectionProviderBean.class);
+        final SingletonCollectionProviderBean singletonCollectionProviderBean = injector.getBean(SingletonCollectionProviderBean.class);
         assertNotNull(singletonCollectionProviderBean);
 
         final CollectionProvider<CarBean> blueCarBeanCollectionProvider = singletonCollectionProviderBean.getBlueCarBeanCollectionProvider();
@@ -1436,7 +1434,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkSingletonFactoryBean() {
-        final SingletonFactoryBean singletonFactoryBean = beanLoader.getBean(SingletonFactoryBean.class);
+        final SingletonFactoryBean singletonFactoryBean = injector.getBean(SingletonFactoryBean.class);
         assertNotNull(singletonFactoryBean);
 
         final SingletonFactoryCreatedBean singletonBean = singletonFactoryBean.createSingletonBean();
@@ -1446,7 +1444,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkSingletonFactoryCreatedBean() {
-        final SingletonFactoryCreatedBean singletonFactoryCreatedBean = beanLoader.getBean(SingletonFactoryCreatedBean.class);
+        final SingletonFactoryCreatedBean singletonFactoryCreatedBean = injector.getBean(SingletonFactoryCreatedBean.class);
 
         assertNotNull(singletonFactoryCreatedBean);
         assertTrue(singletonFactoryCreatedBean.isCreatedByFactory());
@@ -1454,7 +1452,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkSingletonFactoryCreatedBeanUsingBean() {
-        final SingletonFactoryCreatedBeanUsingBean singletonFactoryCreatedBeanUsingBean = beanLoader.getBean(SingletonFactoryCreatedBeanUsingBean.class);
+        final SingletonFactoryCreatedBeanUsingBean singletonFactoryCreatedBeanUsingBean = injector.getBean(SingletonFactoryCreatedBeanUsingBean.class);
         assertNotNull(singletonFactoryCreatedBeanUsingBean);
 
         final SingletonFactoryCreatedBean singletonFactoryCreatedBean1 = singletonFactoryCreatedBeanUsingBean.getSingletonFactoryCreatedBean1();
@@ -1470,7 +1468,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkSingletonProviderBean() {
-        final SingletonProviderBean singletonProviderBean = beanLoader.getBean(SingletonProviderBean.class);
+        final SingletonProviderBean singletonProviderBean = injector.getBean(SingletonProviderBean.class);
         assertNotNull(singletonProviderBean);
 
         final Provider<SingletonBean> singletonBeanProvider = singletonProviderBean.getSingletonBeanProvider();
@@ -1482,7 +1480,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkSingletonWithPrototypeBean() {
-        final SingletonWithPrototypeBean singletonWithPrototypeBean = beanLoader.getBean(SingletonWithPrototypeBean.class);
+        final SingletonWithPrototypeBean singletonWithPrototypeBean = injector.getBean(SingletonWithPrototypeBean.class);
 
         assertNotNull(singletonWithPrototypeBean);
         assertNotNull(singletonWithPrototypeBean.getHelloBean1());
@@ -1494,7 +1492,7 @@ public class BeanInjectionTest {
         assertNull(StaticBean.getFieldBean());
         assertNull(StaticBean.getSetterBean());
 
-        final StaticBean staticBean = beanLoader.getBean(StaticBean.class);
+        final StaticBean staticBean = injector.getBean(StaticBean.class);
         assertNotNull(staticBean);
         assertNull(staticBean.getFieldBean());
         assertNull(staticBean.getSetterBean());
@@ -1502,7 +1500,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkStringPropertyFactoryBean() {
-        final StringPropertyFactoryBean stringPropertyFactoryBean = beanLoader.getBean(StringPropertyFactoryBean.class);
+        final StringPropertyFactoryBean stringPropertyFactoryBean = injector.getBean(StringPropertyFactoryBean.class);
         assertNotNull(stringPropertyFactoryBean);
 
         final FactoryContext factoryContext = new FactoryContextImpl("some.property");
@@ -1511,13 +1509,13 @@ public class BeanInjectionTest {
         assertEquals("This is some property", stringProperty);
 
         // Singleton scope
-        final StringPropertyFactoryBean stringPropertyFactoryBean2 = beanLoader.getBean(StringPropertyFactoryBean.class);
+        final StringPropertyFactoryBean stringPropertyFactoryBean2 = injector.getBean(StringPropertyFactoryBean.class);
         assertSame(stringPropertyFactoryBean, stringPropertyFactoryBean2);
     }
 
     @Test
     public void checkStringPropertyInjectedBean() {
-        final StringPropertyInjectedBean stringPropertyInjectedBean = beanLoader.getBean(StringPropertyInjectedBean.class);
+        final StringPropertyInjectedBean stringPropertyInjectedBean = injector.getBean(StringPropertyInjectedBean.class);
         assertNotNull(stringPropertyInjectedBean);
 
         assertEquals("Pink", stringPropertyInjectedBean.getColor());
@@ -1527,21 +1525,21 @@ public class BeanInjectionTest {
 
     @Test
     public void checkTapeRecorderBean() {
-        final TapeRecorderBean tapeRecorderBean1 = beanLoader.getBean(TapeRecorderBean.class);
+        final TapeRecorderBean tapeRecorderBean1 = injector.getBean(TapeRecorderBean.class);
         assertNotNull(tapeRecorderBean1);
         assertTrue(tapeRecorderBean1.isCreatedByFactory());
 
-        final TapeRecorderBean tapeRecorderBean2 = beanLoader.getBean(TapeRecorderBean.class, "tape");
+        final TapeRecorderBean tapeRecorderBean2 = injector.getBean(TapeRecorderBean.class, "tape");
         assertNotNull(tapeRecorderBean2);
 
-        final RecorderBean tapeRecorderBean3 = beanLoader.getBean(RecorderBean.class, "tape");
+        final RecorderBean tapeRecorderBean3 = injector.getBean(RecorderBean.class, "tape");
         assertNotNull(tapeRecorderBean3);
         assertEquals(TapeRecorderBean.class, tapeRecorderBean3.getClass());
     }
 
     @Test
     public void checkTapeRecorderFactoryBean() {
-        final TapeRecorderFactoryBean bean = beanLoader.getBean(TapeRecorderFactoryBean.class);
+        final TapeRecorderFactoryBean bean = injector.getBean(TapeRecorderFactoryBean.class);
         assertNotNull(bean);
 
         final TapeRecorderBean tapeRecorderBean = bean.createBean();
@@ -1551,11 +1549,11 @@ public class BeanInjectionTest {
 
     @Test
     public void checkThirdLayer() {
-        final Layer thirdLayer1 = beanLoader.getBean(Layer.class, "third");
-        final Layer thirdLayer2 = beanLoader.getBean(FirstLayerBean.class, "third");
-        final Layer thirdLayer3 = beanLoader.getBean(SecondLayerBean.class, "third");
-        final Layer thirdLayer4 = beanLoader.getBean(ThirdLayerBean.class);
-        final Layer thirdLayer5 = beanLoader.getBean(ThirdLayerBean.class, "third");
+        final Layer thirdLayer1 = injector.getBean(Layer.class, "third");
+        final Layer thirdLayer2 = injector.getBean(FirstLayerBean.class, "third");
+        final Layer thirdLayer3 = injector.getBean(SecondLayerBean.class, "third");
+        final Layer thirdLayer4 = injector.getBean(ThirdLayerBean.class);
+        final Layer thirdLayer5 = injector.getBean(ThirdLayerBean.class, "third");
 
         assertNotSame(thirdLayer1, thirdLayer2);
         assertNotSame(thirdLayer2, thirdLayer3);
@@ -1571,7 +1569,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkThirdMultipleFactoryCreatedBean() {
-        final ThirdMultipleFactoryCreatedBean bean = beanLoader.getBean(ThirdMultipleFactoryCreatedBean.class);
+        final ThirdMultipleFactoryCreatedBean bean = injector.getBean(ThirdMultipleFactoryCreatedBean.class);
 
         assertNotNull(bean);
         assertTrue(bean.isCreatedByFactory());
@@ -1579,7 +1577,7 @@ public class BeanInjectionTest {
 
     @Test
     public void checkThreeParametersFactoryCreatedBean() {
-        final ThreeParametersFactoryCreatedBean bean = beanLoader.getBean(ThreeParametersFactoryCreatedBean.class);
+        final ThreeParametersFactoryCreatedBean bean = injector.getBean(ThreeParametersFactoryCreatedBean.class);
 
         assertNotNull(bean);
         assertTrue(bean.isCreatedByFactory());
@@ -1594,27 +1592,17 @@ public class BeanInjectionTest {
 
     @Test
     public void checkYellowBean() {
-        final YellowBean yellowBean1 = beanLoader.getBean(YellowBean.class);
+        final YellowBean yellowBean1 = injector.getBean(YellowBean.class);
         assertNotNull(yellowBean1);
         assertTrue(yellowBean1.getClass().equals(YellowBean.class));
 
-        final YellowBean yellowBean2 = beanLoader.getBean(YellowBean.class, "Yellow");
+        final YellowBean yellowBean2 = injector.getBean(YellowBean.class, "Yellow");
         assertNotNull(yellowBean2);
         assertTrue(yellowBean2.getClass().equals(YellowBean.class));
 
-        final ColorBean yellowBean3 = beanLoader.getBean(ColorBean.class, "Yellow");
+        final ColorBean yellowBean3 = injector.getBean(ColorBean.class, "Yellow");
         assertNotNull(yellowBean3);
         assertTrue(yellowBean3.getClass().equals(YellowBean.class));
-    }
-
-    private DefaultBeanLoader createBeanLoaderWithBasePackages(final String... basePackages) {
-        final ClassLocator classLocator = new ClassPathScanner();
-        final BeanLocator beanLocator = new AnnotationBasedBeanLocator(
-                classLocator, basePackages);
-        final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
-        final FactoryPointHandler factoryPointHandler = new AnnotationBasedFactoryPointHandler();
-
-        return new DefaultBeanLoader(beanDataHandler, beanLocator, factoryPointHandler);
     }
 
     private boolean containsBean(final Class<?> bean, final Collection<?> collection) {
