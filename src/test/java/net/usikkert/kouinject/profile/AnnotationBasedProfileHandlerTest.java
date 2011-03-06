@@ -25,7 +25,9 @@ package net.usikkert.kouinject.profile;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.ProviderBean;
@@ -187,6 +189,22 @@ public class AnnotationBasedProfileHandlerTest {
         assertFalse(profileHandler.beanIsActive(ProfileBBean.class));
         assertFalse(profileHandler.beanIsActive(ProfileCBean.class));
         assertFalse(profileHandler.beanIsActive(ProfileACBean.class));
+    }
+
+    @Test
+    public void shouldNotBeAbleToModifyProfileListFromLocator() {
+        final ProfileLocator profileLocator = mock(ProfileLocator.class);
+        final List<String> profiles = new ArrayList<String>();
+        profiles.add("profile");
+        when(profileLocator.getActiveProfiles()).thenReturn(profiles);
+
+        profileHandler = new AnnotationBasedProfileHandler(profileLocator);
+
+        assertFalse(profileHandler.beanIsActive(ProfileABean.class));
+
+        profiles.add(PROFILE_A);
+
+        assertFalse(profileHandler.beanIsActive(ProfileABean.class));
     }
 
     private void loadProfiles(final String... profiles) {

@@ -24,6 +24,7 @@ package net.usikkert.kouinject.profile;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import net.usikkert.kouinject.annotation.Profile;
@@ -50,8 +51,9 @@ public class AnnotationBasedProfileHandler implements ProfileHandler {
     public AnnotationBasedProfileHandler(final ProfileLocator profileLocator) {
         Validate.notNull(profileLocator, "Profile locator can not be null");
 
-        activeProfiles = profileLocator.getActiveProfiles();
-        validateActiveProfiles();
+        final List<String> profiles = profileLocator.getActiveProfiles();
+        validateActiveProfiles(profiles);
+        activeProfiles = Collections.unmodifiableList(new ArrayList<String>(profiles));
     }
 
     /**
@@ -96,10 +98,10 @@ public class AnnotationBasedProfileHandler implements ProfileHandler {
         return false;
     }
 
-    private void validateActiveProfiles() {
-        Validate.notNull(activeProfiles, "Active profiles can not be null");
+    private void validateActiveProfiles(final List<String> activeProfilesForValidation) {
+        Validate.notNull(activeProfilesForValidation, "Active profiles can not be null");
 
-        for (final String activeProfile : activeProfiles) {
+        for (final String activeProfile : activeProfilesForValidation) {
             Validate.notNull(activeProfile, "Active profile can not be null");
         }
     }
