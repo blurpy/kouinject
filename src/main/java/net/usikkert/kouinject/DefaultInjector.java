@@ -22,10 +22,15 @@
 
 package net.usikkert.kouinject;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import net.usikkert.kouinject.factory.AnnotationBasedFactoryPointHandler;
 import net.usikkert.kouinject.factory.FactoryPointHandler;
+import net.usikkert.kouinject.profile.AnnotationBasedProfileHandler;
+import net.usikkert.kouinject.profile.InputBasedProfileLocator;
+import net.usikkert.kouinject.profile.ProfileHandler;
+import net.usikkert.kouinject.profile.ProfileLocator;
 
 /**
  * An {@link Injector} using classpath scanning to detect beans, and annotations for
@@ -46,7 +51,9 @@ public class DefaultInjector implements Injector {
      */
     public DefaultInjector(final String... basePackages) {
         final ClassLocator classLocator = new ClassPathScanner();
-        final BeanLocator beanLocator = new AnnotationBasedBeanLocator(classLocator, basePackages);
+        final ProfileLocator profileLocator = new InputBasedProfileLocator(new ArrayList<String>());
+        final ProfileHandler profileHandler = new AnnotationBasedProfileHandler(profileLocator);
+        final BeanLocator beanLocator = new AnnotationBasedBeanLocator(classLocator, profileHandler, basePackages);
         final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
         final FactoryPointHandler factoryPointHandler = new AnnotationBasedFactoryPointHandler();
 

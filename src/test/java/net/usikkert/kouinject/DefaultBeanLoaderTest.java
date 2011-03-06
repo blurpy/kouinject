@@ -25,6 +25,7 @@ package net.usikkert.kouinject;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -34,6 +35,10 @@ import javax.inject.Provider;
 import net.usikkert.kouinject.beandata.BeanKey;
 import net.usikkert.kouinject.factory.AnnotationBasedFactoryPointHandler;
 import net.usikkert.kouinject.factory.FactoryPointHandler;
+import net.usikkert.kouinject.profile.AnnotationBasedProfileHandler;
+import net.usikkert.kouinject.profile.InputBasedProfileLocator;
+import net.usikkert.kouinject.profile.ProfileHandler;
+import net.usikkert.kouinject.profile.ProfileLocator;
 import net.usikkert.kouinject.testbeans.BeanCount;
 import net.usikkert.kouinject.testbeans.notscanned.ACloserMatchOfImplementationUser;
 import net.usikkert.kouinject.testbeans.notscanned.FirstCircularBean;
@@ -1131,8 +1136,9 @@ public class DefaultBeanLoaderTest {
 
     private DefaultBeanLoader createBeanLoaderWithBasePackages(final String... basePackages) {
         final ClassLocator classLocator = new ClassPathScanner();
-        final BeanLocator beanLocator = new AnnotationBasedBeanLocator(
-                classLocator, basePackages);
+        final ProfileLocator profileLocator = new InputBasedProfileLocator(new ArrayList<String>());
+        final ProfileHandler profileHandler = new AnnotationBasedProfileHandler(profileLocator);
+        final BeanLocator beanLocator = new AnnotationBasedBeanLocator(classLocator, profileHandler, basePackages);
         final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();
         final FactoryPointHandler factoryPointHandler = new AnnotationBasedFactoryPointHandler();
 

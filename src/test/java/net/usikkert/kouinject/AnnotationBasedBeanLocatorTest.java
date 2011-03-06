@@ -23,11 +23,13 @@
 package net.usikkert.kouinject;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 import java.util.Set;
 
 import net.usikkert.kouinject.annotation.Component;
 import net.usikkert.kouinject.beandata.BeanKey;
+import net.usikkert.kouinject.profile.ProfileHandler;
 import net.usikkert.kouinject.testbeans.BeanCount;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.any.AnyBean;
@@ -56,15 +58,19 @@ import org.junit.Test;
 public class AnnotationBasedBeanLocatorTest {
 
     private ClassLocator classLocator;
+    private ProfileHandler profileHandler;
 
     @Before
     public void createClassLocator() {
         classLocator = new ClassPathScanner();
+        profileHandler = mock(ProfileHandler.class);
+
+        when(profileHandler.beanIsActive(any(Class.class))).thenReturn(true);
     }
 
     @Test
     public void findBeansShouldReturnAllComponents() {
-        final BeanLocator beanLocator = new AnnotationBasedBeanLocator(classLocator, "net.usikkert.kouinject");
+        final BeanLocator beanLocator = new AnnotationBasedBeanLocator(classLocator, profileHandler, "net.usikkert.kouinject");
         final Set<BeanKey> beans = beanLocator.findBeans();
 
         assertEquals(BeanCount.ALL.getNumberOfBeans(), beans.size());
@@ -78,7 +84,8 @@ public class AnnotationBasedBeanLocatorTest {
 
     @Test
     public void findBeansShouldDetectQualifiers() {
-        final BeanLocator beanLocator = new AnnotationBasedBeanLocator(classLocator, "net.usikkert.kouinject.testbeans.scanned.qualifier");
+        final BeanLocator beanLocator = new AnnotationBasedBeanLocator(classLocator, profileHandler,
+                "net.usikkert.kouinject.testbeans.scanned.qualifier");
         final Set<BeanKey> beans = beanLocator.findBeans();
 
         assertEquals(5, beans.size());
@@ -92,7 +99,8 @@ public class AnnotationBasedBeanLocatorTest {
 
     @Test
     public void findBeansShouldIgnoreMissingQualifiers() {
-        final BeanLocator beanLocator = new AnnotationBasedBeanLocator(classLocator, "net.usikkert.kouinject.testbeans.scanned.coffee");
+        final BeanLocator beanLocator = new AnnotationBasedBeanLocator(classLocator, profileHandler,
+                "net.usikkert.kouinject.testbeans.scanned.coffee");
         final Set<BeanKey> beans = beanLocator.findBeans();
 
         assertEquals(2, beans.size());
@@ -105,6 +113,7 @@ public class AnnotationBasedBeanLocatorTest {
     public void findBeansShouldHandleMultipleBasePackages() {
         final BeanLocator beanLocator = new AnnotationBasedBeanLocator(
                 classLocator,
+                profileHandler,
                 "net.usikkert.kouinject.testbeans.scanned.coffee",
                 "net.usikkert.kouinject.testbeans.scanned.any",
                 "net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding2");
@@ -125,14 +134,51 @@ public class AnnotationBasedBeanLocatorTest {
         assertFalse(containsBean(beans, HelloBean.class, null));
     }
 
+    @Test
+    public void findBeansShouldIgnoreInactiveBeans1() {
+        final BeanLocator beanLocator = new AnnotationBasedBeanLocator(classLocator, profileHandler,
+                "net.usikkert.kouinject.testbeans.scanned.coffee");
+
+        // CoffeeBean is no longer active
+        when(profileHandler.beanIsActive(CoffeeBean.class)).thenReturn(false);
+
+        final Set<BeanKey> beans = beanLocator.findBeans();
+
+        assertEquals(1, beans.size());
+        assertTrue(containsBean(beans, JavaBean.class, null));
+    }
+
+    @Test
+    public void findBeansShouldIgnoreInactiveBeans2() {
+        final BeanLocator beanLocator = new AnnotationBasedBeanLocator(classLocator, profileHandler,
+                "net.usikkert.kouinject.testbeans.scanned.qualifier");
+
+        // RedBean is no longer active
+        when(profileHandler.beanIsActive(RedBean.class)).thenReturn(false);
+
+        final Set<BeanKey> beans = beanLocator.findBeans();
+
+        assertEquals(4, beans.size());
+
+        assertTrue(containsBean(beans, BlueBean.class, "Blue"));
+        assertTrue(containsBean(beans, GreenBean.class, "Green"));
+        assertTrue(containsBean(beans, YellowBean.class, "Yellow"));
+        assertTrue(containsBean(beans, DarkYellowBean.class, "darkYellow"));
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void constructorShouldValidateClassLocatorNotNull() {
-        new AnnotationBasedBeanLocator(null, "package");
+        new AnnotationBasedBeanLocator(null, profileHandler, "package");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void constructorShouldValidateProfileHandlerNotNull() {
+        new AnnotationBasedBeanLocator(classLocator, null, "package");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void constructorShouldValidateBasePackagesNotNull() {
-        new AnnotationBasedBeanLocator(classLocator, null);
+        new AnnotationBasedBeanLocator(classLocator, profileHandler, null);
     }
 
     private boolean containsBean(final Set<BeanKey> beans, final Class<?> beanClass, final String qualifier) {

@@ -28,6 +28,7 @@ import java.util.Set;
 
 import net.usikkert.kouinject.annotation.Component;
 import net.usikkert.kouinject.beandata.BeanKey;
+import net.usikkert.kouinject.profile.ProfileHandler;
 
 import org.apache.commons.lang.Validate;
 
@@ -44,6 +45,7 @@ public class AnnotationBasedBeanLocator implements BeanLocator {
     private final ClassLocator classLocator;
     private final String[] basePackages;
     private final AnnotationBasedQualifierHandler qualifierHandler;
+    private final ProfileHandler profileHandler;
 
     /**
      * Constructs a new instance of this {@link BeanLocator} using a {@link ClassLocator} for
@@ -51,14 +53,18 @@ public class AnnotationBasedBeanLocator implements BeanLocator {
      *
      * @param classLocator The instance of {@link ClassLocator} to use for finding the classes
      * that are bean candidates.
+     * @param profileHandler The handler to use when deciding if a bean has an active profile.
      * @param basePackages A set of packages to start scanning for beans. All sub-packages will also be scanned.
      */
-    public AnnotationBasedBeanLocator(final ClassLocator classLocator, final String... basePackages) {
+    public AnnotationBasedBeanLocator(final ClassLocator classLocator, final ProfileHandler profileHandler,
+                                      final String... basePackages) {
         Validate.notNull(classLocator, "Class locator can not be null");
+        Validate.notNull(profileHandler, "Profile handler can not be null");
         Validate.notNull(basePackages, "Base packages can not be null");
 
         this.basePackages = basePackages;
         this.classLocator = classLocator;
+        this.profileHandler = profileHandler;
         this.qualifierHandler = new AnnotationBasedQualifierHandler();
     }
 
@@ -71,7 +77,7 @@ public class AnnotationBasedBeanLocator implements BeanLocator {
         final Set<BeanKey> detectedBeans = new HashSet<BeanKey>();
 
         for (final Class<?> clazz : allClasses) {
-            if (classIsBean(clazz)) {
+            if (classIsBean(clazz) && profileHandler.beanIsActive(clazz)) {
                 final String qualifier = getQualifier(clazz);
                 final BeanKey bean = new BeanKey(clazz, qualifier);
 
