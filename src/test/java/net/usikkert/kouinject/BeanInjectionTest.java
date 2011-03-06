@@ -25,6 +25,7 @@ package net.usikkert.kouinject;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 
@@ -125,6 +126,10 @@ import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding2.OrganismBe
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding2.PetBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding2.pets.CatBean;
 import net.usikkert.kouinject.testbeans.scanned.notloaded.NoBean;
+import net.usikkert.kouinject.testbeans.scanned.profile.ProfileABean;
+import net.usikkert.kouinject.testbeans.scanned.profile.ProfileACBean;
+import net.usikkert.kouinject.testbeans.scanned.profile.ProfileBBean;
+import net.usikkert.kouinject.testbeans.scanned.profile.ProfileCBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.BlueBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.ColorBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.DarkYellowBean;
@@ -1203,6 +1208,38 @@ public class BeanInjectionTest {
 
         assertNotNull(bean);
         assertTrue(bean.isCreatedByFactory());
+    }
+
+    @Test
+    public void checkProfileABean() {
+        injector = new DefaultInjector(Arrays.asList("ProfileA"), "net.usikkert.kouinject.testbeans.scanned");
+
+        final ProfileABean profileABean = injector.getBean(ProfileABean.class);
+        assertNotNull(profileABean);
+    }
+
+    @Test
+    public void checkProfileACBean() {
+        injector = new DefaultInjector(Arrays.asList("ProfileA"), "net.usikkert.kouinject.testbeans.scanned");
+
+        final ProfileACBean profileACBean = injector.getBean(ProfileACBean.class);
+        assertNotNull(profileACBean);
+    }
+
+    @Test
+    public void checkProfileBBean() {
+        injector = new DefaultInjector(Arrays.asList("ProfileB"), "net.usikkert.kouinject.testbeans.scanned");
+
+        final ProfileBBean profileBBean = injector.getBean(ProfileBBean.class);
+        assertNotNull(profileBBean);
+    }
+
+    @Test
+    public void checkProfileCBean() {
+        injector = new DefaultInjector(Arrays.asList("ProfileC"), "net.usikkert.kouinject.testbeans.scanned");
+
+        final ProfileCBean profileCBean = injector.getBean(ProfileCBean.class);
+        assertNotNull(profileCBean);
     }
 
     @Test
