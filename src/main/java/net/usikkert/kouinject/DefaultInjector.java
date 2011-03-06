@@ -22,8 +22,9 @@
 
 package net.usikkert.kouinject;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import net.usikkert.kouinject.factory.AnnotationBasedFactoryPointHandler;
 import net.usikkert.kouinject.factory.FactoryPointHandler;
@@ -31,6 +32,8 @@ import net.usikkert.kouinject.profile.AnnotationBasedProfileHandler;
 import net.usikkert.kouinject.profile.InputBasedProfileLocator;
 import net.usikkert.kouinject.profile.ProfileHandler;
 import net.usikkert.kouinject.profile.ProfileLocator;
+
+import org.apache.commons.lang.Validate;
 
 /**
  * An {@link Injector} using classpath scanning to detect beans, and annotations for
@@ -45,13 +48,26 @@ public class DefaultInjector implements Injector {
     private final BeanLoader beanLoader;
 
     /**
-     * Creates and initializes this injector.
+     * Creates and initializes this injector. Does not support profiles.
      *
      * @param basePackages A set of packages to start scanning for beans. All sub-packages will also be scanned.
      */
     public DefaultInjector(final String... basePackages) {
+        this(Collections.<String>emptyList(), basePackages);
+    }
+
+    /**
+     * Creates and initializes this injector, with support for profiles.
+     *
+     * @param activeProfiles A list of the profiles that will be used to find the active beans.
+     * @param basePackages A set of packages to start scanning for beans. All sub-packages will also be scanned.
+     */
+    public DefaultInjector(final List<String> activeProfiles, final String... basePackages) {
+        Validate.notNull(activeProfiles, "Active profiles can not be null");
+        Validate.notNull(basePackages, "Base packages can not be null");
+
         final ClassLocator classLocator = new ClassPathScanner();
-        final ProfileLocator profileLocator = new InputBasedProfileLocator(new ArrayList<String>());
+        final ProfileLocator profileLocator = new InputBasedProfileLocator(activeProfiles);
         final ProfileHandler profileHandler = new AnnotationBasedProfileHandler(profileLocator);
         final BeanLocator beanLocator = new AnnotationBasedBeanLocator(classLocator, profileHandler, basePackages);
         final BeanDataHandler beanDataHandler = new AnnotationBasedBeanDataHandler();

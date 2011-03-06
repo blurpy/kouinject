@@ -24,6 +24,7 @@ package net.usikkert.kouinject;
 
 import static org.junit.Assert.*;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import net.usikkert.kouinject.testbeans.BeanCount;
@@ -31,6 +32,8 @@ import net.usikkert.kouinject.testbeans.notscanned.TheInterfaceUser;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.HungryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.SimpleFactoryCreatedBean;
+import net.usikkert.kouinject.testbeans.scanned.profile.ProfileABean;
+import net.usikkert.kouinject.testbeans.scanned.profile.ProfileACBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.BlueBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.ColorBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.RedBean;
@@ -116,5 +119,38 @@ public class DefaultInjectorTest {
 
         assertNotNull(bean);
         assertTrue(bean.isCreatedByFactory());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getBeanShouldFailToGetProfiledBeanWhenNoProfilesActive() {
+        injector.getBean(ProfileABean.class);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getBeanShouldFailToGetProfiledBeanWhenDifferentProfileIsActive() {
+        injector = new DefaultInjector(Arrays.asList("ProfileB"), "net.usikkert.kouinject.testbeans.scanned");
+
+        injector.getBean(ProfileABean.class);
+    }
+
+    @Test
+    public void getBeanShouldFindBeansWithActiveProfile() {
+        injector = new DefaultInjector(Arrays.asList("ProfileA"), "net.usikkert.kouinject.testbeans.scanned");
+
+        final ProfileABean profileABean = injector.getBean(ProfileABean.class);
+        assertNotNull(profileABean);
+
+        final ProfileACBean profileACBean = injector.getBean(ProfileACBean.class);
+        assertNotNull(profileACBean);
+    }
+
+    @Test
+    public void getBeansShouldFindBeansWithActiveProfile() {
+        injector = new DefaultInjector(Arrays.asList("ProfileA", "ProfileB", "ProfileC"), "net.usikkert.kouinject.testbeans.scanned");
+
+        final Collection<Object> beans = injector.getBeans(Object.class, "any");
+
+        assertNotNull(beans);
+        assertEquals(BeanCount.SCANNED_WITH_PROFILED.getNumberOfBeans(), beans.size());
     }
 }
