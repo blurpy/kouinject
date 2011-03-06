@@ -22,29 +22,177 @@
 
 package net.usikkert.kouinject.profile;
 
-import net.usikkert.kouinject.testbeans.scanned.HelloBean;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
-import org.junit.Before;
+import java.util.Arrays;
+
+import net.usikkert.kouinject.testbeans.scanned.HelloBean;
+import net.usikkert.kouinject.testbeans.scanned.ProviderBean;
+import net.usikkert.kouinject.testbeans.scanned.notloaded.NoBean;
+import net.usikkert.kouinject.testbeans.scanned.profile.ProfileABean;
+import net.usikkert.kouinject.testbeans.scanned.profile.ProfileACBean;
+import net.usikkert.kouinject.testbeans.scanned.profile.ProfileBBean;
+import net.usikkert.kouinject.testbeans.scanned.profile.ProfileCBean;
+
 import org.junit.Test;
 
 /**
  * Test of {@link AnnotationBasedProfileHandler}.
  *
- * TODO
- *
  * @author Christian Ihle
  */
 public class AnnotationBasedProfileHandlerTest {
 
+    private static final String PROFILE_A = "ProfileA";
+    private static final String PROFILE_B = "ProfileB";
+    private static final String PROFILE_C = "ProfileC";
+
     private AnnotationBasedProfileHandler profileHandler;
 
-    @Before
-    public void setUp() {
-        profileHandler = new AnnotationBasedProfileHandler();
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldFailIfNoProfileLocator() {
+        new AnnotationBasedProfileHandler(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldFailIfProfileLocatorReturnsNull() {
+        final ProfileLocator profileLocator = mock(ProfileLocator.class);
+        when(profileLocator.getActiveProfiles()).thenReturn(null);
+
+        new AnnotationBasedProfileHandler(profileLocator);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldFailIfProfileLocatorReturnsAProfileWithNullValue() {
+        loadProfiles(new String[] {null});
     }
 
     @Test
-    public void beanIsActive() {
-        profileHandler.beanIsActive(HelloBean.class);
+    public void shouldReturnTrueForBeansWithNoProfilesWithNoActiveProfiles() {
+        loadProfiles();
+
+        assertTrue(profileHandler.beanIsActive(HelloBean.class));
+        assertTrue(profileHandler.beanIsActive(String.class));
+        assertTrue(profileHandler.beanIsActive(ProviderBean.class));
+    }
+
+    @Test
+    public void shouldReturnTrueForBeansWithNoProfilesWithAllActiveProfiles() {
+        loadProfiles(PROFILE_A, PROFILE_B, PROFILE_C);
+
+        assertTrue(profileHandler.beanIsActive(HelloBean.class));
+        assertTrue(profileHandler.beanIsActive(String.class));
+        assertTrue(profileHandler.beanIsActive(ProviderBean.class));
+    }
+
+    @Test
+    public void shouldHandleClassesWithNoAnnotations() {
+        loadProfiles(PROFILE_A, PROFILE_B, PROFILE_C);
+
+        assertTrue(profileHandler.beanIsActive(NoBean.class));
+    }
+
+    @Test
+    public void shouldReturnTrueForBeansWithTheSameActiveProfileA() {
+        loadProfiles(PROFILE_A);
+
+        assertTrue(profileHandler.beanIsActive(ProfileABean.class));
+        assertTrue(profileHandler.beanIsActive(ProfileACBean.class));
+    }
+
+    @Test
+    public void shouldReturnTrueForBeansWithTheSameActiveProfileB() {
+        loadProfiles(PROFILE_B);
+
+        assertTrue(profileHandler.beanIsActive(ProfileBBean.class));
+    }
+
+    @Test
+    public void shouldReturnTrueForBeansWithTheSameActiveProfileC() {
+        loadProfiles(PROFILE_C);
+
+        assertTrue(profileHandler.beanIsActive(ProfileCBean.class));
+        assertTrue(profileHandler.beanIsActive(ProfileACBean.class));
+    }
+
+    @Test
+    public void shouldReturnTrueForBeansWithOneOfTheActiveProfiles() {
+        loadProfiles(PROFILE_A, PROFILE_B);
+
+        assertTrue(profileHandler.beanIsActive(ProfileABean.class));
+        assertTrue(profileHandler.beanIsActive(ProfileBBean.class));
+    }
+
+    @Test
+    public void shouldReturnTrueForBeansWithAllTheActiveProfiles() {
+        loadProfiles(PROFILE_A, PROFILE_C);
+
+        assertTrue(profileHandler.beanIsActive(ProfileACBean.class));
+    }
+
+    @Test
+    public void shouldHandleUpperCase() {
+        loadProfiles(PROFILE_A.toUpperCase());
+
+        assertTrue(profileHandler.beanIsActive(ProfileABean.class));
+        assertFalse(profileHandler.beanIsActive(ProfileBBean.class));
+    }
+
+    @Test
+    public void shouldHandleLowerCase() {
+        loadProfiles(PROFILE_A.toLowerCase());
+
+        assertTrue(profileHandler.beanIsActive(ProfileABean.class));
+        assertFalse(profileHandler.beanIsActive(ProfileBBean.class));
+    }
+
+    @Test
+    public void shouldReturnFalseForBeansWithoutAnActiveProfileA() {
+        loadProfiles(PROFILE_A);
+
+        assertFalse(profileHandler.beanIsActive(ProfileBBean.class));
+        assertFalse(profileHandler.beanIsActive(ProfileCBean.class));
+    }
+
+    @Test
+    public void shouldReturnFalseForBeansWithoutAnActiveProfileB() {
+        loadProfiles(PROFILE_B);
+
+        assertFalse(profileHandler.beanIsActive(ProfileABean.class));
+        assertFalse(profileHandler.beanIsActive(ProfileCBean.class));
+        assertFalse(profileHandler.beanIsActive(ProfileACBean.class));
+    }
+
+    @Test
+    public void shouldReturnFalseForBeansWithoutAnActiveProfileC() {
+        loadProfiles(PROFILE_C);
+
+        assertFalse(profileHandler.beanIsActive(ProfileABean.class));
+        assertFalse(profileHandler.beanIsActive(ProfileBBean.class));
+    }
+
+    @Test
+    public void shouldReturnFalseForBeansWithoutAnyOfTheActiveProfiles() {
+        loadProfiles(PROFILE_A, PROFILE_C);
+
+        assertFalse(profileHandler.beanIsActive(ProfileBBean.class));
+    }
+
+    @Test
+    public void shouldReturnFalseForBeansWithProfileButNoActiveProfiles() {
+        loadProfiles();
+
+        assertFalse(profileHandler.beanIsActive(ProfileABean.class));
+        assertFalse(profileHandler.beanIsActive(ProfileBBean.class));
+        assertFalse(profileHandler.beanIsActive(ProfileCBean.class));
+        assertFalse(profileHandler.beanIsActive(ProfileACBean.class));
+    }
+
+    private void loadProfiles(final String... profiles) {
+        final ProfileLocator profileLocator = mock(ProfileLocator.class);
+        when(profileLocator.getActiveProfiles()).thenReturn(Arrays.asList(profiles));
+
+        profileHandler = new AnnotationBasedProfileHandler(profileLocator);
     }
 }

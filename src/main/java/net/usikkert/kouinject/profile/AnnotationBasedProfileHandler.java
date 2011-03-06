@@ -22,17 +22,37 @@
 
 package net.usikkert.kouinject.profile;
 
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.List;
+
+import net.usikkert.kouinject.annotation.Profile;
+
 import org.apache.commons.lang.Validate;
 
 /**
- * An implementation of {@link ProfileHandler} using the {@link net.usikkert.kouinject.annotation.Profile}
+ * An implementation of {@link ProfileHandler} using the {@link Profile}
  * annotation to find the profiles on a bean.
- *
- * TODO
  *
  * @author Christian Ihle
  */
 public class AnnotationBasedProfileHandler implements ProfileHandler {
+
+    private static final Class<Profile> PROFILE_ANNOTATION = Profile.class;
+
+    private final List<String> activeProfiles;
+
+    /**
+     * Creates a new profile handler using the active profiles returned by the profile locator.
+     *
+     * @param profileLocator The locator to use to get the currently active profiles.
+     */
+    public AnnotationBasedProfileHandler(final ProfileLocator profileLocator) {
+        Validate.notNull(profileLocator, "Profile locator can not be null");
+
+        activeProfiles = profileLocator.getActiveProfiles();
+        validateActiveProfiles();
+    }
 
     /**
      * {@inheritDoc}
@@ -41,6 +61,46 @@ public class AnnotationBasedProfileHandler implements ProfileHandler {
     public boolean beanIsActive(final Class<?> beanClass) {
         Validate.notNull(beanClass, "Bean class can not be null");
 
+        final List<String> beanProfiles = getBeanProfiles(beanClass);
+        return beanHasActiveProfile(beanProfiles);
+    }
+
+    private List<String> getBeanProfiles(final Class<?> beanClass) {
+        final List<String> beanProfiles = new ArrayList<String>();
+        final Annotation[] annotations = beanClass.getAnnotations();
+
+        for (final Annotation annotation : annotations) {
+            final Class<? extends Annotation> annotationType = annotation.annotationType();
+
+            if (annotationType.isAnnotationPresent(PROFILE_ANNOTATION)) {
+                beanProfiles.add(annotationType.getSimpleName());
+            }
+        }
+
+        return beanProfiles;
+    }
+
+    private boolean beanHasActiveProfile(final List<String> beanProfiles) {
+        if (beanProfiles.isEmpty()) {
+            return true;
+        }
+
+        for (final String beanProfile : beanProfiles) {
+            for (final String activeProfile : activeProfiles) {
+                if (beanProfile.equalsIgnoreCase(activeProfile)) {
+                    return true;
+                }
+            }
+        }
+
         return false;
+    }
+
+    private void validateActiveProfiles() {
+        Validate.notNull(activeProfiles, "Active profiles can not be null");
+
+        for (final String activeProfile : activeProfiles) {
+            Validate.notNull(activeProfile, "Active profile can not be null");
+        }
     }
 }
