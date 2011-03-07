@@ -26,6 +26,7 @@ import static org.junit.Assert.*;
 
 import java.util.Arrays;
 
+import net.usikkert.kouinject.testbeans.scanned.profile.AcceptanceBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.DevelopmentBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.EnvironmentBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.EnvironmentUsingBean;
@@ -49,6 +50,18 @@ public class ProfileBeanInjectionTest {
     private Injector injector;
 
     @Test
+    public void checkAcceptanceBean() {
+        injector = new DefaultInjector(Arrays.asList("acceptance"), SCANNED);
+
+        final AcceptanceBean acceptanceBean = injector.getBean(AcceptanceBean.class);
+        assertNotNull(acceptanceBean);
+
+        final EnvironmentBean environmentBean = injector.getBean(EnvironmentBean.class);
+        assertNotNull(environmentBean);
+        assertEquals(AcceptanceBean.class, environmentBean.getClass());
+    }
+
+    @Test
     public void checkDevelopmentBean() {
         injector = new DefaultInjector(Arrays.asList("development"), SCANNED);
 
@@ -58,6 +71,18 @@ public class ProfileBeanInjectionTest {
         final EnvironmentBean environmentBean = injector.getBean(EnvironmentBean.class);
         assertNotNull(environmentBean);
         assertEquals(DevelopmentBean.class, environmentBean.getClass());
+    }
+
+    @Test
+    public void checkEnvironmentUsingBeanWithAcceptanceProfile() {
+        injector = new DefaultInjector(Arrays.asList("acceptance"), SCANNED);
+
+        final EnvironmentUsingBean environmentUsingBean = injector.getBean(EnvironmentUsingBean.class);
+        assertNotNull(environmentUsingBean);
+
+        final EnvironmentBean environmentBean = environmentUsingBean.getEnvironmentBean();
+        assertNotNull(environmentBean);
+        assertEquals(AcceptanceBean.class, environmentBean.getClass());
     }
 
     @Test

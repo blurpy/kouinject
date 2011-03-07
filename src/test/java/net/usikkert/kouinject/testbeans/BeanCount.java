@@ -30,7 +30,7 @@ package net.usikkert.kouinject.testbeans;
 public enum BeanCount {
 
     // All components
-    ALL(110),
+    ALL(111),
 
     // All components and those created by factories
     SCANNED(104),

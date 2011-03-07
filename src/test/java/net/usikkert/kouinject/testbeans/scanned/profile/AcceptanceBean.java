@@ -22,27 +22,15 @@
 
 package net.usikkert.kouinject.testbeans.scanned.profile;
 
-import javax.inject.Inject;
-
 import net.usikkert.kouinject.annotation.Component;
 
 /**
- * Bean for testing injection of a profiled implementation of an interface.
- *
- * Since most tests are used with no active profiles, this bean have to be part of the profiles as well.
+ * Bean for profile acceptance.
  *
  * @author Christian Ihle
  */
 @Component
 @Acceptance
-@Development
-@Production
-public class EnvironmentUsingBean {
+public class AcceptanceBean implements EnvironmentBean {
 
-    @Inject
-    private EnvironmentBean environmentBean;
-
-    public EnvironmentBean getEnvironmentBean() {
-        return environmentBean;
-    }
 }
