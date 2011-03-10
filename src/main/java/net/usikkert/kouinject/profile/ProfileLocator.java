@@ -22,7 +22,7 @@
 
 package net.usikkert.kouinject.profile;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * Interface for locating the active profiles to use for deciding which beans that can be loaded.
@@ -32,9 +32,9 @@ import java.util.List;
 public interface ProfileLocator {
 
     /**
-     * Gets a list of all the currently active profiles in the injector,
+     * Gets a collection of all the currently active profiles in the injector,
      *
      * @return All active profiles.
      */
-    List<String> getActiveProfiles();
+    Collection<String> getActiveProfiles();
 }

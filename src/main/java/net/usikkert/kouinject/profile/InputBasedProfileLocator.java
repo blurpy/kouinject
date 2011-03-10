@@ -22,42 +22,42 @@
 
 package net.usikkert.kouinject.profile;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 
 /**
- * An implementation of {@link ProfileLocator} that accepts the active profiles as a list of strings.
+ * An implementation of {@link ProfileLocator} that accepts the active profiles as a collection of strings.
  *
  * @author Christian Ihle
  */
 public class InputBasedProfileLocator implements ProfileLocator {
 
-    private final List<String> activeProfiles;
+    private final Collection<String> activeProfiles;
 
     /**
-     * Creates a new profile locator using the list of profiles as the currently active profiles for the injector.
+     * Creates a new profile locator using the collection of profiles as the currently active profiles for the injector.
      *
      * @param activeProfiles The active profiles to use.
      */
-    public InputBasedProfileLocator(final List<String> activeProfiles) {
+    public InputBasedProfileLocator(final Collection<String> activeProfiles) {
         Validate.notNull(activeProfiles, "Active profiles can not be null");
 
         for (final String activeProfile : activeProfiles) {
             Validate.isTrue(StringUtils.isNotBlank(activeProfile), "Active profile can not be empty");
         }
 
-        this.activeProfiles = Collections.unmodifiableList(new ArrayList<String>(activeProfiles));
+        this.activeProfiles = Collections.unmodifiableSet(new HashSet<String>(activeProfiles));
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<String> getActiveProfiles() {
+    public Collection<String> getActiveProfiles() {
         return activeProfiles;
     }
 }

@@ -23,9 +23,9 @@
 package net.usikkert.kouinject.profile;
 
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
 
 import net.usikkert.kouinject.annotation.Profile;
 
@@ -42,7 +42,7 @@ public class AnnotationBasedProfileHandler implements ProfileHandler {
 
     private static final Class<Profile> PROFILE_ANNOTATION = Profile.class;
 
-    private final List<String> activeProfiles;
+    private final Collection<String> activeProfiles;
 
     /**
      * Creates a new profile handler using the active profiles returned by the profile locator.
@@ -52,9 +52,9 @@ public class AnnotationBasedProfileHandler implements ProfileHandler {
     public AnnotationBasedProfileHandler(final ProfileLocator profileLocator) {
         Validate.notNull(profileLocator, "Profile locator can not be null");
 
-        final List<String> profiles = profileLocator.getActiveProfiles();
+        final Collection<String> profiles = profileLocator.getActiveProfiles();
         validateActiveProfiles(profiles);
-        activeProfiles = Collections.unmodifiableList(new ArrayList<String>(profiles));
+        activeProfiles = Collections.unmodifiableSet(new HashSet<String>(profiles));
     }
 
     /**
@@ -64,12 +64,12 @@ public class AnnotationBasedProfileHandler implements ProfileHandler {
     public boolean beanIsActive(final Class<?> beanClass) {
         Validate.notNull(beanClass, "Bean class can not be null");
 
-        final List<String> beanProfiles = getBeanProfiles(beanClass);
+        final Collection<String> beanProfiles = getBeanProfiles(beanClass);
         return beanHasActiveProfile(beanProfiles);
     }
 
-    private List<String> getBeanProfiles(final Class<?> beanClass) {
-        final List<String> beanProfiles = new ArrayList<String>();
+    private Collection<String> getBeanProfiles(final Class<?> beanClass) {
+        final Collection<String> beanProfiles = new HashSet<String>();
         final Annotation[] annotations = beanClass.getAnnotations();
 
         for (final Annotation annotation : annotations) {
@@ -83,7 +83,7 @@ public class AnnotationBasedProfileHandler implements ProfileHandler {
         return beanProfiles;
     }
 
-    private boolean beanHasActiveProfile(final List<String> beanProfiles) {
+    private boolean beanHasActiveProfile(final Collection<String> beanProfiles) {
         if (beanProfiles.isEmpty()) {
             return true;
         }
@@ -99,7 +99,7 @@ public class AnnotationBasedProfileHandler implements ProfileHandler {
         return false;
     }
 
-    private void validateActiveProfiles(final List<String> activeProfilesForValidation) {
+    private void validateActiveProfiles(final Collection<String> activeProfilesForValidation) {
         Validate.notNull(activeProfilesForValidation, "Active profiles can not be null");
 
         for (final String activeProfile : activeProfilesForValidation) {

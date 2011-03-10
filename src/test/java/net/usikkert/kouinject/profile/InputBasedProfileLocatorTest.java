@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 
 import org.junit.Test;
 
@@ -51,7 +51,7 @@ public class InputBasedProfileLocatorTest {
     public void shouldHandleEmptyList() {
         final InputBasedProfileLocator locator = new InputBasedProfileLocator(new ArrayList<String>());
 
-        final List<String> activeProfiles = locator.getActiveProfiles();
+        final Collection<String> activeProfiles = locator.getActiveProfiles();
         assertNotNull(activeProfiles);
         assertTrue(activeProfiles.isEmpty());
     }
@@ -61,7 +61,7 @@ public class InputBasedProfileLocatorTest {
         final InputBasedProfileLocator locator = new InputBasedProfileLocator(
                 Arrays.asList("profile1", "profile2", "otherprofile"));
 
-        final List<String> activeProfiles = locator.getActiveProfiles();
+        final Collection<String> activeProfiles = locator.getActiveProfiles();
         assertNotNull(activeProfiles);
         assertEquals(3, activeProfiles.size());
 
@@ -74,7 +74,7 @@ public class InputBasedProfileLocatorTest {
     public void shouldReturnTheSameProfilesAsUsedInConstructor2() {
         final InputBasedProfileLocator locator = new InputBasedProfileLocator(Arrays.asList("profile"));
 
-        final List<String> activeProfiles = locator.getActiveProfiles();
+        final Collection<String> activeProfiles = locator.getActiveProfiles();
         assertNotNull(activeProfiles);
         assertEquals(1, activeProfiles.size());
 
@@ -83,12 +83,12 @@ public class InputBasedProfileLocatorTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void shouldNotBeAbleToModifyReturnedProfileList() {
-        final ArrayList<String> profiles = new ArrayList<String>();
+        final Collection<String> profiles = new ArrayList<String>();
         profiles.add(("profile"));
 
         final InputBasedProfileLocator locator = new InputBasedProfileLocator(profiles);
 
-        final List<String> activeProfiles = locator.getActiveProfiles();
+        final Collection<String> activeProfiles = locator.getActiveProfiles();
         assertNotNull(activeProfiles);
         assertEquals(1, activeProfiles.size());
 
@@ -97,19 +97,19 @@ public class InputBasedProfileLocatorTest {
 
     @Test
     public void shouldNotBeAbleToModifyInputProfileList() {
-        final ArrayList<String> profiles = new ArrayList<String>();
+        final Collection<String> profiles = new ArrayList<String>();
         profiles.add(("profile"));
 
         final InputBasedProfileLocator locator = new InputBasedProfileLocator(profiles);
 
-        final List<String> activeProfiles1 = locator.getActiveProfiles();
+        final Collection<String> activeProfiles1 = locator.getActiveProfiles();
         assertNotNull(activeProfiles1);
         assertEquals(1, activeProfiles1.size());
         assertTrue(activeProfiles1.contains("profile"));
 
         profiles.add("new");
 
-        final List<String> activeProfiles2 = locator.getActiveProfiles();
+        final Collection<String> activeProfiles2 = locator.getActiveProfiles();
         assertNotNull(activeProfiles2);
         assertEquals(1, activeProfiles2.size());
         assertTrue(activeProfiles2.contains("profile"));
