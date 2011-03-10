@@ -29,6 +29,7 @@ import java.util.List;
 
 import net.usikkert.kouinject.annotation.Profile;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 
 /**
@@ -102,7 +103,7 @@ public class AnnotationBasedProfileHandler implements ProfileHandler {
         Validate.notNull(activeProfilesForValidation, "Active profiles can not be null");
 
         for (final String activeProfile : activeProfilesForValidation) {
-            Validate.notNull(activeProfile, "Active profile can not be null");
+            Validate.isTrue(StringUtils.isNotBlank(activeProfile), "Active profile can not be empty");
         }
     }
 }

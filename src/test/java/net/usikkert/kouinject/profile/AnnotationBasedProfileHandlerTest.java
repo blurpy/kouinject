@@ -70,6 +70,11 @@ public class AnnotationBasedProfileHandlerTest {
         loadProfiles(new String[] {null});
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldFailIfProfileLocatorReturnsAProfileWithEmptyValue() {
+        loadProfiles(" ");
+    }
+
     @Test
     public void shouldReturnTrueForBeansWithNoProfilesWithNoActiveProfiles() {
         loadProfiles();
