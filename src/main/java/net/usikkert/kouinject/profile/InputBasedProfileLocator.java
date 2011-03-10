@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 
 /**
@@ -46,7 +47,7 @@ public class InputBasedProfileLocator implements ProfileLocator {
         Validate.notNull(activeProfiles, "Active profiles can not be null");
 
         for (final String activeProfile : activeProfiles) {
-            Validate.notNull(activeProfile, "Active profile can not be null");
+            Validate.isTrue(StringUtils.isNotBlank(activeProfile), "Active profile can not be empty");
         }
 
         this.activeProfiles = Collections.unmodifiableList(new ArrayList<String>(activeProfiles));
