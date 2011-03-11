@@ -28,17 +28,20 @@ import static org.junit.Assert.*;
 import java.util.Arrays;
 
 import net.usikkert.kouinject.testbeans.scanned.profile.AcceptanceBean;
+import net.usikkert.kouinject.testbeans.scanned.profile.ArchiveBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.DataSourceBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.DevelopmentBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.EnvironmentBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.EnvironmentUsingBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.InMemoryDataSourceBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.JndiDataSourceBean;
+import net.usikkert.kouinject.testbeans.scanned.profile.LocalArchiveBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.ProductionBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.ProfileABean;
 import net.usikkert.kouinject.testbeans.scanned.profile.ProfileACBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.ProfileBBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.ProfileCBean;
+import net.usikkert.kouinject.testbeans.scanned.profile.RemoteArchiveBean;
 
 import org.junit.Test;
 
@@ -238,6 +241,18 @@ public class ProfileBeanInjectionTest {
     }
 
     @Test
+    public void checkLocalArchiveBean() {
+        injector = new DefaultInjector(Arrays.asList(DEVELOPMENT.value()), SCANNED);
+
+        final LocalArchiveBean localArchiveBean = injector.getBean(LocalArchiveBean.class);
+        assertNotNull(localArchiveBean);
+
+        final ArchiveBean archiveBean = injector.getBean(ArchiveBean.class);
+        assertNotNull(archiveBean);
+        assertEquals(LocalArchiveBean.class, archiveBean.getClass());
+    }
+
+    @Test
     public void checkProductionBeanWithInMemoryProfile() {
         injector = new DefaultInjector(Arrays.asList(PRODUCTION.value(), IN_MEMORY.value()), SCANNED);
 
@@ -299,5 +314,29 @@ public class ProfileBeanInjectionTest {
 
         final ProfileCBean profileCBean = injector.getBean(ProfileCBean.class);
         assertNotNull(profileCBean);
+    }
+
+    @Test
+    public void checkRemoteArchiveBeanWithProductionProfile() {
+        injector = new DefaultInjector(Arrays.asList(PRODUCTION.value()), SCANNED);
+
+        final RemoteArchiveBean remoteArchiveBean = injector.getBean(RemoteArchiveBean.class);
+        assertNotNull(remoteArchiveBean);
+
+        final ArchiveBean archiveBean = injector.getBean(ArchiveBean.class);
+        assertNotNull(archiveBean);
+        assertEquals(RemoteArchiveBean.class, archiveBean.getClass());
+    }
+
+    @Test
+    public void checkRemoteArchiveBeanWithAcceptanceProfile() {
+        injector = new DefaultInjector(Arrays.asList(ACCEPTANCE.value()), SCANNED);
+
+        final RemoteArchiveBean remoteArchiveBean = injector.getBean(RemoteArchiveBean.class);
+        assertNotNull(remoteArchiveBean);
+
+        final ArchiveBean archiveBean = injector.getBean(ArchiveBean.class);
+        assertNotNull(archiveBean);
+        assertEquals(RemoteArchiveBean.class, archiveBean.getClass());
     }
 }

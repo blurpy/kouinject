@@ -96,10 +96,12 @@ import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractB
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.interfacebean.InterfaceBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.DevelopmentBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.EnvironmentBean;
+import net.usikkert.kouinject.testbeans.scanned.profile.LocalArchiveBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.ProfileABean;
 import net.usikkert.kouinject.testbeans.scanned.profile.ProfileACBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.ProfileBBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.ProfileCBean;
+import net.usikkert.kouinject.testbeans.scanned.profile.RemoteArchiveBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.BlueBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.ColorBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.DarkYellowBean;
@@ -1226,6 +1228,27 @@ public class DefaultBeanLoaderTest {
                 Arrays.asList(DEVELOPMENT.value(), PRODUCTION.value()));
 
         loader.getBean(EnvironmentBean.class);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getBeanShouldFailToGetBeanWithProfileFromSuperClass() {
+        final DefaultBeanLoader loader = createBeanLoaderWithBasePackagesAndProfiles(
+                Arrays.asList("net.usikkert.kouinject.testbeans.scanned"),
+                Arrays.asList(DEVELOPMENT.value()));
+
+        loader.getBean(RemoteArchiveBean.class); // Should not inherit development profile from LocalArchiveBean
+    }
+
+    @Test
+    public void getBeanShouldReturnSubClassWithCorrectProfile() {
+        final DefaultBeanLoader loader = createBeanLoaderWithBasePackagesAndProfiles(
+                Arrays.asList("net.usikkert.kouinject.testbeans.scanned"),
+                Arrays.asList(PRODUCTION.value()));
+
+        // RemoteArchiveBean is the only bean matching LocalArchiveBean that is available with the production profile
+        final LocalArchiveBean localArchiveBean = loader.getBean(LocalArchiveBean.class);
+        assertNotNull(localArchiveBean);
+        assertEquals(RemoteArchiveBean.class, localArchiveBean.getClass());
     }
 
     private DefaultBeanLoader createBeanLoaderWithBasePackages(final String... basePackages) {
