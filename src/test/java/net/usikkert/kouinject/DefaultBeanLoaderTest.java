@@ -1219,6 +1219,15 @@ public class DefaultBeanLoaderTest {
         loader.getBean(ProfileABean.class);
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void getBeanShouldFailIfProfilesWithConflictingBeansAreActiveAtTheSameTime() {
+        final DefaultBeanLoader loader = createBeanLoaderWithBasePackagesAndProfiles(
+                Arrays.asList("net.usikkert.kouinject.testbeans.scanned"),
+                Arrays.asList(DEVELOPMENT.value(), PRODUCTION.value()));
+
+        loader.getBean(EnvironmentBean.class);
+    }
+
     private DefaultBeanLoader createBeanLoaderWithBasePackages(final String... basePackages) {
         return createBeanLoaderWithBasePackagesAndProfiles(Arrays.asList(basePackages), new ArrayList<String>());
     }
