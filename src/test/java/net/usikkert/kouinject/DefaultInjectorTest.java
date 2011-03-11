@@ -22,7 +22,7 @@
 
 package net.usikkert.kouinject;
 
-import static net.usikkert.kouinject.testbeans.Profiles.*;
+import static net.usikkert.kouinject.testbeans.scanned.profile.Profiles.*;
 import static org.junit.Assert.*;
 
 import java.util.Arrays;
