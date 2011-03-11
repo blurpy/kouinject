@@ -22,6 +22,7 @@
 
 package net.usikkert.kouinject.profile;
 
+import static net.usikkert.kouinject.testbeans.Profiles.*;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ public class InputBasedProfileLocatorTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldFailIfAProfileIsNull() {
-        new InputBasedProfileLocator(Arrays.asList("profileA", null, "profileC"));
+        new InputBasedProfileLocator(Arrays.asList(PROFILE_A.value(), null, PROFILE_C.value()));
     }
 
     @Test

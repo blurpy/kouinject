@@ -22,6 +22,7 @@
 
 package net.usikkert.kouinject;
 
+import static net.usikkert.kouinject.testbeans.Profiles.*;
 import static org.junit.Assert.*;
 
 import java.util.Arrays;
@@ -51,7 +52,7 @@ public class ProfileBeanInjectionTest {
 
     @Test
     public void checkAcceptanceBean() {
-        injector = new DefaultInjector(Arrays.asList("acceptance"), SCANNED);
+        injector = new DefaultInjector(Arrays.asList(ACCEPTANCE.value()), SCANNED);
 
         final AcceptanceBean acceptanceBean = injector.getBean(AcceptanceBean.class);
         assertNotNull(acceptanceBean);
@@ -63,7 +64,7 @@ public class ProfileBeanInjectionTest {
 
     @Test
     public void checkDevelopmentBean() {
-        injector = new DefaultInjector(Arrays.asList("development"), SCANNED);
+        injector = new DefaultInjector(Arrays.asList(DEVELOPMENT.value()), SCANNED);
 
         final DevelopmentBean developmentBean = injector.getBean(DevelopmentBean.class);
         assertNotNull(developmentBean);
@@ -75,7 +76,7 @@ public class ProfileBeanInjectionTest {
 
     @Test
     public void checkEnvironmentUsingBeanWithAcceptanceProfile() {
-        injector = new DefaultInjector(Arrays.asList("acceptance"), SCANNED);
+        injector = new DefaultInjector(Arrays.asList(ACCEPTANCE.value()), SCANNED);
 
         final EnvironmentUsingBean environmentUsingBean = injector.getBean(EnvironmentUsingBean.class);
         assertNotNull(environmentUsingBean);
@@ -87,7 +88,7 @@ public class ProfileBeanInjectionTest {
 
     @Test
     public void checkEnvironmentUsingBeanWithDevelopmentProfile() {
-        injector = new DefaultInjector(Arrays.asList("development"), SCANNED);
+        injector = new DefaultInjector(Arrays.asList(DEVELOPMENT.value()), SCANNED);
 
         final EnvironmentUsingBean environmentUsingBean = injector.getBean(EnvironmentUsingBean.class);
         assertNotNull(environmentUsingBean);
@@ -99,7 +100,7 @@ public class ProfileBeanInjectionTest {
 
     @Test
     public void checkEnvironmentUsingBeanWithProductionProfile() {
-        injector = new DefaultInjector(Arrays.asList("production"), SCANNED);
+        injector = new DefaultInjector(Arrays.asList(PRODUCTION.value()), SCANNED);
 
         final EnvironmentUsingBean environmentUsingBean = injector.getBean(EnvironmentUsingBean.class);
         assertNotNull(environmentUsingBean);
@@ -111,7 +112,7 @@ public class ProfileBeanInjectionTest {
 
     @Test
     public void checkProductionBean() {
-        injector = new DefaultInjector(Arrays.asList("production"), SCANNED);
+        injector = new DefaultInjector(Arrays.asList(PRODUCTION.value()), SCANNED);
 
         final ProductionBean productionBean = injector.getBean(ProductionBean.class);
         assertNotNull(productionBean);
@@ -123,7 +124,7 @@ public class ProfileBeanInjectionTest {
 
     @Test
     public void checkProfileABean() {
-        injector = new DefaultInjector(Arrays.asList("ProfileA"), SCANNED);
+        injector = new DefaultInjector(Arrays.asList(PROFILE_A.value()), SCANNED);
 
         final ProfileABean profileABean = injector.getBean(ProfileABean.class);
         assertNotNull(profileABean);
@@ -131,7 +132,7 @@ public class ProfileBeanInjectionTest {
 
     @Test
     public void checkProfileACBean() {
-        injector = new DefaultInjector(Arrays.asList("ProfileA"), SCANNED);
+        injector = new DefaultInjector(Arrays.asList(PROFILE_A.value()), SCANNED);
 
         final ProfileACBean profileACBean = injector.getBean(ProfileACBean.class);
         assertNotNull(profileACBean);
@@ -139,7 +140,7 @@ public class ProfileBeanInjectionTest {
 
     @Test
     public void checkProfileBBean() {
-        injector = new DefaultInjector(Arrays.asList("ProfileB"), SCANNED);
+        injector = new DefaultInjector(Arrays.asList(PROFILE_B.value()), SCANNED);
 
         final ProfileBBean profileBBean = injector.getBean(ProfileBBean.class);
         assertNotNull(profileBBean);
@@ -147,7 +148,7 @@ public class ProfileBeanInjectionTest {
 
     @Test
     public void checkProfileCBean() {
-        injector = new DefaultInjector(Arrays.asList("ProfileC"), SCANNED);
+        injector = new DefaultInjector(Arrays.asList(PROFILE_C.value()), SCANNED);
 
         final ProfileCBean profileCBean = injector.getBean(ProfileCBean.class);
         assertNotNull(profileCBean);

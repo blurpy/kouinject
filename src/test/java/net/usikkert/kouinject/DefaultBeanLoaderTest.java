@@ -22,6 +22,7 @@
 
 package net.usikkert.kouinject;
 
+import static net.usikkert.kouinject.testbeans.Profiles.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -505,7 +506,7 @@ public class DefaultBeanLoaderTest {
     public void getBeansWithObjectAndAnyQualifierShouldReturnBeansWithActiveProfiles() {
         final DefaultBeanLoader loader = createBeanLoaderWithBasePackagesAndProfiles(
                 Arrays.asList("net.usikkert.kouinject.testbeans.scanned"),
-                Arrays.asList("ProfileA", "ProfileB", "ProfileC", "Development"));
+                Arrays.asList(PROFILE_A.value(), PROFILE_B.value(), PROFILE_C.value(), DEVELOPMENT.value()));
 
         final Collection<Object> beans = loader.getBeans(Object.class, "any");
 
@@ -1164,7 +1165,7 @@ public class DefaultBeanLoaderTest {
     public void getBeanShouldReturnBeanWithOneOfActiveProfiles() {
         final DefaultBeanLoader loader = createBeanLoaderWithBasePackagesAndProfiles(
                 Arrays.asList("net.usikkert.kouinject.testbeans.scanned"),
-                Arrays.asList("ProfileA", "ProfileB", "ProfileC"));
+                Arrays.asList(PROFILE_A.value(), PROFILE_B.value(), PROFILE_C.value()));
 
         final ProfileABean profileABean = loader.getBean(ProfileABean.class);
         assertNotNull(profileABean);
@@ -1183,7 +1184,7 @@ public class DefaultBeanLoaderTest {
     public void getBeanShouldReturnBeanWithActiveProfile() {
         final DefaultBeanLoader loader = createBeanLoaderWithBasePackagesAndProfiles(
                 Arrays.asList("net.usikkert.kouinject.testbeans.scanned"),
-                Arrays.asList("ProfileA"));
+                Arrays.asList(PROFILE_A.value()));
 
         final ProfileABean profileABean = loader.getBean(ProfileABean.class);
         assertNotNull(profileABean);
@@ -1193,7 +1194,7 @@ public class DefaultBeanLoaderTest {
     public void getBeanShouldReturnBeanWhereOneOfSeveralProfilesMatchWithActiveProfile() {
         final DefaultBeanLoader loader = createBeanLoaderWithBasePackagesAndProfiles(
                 Arrays.asList("net.usikkert.kouinject.testbeans.scanned"),
-                Arrays.asList("ProfileC"));
+                Arrays.asList(PROFILE_C.value()));
 
         final ProfileACBean profileACBean = loader.getBean(ProfileACBean.class);
         assertNotNull(profileACBean);
@@ -1213,7 +1214,7 @@ public class DefaultBeanLoaderTest {
     public void getBeanShouldNotReturnProfiledBeanWhenDifferentProfileIsActive() {
         final DefaultBeanLoader loader = createBeanLoaderWithBasePackagesAndProfiles(
                 Arrays.asList("net.usikkert.kouinject.testbeans.scanned"),
-                Arrays.asList("ProfileB"));
+                Arrays.asList(PROFILE_B.value()));
 
         loader.getBean(ProfileABean.class);
     }

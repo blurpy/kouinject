@@ -22,6 +22,7 @@
 
 package net.usikkert.kouinject.profile;
 
+import static net.usikkert.kouinject.testbeans.Profiles.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -45,10 +46,6 @@ import org.junit.Test;
  * @author Christian Ihle
  */
 public class AnnotationBasedProfileHandlerTest {
-
-    private static final String PROFILE_A = "ProfileA";
-    private static final String PROFILE_B = "ProfileB";
-    private static final String PROFILE_C = "ProfileC";
 
     private AnnotationBasedProfileHandler profileHandler;
 
@@ -86,7 +83,7 @@ public class AnnotationBasedProfileHandlerTest {
 
     @Test
     public void shouldReturnTrueForBeansWithNoProfilesWithAllActiveProfiles() {
-        loadProfiles(PROFILE_A, PROFILE_B, PROFILE_C);
+        loadProfiles(PROFILE_A.value(), PROFILE_B.value(), PROFILE_C.value());
 
         assertTrue(profileHandler.beanIsActive(HelloBean.class));
         assertTrue(profileHandler.beanIsActive(String.class));
@@ -95,14 +92,14 @@ public class AnnotationBasedProfileHandlerTest {
 
     @Test
     public void shouldHandleClassesWithNoAnnotations() {
-        loadProfiles(PROFILE_A, PROFILE_B, PROFILE_C);
+        loadProfiles(PROFILE_A.value(), PROFILE_B.value(), PROFILE_C.value());
 
         assertTrue(profileHandler.beanIsActive(NoBean.class));
     }
 
     @Test
     public void shouldReturnTrueForBeansWithTheSameActiveProfileA() {
-        loadProfiles(PROFILE_A);
+        loadProfiles(PROFILE_A.value());
 
         assertTrue(profileHandler.beanIsActive(ProfileABean.class));
         assertTrue(profileHandler.beanIsActive(ProfileACBean.class));
@@ -110,14 +107,14 @@ public class AnnotationBasedProfileHandlerTest {
 
     @Test
     public void shouldReturnTrueForBeansWithTheSameActiveProfileB() {
-        loadProfiles(PROFILE_B);
+        loadProfiles(PROFILE_B.value());
 
         assertTrue(profileHandler.beanIsActive(ProfileBBean.class));
     }
 
     @Test
     public void shouldReturnTrueForBeansWithTheSameActiveProfileC() {
-        loadProfiles(PROFILE_C);
+        loadProfiles(PROFILE_C.value());
 
         assertTrue(profileHandler.beanIsActive(ProfileCBean.class));
         assertTrue(profileHandler.beanIsActive(ProfileACBean.class));
@@ -125,7 +122,7 @@ public class AnnotationBasedProfileHandlerTest {
 
     @Test
     public void shouldReturnTrueForBeansWithOneOfTheActiveProfiles() {
-        loadProfiles(PROFILE_A, PROFILE_B);
+        loadProfiles(PROFILE_A.value(), PROFILE_B.value());
 
         assertTrue(profileHandler.beanIsActive(ProfileABean.class));
         assertTrue(profileHandler.beanIsActive(ProfileBBean.class));
@@ -133,14 +130,14 @@ public class AnnotationBasedProfileHandlerTest {
 
     @Test
     public void shouldReturnTrueForBeansWithAllTheActiveProfiles() {
-        loadProfiles(PROFILE_A, PROFILE_C);
+        loadProfiles(PROFILE_A.value(), PROFILE_C.value());
 
         assertTrue(profileHandler.beanIsActive(ProfileACBean.class));
     }
 
     @Test
     public void shouldHandleUpperCase() {
-        loadProfiles(PROFILE_A.toUpperCase());
+        loadProfiles(PROFILE_A.value().toUpperCase());
 
         assertTrue(profileHandler.beanIsActive(ProfileABean.class));
         assertFalse(profileHandler.beanIsActive(ProfileBBean.class));
@@ -148,7 +145,7 @@ public class AnnotationBasedProfileHandlerTest {
 
     @Test
     public void shouldHandleLowerCase() {
-        loadProfiles(PROFILE_A.toLowerCase());
+        loadProfiles(PROFILE_A.value().toLowerCase());
 
         assertTrue(profileHandler.beanIsActive(ProfileABean.class));
         assertFalse(profileHandler.beanIsActive(ProfileBBean.class));
@@ -156,7 +153,7 @@ public class AnnotationBasedProfileHandlerTest {
 
     @Test
     public void shouldReturnFalseForBeansWithoutAnActiveProfileA() {
-        loadProfiles(PROFILE_A);
+        loadProfiles(PROFILE_A.value());
 
         assertFalse(profileHandler.beanIsActive(ProfileBBean.class));
         assertFalse(profileHandler.beanIsActive(ProfileCBean.class));
@@ -164,7 +161,7 @@ public class AnnotationBasedProfileHandlerTest {
 
     @Test
     public void shouldReturnFalseForBeansWithoutAnActiveProfileB() {
-        loadProfiles(PROFILE_B);
+        loadProfiles(PROFILE_B.value());
 
         assertFalse(profileHandler.beanIsActive(ProfileABean.class));
         assertFalse(profileHandler.beanIsActive(ProfileCBean.class));
@@ -173,7 +170,7 @@ public class AnnotationBasedProfileHandlerTest {
 
     @Test
     public void shouldReturnFalseForBeansWithoutAnActiveProfileC() {
-        loadProfiles(PROFILE_C);
+        loadProfiles(PROFILE_C.value());
 
         assertFalse(profileHandler.beanIsActive(ProfileABean.class));
         assertFalse(profileHandler.beanIsActive(ProfileBBean.class));
@@ -181,7 +178,7 @@ public class AnnotationBasedProfileHandlerTest {
 
     @Test
     public void shouldReturnFalseForBeansWithoutAnyOfTheActiveProfiles() {
-        loadProfiles(PROFILE_A, PROFILE_C);
+        loadProfiles(PROFILE_A.value(), PROFILE_C.value());
 
         assertFalse(profileHandler.beanIsActive(ProfileBBean.class));
     }
@@ -207,7 +204,7 @@ public class AnnotationBasedProfileHandlerTest {
 
         assertFalse(profileHandler.beanIsActive(ProfileABean.class));
 
-        profiles.add(PROFILE_A);
+        profiles.add(PROFILE_A.value());
 
         assertFalse(profileHandler.beanIsActive(ProfileABean.class));
     }

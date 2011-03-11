@@ -22,6 +22,7 @@
 
 package net.usikkert.kouinject;
 
+import static net.usikkert.kouinject.testbeans.Profiles.*;
 import static org.junit.Assert.*;
 
 import java.util.Arrays;
@@ -128,14 +129,14 @@ public class DefaultInjectorTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void getBeanShouldFailToGetProfiledBeanWhenDifferentProfileIsActive() {
-        injector = new DefaultInjector(Arrays.asList("ProfileB"), "net.usikkert.kouinject.testbeans.scanned");
+        injector = new DefaultInjector(Arrays.asList(PROFILE_B.value()), "net.usikkert.kouinject.testbeans.scanned");
 
         injector.getBean(ProfileABean.class);
     }
 
     @Test
     public void getBeanShouldFindBeansWithActiveProfile() {
-        injector = new DefaultInjector(Arrays.asList("ProfileA"), "net.usikkert.kouinject.testbeans.scanned");
+        injector = new DefaultInjector(Arrays.asList(PROFILE_A.value()), "net.usikkert.kouinject.testbeans.scanned");
 
         final ProfileABean profileABean = injector.getBean(ProfileABean.class);
         assertNotNull(profileABean);
@@ -146,7 +147,7 @@ public class DefaultInjectorTest {
 
     @Test
     public void getBeansShouldFindBeansWithActiveProfile() {
-        injector = new DefaultInjector(Arrays.asList("ProfileA", "ProfileB", "ProfileC", "Production"),
+        injector = new DefaultInjector(Arrays.asList(PROFILE_A.value(), PROFILE_B.value(), PROFILE_C.value(), PRODUCTION.value()),
                 "net.usikkert.kouinject.testbeans.scanned");
 
         final Collection<Object> beans = injector.getBeans(Object.class, "any");
