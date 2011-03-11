@@ -38,7 +38,14 @@ public class ProductionBean implements EnvironmentBean {
     @Inject
     private DataSourceBean dataSourceBean;
 
+    @Inject
+    private ArchiveBean archiveBean;
+
     public DataSourceBean getDataSourceBean() {
         return dataSourceBean;
+    }
+
+    public ArchiveBean getArchiveBean() {
+        return archiveBean;
     }
 }

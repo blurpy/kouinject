@@ -30,4 +30,6 @@ package net.usikkert.kouinject.testbeans.scanned.profile;
 public interface EnvironmentBean {
 
     DataSourceBean getDataSourceBean();
+
+    ArchiveBean getArchiveBean();
 }

@@ -67,6 +67,10 @@ public class ProfileBeanInjectionTest {
         assertNotNull(dataSourceBean);
         assertEquals(InMemoryDataSourceBean.class, dataSourceBean.getClass());
 
+        final ArchiveBean archiveBean = acceptanceBean.getArchiveBean();
+        assertNotNull(archiveBean);
+        assertEquals(RemoteArchiveBean.class, archiveBean.getClass());
+
         final EnvironmentBean environmentBean = injector.getBean(EnvironmentBean.class);
         assertNotNull(environmentBean);
         assertEquals(AcceptanceBean.class, environmentBean.getClass());
@@ -82,6 +86,10 @@ public class ProfileBeanInjectionTest {
         final DataSourceBean dataSourceBean = acceptanceBean.getDataSourceBean();
         assertNotNull(dataSourceBean);
         assertEquals(JndiDataSourceBean.class, dataSourceBean.getClass());
+
+        final ArchiveBean archiveBean = acceptanceBean.getArchiveBean();
+        assertNotNull(archiveBean);
+        assertEquals(RemoteArchiveBean.class, archiveBean.getClass());
 
         final EnvironmentBean environmentBean = injector.getBean(EnvironmentBean.class);
         assertNotNull(environmentBean);
@@ -99,6 +107,10 @@ public class ProfileBeanInjectionTest {
         assertNotNull(dataSourceBean);
         assertEquals(InMemoryDataSourceBean.class, dataSourceBean.getClass());
 
+        final ArchiveBean archiveBean = developmentBean.getArchiveBean();
+        assertNotNull(archiveBean);
+        assertEquals(LocalArchiveBean.class, archiveBean.getClass());
+
         final EnvironmentBean environmentBean = injector.getBean(EnvironmentBean.class);
         assertNotNull(environmentBean);
         assertEquals(DevelopmentBean.class, environmentBean.getClass());
@@ -114,6 +126,10 @@ public class ProfileBeanInjectionTest {
         final DataSourceBean dataSourceBean = developmentBean.getDataSourceBean();
         assertNotNull(dataSourceBean);
         assertEquals(JndiDataSourceBean.class, dataSourceBean.getClass());
+
+        final ArchiveBean archiveBean = developmentBean.getArchiveBean();
+        assertNotNull(archiveBean);
+        assertEquals(LocalArchiveBean.class, archiveBean.getClass());
 
         final EnvironmentBean environmentBean = injector.getBean(EnvironmentBean.class);
         assertNotNull(environmentBean);
@@ -134,6 +150,10 @@ public class ProfileBeanInjectionTest {
         final DataSourceBean dataSourceBean = environmentBean.getDataSourceBean();
         assertNotNull(dataSourceBean);
         assertEquals(InMemoryDataSourceBean.class, dataSourceBean.getClass());
+
+        final ArchiveBean archiveBean = environmentBean.getArchiveBean();
+        assertNotNull(archiveBean);
+        assertEquals(RemoteArchiveBean.class, archiveBean.getClass());
     }
 
     @Test
@@ -150,6 +170,10 @@ public class ProfileBeanInjectionTest {
         final DataSourceBean dataSourceBean = environmentBean.getDataSourceBean();
         assertNotNull(dataSourceBean);
         assertEquals(JndiDataSourceBean.class, dataSourceBean.getClass());
+
+        final ArchiveBean archiveBean = environmentBean.getArchiveBean();
+        assertNotNull(archiveBean);
+        assertEquals(RemoteArchiveBean.class, archiveBean.getClass());
     }
 
     @Test
@@ -166,6 +190,10 @@ public class ProfileBeanInjectionTest {
         final DataSourceBean dataSourceBean = environmentBean.getDataSourceBean();
         assertNotNull(dataSourceBean);
         assertEquals(InMemoryDataSourceBean.class, dataSourceBean.getClass());
+
+        final ArchiveBean archiveBean = environmentBean.getArchiveBean();
+        assertNotNull(archiveBean);
+        assertEquals(LocalArchiveBean.class, archiveBean.getClass());
     }
 
     @Test
@@ -182,6 +210,10 @@ public class ProfileBeanInjectionTest {
         final DataSourceBean dataSourceBean = environmentBean.getDataSourceBean();
         assertNotNull(dataSourceBean);
         assertEquals(JndiDataSourceBean.class, dataSourceBean.getClass());
+
+        final ArchiveBean archiveBean = environmentBean.getArchiveBean();
+        assertNotNull(archiveBean);
+        assertEquals(LocalArchiveBean.class, archiveBean.getClass());
     }
 
     @Test
@@ -198,6 +230,10 @@ public class ProfileBeanInjectionTest {
         final DataSourceBean dataSourceBean = environmentBean.getDataSourceBean();
         assertNotNull(dataSourceBean);
         assertEquals(InMemoryDataSourceBean.class, dataSourceBean.getClass());
+
+        final ArchiveBean archiveBean = environmentBean.getArchiveBean();
+        assertNotNull(archiveBean);
+        assertEquals(RemoteArchiveBean.class, archiveBean.getClass());
     }
 
     @Test
@@ -214,6 +250,10 @@ public class ProfileBeanInjectionTest {
         final DataSourceBean dataSourceBean = environmentBean.getDataSourceBean();
         assertNotNull(dataSourceBean);
         assertEquals(JndiDataSourceBean.class, dataSourceBean.getClass());
+
+        final ArchiveBean archiveBean = environmentBean.getArchiveBean();
+        assertNotNull(archiveBean);
+        assertEquals(RemoteArchiveBean.class, archiveBean.getClass());
     }
 
     @Test
@@ -263,6 +303,10 @@ public class ProfileBeanInjectionTest {
         assertNotNull(dataSourceBean);
         assertEquals(InMemoryDataSourceBean.class, dataSourceBean.getClass());
 
+        final ArchiveBean archiveBean = productionBean.getArchiveBean();
+        assertNotNull(archiveBean);
+        assertEquals(RemoteArchiveBean.class, archiveBean.getClass());
+
         final EnvironmentBean environmentBean = injector.getBean(EnvironmentBean.class);
         assertNotNull(environmentBean);
         assertEquals(ProductionBean.class, environmentBean.getClass());
@@ -278,6 +322,10 @@ public class ProfileBeanInjectionTest {
         final DataSourceBean dataSourceBean = productionBean.getDataSourceBean();
         assertNotNull(dataSourceBean);
         assertEquals(JndiDataSourceBean.class, dataSourceBean.getClass());
+
+        final ArchiveBean archiveBean = productionBean.getArchiveBean();
+        assertNotNull(archiveBean);
+        assertEquals(RemoteArchiveBean.class, archiveBean.getClass());
 
         final EnvironmentBean environmentBean = injector.getBean(EnvironmentBean.class);
         assertNotNull(environmentBean);
