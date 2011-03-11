@@ -22,6 +22,8 @@
 
 package net.usikkert.kouinject.testbeans.scanned.profile;
 
+import javax.inject.Inject;
+
 import net.usikkert.kouinject.annotation.Component;
 
 /**
@@ -33,4 +35,10 @@ import net.usikkert.kouinject.annotation.Component;
 @Production
 public class ProductionBean implements EnvironmentBean {
 
+    @Inject
+    private DataSourceBean dataSourceBean;
+
+    public DataSourceBean getDataSourceBean() {
+        return dataSourceBean;
+    }
 }

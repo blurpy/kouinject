@@ -54,32 +54,72 @@ public class ProfileBeanInjectionTest {
     private Injector injector;
 
     @Test
-    public void checkAcceptanceBean() {
-        injector = new DefaultInjector(Arrays.asList(ACCEPTANCE.value()), SCANNED);
+    public void checkAcceptanceBeanWithInMemoryProfile() {
+        injector = new DefaultInjector(Arrays.asList(ACCEPTANCE.value(), IN_MEMORY.value()), SCANNED);
 
         final AcceptanceBean acceptanceBean = injector.getBean(AcceptanceBean.class);
         assertNotNull(acceptanceBean);
 
+        final DataSourceBean dataSourceBean = acceptanceBean.getDataSourceBean();
+        assertNotNull(dataSourceBean);
+        assertEquals(InMemoryDataSourceBean.class, dataSourceBean.getClass());
+
         final EnvironmentBean environmentBean = injector.getBean(EnvironmentBean.class);
         assertNotNull(environmentBean);
         assertEquals(AcceptanceBean.class, environmentBean.getClass());
     }
 
     @Test
-    public void checkDevelopmentBean() {
-        injector = new DefaultInjector(Arrays.asList(DEVELOPMENT.value()), SCANNED);
+    public void checkAcceptanceBeanWithJndiProfile() {
+        injector = new DefaultInjector(Arrays.asList(ACCEPTANCE.value(), JNDI.value()), SCANNED);
+
+        final AcceptanceBean acceptanceBean = injector.getBean(AcceptanceBean.class);
+        assertNotNull(acceptanceBean);
+
+        final DataSourceBean dataSourceBean = acceptanceBean.getDataSourceBean();
+        assertNotNull(dataSourceBean);
+        assertEquals(JndiDataSourceBean.class, dataSourceBean.getClass());
+
+        final EnvironmentBean environmentBean = injector.getBean(EnvironmentBean.class);
+        assertNotNull(environmentBean);
+        assertEquals(AcceptanceBean.class, environmentBean.getClass());
+    }
+
+    @Test
+    public void checkDevelopmentBeanWithInMemoryProfile() {
+        injector = new DefaultInjector(Arrays.asList(DEVELOPMENT.value(), IN_MEMORY.value()), SCANNED);
 
         final DevelopmentBean developmentBean = injector.getBean(DevelopmentBean.class);
         assertNotNull(developmentBean);
 
+        final DataSourceBean dataSourceBean = developmentBean.getDataSourceBean();
+        assertNotNull(dataSourceBean);
+        assertEquals(InMemoryDataSourceBean.class, dataSourceBean.getClass());
+
         final EnvironmentBean environmentBean = injector.getBean(EnvironmentBean.class);
         assertNotNull(environmentBean);
         assertEquals(DevelopmentBean.class, environmentBean.getClass());
     }
 
     @Test
-    public void checkEnvironmentUsingBeanWithAcceptanceProfile() {
-        injector = new DefaultInjector(Arrays.asList(ACCEPTANCE.value()), SCANNED);
+    public void checkDevelopmentBeanWithJndiProfile() {
+        injector = new DefaultInjector(Arrays.asList(DEVELOPMENT.value(), JNDI.value()), SCANNED);
+
+        final DevelopmentBean developmentBean = injector.getBean(DevelopmentBean.class);
+        assertNotNull(developmentBean);
+
+        final DataSourceBean dataSourceBean = developmentBean.getDataSourceBean();
+        assertNotNull(dataSourceBean);
+        assertEquals(JndiDataSourceBean.class, dataSourceBean.getClass());
+
+        final EnvironmentBean environmentBean = injector.getBean(EnvironmentBean.class);
+        assertNotNull(environmentBean);
+        assertEquals(DevelopmentBean.class, environmentBean.getClass());
+    }
+
+    @Test
+    public void checkEnvironmentUsingBeanWithAcceptanceAndInMemoryProfile() {
+        injector = new DefaultInjector(Arrays.asList(ACCEPTANCE.value(), IN_MEMORY.value()), SCANNED);
 
         final EnvironmentUsingBean environmentUsingBean = injector.getBean(EnvironmentUsingBean.class);
         assertNotNull(environmentUsingBean);
@@ -87,11 +127,31 @@ public class ProfileBeanInjectionTest {
         final EnvironmentBean environmentBean = environmentUsingBean.getEnvironmentBean();
         assertNotNull(environmentBean);
         assertEquals(AcceptanceBean.class, environmentBean.getClass());
+
+        final DataSourceBean dataSourceBean = environmentBean.getDataSourceBean();
+        assertNotNull(dataSourceBean);
+        assertEquals(InMemoryDataSourceBean.class, dataSourceBean.getClass());
     }
 
     @Test
-    public void checkEnvironmentUsingBeanWithDevelopmentProfile() {
-        injector = new DefaultInjector(Arrays.asList(DEVELOPMENT.value()), SCANNED);
+    public void checkEnvironmentUsingBeanWithAcceptanceAndJndiProfile() {
+        injector = new DefaultInjector(Arrays.asList(ACCEPTANCE.value(), JNDI.value()), SCANNED);
+
+        final EnvironmentUsingBean environmentUsingBean = injector.getBean(EnvironmentUsingBean.class);
+        assertNotNull(environmentUsingBean);
+
+        final EnvironmentBean environmentBean = environmentUsingBean.getEnvironmentBean();
+        assertNotNull(environmentBean);
+        assertEquals(AcceptanceBean.class, environmentBean.getClass());
+
+        final DataSourceBean dataSourceBean = environmentBean.getDataSourceBean();
+        assertNotNull(dataSourceBean);
+        assertEquals(JndiDataSourceBean.class, dataSourceBean.getClass());
+    }
+
+    @Test
+    public void checkEnvironmentUsingBeanWithDevelopmentAndInMemoryProfile() {
+        injector = new DefaultInjector(Arrays.asList(DEVELOPMENT.value(), IN_MEMORY.value()), SCANNED);
 
         final EnvironmentUsingBean environmentUsingBean = injector.getBean(EnvironmentUsingBean.class);
         assertNotNull(environmentUsingBean);
@@ -99,11 +159,31 @@ public class ProfileBeanInjectionTest {
         final EnvironmentBean environmentBean = environmentUsingBean.getEnvironmentBean();
         assertNotNull(environmentBean);
         assertEquals(DevelopmentBean.class, environmentBean.getClass());
+
+        final DataSourceBean dataSourceBean = environmentBean.getDataSourceBean();
+        assertNotNull(dataSourceBean);
+        assertEquals(InMemoryDataSourceBean.class, dataSourceBean.getClass());
     }
 
     @Test
-    public void checkEnvironmentUsingBeanWithProductionProfile() {
-        injector = new DefaultInjector(Arrays.asList(PRODUCTION.value()), SCANNED);
+    public void checkEnvironmentUsingBeanWithDevelopmentAndJndiProfile() {
+        injector = new DefaultInjector(Arrays.asList(DEVELOPMENT.value(), JNDI.value()), SCANNED);
+
+        final EnvironmentUsingBean environmentUsingBean = injector.getBean(EnvironmentUsingBean.class);
+        assertNotNull(environmentUsingBean);
+
+        final EnvironmentBean environmentBean = environmentUsingBean.getEnvironmentBean();
+        assertNotNull(environmentBean);
+        assertEquals(DevelopmentBean.class, environmentBean.getClass());
+
+        final DataSourceBean dataSourceBean = environmentBean.getDataSourceBean();
+        assertNotNull(dataSourceBean);
+        assertEquals(JndiDataSourceBean.class, dataSourceBean.getClass());
+    }
+
+    @Test
+    public void checkEnvironmentUsingBeanWithProductionAndInMemoryProfile() {
+        injector = new DefaultInjector(Arrays.asList(PRODUCTION.value(), IN_MEMORY.value()), SCANNED);
 
         final EnvironmentUsingBean environmentUsingBean = injector.getBean(EnvironmentUsingBean.class);
         assertNotNull(environmentUsingBean);
@@ -111,6 +191,26 @@ public class ProfileBeanInjectionTest {
         final EnvironmentBean environmentBean = environmentUsingBean.getEnvironmentBean();
         assertNotNull(environmentBean);
         assertEquals(ProductionBean.class, environmentBean.getClass());
+
+        final DataSourceBean dataSourceBean = environmentBean.getDataSourceBean();
+        assertNotNull(dataSourceBean);
+        assertEquals(InMemoryDataSourceBean.class, dataSourceBean.getClass());
+    }
+
+    @Test
+    public void checkEnvironmentUsingBeanWithProductionAndJndiProfile() {
+        injector = new DefaultInjector(Arrays.asList(PRODUCTION.value(), JNDI.value()), SCANNED);
+
+        final EnvironmentUsingBean environmentUsingBean = injector.getBean(EnvironmentUsingBean.class);
+        assertNotNull(environmentUsingBean);
+
+        final EnvironmentBean environmentBean = environmentUsingBean.getEnvironmentBean();
+        assertNotNull(environmentBean);
+        assertEquals(ProductionBean.class, environmentBean.getClass());
+
+        final DataSourceBean dataSourceBean = environmentBean.getDataSourceBean();
+        assertNotNull(dataSourceBean);
+        assertEquals(JndiDataSourceBean.class, dataSourceBean.getClass());
     }
 
     @Test
@@ -138,11 +238,31 @@ public class ProfileBeanInjectionTest {
     }
 
     @Test
-    public void checkProductionBean() {
-        injector = new DefaultInjector(Arrays.asList(PRODUCTION.value()), SCANNED);
+    public void checkProductionBeanWithInMemoryProfile() {
+        injector = new DefaultInjector(Arrays.asList(PRODUCTION.value(), IN_MEMORY.value()), SCANNED);
 
         final ProductionBean productionBean = injector.getBean(ProductionBean.class);
         assertNotNull(productionBean);
+
+        final DataSourceBean dataSourceBean = productionBean.getDataSourceBean();
+        assertNotNull(dataSourceBean);
+        assertEquals(InMemoryDataSourceBean.class, dataSourceBean.getClass());
+
+        final EnvironmentBean environmentBean = injector.getBean(EnvironmentBean.class);
+        assertNotNull(environmentBean);
+        assertEquals(ProductionBean.class, environmentBean.getClass());
+    }
+
+    @Test
+    public void checkProductionBeanWithJndiProfile() {
+        injector = new DefaultInjector(Arrays.asList(PRODUCTION.value(), JNDI.value()), SCANNED);
+
+        final ProductionBean productionBean = injector.getBean(ProductionBean.class);
+        assertNotNull(productionBean);
+
+        final DataSourceBean dataSourceBean = productionBean.getDataSourceBean();
+        assertNotNull(dataSourceBean);
+        assertEquals(JndiDataSourceBean.class, dataSourceBean.getClass());
 
         final EnvironmentBean environmentBean = injector.getBean(EnvironmentBean.class);
         assertNotNull(environmentBean);
