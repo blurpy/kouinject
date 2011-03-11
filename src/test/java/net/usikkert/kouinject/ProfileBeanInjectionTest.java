@@ -28,9 +28,12 @@ import static org.junit.Assert.*;
 import java.util.Arrays;
 
 import net.usikkert.kouinject.testbeans.scanned.profile.AcceptanceBean;
+import net.usikkert.kouinject.testbeans.scanned.profile.DataSourceBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.DevelopmentBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.EnvironmentBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.EnvironmentUsingBean;
+import net.usikkert.kouinject.testbeans.scanned.profile.InMemoryDataSourceBean;
+import net.usikkert.kouinject.testbeans.scanned.profile.JndiDataSourceBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.ProductionBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.ProfileABean;
 import net.usikkert.kouinject.testbeans.scanned.profile.ProfileACBean;
@@ -108,6 +111,30 @@ public class ProfileBeanInjectionTest {
         final EnvironmentBean environmentBean = environmentUsingBean.getEnvironmentBean();
         assertNotNull(environmentBean);
         assertEquals(ProductionBean.class, environmentBean.getClass());
+    }
+
+    @Test
+    public void checkInMemoryDataSourceBean() {
+        injector = new DefaultInjector(Arrays.asList(IN_MEMORY.value()), SCANNED);
+
+        final InMemoryDataSourceBean inMemoryDataSourceBean = injector.getBean(InMemoryDataSourceBean.class);
+        assertNotNull(inMemoryDataSourceBean);
+
+        final DataSourceBean dataSourceBean = injector.getBean(DataSourceBean.class);
+        assertNotNull(dataSourceBean);
+        assertEquals(InMemoryDataSourceBean.class, dataSourceBean.getClass());
+    }
+
+    @Test
+    public void checkJndiDataSourceBean() {
+        injector = new DefaultInjector(Arrays.asList(JNDI.value()), SCANNED);
+
+        final JndiDataSourceBean jndiDataSourceBean = injector.getBean(JndiDataSourceBean.class);
+        assertNotNull(jndiDataSourceBean);
+
+        final DataSourceBean dataSourceBean = injector.getBean(DataSourceBean.class);
+        assertNotNull(dataSourceBean);
+        assertEquals(JndiDataSourceBean.class, dataSourceBean.getClass());
     }
 
     @Test

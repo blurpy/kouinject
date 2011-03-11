@@ -34,7 +34,9 @@ public enum Profiles {
     PROFILE_C("ProfileC"),
     PRODUCTION("Production"),
     ACCEPTANCE("Acceptance"),
-    DEVELOPMENT("Development");
+    DEVELOPMENT("Development"),
+    JNDI("Jndi"),
+    IN_MEMORY("InMemory");
 
     private final String name;
 

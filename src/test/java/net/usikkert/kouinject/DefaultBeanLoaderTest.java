@@ -506,7 +506,7 @@ public class DefaultBeanLoaderTest {
     public void getBeansWithObjectAndAnyQualifierShouldReturnBeansWithActiveProfiles() {
         final DefaultBeanLoader loader = createBeanLoaderWithBasePackagesAndProfiles(
                 Arrays.asList("net.usikkert.kouinject.testbeans.scanned"),
-                Arrays.asList(PROFILE_A.value(), PROFILE_B.value(), PROFILE_C.value(), DEVELOPMENT.value()));
+                Arrays.asList(PROFILE_A.value(), PROFILE_B.value(), PROFILE_C.value(), DEVELOPMENT.value(), JNDI.value()));
 
         final Collection<Object> beans = loader.getBeans(Object.class, "any");
 
