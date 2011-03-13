@@ -29,6 +29,8 @@ import java.util.List;
 import javax.inject.Named;
 import javax.inject.Qualifier;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * Class for finding the qualifier of a class/field/parameter.
  *
@@ -80,7 +82,7 @@ public class AnnotationBasedQualifierHandler {
             final Named named = (Named) annotation;
             final String value = named.value();
 
-            if (valueIsEmpty(value)) {
+            if (StringUtils.isBlank(value)) {
                 throw new UnsupportedOperationException(
                         "Named qualifier annotation used without a value on " + owner);
             }
@@ -91,9 +93,5 @@ public class AnnotationBasedQualifierHandler {
         else {
             return annotation.annotationType().getSimpleName();
         }
-    }
-
-    private boolean valueIsEmpty(final String value) {
-        return value == null || value.trim().length() == 0;
     }
 }

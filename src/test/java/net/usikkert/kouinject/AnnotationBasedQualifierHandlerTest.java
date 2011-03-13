@@ -22,7 +22,7 @@
 
 package net.usikkert.kouinject;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -56,6 +56,9 @@ public class AnnotationBasedQualifierHandlerTest {
 
     @Named
     public final Object anonymous = new Object();
+
+    @Named(" ")
+    public final Object empty = new Object();
 
     private AnnotationBasedQualifierHandler qualifierHandler;
 
@@ -105,6 +108,14 @@ public class AnnotationBasedQualifierHandlerTest {
     @Test(expected = UnsupportedOperationException.class)
     public void getQualifierShouldThrowExceptionWithNamedQualifierWithoutValue() throws Exception {
         final Field anonymousField = getClass().getField("anonymous");
+        final Annotation[] anonymousAnnotations = anonymousField.getAnnotations();
+
+        qualifierHandler.getQualifier(anonymousField, anonymousAnnotations);
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void getQualifierShouldThrowExceptionWithNamedQualifierWithEmptyValue() throws Exception {
+        final Field anonymousField = getClass().getField("empty");
         final Annotation[] anonymousAnnotations = anonymousField.getAnnotations();
 
         qualifierHandler.getQualifier(anonymousField, anonymousAnnotations);
