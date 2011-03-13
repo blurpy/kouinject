@@ -187,7 +187,6 @@ public class DefaultBeanLoader implements BeanLoader {
     private boolean beanCanBeCreated(final BeanKey dependency) {
         final boolean isStandaloneBean = beanDataMap.containsBeanData(dependency);
         final boolean isFactoryCreatedBean = factoryPointMap.containsFactoryPoint(dependency);
-        final boolean isFactoryContext = dependency.getBeanClass().equals(FactoryContext.class);
 
         if (isStandaloneBean && isFactoryCreatedBean) {
             throw new IllegalStateException("Requested bean is both a standalone bean and a factory created bean: " + dependency
@@ -195,7 +194,7 @@ public class DefaultBeanLoader implements BeanLoader {
                     + "\n factory: " + factoryPointMap.getFactoryPoint(dependency));
         }
 
-        return isStandaloneBean || isFactoryCreatedBean || isFactoryContext;
+        return isStandaloneBean || isFactoryCreatedBean;
     }
 
     private Object findOrCreateBean(final BeanKey dependency) {
