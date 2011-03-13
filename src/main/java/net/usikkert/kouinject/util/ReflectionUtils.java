@@ -165,7 +165,7 @@ public class ReflectionUtils {
             return false;
         }
 
-        if (isDefault(method)) {
+        if (isPackagePrivate(method)) {
             return isInTheSamePackage(method, candidate);
         }
 
@@ -277,12 +277,10 @@ public class ReflectionUtils {
     /**
      * Checks if the member is package private. Also called the default modifier, as no modifiers are present.
      *
-     * TODO rename to isPackagePrivate
-     *
      * @param member The member to check.
      * @return If the member is package private.
      */
-    public boolean isDefault(final Member member) {
+    public boolean isPackagePrivate(final Member member) {
         return !isPublic(member) && !isProtected(member) && !isPrivate(member);
     }
 

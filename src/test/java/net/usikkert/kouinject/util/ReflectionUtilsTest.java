@@ -332,25 +332,25 @@ public class ReflectionUtilsTest {
     public void methodModifiers() throws Exception {
         final Method publicMethod = OverridingChildBean.class.getDeclaredMethod("publicMethod");
         assertTrue(reflectionUtils.isPublic(publicMethod));
-        assertFalse(reflectionUtils.isDefault(publicMethod));
+        assertFalse(reflectionUtils.isPackagePrivate(publicMethod));
         assertFalse(reflectionUtils.isPrivate(publicMethod));
         assertFalse(reflectionUtils.isProtected(publicMethod));
 
         final Method protectedMethod = OverridingChildBean.class.getDeclaredMethod("protectedMethod");
         assertTrue(reflectionUtils.isProtected(protectedMethod));
         assertFalse(reflectionUtils.isPublic(protectedMethod));
-        assertFalse(reflectionUtils.isDefault(protectedMethod));
+        assertFalse(reflectionUtils.isPackagePrivate(protectedMethod));
         assertFalse(reflectionUtils.isPrivate(protectedMethod));
 
         final Method defaultMethod = OverridingChildBean.class.getDeclaredMethod("defaultMethod");
-        assertTrue(reflectionUtils.isDefault(defaultMethod));
+        assertTrue(reflectionUtils.isPackagePrivate(defaultMethod));
         assertFalse(reflectionUtils.isProtected(defaultMethod));
         assertFalse(reflectionUtils.isPublic(defaultMethod));
         assertFalse(reflectionUtils.isPrivate(defaultMethod));
 
         final Method privateMethod = OverridingSuperBean.class.getDeclaredMethod("privateMethod");
         assertTrue(reflectionUtils.isPrivate(privateMethod));
-        assertFalse(reflectionUtils.isDefault(privateMethod));
+        assertFalse(reflectionUtils.isPackagePrivate(privateMethod));
         assertFalse(reflectionUtils.isProtected(privateMethod));
         assertFalse(reflectionUtils.isPublic(privateMethod));
 
@@ -375,7 +375,7 @@ public class ReflectionUtilsTest {
         assertTrue(reflectionUtils.isProtected(protectedField));
 
         final Field defaultField = FieldModifierBean.class.getDeclaredField("defaultField");
-        assertTrue(reflectionUtils.isDefault(defaultField));
+        assertTrue(reflectionUtils.isPackagePrivate(defaultField));
 
         final Field privateField = FieldModifierBean.class.getDeclaredField("privateField");
         assertTrue(reflectionUtils.isPrivate(privateField));
