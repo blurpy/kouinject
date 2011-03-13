@@ -32,7 +32,7 @@ import java.util.Collection;
 public interface ProfileLocator {
 
     /**
-     * Gets a collection of all the currently active profiles in the injector,
+     * Gets a collection of all the currently active profiles in the injector.
      *
      * @return All active profiles.
      */
