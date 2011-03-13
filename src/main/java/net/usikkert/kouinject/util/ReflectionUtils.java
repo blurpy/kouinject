@@ -37,6 +37,15 @@ import java.util.List;
  */
 public class ReflectionUtils {
 
+    /**
+     * Gets all the methods from a class and its superclasses.
+     *
+     * <p>The methods are sorted from superclass to subclass, with methods in the superclass first,
+     * then methods in subclasses.</p>
+     *
+     * @param clazz The class to find the methods in.
+     * @return List with all the methods found.
+     */
     public List<Method> findAllMethods(final Class<?> clazz) {
         final List<Method> methods = new ArrayList<Method>();
 
@@ -83,6 +92,14 @@ public class ReflectionUtils {
         return members;
     }
 
+    /**
+     * Checks if the method is overridden by any of the methods in the list of candidates.
+     *
+     * @param method The method that may be overridden.
+     * @param candidates A list of methods that may override the first method.
+     *                  These methods should be from the same class as the first method, including inherited methods.
+     * @return If the method is overridden by any of the candidates.
+     */
     public boolean isOverridden(final Method method, final List<Method> candidates) {
         for (final Method candidate : candidates) {
             if (isOverridden(method, candidate)) {
@@ -132,6 +149,16 @@ public class ReflectionUtils {
         return true;
     }
 
+    /**
+     * Checks if the method can be overridden by the candidate based on the modifiers of the methods.
+     *
+     * <p>Private, static or final methods can not be overridden. Package private (default) methods can be
+     * overridden only if both methods are from classes in the same package.</p>
+     *
+     * @param method The method that may be overridden.
+     * @param candidate The method that may override the first method.
+     * @return If the candidate could override the first method, based on the modifiers of the methods.
+     */
     public boolean hasOverridableAccessModifiers(final Method method, final Method candidate) {
         if (isFinal(method) || isPrivate(method) || isStatic(method)
                 || isPrivate(candidate) || isStatic(candidate)) {
@@ -145,22 +172,44 @@ public class ReflectionUtils {
         return true;
     }
 
-    public boolean isSubClassOf(final Class<?> subclass, final Class<?> superclass) {
-        if (subclass.getSuperclass() != null) {
-            if (subclass.getSuperclass().equals(superclass)) {
+    /**
+     * Checks if the potentialSubclass is one of the subclasses of the potentialSuperclass.
+     *
+     * @param potentialSubclass The class that will be checked to find out if it's a subclass of the potentialSuperclass.
+     * @param potentialSuperclass The class that the potentialSubclass will be checked against.
+     * @return If potentialSubclass is a subclass of potentialSuperclass.
+     */
+    public boolean isSubClassOf(final Class<?> potentialSubclass, final Class<?> potentialSuperclass) {
+        if (potentialSubclass.getSuperclass() != null) {
+            if (potentialSubclass.getSuperclass().equals(potentialSuperclass)) {
                 return true;
             }
 
-            return isSubClassOf(subclass.getSuperclass(), superclass);
+            return isSubClassOf(potentialSubclass.getSuperclass(), potentialSuperclass);
         }
 
         return false;
     }
 
+    /**
+     * Checks if the method has the same name as the candidate.
+     *
+     * @param method First method to compare the name of.
+     * @param candidate Second method to compare the name of.
+     * @return If both methods have the same name.
+     */
     public boolean hasTheSameName(final Method method, final Method candidate) {
         return method.getName().equals(candidate.getName());
     }
 
+    /**
+     * Checks if the method has the same number of parameters, the same order of parameters,
+     * and the exact same type of parameters as the candidate.
+     *
+     * @param method First method to compare the parameters of.
+     * @param candidate Second method to compare the parameters of.
+     * @return If both methods have the same parameters.
+     */
     public boolean hasTheSameParameters(final Method method, final Method candidate) {
         final Class<?>[] methodParameters = method.getParameterTypes();
         final Class<?>[] candidateParameters = candidate.getParameterTypes();
@@ -181,6 +230,13 @@ public class ReflectionUtils {
         return true;
     }
 
+    /**
+     * Checks if the method is an a class in the same package as the class of the candidate.
+     *
+     * @param method The first method to compare the package of.
+     * @param candidate The second method to compare the package of.
+     * @return If both methods are from classes in the same package.
+     */
     public boolean isInTheSamePackage(final Method method, final Method candidate) {
         final Package methodPackage = method.getDeclaringClass().getPackage();
         final Package candidatePackage = candidate.getDeclaringClass().getPackage();
@@ -188,34 +244,94 @@ public class ReflectionUtils {
         return methodPackage.equals(candidatePackage);
     }
 
+    /**
+     * Checks if the member is static.
+     *
+     * @param member The member to check.
+     * @return If the member is static.
+     */
     public boolean isStatic(final Member member) {
         return Modifier.isStatic(member.getModifiers());
     }
 
+    /**
+     * Checks if the member is final.
+     *
+     * @param member The member to check.
+     * @return If the member is final.
+     */
     public boolean isFinal(final Member member) {
         return Modifier.isFinal(member.getModifiers());
     }
 
+    /**
+     * Checks if the member is private.
+     *
+     * @param member The member to check.
+     * @return If the member is private.
+     */
     public boolean isPrivate(final Member member) {
         return Modifier.isPrivate(member.getModifiers());
     }
 
+    /**
+     * Checks if the member is package private. Also called the default modifier, as no modifiers are present.
+     *
+     * TODO rename to isPackagePrivate
+     *
+     * @param member The member to check.
+     * @return If the member is package private.
+     */
     public boolean isDefault(final Member member) {
         return !isPublic(member) && !isProtected(member) && !isPrivate(member);
     }
 
+    /**
+     * Checks if the member is protected.
+     *
+     * @param member The member to check.
+     * @return If the member is protected.
+     */
     public boolean isProtected(final Member member) {
         return Modifier.isProtected(member.getModifiers());
     }
 
+    /**
+     * Checks if the member is public.
+     *
+     * @param member The member to check.
+     * @return If the member is public.
+     */
     public boolean isPublic(final Member member) {
         return Modifier.isPublic(member.getModifiers());
     }
 
+    /**
+     * Checks if the class is abstract.
+     *
+     * @param clazz The class to check.
+     * @return If the class is abstract.
+     */
     public boolean isAbstract(final Class<?> clazz) {
         return Modifier.isAbstract(clazz.getModifiers());
     }
 
+    /**
+     * Checks if the class is a normal class.
+     *
+     * <p>A normal class is not:</p>
+     * <ul>
+     *   <li>An enum or annotation.</li>
+     *   <li>An interface or abstract class.</li>
+     *   <li>An anonymous or inner class.</li>
+     *   <li>A class generated by the compiler (synthetic).</li>
+     * </ul>
+     *
+     * TODO reorder synthetic
+     *
+     * @param clazz The class to check.
+     * @return If the class is normal.
+     */
     public boolean isNormalClass(final Class<?> clazz) {
         return !clazz.isAnonymousClass() && !clazz.isMemberClass() && !clazz.isSynthetic()
         && !clazz.isAnnotation() && !clazz.isEnum() && !clazz.isInterface() && !isAbstract(clazz);
