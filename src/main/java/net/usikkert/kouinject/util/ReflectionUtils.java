@@ -38,12 +38,16 @@ import java.util.List;
 public class ReflectionUtils {
 
     public List<Method> findAllMethods(final Class<?> clazz) {
-        final Method[] declaredMethods = clazz.getDeclaredMethods();
         final List<Method> methods = new ArrayList<Method>();
 
+        if (clazz.equals(Object.class)) {
+            return methods;
+        }
+
+        final Method[] declaredMethods = clazz.getDeclaredMethods();
         methods.addAll(Arrays.asList(declaredMethods));
 
-        if (clazz.getSuperclass() != null && !clazz.getSuperclass().equals(Object.class)) {
+        if (!clazz.getSuperclass().equals(Object.class)) {
             methods.addAll(findAllMethods(clazz.getSuperclass()));
         }
 
@@ -62,13 +66,17 @@ public class ReflectionUtils {
     public List<Member> findAllMembers(final Class<?> clazz) {
         final List<Member> members = new ArrayList<Member>();
 
+        if (clazz.equals(Object.class)) {
+            return members;
+        }
+
         final Field[] declaredFields = clazz.getDeclaredFields();
         members.addAll(Arrays.asList(declaredFields));
 
         final Method[] declaredMethods = clazz.getDeclaredMethods();
         members.addAll(Arrays.asList(declaredMethods));
 
-        if (clazz.getSuperclass() != null && !clazz.getSuperclass().equals(Object.class)) {
+        if (!clazz.getSuperclass().equals(Object.class)) {
             members.addAll(0, findAllMembers(clazz.getSuperclass()));
         }
 

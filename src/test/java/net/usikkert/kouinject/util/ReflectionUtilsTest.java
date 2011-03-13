@@ -32,13 +32,14 @@ import java.util.List;
 import net.usikkert.kouinject.testbeans.notscanned.SomeEnum;
 import net.usikkert.kouinject.testbeans.notscanned.notloaded.FieldModifierBean;
 import net.usikkert.kouinject.testbeans.scanned.GarageBean;
+import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.ChildBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.MiddleBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.SuperBean;
-import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding.OverridingFirstAbstractBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding.OverridingChildBean;
+import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding.OverridingFirstAbstractBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding.OverridingInterface;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding.OverridingSecondAbstractBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding.OverridingSuperBean;
@@ -72,6 +73,9 @@ public class ReflectionUtilsTest {
         assertEquals(5, reflectionUtils.findAllMethods(OverridingSecondAbstractBean.class).size());
         assertEquals(13, reflectionUtils.findAllMethods(OverridingSuperBean.class).size());
         assertEquals(22, reflectionUtils.findAllMethods(OverridingChildBean.class).size());
+
+        assertEquals(0, reflectionUtils.findAllMethods(HelloBean.class).size());
+        assertEquals(0, reflectionUtils.findAllMethods(Object.class).size());
     }
 
     @Test
@@ -80,6 +84,9 @@ public class ReflectionUtilsTest {
         assertEquals(48, reflectionUtils.findAllMembers(AnimalBean.class).size());
         assertEquals(72, reflectionUtils.findAllMembers(PetBean.class).size());
         assertEquals(96, reflectionUtils.findAllMembers(CatBean.class).size());
+
+        assertEquals(0, reflectionUtils.findAllMembers(HelloBean.class).size());
+        assertEquals(0, reflectionUtils.findAllMembers(Object.class).size());
     }
 
     @Test
@@ -325,15 +332,27 @@ public class ReflectionUtilsTest {
     public void methodModifiers() throws Exception {
         final Method publicMethod = OverridingChildBean.class.getDeclaredMethod("publicMethod");
         assertTrue(reflectionUtils.isPublic(publicMethod));
+        assertFalse(reflectionUtils.isDefault(publicMethod));
+        assertFalse(reflectionUtils.isPrivate(publicMethod));
+        assertFalse(reflectionUtils.isProtected(publicMethod));
 
         final Method protectedMethod = OverridingChildBean.class.getDeclaredMethod("protectedMethod");
         assertTrue(reflectionUtils.isProtected(protectedMethod));
+        assertFalse(reflectionUtils.isPublic(protectedMethod));
+        assertFalse(reflectionUtils.isDefault(protectedMethod));
+        assertFalse(reflectionUtils.isPrivate(protectedMethod));
 
         final Method defaultMethod = OverridingChildBean.class.getDeclaredMethod("defaultMethod");
         assertTrue(reflectionUtils.isDefault(defaultMethod));
+        assertFalse(reflectionUtils.isProtected(defaultMethod));
+        assertFalse(reflectionUtils.isPublic(defaultMethod));
+        assertFalse(reflectionUtils.isPrivate(defaultMethod));
 
         final Method privateMethod = OverridingSuperBean.class.getDeclaredMethod("privateMethod");
         assertTrue(reflectionUtils.isPrivate(privateMethod));
+        assertFalse(reflectionUtils.isDefault(privateMethod));
+        assertFalse(reflectionUtils.isProtected(privateMethod));
+        assertFalse(reflectionUtils.isPublic(privateMethod));
 
         final Method finalMethod = OverridingChildBean.class.getDeclaredMethod("finalMethod");
         assertTrue(reflectionUtils.isFinal(finalMethod));
@@ -441,18 +460,25 @@ public class ReflectionUtilsTest {
     }
 
     @Test
-    public void isNormalClass() {
+    public void isNormalClass() throws ClassNotFoundException {
         assertTrue(reflectionUtils.isNormalClass(OverridingChildBean.class));
         assertFalse(reflectionUtils.isNormalClass(OverridingInterface.class));
         assertFalse(reflectionUtils.isNormalClass(OverridingFirstAbstractBean.class));
         assertFalse(reflectionUtils.isNormalClass(Yellow.class));
         assertFalse(reflectionUtils.isNormalClass(SomeEnum.class));
         assertFalse(reflectionUtils.isNormalClass(MemberClass.class));
+
+        final Object anonymousObject = new Object() {};
+        assertFalse(reflectionUtils.isNormalClass(anonymousObject.getClass()));
+        assertTrue(reflectionUtils.isNormalClass(Object.class));
+
+        // Note: don't know how to test synthetic classes
     }
 
     /**
      * Class for testing detection of member classes.
      */
     private class MemberClass {
+
     }
 }
