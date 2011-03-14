@@ -208,14 +208,6 @@ public class DefaultBeanLoader implements BeanLoader {
         return createBean(dependency);
     }
 
-    /**
-     * Adds a new singleton to the container, with the given qualifier.
-     *
-     * <p>The bean must be ready to use, and will be available for dependency injection in other beans.</p>
-     *
-     * @param beanToAdd The fully instantiated and ready to use bean to add to the container.
-     * @param qualifier The qualifier for this bean. May be <code>null</code>.
-     */
     private void addSingleton(final Object beanToAdd, final String qualifier) {
         Validate.notNull(beanToAdd, "Bean can not be null");
 
