@@ -2,6 +2,13 @@
 - KouInject CHANGES
 
 
+* Version 1.2 (xx.xx.2011):
+ - Added @Profile for defining profile annotations for beans
+ - Added new constructor in DefaultInjector for setting active profiles
+ - Fixed issue where adding several beans in an inheritance hierarchy would fail randomly based on the order they were loaded
+ - Improved support for working with a SecurityManager
+
+
 * Version 1.1 (01.03.2011):
  - Updated copyright to include 2011
  - Updated to Commons Lang 2.6
