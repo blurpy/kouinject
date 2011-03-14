@@ -23,6 +23,8 @@
 package net.usikkert.kouinject.beandata;
 
 import java.lang.reflect.Field;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Arrays;
 import java.util.List;
 
@@ -97,7 +99,7 @@ public class FieldData implements InjectionPoint {
         Validate.isTrue(parameters.length == 1, "Can only inject 1 parameter into a field");
 
         final boolean originalAccessible = field.isAccessible();
-        field.setAccessible(true);
+        setAccessible(true);
 
         try {
             final Object value = parameters[0];
@@ -109,8 +111,19 @@ public class FieldData implements InjectionPoint {
         }
 
         finally {
-            field.setAccessible(originalAccessible);
+            setAccessible(originalAccessible);
         }
+    }
+
+    private void setAccessible(final boolean accessible) {
+        AccessController.doPrivileged(new PrivilegedAction<Object>() {
+            @Override
+            public Object run() {
+                // Requires java.lang.reflect.ReflectPermission "suppressAccessChecks"
+                field.setAccessible(accessible);
+                return null;
+            }
+        });
     }
 
     @Override

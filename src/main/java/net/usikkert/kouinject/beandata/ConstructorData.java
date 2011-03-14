@@ -24,6 +24,8 @@ package net.usikkert.kouinject.beandata;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
@@ -82,7 +84,7 @@ public class ConstructorData {
         Validate.notNull(parameters, "Parameters can not be null");
 
         final boolean originalAccessible = constructor.isAccessible();
-        constructor.setAccessible(true);
+        setAccessible(true);
 
         try {
             return constructor.newInstance(parameters);
@@ -101,8 +103,19 @@ public class ConstructorData {
         }
 
         finally {
-            constructor.setAccessible(originalAccessible);
+            setAccessible(originalAccessible);
         }
+    }
+
+    private void setAccessible(final boolean accessible) {
+        AccessController.doPrivileged(new PrivilegedAction<Object>() {
+            @Override
+            public Object run() {
+                // Requires java.lang.reflect.ReflectPermission "suppressAccessChecks"
+                constructor.setAccessible(accessible);
+                return null;
+            }
+        });
     }
 
     @Override

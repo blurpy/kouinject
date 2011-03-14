@@ -1,0 +1,27 @@
+
+// Allows tests to unset the security manager when done
+grant codebase "file:${user.dir}/target/test-classes/" {
+  permission java.lang.RuntimePermission "setSecurityManager";
+};
+
+// KouInject
+grant codebase "file:${user.dir}/target/classes/" {
+
+  // ClassPathScanner
+  permission java.io.FilePermission "${user.dir}/target/test-classes/-", "read";
+
+  // Field/method/constructor setAccessible()
+  permission java.lang.reflect.ReflectPermission "suppressAccessChecks";
+
+};
+
+// KouInject - same as above, but modified for running with "mvn site"
+grant codebase "file:${user.dir}/target/generated-classes/cobertura/" {
+
+  // ClassPathScanner
+  permission java.io.FilePermission "${user.dir}/target/test-classes/-", "read";
+
+  // Field/method/constructor setAccessible()
+  permission java.lang.reflect.ReflectPermission "suppressAccessChecks";
+
+};

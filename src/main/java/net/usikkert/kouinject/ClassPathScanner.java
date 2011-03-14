@@ -26,6 +26,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
@@ -99,25 +101,40 @@ public class ClassPathScanner implements ClassLocator {
             final Enumeration<URL> resources = loader.getResources(path);
 
             if (resources != null) {
-                while (resources.hasMoreElements()) {
-                    final String filePath = getFilePath(resources.nextElement());
-
-                    if (filePath != null) {
-                        if (isJarFilePath(filePath)) {
-                            final String jarPath = getJarPath(filePath);
-                            classes.addAll(getFromJARFile(jarPath, path));
+                AccessController.doPrivileged(new PrivilegedAction<Object>() {
+                    @Override
+                    public Object run() {
+                        // hasMoreElements requires java.io.FilePermission "read" to find anything
+                        while (resources.hasMoreElements()) {
+                            classes.addAll(getClassesFromResource(basePackage, path, resources));
                         }
 
-                        else {
-                            classes.addAll(getFromDirectory(new File(filePath), basePackage));
-                        }
+                        return null;
                     }
-                }
+                });
             }
         }
 
         catch (final IOException e) {
             throw new RuntimeException(e);
+        }
+
+        return classes;
+    }
+
+    private Set<Class<?>> getClassesFromResource(final String basePackage, final String path, final Enumeration<URL> resources) {
+        final Set<Class<?>> classes = new HashSet<Class<?>>();
+        final String filePath = getFilePath(resources.nextElement());
+
+        if (filePath != null) {
+            if (isJarFilePath(filePath)) {
+                final String jarPath = getJarPath(filePath);
+                classes.addAll(getFromJARFile(jarPath, path));
+            }
+
+            else {
+                classes.addAll(getFromDirectory(new File(filePath), basePackage));
+            }
         }
 
         return classes;

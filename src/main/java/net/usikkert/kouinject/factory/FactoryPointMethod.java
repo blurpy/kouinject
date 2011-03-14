@@ -24,6 +24,8 @@ package net.usikkert.kouinject.factory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Collections;
 import java.util.List;
 
@@ -89,7 +91,7 @@ public class FactoryPointMethod<T> implements FactoryPoint<T> {
         }
 
         final boolean originalAccessible = method.isAccessible();
-        method.setAccessible(true);
+        setAccessible(true);
 
         try {
             final T returnValue = (T) method.invoke(factoryInstance, factoryPointParameters);
@@ -110,8 +112,19 @@ public class FactoryPointMethod<T> implements FactoryPoint<T> {
         }
 
         finally {
-            method.setAccessible(originalAccessible);
+            setAccessible(originalAccessible);
         }
+    }
+
+    private void setAccessible(final boolean accessible) {
+        AccessController.doPrivileged(new PrivilegedAction<Object>() {
+            @Override
+            public Object run() {
+                // Requires java.lang.reflect.ReflectPermission "suppressAccessChecks"
+                method.setAccessible(accessible);
+                return null;
+            }
+        });
     }
 
     /**
