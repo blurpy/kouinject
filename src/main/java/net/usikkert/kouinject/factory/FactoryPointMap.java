@@ -59,7 +59,7 @@ public class FactoryPointMap {
 
         final BeanKey returnType = factoryPoint.getReturnType();
 
-        if (containsFactoryPoint(returnType)) {
+        if (factoryPointMap.containsKey(returnType)) {
             throw new IllegalArgumentException("Cannot add already existing factory point: " + factoryPoint);
         }
 

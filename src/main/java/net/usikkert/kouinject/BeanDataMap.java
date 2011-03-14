@@ -59,7 +59,7 @@ public class BeanDataMap {
 
         final BeanKey description = beanData.getBeanKey();
 
-        if (containsBeanData(description)) {
+        if (beanDataMap.containsKey(description)) {
             throw new IllegalArgumentException("Cannot add already existing bean-data: " + description);
         }
 

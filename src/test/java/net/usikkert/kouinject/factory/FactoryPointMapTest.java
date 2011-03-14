@@ -34,6 +34,8 @@ import net.usikkert.kouinject.testbeans.scanned.CarBean;
 import net.usikkert.kouinject.testbeans.scanned.FieldBean;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.SetterBean;
+import net.usikkert.kouinject.testbeans.scanned.profile.LocalArchiveBean;
+import net.usikkert.kouinject.testbeans.scanned.profile.RemoteArchiveBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.GreenBean;
 
 import org.junit.Before;
@@ -84,6 +86,26 @@ public class FactoryPointMapTest {
 
         map.addFactoryPoint(createFactoryPoint(HelloBean.class));
         assertEquals(3, map.size());
+    }
+
+    @Test
+    public void addFactoryPointShouldHandleAddingForBeansWithInheritanceRegardlessOfOrder1() {
+        assertEquals(0, map.size());
+
+        map.addFactoryPoint(createFactoryPoint(LocalArchiveBean.class));
+        map.addFactoryPoint(createFactoryPoint(RemoteArchiveBean.class));
+
+        assertEquals(2, map.size());
+    }
+
+    @Test
+    public void addFactoryPointShouldHandleAddingForBeansWithInheritanceRegardlessOfOrder2() {
+        assertEquals(0, map.size());
+
+        map.addFactoryPoint(createFactoryPoint(RemoteArchiveBean.class));
+        map.addFactoryPoint(createFactoryPoint(LocalArchiveBean.class));
+
+        assertEquals(2, map.size());
     }
 
     @Test
@@ -141,6 +163,27 @@ public class FactoryPointMapTest {
         addTestFactoryPoints();
 
         map.getFactoryPoint(new BeanKey(Object.class));
+    }
+
+    @Test
+    public void getFactoryPointShouldHandleGettingSubclassWhenSuperclassAlsoAvailable() {
+        map.addFactoryPoint(createFactoryPoint(LocalArchiveBean.class));
+        map.addFactoryPoint(createFactoryPoint(RemoteArchiveBean.class));
+
+        final BeanKey beanKey = new BeanKey(RemoteArchiveBean.class);
+        final FactoryPoint factoryPoint = map.getFactoryPoint(beanKey);
+
+        assertNotNull(factoryPoint);
+        assertTrue(factoryPoint.getReturnType().equals(beanKey));
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void getFactoryPointShouldFailToGetSuperclassWhenSubclassAlsoAvailable() {
+        map.addFactoryPoint(createFactoryPoint(LocalArchiveBean.class));
+        map.addFactoryPoint(createFactoryPoint(RemoteArchiveBean.class));
+
+        final BeanKey beanKey = new BeanKey(LocalArchiveBean.class);
+        map.getFactoryPoint(beanKey);
     }
 
     @Test

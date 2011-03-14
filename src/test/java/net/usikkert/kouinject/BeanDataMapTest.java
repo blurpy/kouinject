@@ -34,6 +34,8 @@ import net.usikkert.kouinject.testbeans.scanned.CarBean;
 import net.usikkert.kouinject.testbeans.scanned.FieldBean;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.SetterBean;
+import net.usikkert.kouinject.testbeans.scanned.profile.LocalArchiveBean;
+import net.usikkert.kouinject.testbeans.scanned.profile.RemoteArchiveBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.GreenBean;
 
 import org.junit.Before;
@@ -87,6 +89,26 @@ public class BeanDataMapTest {
     }
 
     @Test
+    public void addBeanDataShouldHandleAddingDataForBeansWithInheritanceRegardlessOfOrder1() {
+        assertEquals(0, map.size());
+
+        map.addBeanData(createBeanData(LocalArchiveBean.class));
+        map.addBeanData(createBeanData(RemoteArchiveBean.class));
+
+        assertEquals(2, map.size());
+    }
+
+    @Test
+    public void addBeanDataShouldHandleAddingDataForBeansWithInheritanceRegardlessOfOrder2() {
+        assertEquals(0, map.size());
+
+        map.addBeanData(createBeanData(RemoteArchiveBean.class));
+        map.addBeanData(createBeanData(LocalArchiveBean.class));
+
+        assertEquals(2, map.size());
+    }
+
+    @Test
     public void getBeanDataShouldFindTheCorrectBeanData() {
         addTestBeans();
 
@@ -123,6 +145,27 @@ public class BeanDataMapTest {
         addTestBeans();
 
         map.getBeanData(new BeanKey(Object.class));
+    }
+
+    @Test
+    public void getBeanDataShouldHandleGettingSubclassWhenSuperclassAlsoAvailable() {
+        map.addBeanData(createBeanData(LocalArchiveBean.class));
+        map.addBeanData(createBeanData(RemoteArchiveBean.class));
+
+        final BeanKey beanKey = new BeanKey(RemoteArchiveBean.class);
+        final BeanData beanData = map.getBeanData(beanKey);
+
+        assertNotNull(beanData);
+        assertTrue(beanData.getBeanKey().equals(beanKey));
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void getBeanDataShouldFailToGetSuperclassWhenSubclassAlsoAvailable() {
+        map.addBeanData(createBeanData(LocalArchiveBean.class));
+        map.addBeanData(createBeanData(RemoteArchiveBean.class));
+
+        final BeanKey beanKey = new BeanKey(LocalArchiveBean.class);
+        map.getBeanData(beanKey);
     }
 
     @Test
