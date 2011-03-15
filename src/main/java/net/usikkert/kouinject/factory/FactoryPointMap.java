@@ -40,13 +40,13 @@ import org.apache.commons.lang.Validate;
 public class FactoryPointMap {
 
     /** Map with the factory point as value, and the bean it creates as key. */
-    private final Map<BeanKey, FactoryPoint> factoryPointMap;
+    private final Map<BeanKey, FactoryPoint<?>> factoryPointMap;
 
     /**
      * Creates a new instance of this factory point map, ready to use.
      */
     public FactoryPointMap() {
-        this.factoryPointMap = new HashMap<BeanKey, FactoryPoint>();
+        this.factoryPointMap = new HashMap<BeanKey, FactoryPoint<?>>();
     }
 
     /**
@@ -54,7 +54,7 @@ public class FactoryPointMap {
      *
      * @param factoryPoint The factory point to add.
      */
-    public synchronized void addFactoryPoint(final FactoryPoint factoryPoint) {
+    public synchronized void addFactoryPoint(final FactoryPoint<?> factoryPoint) {
         Validate.notNull(factoryPoint, "FactoryPoint can not be null");
 
         final BeanKey returnType = factoryPoint.getReturnType();
@@ -71,10 +71,10 @@ public class FactoryPointMap {
      *
      * @param factoryPoints The factory points to add.
      */
-    public synchronized void addFactoryPoints(final List<FactoryPoint> factoryPoints) {
+    public synchronized void addFactoryPoints(final List<FactoryPoint<?>> factoryPoints) {
         Validate.notNull(factoryPoints, "FactoryPoints can not be null");
 
-        for (final FactoryPoint factoryPoint : factoryPoints) {
+        for (final FactoryPoint<?> factoryPoint : factoryPoints) {
             addFactoryPoint(factoryPoint);
         }
     }
@@ -85,11 +85,11 @@ public class FactoryPointMap {
      * @param beanNeeded The type of bean to get a factory point for.
      * @return The factory point for that bean, or {@link IllegalArgumentException} if not found.
      */
-    public synchronized FactoryPoint getFactoryPoint(final BeanKey beanNeeded) {
+    public synchronized FactoryPoint<?> getFactoryPoint(final BeanKey beanNeeded) {
         return getFactoryPoint(beanNeeded, true);
     }
 
-    private FactoryPoint getFactoryPoint(final BeanKey beanNeeded, final boolean throwEx) {
+    private FactoryPoint<?> getFactoryPoint(final BeanKey beanNeeded, final boolean throwEx) {
         Validate.notNull(beanNeeded, "Bean needed can not be null");
 
         final List<BeanKey> matches = new ArrayList<BeanKey>();
@@ -133,7 +133,7 @@ public class FactoryPointMap {
      * @return If the factory point exists in the map.
      */
     public synchronized boolean containsFactoryPoint(final BeanKey beanNeeded) {
-        final FactoryPoint factoryPoint = getFactoryPoint(beanNeeded, false);
+        final FactoryPoint<?> factoryPoint = getFactoryPoint(beanNeeded, false);
         return factoryPoint != null;
     }
 

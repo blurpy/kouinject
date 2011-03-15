@@ -78,7 +78,7 @@ public class AnnotationBasedFactoryPointHandlerTest {
     public void getFactoryPointsShouldHandleNoFactoryMethods() {
         final BeanKey factory = new BeanKey(HelloBean.class);
 
-        final List<FactoryPoint> factoryPoints = handler.getFactoryPoints(factory);
+        final List<FactoryPoint<?>> factoryPoints = handler.getFactoryPoints(factory);
 
         assertNotNull(factoryPoints);
         assertTrue(factoryPoints.isEmpty());
@@ -88,12 +88,12 @@ public class AnnotationBasedFactoryPointHandlerTest {
     public void getFactoryPointsShouldFindSingleFactoryMethod() {
         final BeanKey factory = new BeanKey(SimpleFactoryBean.class);
 
-        final List<FactoryPoint> factoryPoints = handler.getFactoryPoints(factory);
+        final List<FactoryPoint<?>> factoryPoints = handler.getFactoryPoints(factory);
 
         assertNotNull(factoryPoints);
         assertEquals(1, factoryPoints.size());
 
-        final FactoryPoint factoryPoint = factoryPoints.get(0);
+        final FactoryPoint<?> factoryPoint = factoryPoints.get(0);
 
         checkBeanKey(factoryPoint.getReturnType(), SimpleFactoryCreatedBean.class, null);
         checkBeanKey(factoryPoint.getFactoryKey(), SimpleFactoryBean.class, null);
@@ -105,24 +105,24 @@ public class AnnotationBasedFactoryPointHandlerTest {
     public void getFactoryPointsShouldFindMultipleFactoryMethods() {
         final BeanKey factory = new BeanKey(MultipleFactoryBean.class);
 
-        final List<FactoryPoint> factoryPoints = handler.getFactoryPoints(factory);
+        final List<FactoryPoint<?>> factoryPoints = handler.getFactoryPoints(factory);
 
         assertNotNull(factoryPoints);
         assertEquals(3, factoryPoints.size());
 
-        final FactoryPoint factoryPoint1 = factoryPoints.get(0);
+        final FactoryPoint<?> factoryPoint1 = factoryPoints.get(0);
         checkBeanKey(factoryPoint1.getReturnType(), FirstMultipleFactoryCreatedBean.class, null);
         checkBeanKey(factoryPoint1.getFactoryKey(), MultipleFactoryBean.class, null);
         assertFalse(factoryPoint1.isSingleton());
         assertTrue(factoryPoint1.getParameters().isEmpty());
 
-        final FactoryPoint factoryPoint2 = factoryPoints.get(1);
+        final FactoryPoint<?> factoryPoint2 = factoryPoints.get(1);
         checkBeanKey(factoryPoint2.getReturnType(), SecondMultipleFactoryCreatedBean.class, "second");
         checkBeanKey(factoryPoint2.getFactoryKey(), MultipleFactoryBean.class, null);
         assertFalse(factoryPoint2.isSingleton());
         assertTrue(factoryPoint2.getParameters().isEmpty());
 
-        final FactoryPoint factoryPoint3 = factoryPoints.get(2);
+        final FactoryPoint<?> factoryPoint3 = factoryPoints.get(2);
         checkBeanKey(factoryPoint3.getReturnType(), ThirdMultipleFactoryCreatedBean.class, null);
         checkBeanKey(factoryPoint3.getFactoryKey(), MultipleFactoryBean.class, null);
         assertTrue(factoryPoint3.isSingleton());
@@ -133,12 +133,12 @@ public class AnnotationBasedFactoryPointHandlerTest {
     public void getFactoryPointsShouldFindPrivateFactoryMethods() {
         final BeanKey factory = new BeanKey(PrivateFactoryBean.class);
 
-        final List<FactoryPoint> factoryPoints = handler.getFactoryPoints(factory);
+        final List<FactoryPoint<?>> factoryPoints = handler.getFactoryPoints(factory);
 
         assertNotNull(factoryPoints);
         assertEquals(1, factoryPoints.size());
 
-        final FactoryPoint factoryPoint = factoryPoints.get(0);
+        final FactoryPoint<?> factoryPoint = factoryPoints.get(0);
 
         checkBeanKey(factoryPoint.getReturnType(), PrivateFactoryCreatedBean.class, null);
         checkBeanKey(factoryPoint.getFactoryKey(), PrivateFactoryBean.class, null);
@@ -150,7 +150,7 @@ public class AnnotationBasedFactoryPointHandlerTest {
     public void getFactoryPointsShouldNotReturnMethodsWithoutProducesAnnotation() {
         final BeanKey factory = new BeanKey(EverythingBean.class);
 
-        final List<FactoryPoint> factoryPoints = handler.getFactoryPoints(factory);
+        final List<FactoryPoint<?>> factoryPoints = handler.getFactoryPoints(factory);
 
         assertNotNull(factoryPoints);
         assertTrue(factoryPoints.isEmpty());
@@ -160,12 +160,12 @@ public class AnnotationBasedFactoryPointHandlerTest {
     public void getFactoryPointsShouldKeepTheQualifierOnTheFactoryKey() {
         final BeanKey factory = new BeanKey(SimpleFactoryBean.class, "banana");
 
-        final List<FactoryPoint> factoryPoints = handler.getFactoryPoints(factory);
+        final List<FactoryPoint<?>> factoryPoints = handler.getFactoryPoints(factory);
 
         assertNotNull(factoryPoints);
         assertEquals(1, factoryPoints.size());
 
-        final FactoryPoint factoryPoint = factoryPoints.get(0);
+        final FactoryPoint<?> factoryPoint = factoryPoints.get(0);
         checkBeanKey(factoryPoint.getFactoryKey(), SimpleFactoryBean.class, "banana");
     }
 
@@ -173,12 +173,12 @@ public class AnnotationBasedFactoryPointHandlerTest {
     public void getFactoryPointsShouldFindSingletonScopeOnTheMethod() {
         final BeanKey factory = new BeanKey(SingletonFactoryBean.class);
 
-        final List<FactoryPoint> factoryPoints = handler.getFactoryPoints(factory);
+        final List<FactoryPoint<?>> factoryPoints = handler.getFactoryPoints(factory);
 
         assertNotNull(factoryPoints);
         assertEquals(1, factoryPoints.size());
 
-        final FactoryPoint factoryPoint = factoryPoints.get(0);
+        final FactoryPoint<?> factoryPoint = factoryPoints.get(0);
         assertTrue(factoryPoint.isSingleton());
     }
 
@@ -186,12 +186,12 @@ public class AnnotationBasedFactoryPointHandlerTest {
     public void getFactoryPointsShouldFindTheQualifierOfTheMethod() {
         final BeanKey factory = new BeanKey(OrangeFactoryBean.class);
 
-        final List<FactoryPoint> factoryPoints = handler.getFactoryPoints(factory);
+        final List<FactoryPoint<?>> factoryPoints = handler.getFactoryPoints(factory);
 
         assertNotNull(factoryPoints);
         assertEquals(1, factoryPoints.size());
 
-        final FactoryPoint factoryPoint = factoryPoints.get(0);
+        final FactoryPoint<?> factoryPoint = factoryPoints.get(0);
         checkBeanKey(factoryPoint.getReturnType(), OrangeBean.class, "orange");
     }
 
@@ -199,7 +199,7 @@ public class AnnotationBasedFactoryPointHandlerTest {
     public void getFactoryPointsShouldFindTheCorrectParameters() {
         final BeanKey factory = new BeanKey(ParameterFactoryBean.class);
 
-        final List<FactoryPoint> factoryPoints = handler.getFactoryPoints(factory);
+        final List<FactoryPoint<?>> factoryPoints = handler.getFactoryPoints(factory);
 
         assertNotNull(factoryPoints);
         assertEquals(3, factoryPoints.size());
@@ -238,7 +238,7 @@ public class AnnotationBasedFactoryPointHandlerTest {
     public void getFactoryPointsShouldFindDifferentParameterTypes() {
         final BeanKey factory = new BeanKey(DifferentTypesFactoryBean.class);
 
-        final List<FactoryPoint> factoryPoints = handler.getFactoryPoints(factory);
+        final List<FactoryPoint<?>> factoryPoints = handler.getFactoryPoints(factory);
 
         assertNotNull(factoryPoints);
         assertEquals(1, factoryPoints.size());
@@ -271,18 +271,18 @@ public class AnnotationBasedFactoryPointHandlerTest {
     public void getFactoryPointsShouldHandleOverriddenMethods() {
         final BeanKey factory = new BeanKey(ChildFactoryBean.class);
 
-        final List<FactoryPoint> factoryPoints = handler.getFactoryPoints(factory);
+        final List<FactoryPoint<?>> factoryPoints = handler.getFactoryPoints(factory);
 
         assertNotNull(factoryPoints);
         assertEquals(2, factoryPoints.size());
 
-        final FactoryPoint factoryPoint1 = factoryPoints.get(0);
+        final FactoryPoint<?> factoryPoint1 = factoryPoints.get(0);
         checkBeanKey(factoryPoint1.getReturnType(), ParentFactoryCreatedBean.class, "parent");
         checkBeanKey(factoryPoint1.getFactoryKey(), ChildFactoryBean.class, null);
         assertFalse(factoryPoint1.isSingleton());
         assertTrue(factoryPoint1.getParameters().isEmpty());
 
-        final FactoryPoint factoryPoint2 = factoryPoints.get(1);
+        final FactoryPoint<?> factoryPoint2 = factoryPoints.get(1);
         checkBeanKey(factoryPoint2.getReturnType(), ChildFactoryCreatedBean.class, "child");
         checkBeanKey(factoryPoint2.getFactoryKey(), ChildFactoryBean.class, null);
         assertFalse(factoryPoint2.isSingleton());
@@ -293,7 +293,7 @@ public class AnnotationBasedFactoryPointHandlerTest {
     public void getFactoryPointsShouldIgnoreStaticMethods() {
         final BeanKey factory = new BeanKey(StaticFactoryBean.class);
 
-        final List<FactoryPoint> factoryPoints = handler.getFactoryPoints(factory);
+        final List<FactoryPoint<?>> factoryPoints = handler.getFactoryPoints(factory);
 
         assertNotNull(factoryPoints);
         assertTrue(factoryPoints.isEmpty());
@@ -310,11 +310,11 @@ public class AnnotationBasedFactoryPointHandlerTest {
     public void getFactoryPointsShouldReturnInvokableFactoryPoints() {
         final BeanKey factory = new BeanKey(ParameterFactoryBean.class);
 
-        final List<FactoryPoint> factoryPoints = handler.getFactoryPoints(factory);
+        final List<FactoryPoint<?>> factoryPoints = handler.getFactoryPoints(factory);
 
         assertNotNull(factoryPoints);
 
-        final FactoryPoint<OneParameterFactoryCreatedBean> factoryPoint = factoryPoints.get(0);
+        final FactoryPoint<OneParameterFactoryCreatedBean> factoryPoint = (FactoryPoint<OneParameterFactoryCreatedBean>) factoryPoints.get(0);
         final OneParameterFactoryCreatedBean bean = factoryPoint.create(new ParameterFactoryBean(), new HelloBean());
         assertNotNull(bean);
 

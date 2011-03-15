@@ -59,7 +59,7 @@ public class AnnotationBasedFactoryPointHandler implements FactoryPointHandler {
      * {@inheritDoc}
      */
     @Override
-    public List<FactoryPoint> getFactoryPoints(final BeanKey factoryBean) {
+    public List<FactoryPoint<?>> getFactoryPoints(final BeanKey factoryBean) {
         Validate.notNull(factoryBean, "Factory bean can not be null");
 
         final List<Method> allMethods = reflectionUtils.findAllMethods(factoryBean.getBeanClass());
@@ -68,9 +68,9 @@ public class AnnotationBasedFactoryPointHandler implements FactoryPointHandler {
         return findAllFactoryPoints(allMembers, allMethods, factoryBean);
     }
 
-    private List<FactoryPoint> findAllFactoryPoints(final List<Member> allMembers, final List<Method> allMethods,
+    private List<FactoryPoint<?>> findAllFactoryPoints(final List<Member> allMembers, final List<Method> allMethods,
                                                     final BeanKey factoryBean) {
-        final List<FactoryPoint> factoryPoints = new ArrayList<FactoryPoint>();
+        final List<FactoryPoint<?>> factoryPoints = new ArrayList<FactoryPoint<?>>();
 
         for (final Member member : allMembers) {
             if (member instanceof Method) {
@@ -79,7 +79,7 @@ public class AnnotationBasedFactoryPointHandler implements FactoryPointHandler {
                 if (methodIsFactoryPoint(method) && !reflectionUtils.isOverridden(method, allMethods)) {
                     failIfInjectionPoint(method);
 
-                    final FactoryPointMethod factoryPointMethod = createFactoryPointMethod(method, factoryBean);
+                    final FactoryPointMethod<?> factoryPointMethod = createFactoryPointMethod(method, factoryBean);
                     factoryPoints.add(factoryPointMethod);
                 }
             }
@@ -102,11 +102,11 @@ public class AnnotationBasedFactoryPointHandler implements FactoryPointHandler {
         return method.isAnnotationPresent(INJECTION_ANNOTATION);
     }
 
-    private FactoryPointMethod createFactoryPointMethod(final Method method, final BeanKey factoryBean) {
+    private <T> FactoryPointMethod<T> createFactoryPointMethod(final Method method, final BeanKey factoryBean) {
         final List<BeanKey> parameters = beanHelper.findParameterKeys(method);
         final BeanKey returnType = beanHelper.findFactoryReturnType(method);
         final boolean singleton = scopeHandler.isSingleton(method);
 
-        return new FactoryPointMethod(method, factoryBean, returnType, parameters, singleton);
+        return new FactoryPointMethod<T>(method, factoryBean, returnType, parameters, singleton);
     }
 }

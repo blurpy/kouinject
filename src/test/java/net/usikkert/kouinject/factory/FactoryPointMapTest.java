@@ -68,7 +68,7 @@ public class FactoryPointMapTest {
     public void addFactoryPointShouldFailToAddTheSameFactoryPointTwice() {
         assertEquals(0, map.size());
 
-        final FactoryPoint factoryPoint = createFactoryPoint(Object.class);
+        final FactoryPoint<?> factoryPoint = createFactoryPoint(Object.class);
 
         map.addFactoryPoint(factoryPoint);
         map.addFactoryPoint(factoryPoint);
@@ -112,9 +112,9 @@ public class FactoryPointMapTest {
     public void addFactoryPointsShouldAddAllTheFactoryPoints() {
         assertEquals(0, map.size());
 
-        final FactoryPoint factoryPoint1 = createFactoryPoint(SetterBean.class);
-        final FactoryPoint factoryPoint2 = createFactoryPoint(FieldBean.class);
-        final FactoryPoint factoryPoint3 = createFactoryPoint(HelloBean.class);
+        final FactoryPoint<?> factoryPoint1 = createFactoryPoint(SetterBean.class);
+        final FactoryPoint<?> factoryPoint2 = createFactoryPoint(FieldBean.class);
+        final FactoryPoint<?> factoryPoint3 = createFactoryPoint(HelloBean.class);
 
         map.addFactoryPoints(Arrays.asList(factoryPoint1, factoryPoint2, factoryPoint3));
 
@@ -125,7 +125,7 @@ public class FactoryPointMapTest {
     public void addFactoryPointShouldHandleEmptyList() {
         assertEquals(0, map.size());
 
-        map.addFactoryPoints(new ArrayList<FactoryPoint>());
+        map.addFactoryPoints(new ArrayList<FactoryPoint<?>>());
 
         assertEquals(0, map.size());
     }
@@ -134,19 +134,19 @@ public class FactoryPointMapTest {
     public void getFactoryPointShouldFindTheCorrectFactoryPoint() {
         addTestFactoryPoints();
 
-        final FactoryPoint setterBean = map.getFactoryPoint(new BeanKey(SetterBean.class));
+        final FactoryPoint<?> setterBean = map.getFactoryPoint(new BeanKey(SetterBean.class));
         assertNotNull(setterBean);
         assertTrue(setterBean.getReturnType().getBeanClass().equals(SetterBean.class));
 
-        final FactoryPoint fieldBean = map.getFactoryPoint(new BeanKey(FieldBean.class));
+        final FactoryPoint<?> fieldBean = map.getFactoryPoint(new BeanKey(FieldBean.class));
         assertNotNull(fieldBean);
         assertTrue(fieldBean.getReturnType().getBeanClass().equals(FieldBean.class));
 
-        final FactoryPoint helloBean = map.getFactoryPoint(new BeanKey(HelloBean.class));
+        final FactoryPoint<?> helloBean = map.getFactoryPoint(new BeanKey(HelloBean.class));
         assertNotNull(helloBean);
         assertTrue(helloBean.getReturnType().getBeanClass().equals(HelloBean.class));
 
-        final FactoryPoint greenBean = map.getFactoryPoint(new BeanKey(GreenBean.class, "Green"));
+        final FactoryPoint<?> greenBean = map.getFactoryPoint(new BeanKey(GreenBean.class, "Green"));
         assertNotNull(greenBean);
         assertTrue(greenBean.getReturnType().getBeanClass().equals(GreenBean.class));
     }
@@ -171,7 +171,7 @@ public class FactoryPointMapTest {
         map.addFactoryPoint(createFactoryPoint(RemoteArchiveBean.class));
 
         final BeanKey beanKey = new BeanKey(RemoteArchiveBean.class);
-        final FactoryPoint factoryPoint = map.getFactoryPoint(beanKey);
+        final FactoryPoint<?> factoryPoint = map.getFactoryPoint(beanKey);
 
         assertNotNull(factoryPoint);
         assertTrue(factoryPoint.getReturnType().equals(beanKey));
@@ -284,15 +284,15 @@ public class FactoryPointMapTest {
         map.addFactoryPoint(createFactoryPoint(GreenBean.class, "Green"));
     }
 
-    private FactoryPoint createFactoryPoint(final Class<?> beanClass) {
-        final FactoryPoint factoryPoint = mock(FactoryPoint.class);
+    private FactoryPoint<?> createFactoryPoint(final Class<?> beanClass) {
+        final FactoryPoint<?> factoryPoint = mock(FactoryPoint.class);
         when(factoryPoint.getReturnType()).thenReturn(new BeanKey(beanClass, null));
 
         return factoryPoint;
     }
 
-    private FactoryPoint createFactoryPoint(final Class<?> beanClass, final String qualifier) {
-        final FactoryPoint factoryPoint = mock(FactoryPoint.class);
+    private FactoryPoint<?> createFactoryPoint(final Class<?> beanClass, final String qualifier) {
+        final FactoryPoint<?> factoryPoint = mock(FactoryPoint.class);
         when(factoryPoint.getReturnType()).thenReturn(new BeanKey(beanClass, qualifier));
 
         return factoryPoint;

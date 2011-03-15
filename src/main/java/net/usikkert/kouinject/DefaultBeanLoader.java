@@ -103,7 +103,7 @@ public class DefaultBeanLoader implements BeanLoader {
             final BeanData beanData = beanDataHandler.getBeanData(bean, false);
             beanDataMap.addBeanData(beanData);
 
-            final List<FactoryPoint> factoryPoints = factoryPointHandler.getFactoryPoints(bean);
+            final List<FactoryPoint<?>> factoryPoints = factoryPointHandler.getFactoryPoints(bean);
             factoryPointMap.addFactoryPoints(factoryPoints);
         }
 
@@ -265,7 +265,7 @@ public class DefaultBeanLoader implements BeanLoader {
     }
 
     private CreatedBean createBeanUsingFactory(final BeanKey dependency) {
-        final FactoryPoint factoryPoint = factoryPointMap.getFactoryPoint(dependency);
+        final FactoryPoint<?> factoryPoint = factoryPointMap.getFactoryPoint(dependency);
         final BeanKey returnType = factoryPoint.getReturnType();
         LOG.finer("Mapping " + dependency + " to " + returnType);
 
@@ -369,7 +369,7 @@ public class DefaultBeanLoader implements BeanLoader {
         if (dependency.isCollectionProvider()) {
             return new CollectionProvider() {
                 @Override
-                public Collection get() {
+                public Collection<?> get() {
                     return getBeans(dependency);
                 }
             };

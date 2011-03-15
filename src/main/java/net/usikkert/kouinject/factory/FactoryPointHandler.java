@@ -39,5 +39,5 @@ public interface FactoryPointHandler {
      * @param factoryBean The key for the bean to get factory points from.
      * @return The detected factory points in the factory bean.
      */
-    List<FactoryPoint> getFactoryPoints(BeanKey factoryBean);
+    List<FactoryPoint<?>> getFactoryPoints(BeanKey factoryBean);
 }
