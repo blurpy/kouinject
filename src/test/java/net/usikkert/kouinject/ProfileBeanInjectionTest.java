@@ -27,6 +27,7 @@ import static org.junit.Assert.*;
 
 import java.util.Arrays;
 
+import net.usikkert.kouinject.testbeans.scanned.component.SwingBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.AcceptanceBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.ArchiveBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.DataSourceBean;
@@ -386,5 +387,13 @@ public class ProfileBeanInjectionTest {
         final ArchiveBean archiveBean = injector.getBean(ArchiveBean.class);
         assertNotNull(archiveBean);
         assertEquals(RemoteArchiveBean.class, archiveBean.getClass());
+    }
+
+    @Test
+    public void checkSwingBean() {
+        injector = new DefaultInjector(Arrays.asList(SWING.value()), SCANNED);
+
+        final SwingBean bean = injector.getBean(SwingBean.class);
+        assertNotNull(bean);
     }
 }

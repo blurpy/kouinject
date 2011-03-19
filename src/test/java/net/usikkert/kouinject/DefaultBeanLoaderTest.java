@@ -81,6 +81,7 @@ import net.usikkert.kouinject.testbeans.scanned.collection.HungryQualifierBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungryBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungryQualifierBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.SingletonCollectionProviderBean;
+import net.usikkert.kouinject.testbeans.scanned.component.SwingBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.CdRecorderBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.FactoryAndStandaloneBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.MiscQualifierBean;
@@ -96,6 +97,7 @@ import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractB
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.interfacebean.InterfaceBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.DevelopmentBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.EnvironmentBean;
+import net.usikkert.kouinject.testbeans.scanned.profile.JndiDataSourceBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.LocalArchiveBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.ProfileABean;
 import net.usikkert.kouinject.testbeans.scanned.profile.ProfileACBean;
@@ -508,7 +510,7 @@ public class DefaultBeanLoaderTest {
     public void getBeansWithObjectAndAnyQualifierShouldReturnBeansWithActiveProfiles() {
         final DefaultBeanLoader loader = createBeanLoaderWithBasePackagesAndProfiles(
                 Arrays.asList("net.usikkert.kouinject.testbeans.scanned"),
-                Arrays.asList(PROFILE_A.value(), PROFILE_B.value(), PROFILE_C.value(), DEVELOPMENT.value(), JNDI.value()));
+                Arrays.asList(PROFILE_A.value(), PROFILE_B.value(), PROFILE_C.value(), DEVELOPMENT.value(), JNDI.value(), SWING.value()));
 
         final Collection<Object> beans = loader.getBeans(Object.class, "any");
 
@@ -520,6 +522,8 @@ public class DefaultBeanLoaderTest {
         assertTrue(containsBean(ProfileCBean.class, beans));
         assertTrue(containsBean(ProfileACBean.class, beans));
         assertTrue(containsBean(DevelopmentBean.class, beans));
+        assertTrue(containsBean(JndiDataSourceBean.class, beans));
+        assertTrue(containsBean(SwingBean.class, beans));
     }
 
     @Test
@@ -1210,6 +1214,11 @@ public class DefaultBeanLoaderTest {
     @Test(expected = IllegalArgumentException.class)
     public void getBeanShouldNotReturnProfiledBeanWhenNoProfilesAreActive2() {
         beanLoader.getBean(EnvironmentBean.class);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getBeanShouldNotReturnProfiledBeanWhenNoProfilesAreActiveWithCombinedComponentAndProfile() {
+        beanLoader.getBean(SwingBean.class);
     }
 
     @Test(expected = IllegalArgumentException.class)

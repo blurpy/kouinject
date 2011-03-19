@@ -31,9 +31,9 @@ import java.lang.annotation.Target;
 /**
  * Annotation for identifying profiles.
  *
- * <p>Profiles are used to include and exclude certain beans at runtime. Beans with no profile annotation
- * are always included. Beans with active profiles are also included. And beans with profiles that are not active
- * will be excluded.</p>
+ * <p>Profiles are used to include and exclude certain beans at runtime. Beans with no profile annotations
+ * are always included. Beans with one of the active profiles are also included. And beans with no profiles
+ * that are active will be excluded.</p>
  *
  * <p>This annotation can not be used directly on beans. Instead you have to define custom annotations
  * for each profile. The class name of the custom annotation will be used as the name of the profile.</p>
@@ -55,6 +55,20 @@ import java.lang.annotation.Target;
  *   &#064;Production
  *   public class ProductionBean implements SameInterfaceAsDevelopmentBean {}
  * </pre>
+ *
+ * <p>If you have many beans using the same profile you can consider combining the {@link Component}
+ * and the <code>@Profile</code> into the same annotation:</p>
+ *
+ * <pre>
+ *   &#064;Documented
+ *   &#064;Retention(RetentionPolicy.RUNTIME)
+ *   &#064;Target(ElementType.TYPE)
+ *   &#064;Profile
+ *   &#064;Component
+ *   public @interface Production {}
+ * </pre>
+ *
+ * <p>You can then drop annotating with the {@link Component} directly on <code>ProductionBean</code>.</p>
  *
  * @author Christian Ihle
  */

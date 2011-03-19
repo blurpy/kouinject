@@ -43,6 +43,8 @@ import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
 import net.usikkert.kouinject.testbeans.scanned.component.CustomServiceBean;
 import net.usikkert.kouinject.testbeans.scanned.component.Service;
+import net.usikkert.kouinject.testbeans.scanned.component.Swing;
+import net.usikkert.kouinject.testbeans.scanned.component.SwingBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.ChildBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding2.AnimalBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding2.OrganismBean;
@@ -93,7 +95,8 @@ public class AnnotationBasedBeanLocatorTest {
 
     private boolean hasComponent(final Class<?> beanClass) {
         return beanClass.isAnnotationPresent(Component.class) ||
-               beanClass.isAnnotationPresent(Service.class);
+               beanClass.isAnnotationPresent(Service.class) ||
+               beanClass.isAnnotationPresent(Swing.class);
     }
 
     @Test
@@ -200,6 +203,16 @@ public class AnnotationBasedBeanLocatorTest {
         assertNotNull(beans);
         assertEquals(1, beans.size());
         assertTrue(containsBean(beans, CustomServiceBean.class, null));
+    }
+
+    @Test
+    public void findBeansShouldFindBeanWithCustomComponentThatIsAlsoAProfile() {
+        final BeanLocator beanLocator = createBeanLocatorWithBeans(SwingBean.class);
+
+        final Set<BeanKey> beans = beanLocator.findBeans();
+        assertNotNull(beans);
+        assertEquals(1, beans.size());
+        assertTrue(containsBean(beans, SwingBean.class, null));
     }
 
     @Test

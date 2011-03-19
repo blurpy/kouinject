@@ -20,32 +20,14 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans.scanned.profile;
+package net.usikkert.kouinject.testbeans.scanned.component;
 
 /**
- * Enum with the different profiles used by the test beans.
+ * A bean using a single annotation for both becoming a component and setting the profile.
  *
  * @author Christian Ihle
  */
-public enum Profiles {
+@Swing
+public class SwingBean {
 
-    PROFILE_A("ProfileA"),
-    PROFILE_B("ProfileB"),
-    PROFILE_C("ProfileC"),
-    PRODUCTION("Production"),
-    ACCEPTANCE("Acceptance"),
-    DEVELOPMENT("Development"),
-    JNDI("Jndi"),
-    IN_MEMORY("InMemory"),
-    SWING("Swing");
-
-    private final String name;
-
-    private Profiles(final String name) {
-        this.name = name;
-    }
-
-    public String value() {
-        return name;
-    }
 }

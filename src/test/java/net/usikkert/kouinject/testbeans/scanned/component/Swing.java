@@ -20,32 +20,27 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans.scanned.profile;
+package net.usikkert.kouinject.testbeans.scanned.component;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import net.usikkert.kouinject.annotation.Component;
+import net.usikkert.kouinject.annotation.Profile;
 
 /**
- * Enum with the different profiles used by the test beans.
+ * A custom @Component and a @Profile at the same time.
  *
  * @author Christian Ihle
  */
-public enum Profiles {
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+@Component
+@Profile
+public @interface Swing {
 
-    PROFILE_A("ProfileA"),
-    PROFILE_B("ProfileB"),
-    PROFILE_C("ProfileC"),
-    PRODUCTION("Production"),
-    ACCEPTANCE("Acceptance"),
-    DEVELOPMENT("Development"),
-    JNDI("Jndi"),
-    IN_MEMORY("InMemory"),
-    SWING("Swing");
-
-    private final String name;
-
-    private Profiles(final String name) {
-        this.name = name;
-    }
-
-    public String value() {
-        return name;
-    }
 }
