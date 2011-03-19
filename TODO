@@ -3,3 +3,11 @@
 
  - Add tests for classpath scanning in jar-files, and windows
  - Fix findbugs warnings
+ - Add wiki page for Logging/Troubleshooting
+ - When adding features:
+    * Add tests
+    * Add example code
+    * Update javadoc
+    * Check mvn site
+    * Update wiki
+    * Deploy to snapshot repository
