@@ -35,16 +35,20 @@ import net.usikkert.kouinject.profile.ProfileHandler;
 import net.usikkert.kouinject.testbeans.BeanCount;
 import net.usikkert.kouinject.testbeans.notscanned.notloaded.ProfileButNoComponentBean;
 import net.usikkert.kouinject.testbeans.notscanned.notloaded.QualifierButNoComponentBean;
+import net.usikkert.kouinject.testbeans.notscanned.notloaded.RandomAnnotationButNoComponentBean;
 import net.usikkert.kouinject.testbeans.notscanned.notloaded.ScopeButNoComponentBean;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.any.AnyBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
+import net.usikkert.kouinject.testbeans.scanned.component.CustomServiceBean;
+import net.usikkert.kouinject.testbeans.scanned.component.Service;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.ChildBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding2.AnimalBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding2.OrganismBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding2.PetBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding2.pets.CatBean;
+import net.usikkert.kouinject.testbeans.scanned.notloaded.NoBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.BlueBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.DarkYellowBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.GreenBean;
@@ -83,8 +87,13 @@ public class AnnotationBasedBeanLocatorTest {
         for (final BeanKey bean : beans) {
             final Class<?> beanClass = bean.getBeanClass();
             assertNotNull(beanClass);
-            assertTrue(beanClass.isAnnotationPresent(Component.class));
+            assertTrue(hasComponent(beanClass));
         }
+    }
+
+    private boolean hasComponent(final Class<?> beanClass) {
+        return beanClass.isAnnotationPresent(Component.class) ||
+               beanClass.isAnnotationPresent(Service.class);
     }
 
     @Test
@@ -184,6 +193,16 @@ public class AnnotationBasedBeanLocatorTest {
     }
 
     @Test
+    public void findBeansShouldFindBeanWithCustomComponent() {
+        final BeanLocator beanLocator = createBeanLocatorWithBeans(CustomServiceBean.class);
+
+        final Set<BeanKey> beans = beanLocator.findBeans();
+        assertNotNull(beans);
+        assertEquals(1, beans.size());
+        assertTrue(containsBean(beans, CustomServiceBean.class, null));
+    }
+
+    @Test
     public void findBeansShouldNotFindBeanWithOnlyScopeAnnotation() {
         final BeanLocator beanLocator = createBeanLocatorWithBeans(ScopeButNoComponentBean.class);
 
@@ -204,6 +223,24 @@ public class AnnotationBasedBeanLocatorTest {
     @Test
     public void findBeansShouldNotFindBeanWithOnlyProfileAnnotation() {
         final BeanLocator beanLocator = createBeanLocatorWithBeans(ProfileButNoComponentBean.class);
+
+        final Set<BeanKey> beans = beanLocator.findBeans();
+        assertNotNull(beans);
+        assertTrue(beans.isEmpty());
+    }
+
+    @Test
+    public void findBeansShouldNotFindBeanWithSomeRandomAnnotation() {
+        final BeanLocator beanLocator = createBeanLocatorWithBeans(RandomAnnotationButNoComponentBean.class);
+
+        final Set<BeanKey> beans = beanLocator.findBeans();
+        assertNotNull(beans);
+        assertTrue(beans.isEmpty());
+    }
+
+    @Test
+    public void findBeansShouldNotFindBeanWithNoAnnotation() {
+        final BeanLocator beanLocator = createBeanLocatorWithBeans(NoBean.class);
 
         final Set<BeanKey> beans = beanLocator.findBeans();
         assertNotNull(beans);

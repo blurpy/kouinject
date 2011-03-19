@@ -89,7 +89,25 @@ public class AnnotationBasedBeanLocator implements BeanLocator {
     }
 
     private boolean classIsBean(final Class<?> clazz) {
+        return classHasRegularComponent(clazz) || classHasCustomComponent(clazz);
+    }
+
+    private boolean classHasRegularComponent(final Class<?> clazz) {
         return clazz.isAnnotationPresent(COMPONENT_ANNOTATION);
+    }
+
+    private boolean classHasCustomComponent(final Class<?> clazz) {
+        final Annotation[] annotations = clazz.getAnnotations();
+
+        for (final Annotation annotation : annotations) {
+            final Class<? extends Annotation> annotationType = annotation.annotationType();
+
+            if (annotationType.isAnnotationPresent(COMPONENT_ANNOTATION)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private String getQualifier(final Class<?> clazz) {

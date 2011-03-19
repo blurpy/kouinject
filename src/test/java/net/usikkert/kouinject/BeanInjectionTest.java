@@ -67,6 +67,7 @@ import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungr
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungryQualifierBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.QualifiedCollectionProviderBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.SingletonCollectionProviderBean;
+import net.usikkert.kouinject.testbeans.scanned.component.CustomServiceBean;
 import net.usikkert.kouinject.testbeans.scanned.date.DateBean;
 import net.usikkert.kouinject.testbeans.scanned.date.DateFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.CdRecorderBean;
@@ -1365,6 +1366,12 @@ public class BeanInjectionTest {
 
         assertNotNull(bean);
         assertTrue(bean.isCreatedByFactory());
+    }
+
+    @Test
+    public void checkCustomServiceBean() {
+        final CustomServiceBean bean = injector.getBean(CustomServiceBean.class);
+        assertNotNull(bean);
     }
 
     @Test
