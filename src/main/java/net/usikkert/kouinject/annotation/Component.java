@@ -29,7 +29,34 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Indicates that the class using this annotation is a component to be handled by the container.
+ * Indicates that the class using this annotation is a component to be handled by the container. Also called a bean.
+ *
+ * <p>Used on a class like this:</p>
+ *
+ * <pre>
+ *   &#064;Component
+ *   public class NewsService {}
+ * </pre>
+ *
+ * <p>It's also possible to specify custom component annotations. They function exactly like the
+ * regular <code>@Component</code>, but allows you to annotate your beans with more meaningful names.</p>
+ *
+ * <p>Example of a custom component annotation:</p>
+ *
+ * <pre>
+ *   &#064;Documented
+ *   &#064;Retention(RetentionPolicy.RUNTIME)
+ *   &#064;Target(ElementType.TYPE)
+ *   &#064;Component
+ *   public @interface Service {}
+ * </pre>
+ *
+ * <p>It can be used like this:</p>
+ *
+ * <pre>
+ *   &#064;Service
+ *   public class NewsService {}
+ * </pre>
  *
  * @author Christian Ihle
  */

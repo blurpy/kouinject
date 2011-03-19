@@ -33,8 +33,7 @@ import net.usikkert.kouinject.profile.ProfileHandler;
 import org.apache.commons.lang.Validate;
 
 /**
- * Implementation of {@link BeanLocator} using the {@link Component} annotation to detect beans,
- * and the {@link javax.inject.Qualifier} annotation to get the qualifier.
+ * Implementation of {@link BeanLocator} using the {@link Component} annotation to detect beans.
  *
  * @author Christian Ihle
  */
