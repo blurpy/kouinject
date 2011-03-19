@@ -25,12 +25,17 @@ package net.usikkert.kouinject;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 import net.usikkert.kouinject.annotation.Component;
 import net.usikkert.kouinject.beandata.BeanKey;
 import net.usikkert.kouinject.profile.ProfileHandler;
 import net.usikkert.kouinject.testbeans.BeanCount;
+import net.usikkert.kouinject.testbeans.notscanned.notloaded.ProfileButNoComponentBean;
+import net.usikkert.kouinject.testbeans.notscanned.notloaded.QualifierButNoComponentBean;
+import net.usikkert.kouinject.testbeans.notscanned.notloaded.ScopeButNoComponentBean;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.any.AnyBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
@@ -145,6 +150,7 @@ public class AnnotationBasedBeanLocatorTest {
         final Set<BeanKey> beans = beanLocator.findBeans();
 
         assertEquals(1, beans.size());
+        assertFalse(containsBean(beans, CoffeeBean.class, null));
         assertTrue(containsBean(beans, JavaBean.class, null));
     }
 
@@ -162,8 +168,46 @@ public class AnnotationBasedBeanLocatorTest {
 
         assertTrue(containsBean(beans, BlueBean.class, "Blue"));
         assertTrue(containsBean(beans, GreenBean.class, "Green"));
+        assertFalse(containsBean(beans, RedBean.class, "red"));
         assertTrue(containsBean(beans, YellowBean.class, "Yellow"));
         assertTrue(containsBean(beans, DarkYellowBean.class, "darkYellow"));
+    }
+
+    @Test
+    public void findBeansShouldFindSingleBean() {
+        final BeanLocator beanLocator = createBeanLocatorWithBeans(HelloBean.class);
+
+        final Set<BeanKey> beans = beanLocator.findBeans();
+        assertNotNull(beans);
+        assertEquals(1, beans.size());
+        assertTrue(containsBean(beans, HelloBean.class, null));
+    }
+
+    @Test
+    public void findBeansShouldNotFindBeanWithOnlyScopeAnnotation() {
+        final BeanLocator beanLocator = createBeanLocatorWithBeans(ScopeButNoComponentBean.class);
+
+        final Set<BeanKey> beans = beanLocator.findBeans();
+        assertNotNull(beans);
+        assertTrue(beans.isEmpty());
+    }
+
+    @Test
+    public void findBeansShouldNotFindBeanWithOnlyQualifierAnnotation() {
+        final BeanLocator beanLocator = createBeanLocatorWithBeans(QualifierButNoComponentBean.class);
+
+        final Set<BeanKey> beans = beanLocator.findBeans();
+        assertNotNull(beans);
+        assertTrue(beans.isEmpty());
+    }
+
+    @Test
+    public void findBeansShouldNotFindBeanWithOnlyProfileAnnotation() {
+        final BeanLocator beanLocator = createBeanLocatorWithBeans(ProfileButNoComponentBean.class);
+
+        final Set<BeanKey> beans = beanLocator.findBeans();
+        assertNotNull(beans);
+        assertTrue(beans.isEmpty());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -182,18 +226,15 @@ public class AnnotationBasedBeanLocatorTest {
     }
 
     private boolean containsBean(final Set<BeanKey> beans, final Class<?> beanClass, final String qualifier) {
-        for (final BeanKey bean : beans) {
-            if (bean.getBeanClass().equals(beanClass)) {
-                if (qualifier == null && bean.getQualifier() == null) {
-                    return true;
-                }
+        final BeanKey beanToLookFor = new BeanKey(beanClass, qualifier);
+        return beans.contains(beanToLookFor);
+    }
 
-                else if (qualifier != null && qualifier.equals(bean.getQualifier())) {
-                    return true;
-                }
-            }
-        }
+    private BeanLocator createBeanLocatorWithBeans(final Class<?>... beans) {
+        final ClassLocator mockLocator = mock(ClassLocator.class);
+        final HashSet<Class<?>> classes = new HashSet<Class<?>>(Arrays.asList(beans));
+        when(mockLocator.findClasses(anyString())).thenReturn(classes);
 
-        return false;
+        return new AnnotationBasedBeanLocator(mockLocator, profileHandler, "mock");
     }
 }
