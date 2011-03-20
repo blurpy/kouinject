@@ -374,4 +374,20 @@ public class BeanKeyTest {
         assertTrue(theGreenBean.isCollectionProvider());
         assertFalse(theGreenBean.isBeanForCreation());
     }
+
+    @Test
+    public void getBeanTypeShouldReturnClassWhenUsedWithConstructorForClass() {
+        final BeanKey beanKey = new BeanKey(String.class);
+
+        assertEquals(String.class, beanKey.getBeanClass());
+        assertEquals(String.class, beanKey.getBeanType());
+    }
+
+    @Test
+    public void getBeanTypeShouldReturnClassWhenUsedWithConstructorForClassAndQualifier() {
+        final BeanKey beanKey = new BeanKey(String.class, "q");
+
+        assertEquals(String.class, beanKey.getBeanClass());
+        assertEquals(String.class, beanKey.getBeanType());
+    }
 }

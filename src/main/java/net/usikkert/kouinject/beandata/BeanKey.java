@@ -22,6 +22,8 @@
 
 package net.usikkert.kouinject.beandata;
 
+import java.lang.reflect.Type;
+
 import org.apache.commons.lang.Validate;
 
 /**
@@ -36,6 +38,8 @@ public class BeanKey {
     private static final String ANY_QUALIFIER = "any";
 
     private final Class<?> beanClass;
+
+    private final Type beanType;
 
     private final String qualifier;
 
@@ -59,17 +63,28 @@ public class BeanKey {
         Validate.notNull(beanClass, "Bean class can not be null");
 
         this.beanClass = beanClass;
+        this.beanType = beanClass;
         this.qualifier = qualifier;
     }
 
     /**
-     * Gets the actual bean class for this key. If this is a {@link javax.inject.Provider},
+     * Gets the actual bean class for this key. If this is e.g. a {@link javax.inject.Provider},
      * then this bean class is the generic type argument of the provider.
      *
      * @return The bean class for this key.
      */
     public Class<?> getBeanClass() {
         return beanClass;
+    }
+
+    /**
+     * Gets the actual generic type for this key. If this is e.g. a {@link javax.inject.Provider},
+     * then this generic type is the generic type argument of the provider.
+     *
+     * @return The generic type for this key.
+     */
+    public Type getBeanType() {
+        return beanType;
     }
 
     /**
@@ -253,7 +268,7 @@ public class BeanKey {
             toStringBuilder.append("[q=").append(qualifier).append("] ");
         }
 
-        toStringBuilder.append(beanClass.toString());
+        toStringBuilder.append(beanType.toString());
 
         return toStringBuilder.toString();
     }
