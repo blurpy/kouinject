@@ -33,7 +33,7 @@ import java.lang.reflect.Type;
  *
  * <pre>TypeLiteral&lt;List&lt;String&gt;&gt; listOfStrings = new TypeLiteral&lt;List&lt;String&gt;&gt;() {};</pre>
  *
- * <p>Use {@link #getType()} to get the generic type, which would return <code>List&lt;String&gt;</code> in this example.</p>
+ * <p>Use {@link #getGenericType()} to get the generic type, which would return <code>List&lt;String&gt;</code> in this example.</p>
  *
  * <p>Inspired by http://gafter.blogspot.com/2006/12/super-type-tokens.html. This is also used by
  * Google Guice and JSR-299.</p>
@@ -43,7 +43,8 @@ import java.lang.reflect.Type;
  */
 public abstract class TypeLiteral<T> {
 
-    private final Type type;
+    private final Type genericType;
+    private final Class<T> genericClass;
 
     /**
      * Constructor that extracts the generic type argument.
@@ -52,19 +53,60 @@ public abstract class TypeLiteral<T> {
         final Type genericSuperclass = getClass().getGenericSuperclass();
 
         if (genericSuperclass instanceof Class) {
-            throw new IllegalArgumentException("Generic type is required");
+            throw new IllegalArgumentException("Generic type <T> is required");
         }
 
-        this.type = ((ParameterizedType) genericSuperclass).getActualTypeArguments()[0];
+        else if (genericSuperclass instanceof ParameterizedType) {
+            final ParameterizedType parameterizedType = (ParameterizedType) genericSuperclass;
+            this.genericType = getGenericType(parameterizedType);
+            this.genericClass = getGenericClass(parameterizedType);
+        }
+
+        else {
+            throw new IllegalArgumentException("Unsupported generic type: " + genericSuperclass);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private Class<T> getGenericClass(final ParameterizedType parameterizedType) {
+        final Type argument = getGenericType(parameterizedType);
+
+        if (argument instanceof Class) {
+            return (Class<T>) argument;
+        }
+
+        else if (argument instanceof ParameterizedType) {
+            final ParameterizedType parameterizedArgument = (ParameterizedType) argument;
+            return (Class<T>) parameterizedArgument.getRawType();
+        }
+
+        throw new IllegalArgumentException("Unsupported generic type: " + argument);
+    }
+
+    private Type getGenericType(final ParameterizedType parameterizedType) {
+        return parameterizedType.getActualTypeArguments()[0];
     }
 
     /**
      * Gets the generic type argument.
      *
+     * <p><code>TypeLiteral&lt;List&lt;String&gt;&gt;</code> will return the type for <code>List&lt;String&gt;</code>.</p>
+     *
      * @return The generic type argument.
      */
-    public Type getType() {
-        return type;
+    public Type getGenericType() {
+        return genericType;
+    }
+
+    /**
+     * Gets the type argument as a regular class.
+     *
+     * <p><code>TypeLiteral&lt;List&lt;String&gt;&gt;</code> will return <code>Class&lt;List&lt;String&gt;&gt;</code>.</p>
+     *
+     * @return The type as a regular class.
+     */
+    public Class<T> getGenericClass() {
+        return genericClass;
     }
 
     @Override
@@ -74,16 +116,16 @@ public abstract class TypeLiteral<T> {
 
         final TypeLiteral that = (TypeLiteral) o;
 
-        return type.equals(that.type);
+        return genericType.equals(that.genericType);
     }
 
     @Override
     public int hashCode() {
-        return type.hashCode();
+        return genericType.hashCode();
     }
 
     @Override
     public String toString() {
-        return type.toString();
+        return genericType.toString();
     }
 }

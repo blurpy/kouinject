@@ -46,12 +46,17 @@ public class TypeLiteralTest {
         new TypeLiteral() {};
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldFailWithArrays() {
+        new TypeLiteral<String[]>() {};
+    }
+
     @Test
     public void getTypeShouldReturnClassWhenNotUsedWithGenericSubType() {
         final TypeLiteral<String> typeLiteral = new TypeLiteral<String>() {};
 
-        final Type type = typeLiteral.getType();
-        assertEquals(String.class, type);
+        assertEquals(String.class, typeLiteral.getGenericType());
+        assertEquals(String.class, typeLiteral.getGenericClass());
     }
 
     @Test
@@ -59,10 +64,11 @@ public class TypeLiteralTest {
         final TypeLiteral<List<String>> typeLiteral = new TypeLiteral<List<String>>() {};
 
         // List
-        final Type type = typeLiteral.getType();
+        final Type type = typeLiteral.getGenericType();
         assertTrue(type instanceof ParameterizedType);
         final ParameterizedType listType = (ParameterizedType) type;
         assertEquals(List.class, listType.getRawType());
+        assertEquals(List.class, typeLiteral.getGenericClass());
 
         // String
         final Type[] ListTypeArguments = listType.getActualTypeArguments();
@@ -75,10 +81,11 @@ public class TypeLiteralTest {
         final TypeLiteral<Collection<Set<HelloBean>>> typeLiteral = new TypeLiteral<Collection<Set<HelloBean>>>() {};
 
         // Collection
-        final Type type = typeLiteral.getType();
+        final Type type = typeLiteral.getGenericType();
         assertTrue(type instanceof ParameterizedType);
         final ParameterizedType collectionType = (ParameterizedType) type;
         assertEquals(Collection.class, collectionType.getRawType());
+        assertEquals(Collection.class, typeLiteral.getGenericClass());
 
         // Set
         final Type[] collectionTypeArguments = collectionType.getActualTypeArguments();
@@ -132,5 +139,13 @@ public class TypeLiteralTest {
         final TypeLiteral<Collection<String>> collectionStringTypeLiteral = new TypeLiteral<Collection<String>>() {};
 
         assertFalse(stringTypeLiteral.equals(collectionStringTypeLiteral));
+    }
+
+    @Test
+    public void equalsShouldReturnFalseForOtherTypes() {
+        final TypeLiteral<String> stringTypeLiteral = new TypeLiteral<String>() {};
+
+        assertFalse(stringTypeLiteral.equals(null));
+        assertFalse(stringTypeLiteral.equals(String.class));
     }
 }
