@@ -24,6 +24,8 @@ package net.usikkert.kouinject.beandata;
 
 import java.lang.reflect.Type;
 
+import net.usikkert.kouinject.TypeLiteral;
+
 import org.apache.commons.lang.Validate;
 
 /**
@@ -44,8 +46,7 @@ public class BeanKey {
     private final String qualifier;
 
     /**
-     * Creates a new bean key for the specified bean class, with provider set to false,
-     * and no qualifier.
+     * Creates a new bean key for the specified bean class, with no qualifier.
      *
      * @param beanClass The actual bean class for this key.
      */
@@ -54,7 +55,7 @@ public class BeanKey {
     }
 
     /**
-     * Creates a new bean key for the specified bean class, with provider set to false.
+     * Creates a new bean key for the specified bean class, with the specified qualifier.
      *
      * @param beanClass The actual bean class for this key.
      * @param qualifier The qualifier for this key.
@@ -64,6 +65,29 @@ public class BeanKey {
 
         this.beanClass = beanClass;
         this.beanType = beanClass;
+        this.qualifier = qualifier;
+    }
+
+    /**
+     * Creates a new bean key for the specified bean type, with no qualifier.
+     *
+     * @param beanType The type literal with the actual type and class for this key.
+     */
+    public BeanKey(final TypeLiteral<?> beanType) {
+        this(beanType, null);
+    }
+
+    /**
+     * Creates a new bean key for the specified bean type, with the specified qualifier.
+     *
+     * @param beanType The type literal with the actual type and class for this key.
+     * @param qualifier The qualifier for this key.
+     */
+    public BeanKey(final TypeLiteral<?> beanType, final String qualifier) {
+        Validate.notNull(beanType, "Bean type can not be null");
+
+        this.beanClass = beanType.getGenericClass();
+        this.beanType = beanType.getGenericType();
         this.qualifier = qualifier;
     }
 

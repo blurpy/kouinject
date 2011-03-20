@@ -23,6 +23,10 @@
 package net.usikkert.kouinject.beandata;
 
 import static org.junit.Assert.*;
+
+import java.util.List;
+
+import net.usikkert.kouinject.TypeLiteral;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.ColorBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.GreenBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.YellowBean;
@@ -389,5 +393,24 @@ public class BeanKeyTest {
 
         assertEquals(String.class, beanKey.getBeanClass());
         assertEquals(String.class, beanKey.getBeanType());
+    }
+
+    @Test
+    public void constructorWithTypeShouldSetTypeAndClass() {
+        final TypeLiteral<List<String>> beanType = new TypeLiteral<List<String>>() {};
+        final BeanKey beanKey = new BeanKey(beanType);
+
+        assertSame(beanType.getGenericClass(), beanKey.getBeanClass());
+        assertSame(beanType.getGenericType(), beanKey.getBeanType());
+    }
+
+    @Test
+    public void constructorWithTypeAndQualifierShouldSetTypeAndClassAndQualifier() {
+        final TypeLiteral<List<String>> beanType = new TypeLiteral<List<String>>() {};
+        final BeanKey beanKey = new BeanKey(beanType, "q");
+
+        assertSame(beanType.getGenericClass(), beanKey.getBeanClass());
+        assertSame(beanType.getGenericType(), beanKey.getBeanType());
+        assertEquals("q", beanKey.getQualifier());
     }
 }
