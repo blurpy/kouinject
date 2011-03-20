@@ -27,6 +27,7 @@ import static org.junit.Assert.*;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -147,5 +148,43 @@ public class TypeLiteralTest {
 
         assertFalse(stringTypeLiteral.equals(null));
         assertFalse(stringTypeLiteral.equals(String.class));
+    }
+
+    @Test
+    public void shouldAcceptTypeInConstructorWhenNotUsedWithGenericSubType() {
+        final TypeLiteral<String> stringTypeLiteral = new TypeLiteral<String>() {};
+
+        final TypeLiteral typeLiteral = new TypeLiteral(stringTypeLiteral.getGenericType()) {};
+
+        assertSame(stringTypeLiteral.getGenericType(), typeLiteral.getGenericType());
+        assertSame(stringTypeLiteral.getGenericClass(), typeLiteral.getGenericClass());
+        assertTrue(stringTypeLiteral.equals(typeLiteral));
+    }
+
+    @Test
+    public void shouldAcceptTypeInConstructorWhenNotUsedWithGenericSubTypeAndIgnoreTypeArgument() {
+        final TypeLiteral<String> stringTypeLiteral = new TypeLiteral<String>() {};
+
+        final TypeLiteral<?> typeLiteral = new TypeLiteral<Object>(stringTypeLiteral.getGenericType()) {};
+
+        assertSame(stringTypeLiteral.getGenericType(), typeLiteral.getGenericType());
+        assertSame(stringTypeLiteral.getGenericClass(), typeLiteral.getGenericClass());
+        assertTrue(stringTypeLiteral.equals(typeLiteral));
+    }
+
+    @Test
+    public void shouldAcceptTypeInConstructorWhenUsedWithGenericSubType() {
+        final TypeLiteral<Collection<Date>> dateTypeLiteral = new TypeLiteral<Collection<Date>>() {};
+
+        final TypeLiteral typeLiteral = new TypeLiteral(dateTypeLiteral.getGenericType()) {};
+
+        assertSame(dateTypeLiteral.getGenericType(), typeLiteral.getGenericType());
+        assertSame(dateTypeLiteral.getGenericClass(), typeLiteral.getGenericClass());
+        assertTrue(dateTypeLiteral.equals(typeLiteral));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldValidateTypeInConstructor() {
+        new TypeLiteral(null) {};
     }
 }
