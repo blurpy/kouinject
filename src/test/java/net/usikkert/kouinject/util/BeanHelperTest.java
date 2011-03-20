@@ -28,10 +28,12 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Provider;
 
 import net.usikkert.kouinject.CollectionProvider;
+import net.usikkert.kouinject.TypeLiteral;
 import net.usikkert.kouinject.beandata.BeanKey;
 import net.usikkert.kouinject.testbeans.notscanned.BeanHelperBean;
 import net.usikkert.kouinject.testbeans.notscanned.SomeEnum;
@@ -82,6 +84,16 @@ public class BeanHelperTest {
 
         assertNotNull(returnType);
         checkRegularParameter(returnType, JavaBean.class, "Blue");
+    }
+
+    @Test
+    public void findFactoryReturnTypeShouldFindTheCorrectType() throws NoSuchMethodException {
+        final Method method = getMethod("genericFactoryMethod");
+        final BeanKey returnType = beanHelper.findFactoryReturnType(method);
+
+        assertNotNull(returnType);
+        checkRegularParameter(returnType, Set.class, "Green");
+        checkGenericParameter(returnType, new TypeLiteral<Set<GreenBean>>() {});
     }
 
     @Test(expected = UnsupportedOperationException.class)
@@ -501,6 +513,11 @@ public class BeanHelperTest {
     private void checkParameter(final BeanKey parameter, final Class<?> aClass, final String qualifier) {
         assertEquals(aClass, parameter.getBeanClass());
         assertEquals(qualifier, parameter.getQualifier());
+    }
+
+    private void checkGenericParameter(final BeanKey beanKey, final TypeLiteral<?> expectedType) {
+        assertEquals(expectedType.getGenericType(), beanKey.getBeanType());
+        assertEquals(expectedType.getGenericClass(), beanKey.getBeanClass());
     }
 
     private BeanKey getParameter(final List<BeanKey> parameters, final int position) {

@@ -36,6 +36,7 @@ import javax.inject.Provider;
 
 import net.usikkert.kouinject.AnnotationBasedQualifierHandler;
 import net.usikkert.kouinject.CollectionProvider;
+import net.usikkert.kouinject.TypeLiteral;
 import net.usikkert.kouinject.beandata.BeanKey;
 import net.usikkert.kouinject.beandata.CollectionBeanKey;
 import net.usikkert.kouinject.beandata.CollectionProviderBeanKey;
@@ -70,7 +71,10 @@ public class BeanHelper {
         final Annotation[] annotations = factoryMethod.getAnnotations();
         final String qualifier = qualifierHandler.getQualifier(factoryMethod, annotations);
 
-        return new BeanKey(returnType, qualifier);
+        final Type genericReturnType = factoryMethod.getGenericReturnType();
+        final TypeLiteral<Object> beanType = new TypeLiteral<Object>(genericReturnType) {};
+
+        return new BeanKey(beanType, qualifier);
     }
 
     /**

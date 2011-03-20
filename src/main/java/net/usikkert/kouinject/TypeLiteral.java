@@ -50,6 +50,8 @@ public abstract class TypeLiteral<T> {
 
     /**
      * Constructor that extracts the generic type argument.
+     *
+     * <p>{@link #getGenericType()} is the type of &lt;T&gt;, and {@link #getGenericClass()} is the raw type of &lt;T&gt;.</p>
      */
     protected TypeLiteral() {
         final ParameterizedType parameterizedType = getAsParameterizedType(getClass().getGenericSuperclass());
@@ -60,6 +62,9 @@ public abstract class TypeLiteral<T> {
 
     /**
      * Constructor that accepts the generic type as a parameter.
+     *
+     * <p>{@link #getGenericType()} is the type in the parameter, and {@link #getGenericClass()} is the
+     * raw type of the type in the parameter.</p>
      *
      * @param type The type this type literal will handle.
      */

@@ -23,6 +23,7 @@
 package net.usikkert.kouinject.testbeans.notscanned;
 
 import java.util.Collection;
+import java.util.Set;
 
 import javax.inject.Named;
 import javax.inject.Provider;
@@ -173,6 +174,11 @@ public class BeanHelperBean {
 
     @Produces @Blue @Singleton
     public JavaBean scopedAndQualifiedFactoryMethod() {
+        return null;
+    }
+
+    @Produces @Green
+    public Set<GreenBean> genericFactoryMethod() {
         return null;
     }
 
