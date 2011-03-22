@@ -26,7 +26,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,6 +51,7 @@ import org.apache.commons.lang.Validate;
 public class BeanHelper {
 
     private final AnnotationBasedQualifierHandler qualifierHandler = new AnnotationBasedQualifierHandler();
+    private final GenericsHelper genericsHelper = new GenericsHelper();
 
     /**
      * Finds the return type of the factory method. The return type includes the qualifier on the method.
@@ -163,14 +163,8 @@ public class BeanHelper {
     }
 
     private Class<?> getBeanClassFromGenericType(final Object parameterOwner, final Type genericParameterType) {
-        if (genericParameterType instanceof ParameterizedType) {
-            final ParameterizedType parameterizedType = (ParameterizedType) genericParameterType;
-            final Type[] typeArguments = parameterizedType.getActualTypeArguments();
-            final Type firstTypeArgument = typeArguments[0];
-
-            if (firstTypeArgument instanceof Class<?>) {
-                return (Class<?>) firstTypeArgument;
-            }
+        if (genericsHelper.isParameterizedType(genericParameterType)) {
+            return genericsHelper.getGenericArgumentAsClass(genericParameterType);
         }
 
         throw new IllegalArgumentException("Generic class used without type argument: " + parameterOwner);
