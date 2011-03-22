@@ -7,6 +7,7 @@
  - Added new constructor in DefaultInjector for setting active profiles
  - Fixed issue where adding several beans in an inheritance hierarchy would fail randomly based on the order they were loaded
  - Improved support for working with a SecurityManager
+ - Added support for custom @Components
 
 
 * Version 1.1 (01.03.2011):
