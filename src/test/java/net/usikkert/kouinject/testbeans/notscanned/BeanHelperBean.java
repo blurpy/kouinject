@@ -60,6 +60,8 @@ public class BeanHelperBean {
 
     private Provider<RedBean> provider;
 
+    private Provider<Set<RedBean>> providerWithGenericParameter;
+
     @Named("great")
     private Provider<NoBean> providerWithQualifier;
 
@@ -70,6 +72,8 @@ public class BeanHelperBean {
 
     private CollectionProvider<YellowBean> collectionProvider;
 
+    private CollectionProvider<Set<YellowBean>> collectionProviderWithGenericParameter;
+
     @Named("awesome")
     private CollectionProvider<QualifierBean> collectionProviderWithQualifier;
 
@@ -79,6 +83,8 @@ public class BeanHelperBean {
 
 
     private Collection<GreenBean> collection;
+
+    private Collection<Set<GreenBean>> collectionWithGenericParameter;
 
     @Named("best")
     private Collection<CarBean> collectionWithQualifier;

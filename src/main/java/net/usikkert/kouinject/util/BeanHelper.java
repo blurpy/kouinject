@@ -143,18 +143,18 @@ public class BeanHelper {
         final String qualifier = qualifierHandler.getQualifier(parameterOwner, annotations);
 
         if (isProvider(parameterClass)) {
-            final Class<?> beanClassFromProvider = getBeanClassFromGenericType(parameterOwner, parameterType);
-            return new ProviderBeanKey(beanClassFromProvider, qualifier);
+            final TypeLiteral<?> beanTypeFromProvider = getBeanTypeFromGenericType(parameterOwner, parameterType);
+            return new ProviderBeanKey(beanTypeFromProvider, qualifier);
         }
 
         else if (isCollection(parameterClass)) {
-            final Class<?> beanClassFromCollection = getBeanClassFromGenericType(parameterOwner, parameterType);
-            return new CollectionBeanKey(beanClassFromCollection, qualifier);
+            final TypeLiteral<?> beanTypeFromCollection = getBeanTypeFromGenericType(parameterOwner, parameterType);
+            return new CollectionBeanKey(beanTypeFromCollection, qualifier);
         }
 
         else if (isCollectionProvider(parameterClass)) {
-            final Class<?> beanClassFromCollectionProvider = getBeanClassFromGenericType(parameterOwner, parameterType);
-            return new CollectionProviderBeanKey(beanClassFromCollectionProvider, qualifier);
+            final TypeLiteral<?> beanTypeFromCollectionProvider = getBeanTypeFromGenericType(parameterOwner, parameterType);
+            return new CollectionProviderBeanKey(beanTypeFromCollectionProvider, qualifier);
         }
 
         else {
@@ -163,9 +163,10 @@ public class BeanHelper {
         }
     }
 
-    private Class<?> getBeanClassFromGenericType(final Object parameterOwner, final Type genericParameterType) {
+    private TypeLiteral<?> getBeanTypeFromGenericType(final Object parameterOwner, final Type genericParameterType) {
         if (genericsHelper.isParameterizedType(genericParameterType)) {
-            return genericsHelper.getGenericArgumentAsClass(genericParameterType);
+            final Type genericArgumentAsType = genericsHelper.getGenericArgumentAsType(genericParameterType);
+            return new TypeLiteral<Object>(genericArgumentAsType) {};
         }
 
         throw new IllegalArgumentException("Generic class used without type argument: " + parameterOwner);

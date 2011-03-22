@@ -269,6 +269,17 @@ public class BeanHelperTest {
 
         assertNotNull(fieldKey);
         checkProviderParameter(fieldKey, RedBean.class, null);
+        checkGenericParameter(fieldKey, new TypeLiteral<RedBean>() {});
+    }
+
+    @Test
+    public void findFieldKeyShouldFindProviderWithGenericParameter() throws NoSuchFieldException {
+        final Field field = getField("providerWithGenericParameter");
+        final BeanKey fieldKey = beanHelper.findFieldKey(field);
+
+        assertNotNull(fieldKey);
+        checkProviderParameter(fieldKey, Set.class, null);
+        checkGenericParameter(fieldKey, new TypeLiteral<Set<RedBean>>() {});
     }
 
     @Test
@@ -299,6 +310,17 @@ public class BeanHelperTest {
 
         assertNotNull(fieldKey);
         checkCollectionProviderParameter(fieldKey, YellowBean.class, null);
+        checkGenericParameter(fieldKey, new TypeLiteral<YellowBean>() {});
+    }
+
+    @Test
+    public void findFieldKeyShouldFindCollectionProviderWithGenericParameter() throws NoSuchFieldException {
+        final Field field = getField("collectionProviderWithGenericParameter");
+        final BeanKey fieldKey = beanHelper.findFieldKey(field);
+
+        assertNotNull(fieldKey);
+        checkCollectionProviderParameter(fieldKey, Set.class, null);
+        checkGenericParameter(fieldKey, new TypeLiteral<Set<YellowBean>>() {});
     }
 
     @Test
@@ -329,6 +351,17 @@ public class BeanHelperTest {
 
         assertNotNull(fieldKey);
         checkCollectionParameter(fieldKey, GreenBean.class, null);
+        checkGenericParameter(fieldKey, new TypeLiteral<GreenBean>() {});
+    }
+
+    @Test
+    public void findFieldKeyShouldFindCollectionWithGenericParameter() throws NoSuchFieldException {
+        final Field field = getField("collectionWithGenericParameter");
+        final BeanKey fieldKey = beanHelper.findFieldKey(field);
+
+        assertNotNull(fieldKey);
+        checkCollectionParameter(fieldKey, Set.class, null);
+        checkGenericParameter(fieldKey, new TypeLiteral<Set<GreenBean>>() {});
     }
 
     @Test
