@@ -158,7 +158,8 @@ public class BeanHelper {
         }
 
         else {
-            return new BeanKey(parameterClass, qualifier);
+            final TypeLiteral<?> beanType = new TypeLiteral<Object>(parameterType) {};
+            return new BeanKey(beanType, qualifier);
         }
     }
 

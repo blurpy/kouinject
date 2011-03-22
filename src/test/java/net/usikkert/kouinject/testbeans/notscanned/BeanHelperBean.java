@@ -87,6 +87,8 @@ public class BeanHelperBean {
 
     private Collection<?> collectionWithWildCard;
 
+    private Set<CoffeeBean> genericField;
+
     // ConstructorWithNoParameters
     public BeanHelperBean() {
 
@@ -159,6 +161,11 @@ public class BeanHelperBean {
 
     // ConstructorWithCollectionWithGenericWildCard
     public BeanHelperBean(final Collection<?> collection, final JavaBean javaBean) {
+
+    }
+
+    // ConstructorWithGenericParameter
+    public BeanHelperBean(final Set<CoffeeBean> coffeeBeanSet) {
 
     }
 
@@ -240,6 +247,10 @@ public class BeanHelperBean {
     }
 
     public void methodWithCollectionWithGenericWildCard(final Collection<?> collection) {
+
+    }
+
+    public void methodWithGenericParameter(final Set<CoffeeBean> coffeeBeanSet) {
 
     }
 }

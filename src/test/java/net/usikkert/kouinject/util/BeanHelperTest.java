@@ -75,6 +75,7 @@ public class BeanHelperTest {
 
         assertNotNull(returnType);
         checkRegularParameter(returnType, HelloBean.class, null);
+        checkGenericParameter(returnType, new TypeLiteral<HelloBean>() {});
     }
 
     @Test
@@ -120,6 +121,7 @@ public class BeanHelperTest {
         assertEquals(1, parameters.size());
 
         checkRegularParameter(parameters, 1, TheInterface.class, null);
+        checkGenericParameter(parameters, 1, new TypeLiteral<TheInterface>() {});
     }
 
     @Test
@@ -230,12 +232,25 @@ public class BeanHelperTest {
     }
 
     @Test
+    public void findParameterKeysForMethodShouldFindCorrectType() throws NoSuchMethodException {
+        final Method method = getMethod("methodWithGenericParameter", Set.class);
+        final List<BeanKey> parameters = beanHelper.findParameterKeys(method);
+
+        assertNotNull(parameters);
+        assertEquals(1, parameters.size());
+
+        checkRegularParameter(parameters, 1, Set.class, null);
+        checkGenericParameter(parameters, 1, new TypeLiteral<Set<CoffeeBean>>() {});
+    }
+
+    @Test
     public void findFieldKeyShouldFindClassWithoutQualifier() throws NoSuchFieldException {
         final Field field = getField("field");
         final BeanKey fieldKey = beanHelper.findFieldKey(field);
 
         assertNotNull(fieldKey);
         checkRegularParameter(fieldKey, TheInterface.class, null);
+        checkGenericParameter(fieldKey, new TypeLiteral<TheInterface>() {});
     }
 
     @Test
@@ -338,6 +353,16 @@ public class BeanHelperTest {
     }
 
     @Test
+    public void findFieldKeyShouldFindTheCorrectType() throws NoSuchFieldException {
+        final Field field = getField("genericField");
+        final BeanKey fieldKey = beanHelper.findFieldKey(field);
+
+        assertNotNull(fieldKey);
+        checkRegularParameter(fieldKey, Set.class, null);
+        checkGenericParameter(fieldKey, new TypeLiteral<Set<CoffeeBean>>() {});
+    }
+
+    @Test
     public void findParameterKeysForConstructorShouldHandleConstructorsWithNoParameters() throws NoSuchMethodException {
         final Constructor<?> constructor = getConstructor();
         final List<BeanKey> parameters = beanHelper.findParameterKeys(constructor);
@@ -355,6 +380,7 @@ public class BeanHelperTest {
         assertEquals(1, parameters.size());
 
         checkRegularParameter(parameters, 1, TheInterface.class, null);
+        checkGenericParameter(parameters, 1, new TypeLiteral<TheInterface>() {});
     }
 
     @Test
@@ -464,6 +490,18 @@ public class BeanHelperTest {
         beanHelper.findParameterKeys(constructor);
     }
 
+    @Test
+    public void findParameterKeysForConstructorShouldFindCorrectType() throws NoSuchMethodException {
+        final Constructor<?> constructor = getConstructor(Set.class);
+        final List<BeanKey> parameters = beanHelper.findParameterKeys(constructor);
+
+        assertNotNull(parameters);
+        assertEquals(1, parameters.size());
+
+        checkRegularParameter(parameters, 1, Set.class, null);
+        checkGenericParameter(parameters, 1, new TypeLiteral<Set<CoffeeBean>>() {});
+    }
+
     private void checkRegularParameter(final List<BeanKey> parameters, final int position,
                                        final Class<?> aClass, final String qualifier) {
         final BeanKey beanKey = getParameter(parameters, position);
@@ -513,6 +551,10 @@ public class BeanHelperTest {
     private void checkParameter(final BeanKey parameter, final Class<?> aClass, final String qualifier) {
         assertEquals(aClass, parameter.getBeanClass());
         assertEquals(qualifier, parameter.getQualifier());
+    }
+
+    private void checkGenericParameter(final List<BeanKey> parameters, final int position, final TypeLiteral<?> expectedType) {
+        checkGenericParameter(parameters.get(position -1), expectedType);
     }
 
     private void checkGenericParameter(final BeanKey beanKey, final TypeLiteral<?> expectedType) {
