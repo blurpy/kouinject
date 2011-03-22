@@ -22,8 +22,9 @@
 
 package net.usikkert.kouinject;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+
+import net.usikkert.kouinject.util.GenericsHelper;
 
 import org.apache.commons.lang.Validate;
 
@@ -45,6 +46,8 @@ import org.apache.commons.lang.Validate;
  */
 public abstract class TypeLiteral<T> {
 
+    private final GenericsHelper genericsHelper = new GenericsHelper();
+
     private final Type genericType;
     private final Class<T> genericClass;
 
@@ -53,11 +56,12 @@ public abstract class TypeLiteral<T> {
      *
      * <p>{@link #getGenericType()} is the type of &lt;T&gt;, and {@link #getGenericClass()} is the raw type of &lt;T&gt;.</p>
      */
+    @SuppressWarnings("unchecked")
     protected TypeLiteral() {
-        final ParameterizedType parameterizedType = getAsParameterizedType(getClass().getGenericSuperclass());
+        final Type genericSuperclass = getClass().getGenericSuperclass();
 
-        this.genericType = getGenericTypeArgument(parameterizedType);
-        this.genericClass = getGenericClassArgument(parameterizedType);
+        this.genericType = genericsHelper.getGenericArgumentAsType(genericSuperclass);
+        this.genericClass = (Class<T>) genericsHelper.getGenericArgumentAsClass(genericSuperclass);
     }
 
     /**
@@ -68,48 +72,12 @@ public abstract class TypeLiteral<T> {
      *
      * @param type The type this type literal will handle.
      */
+    @SuppressWarnings("unchecked")
     protected TypeLiteral(final Type type) {
         Validate.notNull(type, "Type can not be null");
 
         this.genericType = type;
-        this.genericClass = getAsGenericClass(type);
-    }
-
-    private ParameterizedType getAsParameterizedType(final Type type) {
-        if (type instanceof Class) {
-            throw new IllegalArgumentException("Generic type <T> is required");
-        }
-
-        else if (type instanceof ParameterizedType) {
-            return (ParameterizedType) type;
-        }
-
-        throw new IllegalArgumentException("Unsupported generic type: " + type);
-    }
-
-
-    private Type getGenericTypeArgument(final ParameterizedType parameterizedType) {
-        return parameterizedType.getActualTypeArguments()[0];
-    }
-
-    private Class<T> getGenericClassArgument(final ParameterizedType parameterizedType) {
-        final Type argument = getGenericTypeArgument(parameterizedType);
-
-        return getAsGenericClass(argument);
-    }
-
-    @SuppressWarnings("unchecked")
-    private Class<T> getAsGenericClass(final Type type) {
-        if (type instanceof Class) {
-            return (Class<T>) type;
-        }
-
-        else if (type instanceof ParameterizedType) {
-            final ParameterizedType parameterizedType = (ParameterizedType) type;
-            return (Class<T>) parameterizedType.getRawType();
-        }
-
-        throw new IllegalArgumentException("Unsupported generic type: " + type);
+        this.genericClass = (Class<T>) genericsHelper.getAsClass(type);
     }
 
     /**
