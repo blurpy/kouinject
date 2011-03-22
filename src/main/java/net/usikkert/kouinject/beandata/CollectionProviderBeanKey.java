@@ -22,6 +22,8 @@
 
 package net.usikkert.kouinject.beandata;
 
+import net.usikkert.kouinject.TypeLiteral;
+
 /**
  * A {@link net.usikkert.kouinject.beandata.BeanKey} for representing a request for a
  * {@link net.usikkert.kouinject.CollectionProvider} of beans.
@@ -38,6 +40,16 @@ public class CollectionProviderBeanKey extends BeanKey {
      */
     public CollectionProviderBeanKey(final Class<?> beanClass, final String qualifier) {
         super(beanClass, qualifier);
+    }
+
+    /**
+     * Creates a new collection provider bean key for the specified bean type, with the specified qualifier.
+     *
+     * @param beanType The type literal with the actual type and class for this key.
+     * @param qualifier The qualifier for this key.
+     */
+    public CollectionProviderBeanKey(final TypeLiteral<?> beanType, final String qualifier) {
+        super(beanType, qualifier);
     }
 
     /**

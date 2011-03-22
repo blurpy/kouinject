@@ -22,6 +22,8 @@
 
 package net.usikkert.kouinject.beandata;
 
+import net.usikkert.kouinject.TypeLiteral;
+
 /**
  * A {@link BeanKey} for representing request for a {@link javax.inject.Provider}.
  *
@@ -37,6 +39,16 @@ public class ProviderBeanKey extends BeanKey {
      */
     public ProviderBeanKey(final Class<?> beanClass, final String qualifier) {
         super(beanClass, qualifier);
+    }
+
+    /**
+     * Creates a new provider bean key for the specified bean type, with the specified qualifier.
+     *
+     * @param beanType The type literal with the actual type and class for this key.
+     * @param qualifier The qualifier for this key.
+     */
+    public ProviderBeanKey(final TypeLiteral<?> beanType, final String qualifier) {
+        super(beanType, qualifier);
     }
 
     /**

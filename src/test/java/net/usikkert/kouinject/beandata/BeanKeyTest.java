@@ -413,4 +413,34 @@ public class BeanKeyTest {
         assertSame(beanType.getGenericType(), beanKey.getBeanType());
         assertEquals("q", beanKey.getQualifier());
     }
+
+    @Test
+    public void constructorWithTypeAndQualifierShouldSetTypeAndClassAndQualifierForProvider() {
+        final TypeLiteral<List<String>> beanType = new TypeLiteral<List<String>>() {};
+        final BeanKey beanKey = new ProviderBeanKey(beanType, "q");
+
+        assertSame(beanType.getGenericClass(), beanKey.getBeanClass());
+        assertSame(beanType.getGenericType(), beanKey.getBeanType());
+        assertEquals("q", beanKey.getQualifier());
+    }
+
+    @Test
+    public void constructorWithTypeAndQualifierShouldSetTypeAndClassAndQualifierForCollection() {
+        final TypeLiteral<List<String>> beanType = new TypeLiteral<List<String>>() {};
+        final BeanKey beanKey = new CollectionBeanKey(beanType, "q");
+
+        assertSame(beanType.getGenericClass(), beanKey.getBeanClass());
+        assertSame(beanType.getGenericType(), beanKey.getBeanType());
+        assertEquals("q", beanKey.getQualifier());
+    }
+
+    @Test
+    public void constructorWithTypeAndQualifierShouldSetTypeAndClassAndQualifierForCollectionProvider() {
+        final TypeLiteral<List<String>> beanType = new TypeLiteral<List<String>>() {};
+        final BeanKey beanKey = new CollectionProviderBeanKey(beanType, "q");
+
+        assertSame(beanType.getGenericClass(), beanKey.getBeanClass());
+        assertSame(beanType.getGenericType(), beanKey.getBeanType());
+        assertEquals("q", beanKey.getQualifier());
+    }
 }
