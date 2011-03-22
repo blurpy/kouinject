@@ -62,16 +62,14 @@ public class BeanHelper {
     public BeanKey findFactoryReturnType(final Method factoryMethod) {
         Validate.notNull(factoryMethod, "Factory method can not be null");
 
-        final Class<?> returnType = factoryMethod.getReturnType();
+        final Type genericReturnType = factoryMethod.getGenericReturnType();
 
-        if (returnType.equals(Void.TYPE)) {
+        if (genericReturnType.equals(Void.TYPE)) {
             throw new UnsupportedOperationException("Can't return void from a factory method: " + factoryMethod);
         }
 
         final Annotation[] annotations = factoryMethod.getAnnotations();
         final String qualifier = qualifierHandler.getQualifier(factoryMethod, annotations);
-
-        final Type genericReturnType = factoryMethod.getGenericReturnType();
         final TypeLiteral<Object> beanType = new TypeLiteral<Object>(genericReturnType) {};
 
         return new BeanKey(beanType, qualifier);
