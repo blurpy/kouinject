@@ -88,8 +88,24 @@ public class DefaultInjector implements Injector {
      * {@inheritDoc}
      */
     @Override
+    public <T> T getBean(final TypeLiteral<T> beanType) {
+        return beanLoader.getBean(beanType);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public <T> T getBean(final Class<T> beanClass, final String qualifier) {
         return beanLoader.getBean(beanClass, qualifier);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> T getBean(final TypeLiteral<T> beanType, final String qualifier) {
+        return beanLoader.getBean(beanType, qualifier);
     }
 
     /**
@@ -104,27 +120,23 @@ public class DefaultInjector implements Injector {
      * {@inheritDoc}
      */
     @Override
+    public <T> Collection<T> getBeans(final TypeLiteral<T> beanType) {
+        return beanLoader.getBeans(beanType);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public <T> Collection<T> getBeans(final Class<T> beanClass, final String qualifier) {
         return beanLoader.getBeans(beanClass, qualifier);
     }
 
-    @Override
-    public <T> T getBean(final TypeLiteral<T> beanType) {
-        return null;
-    }
-
-    @Override
-    public <T> T getBean(final TypeLiteral<T> beanType, final String qualifier) {
-        return null;
-    }
-
-    @Override
-    public <T> Collection<T> getBeans(final TypeLiteral<T> beanType) {
-        return null;
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <T> Collection<T> getBeans(final TypeLiteral<T> beanType, final String qualifier) {
-        return null;
+        return beanLoader.getBeans(beanType, qualifier);
     }
 }

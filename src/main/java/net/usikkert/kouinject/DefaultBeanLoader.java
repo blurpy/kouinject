@@ -126,21 +126,38 @@ public class DefaultBeanLoader implements BeanLoader {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T getBean(final Class<T> beanClass, final String qualifier) {
-        Validate.notNull(beanClass, "Bean class can not be null");
-
-        final BeanKey dependency = new BeanKey(beanClass, qualifier);
-        LOG.finer("Requesting: " + dependency);
-
-        if (!beanCanBeCreated(dependency)) {
-            throw new IllegalArgumentException("No registered bean-data for: " + dependency);
-        }
-
-        return (T) findOrCreateBean(dependency);
+        return (T) getBean(new BeanKey(beanClass, qualifier));
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> T getBean(final TypeLiteral<T> beanType) {
+        return getBean(beanType, null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T getBean(final TypeLiteral<T> beanType, final String qualifier) {
+        return (T) getBean(new BeanKey(beanType, qualifier));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @SuppressWarnings("unchecked")
     private <T> T getBean(final BeanKey beanKey) {
-        return (T) getBean(beanKey.getBeanClass(), beanKey.getQualifier());
+        LOG.finer("Requesting: " + beanKey);
+
+        if (!beanCanBeCreated(beanKey)) {
+            throw new IllegalArgumentException("No registered bean-data for: " + beanKey);
+        }
+
+        return (T) findOrCreateBean(beanKey);
     }
 
     /**
@@ -155,33 +172,45 @@ public class DefaultBeanLoader implements BeanLoader {
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("unchecked")
     public <T> Collection<T> getBeans(final Class<T> beanClass, final String qualifier) {
-        Validate.notNull(beanClass, "Bean class can not be null");
+        return getBeans(new BeanKey(beanClass, qualifier));
+    }
 
-        final BeanKey dependency = new BeanKey(beanClass, qualifier);
-        LOG.finer("Requesting: " + dependency);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> Collection<T> getBeans(final TypeLiteral<T> beanType) {
+        return getBeans(beanType, null);
+    }
 
-        final Collection<BeanKey> beanKeys = new ArrayList<BeanKey>();
-        beanKeys.addAll(beanDataMap.findBeanKeys(dependency));
-        beanKeys.addAll(factoryPointMap.findFactoryPointKeys(dependency));
-
-        if (beanKeys.isEmpty()) {
-            throw new IllegalArgumentException("No registered bean-data for: " + dependency);
-        }
-
-        final Collection<T> beans = new ArrayList<T>();
-
-        for (final BeanKey beanKey : beanKeys) {
-            beans.add((T) findOrCreateBean(beanKey));
-        }
-
-        return beans;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> Collection<T> getBeans(final TypeLiteral<T> beanType, final String qualifier) {
+        return getBeans(new BeanKey(beanType, qualifier));
     }
 
     @SuppressWarnings("unchecked")
     private <T> Collection<T> getBeans(final BeanKey beanKey) {
-        return (Collection<T>) getBeans(beanKey.getBeanClass(), beanKey.getQualifier());
+        LOG.finer("Requesting: " + beanKey);
+
+        final Collection<BeanKey> beanKeys = new ArrayList<BeanKey>();
+        beanKeys.addAll(beanDataMap.findBeanKeys(beanKey));
+        beanKeys.addAll(factoryPointMap.findFactoryPointKeys(beanKey));
+
+        if (beanKeys.isEmpty()) {
+            throw new IllegalArgumentException("No registered bean-data for: " + beanKey);
+        }
+
+        final Collection<T> beans = new ArrayList<T>();
+
+        for (final BeanKey key : beanKeys) {
+            beans.add((T) findOrCreateBean(key));
+        }
+
+        return beans;
     }
 
     private boolean beanCanBeCreated(final BeanKey dependency) {
@@ -222,10 +251,6 @@ public class DefaultBeanLoader implements BeanLoader {
 
     private Object createBean(final BeanKey dependency) {
         LOG.finer("Checking bean before creation: " + dependency);
-
-        if (!dependency.isBeanForCreation()) {
-            throw new UnsupportedOperationException("This bean can't be instantiated: " + dependency);
-        }
 
         if (singletonMap.containsSingleton(dependency)) {
             throw new UnsupportedOperationException("This singleton has already been created: " + dependency);
