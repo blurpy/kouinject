@@ -20,13 +20,13 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans.notscanned.factory.stuff;
+package net.usikkert.kouinject.testbeans.scanned.generics.stuff;
 
 /**
  * A stuff bean, for testing generics.
  *
  * @author Christian Ihle
  */
-public class OneStuffBean {
+public class TwoStuffBean {
 
 }

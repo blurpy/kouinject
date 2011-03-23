@@ -20,7 +20,7 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans.notscanned.factory.stuff;
+package net.usikkert.kouinject.testbeans.scanned.generics.stuff;
 
 import java.util.List;
 
@@ -29,11 +29,11 @@ import javax.inject.Inject;
 import net.usikkert.kouinject.annotation.Component;
 
 /**
- * A bean injecting 2 different lists.This will fail until generics are supported.
+ * A bean injecting 2 different lists.
  *
  * @author Christian Ihle
  */
-@Component
+//@Component // TODO
 public class ListOfStuffBean {
 
     @Inject

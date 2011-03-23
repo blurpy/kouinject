@@ -20,29 +20,13 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans.notscanned.factory.stuff;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import net.usikkert.kouinject.annotation.Component;
-import net.usikkert.kouinject.annotation.Produces;
+package net.usikkert.kouinject.testbeans.scanned.generics.stuff;
 
 /**
- * A factory bean that creates 2 different lists. This will fail until generics are supported.
+ * A stuff bean, for testing generics.
  *
  * @author Christian Ihle
  */
-@Component
-public class ListOfStuffFactoryBean {
+public class OneStuffBean {
 
-    @Produces
-    public List<OneStuffBean> createOneStuffBeans() {
-        return new ArrayList<OneStuffBean>();
-    }
-
-    @Produces
-    public List<TwoStuffBean> createTwoStuffBeans() {
-        return new ArrayList<TwoStuffBean>();
-    }
 }

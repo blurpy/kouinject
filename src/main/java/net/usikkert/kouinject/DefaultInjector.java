@@ -107,4 +107,24 @@ public class DefaultInjector implements Injector {
     public <T> Collection<T> getBeans(final Class<T> beanClass, final String qualifier) {
         return beanLoader.getBeans(beanClass, qualifier);
     }
+
+    @Override
+    public <T> T getBean(final TypeLiteral<T> beanType) {
+        return null;
+    }
+
+    @Override
+    public <T> T getBean(final TypeLiteral<T> beanType, final String qualifier) {
+        return null;
+    }
+
+    @Override
+    public <T> Collection<T> getBeans(final TypeLiteral<T> beanType) {
+        return null;
+    }
+
+    @Override
+    public <T> Collection<T> getBeans(final TypeLiteral<T> beanType, final String qualifier) {
+        return null;
+    }
 }

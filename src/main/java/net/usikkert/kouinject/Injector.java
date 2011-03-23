@@ -43,6 +43,9 @@ public interface Injector {
      */
     <T> T getBean(Class<T> beanClass);
 
+    // TODO
+    <T> T getBean(TypeLiteral<T> beanType);
+
     /**
      * Gets a bean that matches the given class and qualifier.
      *
@@ -59,6 +62,9 @@ public interface Injector {
      */
     <T> T getBean(Class<T> beanClass, String qualifier);
 
+    // TODO
+    <T> T getBean(TypeLiteral<T> beanType, String qualifier);
+
     /**
      * Gets a collection of all the beans that matches the bean class, with no qualifier.
      *
@@ -70,6 +76,9 @@ public interface Injector {
      * @throws IllegalArgumentException If no beans are found.
      */
     <T> Collection<T> getBeans(Class<T> beanClass);
+
+    // TODO
+    <T> Collection<T> getBeans(TypeLiteral<T> beanType);
 
     /**
      * Gets a collection of all the beans that matches the bean class and qualifier.
@@ -86,4 +95,7 @@ public interface Injector {
      * @throws IllegalArgumentException If no beans are found.
      */
     <T> Collection<T> getBeans(Class<T> beanClass, String qualifier);
+
+    // TODO
+    <T> Collection<T> getBeans(TypeLiteral<T> beanType, String qualifier);
 }
