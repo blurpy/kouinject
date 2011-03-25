@@ -26,6 +26,8 @@ import java.util.Collection;
 
 import javax.inject.Inject;
 
+import net.usikkert.kouinject.annotation.Component;
+
 /**
  * A bean for testing injection of beans with generics.
  *

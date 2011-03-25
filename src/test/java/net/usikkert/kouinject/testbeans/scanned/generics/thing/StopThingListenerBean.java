@@ -22,6 +22,8 @@
 
 package net.usikkert.kouinject.testbeans.scanned.generics.thing;
 
+import net.usikkert.kouinject.annotation.Component;
+
 /**
  * A bean for testing generics, implementing a generic interface.
  *
