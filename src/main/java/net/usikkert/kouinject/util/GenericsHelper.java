@@ -120,6 +120,69 @@ public class GenericsHelper {
         return type instanceof ParameterizedType;
     }
 
+    /**
+     * TODO
+     *
+     * Determines if the class or interface represented by this Class object is either the same as,
+     * or is a superclass or superinterface of, the class or interface represented by the specified Class parameter.
+     *
+     * A generic type A is a subtype of a generic type B if and only if the type parameters are identical
+     * and A's raw type is a subtype of B's raw type.
+     *
+     *
+     * @param thisType
+     * @param thatType
+     * @return
+     */
+    public boolean isAssignableFrom(final Type thisType, final Type thatType) {
+        Validate.notNull(thisType, "This type can not be null");
+        Validate.notNull(thatType, "That type can not be null");
+
+        if (thisType.equals(thatType)) {
+            return true;
+        }
+
+        final Class<?> thisClass = getAsClass(thisType);
+        final Class<?> thatClass = getAsClass(thatType);
+
+        if (thisClass.isAssignableFrom(thatClass)) {
+            if (isClass(thisType) && isClass(thatType)) {
+                return true;
+            }
+
+            else if (isParameterizedType(thisType) && isParameterizedType(thatType)) {
+                return typesHaveTheSameParameters(thisType, thatType);
+            }
+        }
+
+        return false;
+    }
+
+    private boolean typesHaveTheSameParameters(final Type thisType, final Type thatType) {
+        final Type[] thisArguments = getGenericArgumentsAsType(thisType);
+        final Type[] thatArguments = getGenericArgumentsAsType(thatType);
+
+        if (thisArguments.length != thatArguments.length) {
+            return false;
+        }
+
+        for (int i = 0; i < thisArguments.length; i++) {
+            final Type thisArgument = thisArguments[i];
+            final Type thatArgument = thatArguments[i];
+
+            if (!thisArgument.equals(thatArgument)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private Type[] getGenericArgumentsAsType(final Type type) {
+        final ParameterizedType parameterizedType = getAsParameterizedType(type);
+        return parameterizedType.getActualTypeArguments();
+    }
+
     private ParameterizedType getAsParameterizedType(final Type type) {
         if (isClass(type)) {
             throw new IllegalArgumentException("Generic type <T> is required: " + type);
