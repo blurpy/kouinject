@@ -250,7 +250,6 @@ public class GenericsHelperTest {
     }
 
     @Test
-    @Ignore("Not implemented")
     public void isAssignableFromShouldBeTrueForWildcardWithExtendsAndCorrectInheritance() {
         final Type thisType = new TypeLiteral<Set<? extends SuperBean>>() {}.getGenericType();
         final Type thatType = new TypeLiteral<Set<MiddleBean>>() {}.getGenericType();
@@ -279,7 +278,6 @@ public class GenericsHelperTest {
     }
 
     @Test
-    @Ignore("Not implemented")
     public void isAssignableFromShouldBeTrueForWildcardWithSuperAndCorrectInheritance() {
         final Type thisType = new TypeLiteral<Set<? super ChildBean>>() {}.getGenericType();
         final Type thatType = new TypeLiteral<Set<MiddleBean>>() {}.getGenericType();

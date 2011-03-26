@@ -24,6 +24,7 @@ package net.usikkert.kouinject.util;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.WildcardType;
 
 import org.apache.commons.lang.Validate;
 
@@ -175,7 +176,7 @@ public class GenericsHelper {
             final Type thisArgument = thisArguments[i];
             final Type thatArgument = thatArguments[i];
 
-            if (!thisArgument.equals(thatArgument)) {
+            if (!typesHaveTheSameParameter(thisArgument, thatArgument)) {
                 return false;
             }
         }
@@ -186,6 +187,42 @@ public class GenericsHelper {
     private Type[] getGenericArgumentsAsType(final Type type) {
         final ParameterizedType parameterizedType = getAsParameterizedType(type);
         return parameterizedType.getActualTypeArguments();
+    }
+
+    private boolean typesHaveTheSameParameter(final Type thisArgument, final Type thatArgument) {
+        if (thisArgument.equals(thatArgument)) {
+            return true;
+        }
+
+        if (isWildcard(thisArgument)) {
+            final WildcardType thisWildcard = (WildcardType) thisArgument;
+            return isAssignableFromWildcard(thisWildcard, thatArgument);
+        }
+
+        return false;
+    }
+
+    private boolean isWildcard(final Type type) {
+        return type instanceof WildcardType;
+    }
+
+    private boolean isAssignableFromWildcard(final WildcardType thisWildcard, final Type thatType) {
+        final Type[] upperBounds = thisWildcard.getUpperBounds();
+        final Type[] lowerBounds = thisWildcard.getLowerBounds();
+
+        for (final Type upperBound : upperBounds) {
+            if (!isAssignableFrom(upperBound, thatType)) {
+                return false;
+            }
+        }
+
+        for (final Type lowerBound : lowerBounds) {
+            if (!isAssignableFrom(thatType, lowerBound)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private ParameterizedType getAsParameterizedType(final Type type) {
