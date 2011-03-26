@@ -153,6 +153,10 @@ public class GenericsHelper {
             else if (isParameterizedType(thisType) && isParameterizedType(thatType)) {
                 return typesHaveTheSameParameters(thisType, thatType);
             }
+
+            else if (isValidType(thisType) && isValidType(thatClass)) {
+                return true;
+            }
         }
 
         return false;
@@ -176,6 +180,10 @@ public class GenericsHelper {
         }
 
         return true;
+    }
+
+    private boolean isValidType(final Type type) {
+        return isClass(type) || isParameterizedType(type);
     }
 
     private Type[] getGenericArgumentsAsType(final Type type) {

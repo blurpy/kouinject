@@ -205,24 +205,21 @@ public class GenericsHelperTest {
         assertFalse(genericsHelper.isAssignableFrom(thatType, thisType));
     }
 
-    /*
-     * Is supported by the language, but disabled by the injector.
-     */
     @Test
-    public void isAssignableFromShouldBeFalseForSameTypeWithAndWithoutSubType1() {
+    public void isAssignableFromShouldBeTrueForSameTypeWithAndWithoutSubType1() {
         final Type type = new TypeLiteral<List<String>>() {}.getGenericType();
 
 //        final List<String> thatList = null;
 //        final List thisList = thatList; // ok
-        assertFalse(genericsHelper.isAssignableFrom(type, List.class));
+        assertTrue(genericsHelper.isAssignableFrom(type, List.class));
 
 //        final List thatList = null;
 //        final List<String> thisList = thatList; // ok, but unchecked assignment
-        assertFalse(genericsHelper.isAssignableFrom(List.class, type));
+        assertTrue(genericsHelper.isAssignableFrom(List.class, type));
     }
 
     @Test
-    public void isAssignableFromShouldBeFalseForSameTypeWithAndWithoutSubType2() {
+    public void isAssignableFromShouldBeTrueForSameTypeWithAndWithoutSubType2() {
         final Type type = new TypeLiteral<ArrayList<String>>() {}.getGenericType();
 
 //        final List thatList = null;
@@ -231,16 +228,16 @@ public class GenericsHelperTest {
 
 //        final ArrayList<String> thatList = null;
 //        final List thisList = thatList; // ok
-        assertFalse(genericsHelper.isAssignableFrom(List.class, type));
+        assertTrue(genericsHelper.isAssignableFrom(List.class, type));
     }
 
     @Test
-    public void isAssignableFromShouldBeFalseForSameTypeWithAndWithoutSubType3() {
+    public void isAssignableFromShouldBeTrueForSameTypeWithAndWithoutSubType3() {
         final Type type = new TypeLiteral<List<String>>() {}.getGenericType();
 
 //        final ArrayList thatList = null;
 //        final List<String> thisList = thatList; // ok, but unchecked assignment
-        assertFalse(genericsHelper.isAssignableFrom(type, ArrayList.class));
+        assertTrue(genericsHelper.isAssignableFrom(type, ArrayList.class));
 
 //        final List<String> thatList = null;
 //        final ArrayList thisList = thatList; // compile error
