@@ -24,6 +24,7 @@ package net.usikkert.kouinject;
 import static org.junit.Assert.*;
 
 import java.util.List;
+import java.util.Set;
 
 import net.usikkert.kouinject.testbeans.scanned.generics.stuff.ListOfStuffBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.stuff.ListOfStuffFactoryBean;
@@ -31,7 +32,6 @@ import net.usikkert.kouinject.testbeans.scanned.generics.stuff.OneStuffBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.stuff.TwoStuffBean;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -39,7 +39,6 @@ import org.junit.Test;
  *
  * @author Christian Ihle
  */
-@Ignore
 public class GenericBeanInjectionTest {
 
     private Injector injector;
@@ -50,7 +49,7 @@ public class GenericBeanInjectionTest {
     }
 
     @Test
-    public void checkOneStuffBean() {
+    public void checkListOfOneStuffBean() {
         final List<OneStuffBean> oneStuffBeans = injector.getBean(new TypeLiteral<List<OneStuffBean>>() {});
 
         assertNotNull(oneStuffBeans);
@@ -59,12 +58,40 @@ public class GenericBeanInjectionTest {
     }
 
     @Test
-    public void checkTwoStuffBean() {
+    public void checkListOfSetOfOneStuffBean() {
+        final List<Set<OneStuffBean>> oneStuffBeansList = injector.getBean(new TypeLiteral<List<Set<OneStuffBean>>>() {});
+        assertNotNull(oneStuffBeansList);
+        assertEquals(1, oneStuffBeansList.size());
+
+        final Set<OneStuffBean> oneStuffBeansSet = oneStuffBeansList.get(0);
+        assertNotNull(oneStuffBeansSet);
+        assertEquals(1, oneStuffBeansSet.size());
+
+        final OneStuffBean oneStuffBean = oneStuffBeansSet.iterator().next();
+        assertNotNull(oneStuffBean);
+    }
+
+    @Test
+    public void checkListOfTwoStuffBean() {
         final List<TwoStuffBean> twoStuffBeans = injector.getBean(new TypeLiteral<List<TwoStuffBean>>() {});
 
         assertNotNull(twoStuffBeans);
         assertEquals(1, twoStuffBeans.size());
         assertNotNull(twoStuffBeans.get(0));
+    }
+
+    @Test
+    public void checkListOfSetOfTwoStuffBean() {
+        final List<Set<TwoStuffBean>> twoStuffBeansList = injector.getBean(new TypeLiteral<List<Set<TwoStuffBean>>>() {});
+        assertNotNull(twoStuffBeansList);
+        assertEquals(1, twoStuffBeansList.size());
+
+        final Set<TwoStuffBean> twoStuffBeansSet = twoStuffBeansList.get(0);
+        assertNotNull(twoStuffBeansSet);
+        assertEquals(1, twoStuffBeansSet.size());
+
+        final TwoStuffBean twoStuffBean = twoStuffBeansSet.iterator().next();
+        assertNotNull(twoStuffBean);
     }
 
     @Test
@@ -81,6 +108,22 @@ public class GenericBeanInjectionTest {
         assertNotNull(twoStuffBeans);
         assertEquals(1, twoStuffBeans.size());
         assertNotNull(twoStuffBeans.get(0));
+
+        final List<Set<OneStuffBean>> oneStuffBeansInSet = bean.getOneStuffBeansInSet();
+        assertNotNull(oneStuffBeansInSet);
+        assertEquals(1, oneStuffBeansInSet.size());
+        final Set<OneStuffBean> oneStuffBeansSet = oneStuffBeansInSet.get(0);
+        assertNotNull(oneStuffBeansSet);
+        assertEquals(1, oneStuffBeansSet.size());
+        assertNotNull(oneStuffBeansSet.iterator().next());
+
+        final List<Set<TwoStuffBean>> twoStuffBeansInSet = bean.getTwoStuffBeansInSet();
+        assertNotNull(twoStuffBeansInSet);
+        assertEquals(1, twoStuffBeansInSet.size());
+        final Set<TwoStuffBean> twoStuffBeansSet = twoStuffBeansInSet.get(0);
+        assertNotNull(twoStuffBeansSet);
+        assertEquals(1, twoStuffBeansSet.size());
+        assertNotNull(twoStuffBeansSet.iterator().next());
     }
 
     @Test
@@ -88,14 +131,9 @@ public class GenericBeanInjectionTest {
         final ListOfStuffFactoryBean bean = injector.getBean(ListOfStuffFactoryBean.class);
         assertNotNull(bean);
 
-        final List<OneStuffBean> oneStuffBeans = bean.createOneStuffBeans();
-        assertNotNull(oneStuffBeans);
-        assertEquals(1, oneStuffBeans.size());
-        assertNotNull(oneStuffBeans.get(0));
-
-        final List<TwoStuffBean> twoStuffBeans = bean.createTwoStuffBeans();
-        assertNotNull(twoStuffBeans);
-        assertEquals(1, twoStuffBeans.size());
-        assertNotNull(twoStuffBeans.get(0));
+        assertNotNull(bean.createOneStuffBeans());
+        assertNotNull(bean.createTwoStuffBeans());
+        assertNotNull(bean.createOneStuffBeansInSet());
+        assertNotNull(bean.createTwoStuffBeansInSet());
     }
 }

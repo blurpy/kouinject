@@ -23,17 +23,18 @@
 package net.usikkert.kouinject.testbeans.scanned.generics.stuff;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
 import net.usikkert.kouinject.annotation.Component;
 
 /**
- * A bean injecting 2 different lists.
+ * A bean injecting different lists.
  *
  * @author Christian Ihle
  */
-//@Component // TODO
+@Component
 public class ListOfStuffBean {
 
     @Inject
@@ -42,11 +43,25 @@ public class ListOfStuffBean {
     @Inject
     private List<TwoStuffBean> twoStuffBeans;
 
+    @Inject
+    private List<Set<OneStuffBean>> oneStuffBeansInSet;
+
+    @Inject
+    private List<Set<TwoStuffBean>> twoStuffBeansInSet;
+
     public List<OneStuffBean> getOneStuffBeans() {
         return oneStuffBeans;
     }
 
     public List<TwoStuffBean> getTwoStuffBeans() {
         return twoStuffBeans;
+    }
+
+    public List<Set<OneStuffBean>> getOneStuffBeansInSet() {
+        return oneStuffBeansInSet;
+    }
+
+    public List<Set<TwoStuffBean>> getTwoStuffBeansInSet() {
+        return twoStuffBeansInSet;
     }
 }

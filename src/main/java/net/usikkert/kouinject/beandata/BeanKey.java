@@ -25,6 +25,7 @@ package net.usikkert.kouinject.beandata;
 import java.lang.reflect.Type;
 
 import net.usikkert.kouinject.TypeLiteral;
+import net.usikkert.kouinject.util.GenericsHelper;
 
 import org.apache.commons.lang.Validate;
 
@@ -38,6 +39,8 @@ public class BeanKey {
 
     /** Value of qualifier used to mark that an injection point accepts beans with any or no qualifier. */
     private static final String ANY_QUALIFIER = "any";
+
+    private final GenericsHelper genericsHelper = new GenericsHelper();
 
     private final Class<?> beanClass;
 
@@ -151,7 +154,7 @@ public class BeanKey {
     /**
      * Gets the qualifier for this bean key.
      *
-     * <p>A qualifier combined with the class helps identify the bean to inject.
+     * <p>A qualifier combined with the type helps identify the bean to inject.
      * See {@link #canInject(BeanKey)} for details regarding qualifier rules.</p>
      *
      * @return The qualifier.
@@ -166,9 +169,9 @@ public class BeanKey {
      *
      * <p>Rules:</p>
      * <ul>
-     *   <li>The bean must be of the same class or a superclass.</li>
+     *   <li>The bean must be of the same type or a supertype.</li>
      *   <li>The qualifier must be identical, even if it's <code>null</code>.</li>
-     *   <li>Except if the class is an exact match and this qualifier is <code>null</code>.</li>
+     *   <li>Except if the type is an exact match and this qualifier is <code>null</code>.</li>
      *   <li>Or this qualifier is <code>any</code>.</li>
      * </ul>
      *
@@ -184,11 +187,11 @@ public class BeanKey {
             return true;
         }
 
-        if (beanClass.equals(bean.getBeanClass()) && qualifier == null) {
+        if (beanType.equals(bean.getBeanType()) && qualifier == null) {
             return true;
         }
 
-        if (beanClass.isAssignableFrom(bean.getBeanClass())) {
+        if (genericsHelper.isAssignableFrom(beanType, bean.getBeanType())) {
             if (isTheSameQualifier(qualifier, bean.getQualifier())) {
                 return true;
             }
@@ -220,7 +223,7 @@ public class BeanKey {
             return true;
         }
 
-        return beanClass.isAssignableFrom(factoryCreatedBean.getBeanClass())
+        return genericsHelper.isAssignableFrom(beanType, factoryCreatedBean.getBeanType())
                 && factoryCreatedBean.hasTheAnyQualifier();
     }
 
@@ -242,7 +245,7 @@ public class BeanKey {
     }
 
     /**
-     * Checks equality based on {@link #getBeanClass()} and {@link #getQualifier()}.
+     * Checks equality based on {@link #getBeanType()} and {@link #getQualifier()}.
      *
      * @param obj The key to compare with this.
      * @return If the key is equal to this.
@@ -259,7 +262,7 @@ public class BeanKey {
 
         final BeanKey beanKey = (BeanKey) obj;
 
-        if (beanClass.equals(beanKey.getBeanClass())) {
+        if (beanType.equals(beanKey.getBeanType())) {
             if (qualifier == null && beanKey.getQualifier() == null) {
                 return true;
             }
@@ -276,11 +279,11 @@ public class BeanKey {
     @Override
     public int hashCode() {
         if (qualifier != null) {
-            return beanClass.hashCode() + qualifier.toLowerCase().hashCode();
+            return beanType.hashCode() + qualifier.toLowerCase().hashCode();
         }
 
         else {
-            return beanClass.hashCode();
+            return beanType.hashCode();
         }
     }
 

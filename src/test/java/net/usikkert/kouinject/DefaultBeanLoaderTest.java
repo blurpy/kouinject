@@ -124,6 +124,7 @@ import net.usikkert.kouinject.testbeans.scanned.scope.inheritance.SecondLayerBea
 import net.usikkert.kouinject.testbeans.scanned.scope.inheritance.ThirdLayerBean;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -524,6 +525,18 @@ public class DefaultBeanLoaderTest {
         assertTrue(containsBean(DevelopmentBean.class, beans));
         assertTrue(containsBean(JndiDataSourceBean.class, beans));
         assertTrue(containsBean(SwingBean.class, beans));
+    }
+
+    // TODO
+    @Test
+    @Ignore("Need to find a way to compare generic type from object")
+    public void getBeansWithObjectAndAnyQualifierShouldReturnGenericBeans() {
+        final Collection<Object> beans = beanLoader.getBeans(Object.class, "any");
+
+        assertNotNull(beans);
+        assertEquals(BeanCount.SCANNED.getNumberOfBeans(), beans.size());
+
+//        assertTrue(containsBean(new TypeLiteral<List<OneStuffBean>>() {}, beans));
     }
 
     @Test

@@ -23,22 +23,24 @@
 package net.usikkert.kouinject.testbeans.scanned.generics.stuff;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import net.usikkert.kouinject.annotation.Component;
 import net.usikkert.kouinject.annotation.Produces;
 
 /**
- * A factory bean that creates 2 different lists.
+ * A factory bean that creates different lists.
  *
  * @author Christian Ihle
  */
-//@Component // TODO
+@Component
 public class ListOfStuffFactoryBean {
 
     @Produces
-    public List<OneStuffBean> createOneStuffBeans() {
-        final List<OneStuffBean> oneStuffBeans = new ArrayList<OneStuffBean>();
+    public ArrayList<OneStuffBean> createOneStuffBeans() {
+        final ArrayList<OneStuffBean> oneStuffBeans = new ArrayList<OneStuffBean>();
         oneStuffBeans.add(new OneStuffBean());
 
         return oneStuffBeans;
@@ -50,5 +52,25 @@ public class ListOfStuffFactoryBean {
         twoStuffBeans.add(new TwoStuffBean());
 
         return twoStuffBeans;
+    }
+
+    @Produces
+    public List<Set<OneStuffBean>> createOneStuffBeansInSet() {
+        final List<Set<OneStuffBean>> oneStuffBeanList = new ArrayList<Set<OneStuffBean>>();
+        final Set<OneStuffBean> oneStuffBeans = new HashSet<OneStuffBean>();
+        oneStuffBeanList.add(oneStuffBeans);
+        oneStuffBeans.add(new OneStuffBean());
+
+        return oneStuffBeanList;
+    }
+
+    @Produces
+    public ArrayList<Set<TwoStuffBean>> createTwoStuffBeansInSet() {
+        final ArrayList<Set<TwoStuffBean>> twoStuffBeanList = new ArrayList<Set<TwoStuffBean>>();
+        final HashSet<TwoStuffBean> twoStuffBeans = new HashSet<TwoStuffBean>();
+        twoStuffBeanList.add(twoStuffBeans);
+        twoStuffBeans.add(new TwoStuffBean());
+
+        return twoStuffBeanList;
     }
 }

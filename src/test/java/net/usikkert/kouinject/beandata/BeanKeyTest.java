@@ -24,11 +24,14 @@ package net.usikkert.kouinject.beandata;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.usikkert.kouinject.TypeLiteral;
+import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.ColorBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.GreenBean;
+import net.usikkert.kouinject.testbeans.scanned.qualifier.RedBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.YellowBean;
 
 import org.junit.Test;
@@ -82,7 +85,7 @@ public class BeanKeyTest {
     }
 
     @Test
-    public void equalsAndHashcodeShouldBeFalseForDifferentTypes() {
+    public void equalsAndHashcodeShouldBeFalseForDifferentClasses() {
         final BeanKey green = new BeanKey(GreenBean.class);
         final Object object = new Object();
 
@@ -126,6 +129,76 @@ public class BeanKeyTest {
         assertFalse(green.equals(green2));
         assertFalse(green2.equals(green));
         assertFalse(green.hashCode() == green2.hashCode());
+    }
+
+    @Test
+    public void equalsAndHashcodeShouldBeTrueForTheSameBeanType() {
+        final BeanKey helloBeanKey1 = new BeanKey(new TypeLiteral<List<HelloBean>>() {});
+        final BeanKey helloBeanKey2 = new BeanKey(new TypeLiteral<List<HelloBean>>() {});
+
+        assertTrue(helloBeanKey1.equals(helloBeanKey2));
+        assertTrue(helloBeanKey2.equals(helloBeanKey1));
+        assertTrue(helloBeanKey1.hashCode() == helloBeanKey2.hashCode());
+    }
+
+    @Test
+    public void equalsAndHashcodeShouldBeTrueForTheSameBeanTypeWithTheSameQualifier() {
+        final BeanKey helloBeanKey1 = new BeanKey(new TypeLiteral<List<HelloBean>>() {}, "hello");
+        final BeanKey helloBeanKey2 = new BeanKey(new TypeLiteral<List<HelloBean>>() {}, "hello");
+
+        assertTrue(helloBeanKey1.equals(helloBeanKey2));
+        assertTrue(helloBeanKey2.equals(helloBeanKey1));
+        assertTrue(helloBeanKey1.hashCode() == helloBeanKey2.hashCode());
+    }
+
+    @Test
+    public void equalsAndHashcodeShouldBeFalseForTheSameBeanTypeWithDifferentQualifier() {
+        final BeanKey helloBeanKey1 = new BeanKey(new TypeLiteral<List<HelloBean>>() {}, "hello");
+        final BeanKey helloBeanKey2 = new BeanKey(new TypeLiteral<List<HelloBean>>() {}, "hi");
+
+        assertFalse(helloBeanKey1.equals(helloBeanKey2));
+        assertFalse(helloBeanKey2.equals(helloBeanKey1));
+        assertFalse(helloBeanKey1.hashCode() == helloBeanKey2.hashCode());
+    }
+
+    @Test
+    public void equalsAndHashcodeShouldBeFalseForTheSameBeanTypeWithOneNullQualifier() {
+        final BeanKey helloBeanKey1 = new BeanKey(new TypeLiteral<List<HelloBean>>() {});
+        final BeanKey helloBeanKey2 = new BeanKey(new TypeLiteral<List<HelloBean>>() {}, "hi");
+
+        assertFalse(helloBeanKey1.equals(helloBeanKey2));
+        assertFalse(helloBeanKey2.equals(helloBeanKey1));
+        assertFalse(helloBeanKey1.hashCode() == helloBeanKey2.hashCode());
+    }
+
+    @Test
+    public void equalsAndHashcodeShouldBeFalseForDifferentBeanType() {
+        final BeanKey helloBeanKey1 = new BeanKey(new TypeLiteral<List<HelloBean>>() {});
+        final BeanKey helloBeanKey2 = new BeanKey(new TypeLiteral<ArrayList<HelloBean>>() {});
+
+        assertFalse(helloBeanKey1.equals(helloBeanKey2));
+        assertFalse(helloBeanKey2.equals(helloBeanKey1));
+        assertFalse(helloBeanKey1.hashCode() == helloBeanKey2.hashCode());
+    }
+
+    @Test
+    public void equalsAndHashcodeShouldBeFalseForDifferentBeanSubType() {
+        final BeanKey helloBeanKey1 = new BeanKey(new TypeLiteral<List<HelloBean>>() {});
+        final BeanKey helloBeanKey2 = new BeanKey(new TypeLiteral<List<RedBean>>() {});
+
+        assertFalse(helloBeanKey1.equals(helloBeanKey2));
+        assertFalse(helloBeanKey2.equals(helloBeanKey1));
+        assertFalse(helloBeanKey1.hashCode() == helloBeanKey2.hashCode());
+    }
+
+    @Test
+    public void equalsAndHashcodeShouldBeFalseForDifferentBeanSubTypeWithEqualQualifier() {
+        final BeanKey helloBeanKey1 = new BeanKey(new TypeLiteral<List<HelloBean>>() {}, "hello");
+        final BeanKey helloBeanKey2 = new BeanKey(new TypeLiteral<List<RedBean>>() {}, "hello");
+
+        assertFalse(helloBeanKey1.equals(helloBeanKey2));
+        assertFalse(helloBeanKey2.equals(helloBeanKey1));
+        assertFalse(helloBeanKey1.hashCode() == helloBeanKey2.hashCode());
     }
 
     @Test
@@ -314,6 +387,133 @@ public class BeanKeyTest {
         assertFalse(theColorField.canInject(theGreenBean));
 
         assertTrue(theColorField.canInjectFromFactory(theGreenBean));
+    }
+
+    @Test
+    public void canInjectShouldReturnTrueForEqualTypes() {
+        final BeanKey helloBeanKey1 = new BeanKey(new TypeLiteral<List<HelloBean>>() {});
+        final BeanKey helloBeanKey2 = new BeanKey(new TypeLiteral<List<HelloBean>>() {});
+
+        assertTrue(helloBeanKey1.canInject(helloBeanKey2));
+        assertTrue(helloBeanKey1.canInjectFromFactory(helloBeanKey2));
+    }
+
+    @Test
+    public void canInjectShouldReturnTrueForEqualTypesWhenThisHasNoQualifier() {
+        final BeanKey helloBeanKey1 = new BeanKey(new TypeLiteral<List<HelloBean>>() {});
+        final BeanKey helloBeanKey2 = new BeanKey(new TypeLiteral<List<HelloBean>>() {}, "other");
+
+        assertTrue(helloBeanKey1.canInject(helloBeanKey2));
+        assertTrue(helloBeanKey1.canInjectFromFactory(helloBeanKey2));
+
+        assertFalse(helloBeanKey2.canInject(helloBeanKey1));
+        assertFalse(helloBeanKey2.canInjectFromFactory(helloBeanKey1));
+    }
+
+    @Test
+    public void canInjectShouldReturnTrueForEqualTypesWithSameQualifier() {
+        final BeanKey helloBeanKey1 = new BeanKey(new TypeLiteral<List<HelloBean>>() {}, "qualifier");
+        final BeanKey helloBeanKey2 = new BeanKey(new TypeLiteral<List<HelloBean>>() {}, "qualifier");
+
+        assertTrue(helloBeanKey1.canInject(helloBeanKey2));
+        assertTrue(helloBeanKey1.canInjectFromFactory(helloBeanKey2));
+    }
+
+    @Test
+    public void canInjectShouldReturnTrueForEqualTypesWithAnyQualifier() {
+        final BeanKey helloBeanKey1 = new BeanKey(new TypeLiteral<List<HelloBean>>() {}, "any");
+        final BeanKey helloBeanKey2 = new BeanKey(new TypeLiteral<List<HelloBean>>() {}, "other");
+
+        assertTrue(helloBeanKey1.canInject(helloBeanKey2));
+        assertTrue(helloBeanKey1.canInjectFromFactory(helloBeanKey2));
+
+        assertFalse(helloBeanKey2.canInject(helloBeanKey1));
+        // Special treatment when injecting from factory with @Any
+        assertTrue(helloBeanKey2.canInjectFromFactory(helloBeanKey1));
+    }
+
+    @Test
+    public void canInjectShouldReturnFalseForEqualTypesWithDifferentQualifier() {
+        final BeanKey helloBeanKey1 = new BeanKey(new TypeLiteral<List<HelloBean>>() {}, "one");
+        final BeanKey helloBeanKey2 = new BeanKey(new TypeLiteral<List<HelloBean>>() {}, "two");
+
+        assertFalse(helloBeanKey1.canInject(helloBeanKey2));
+        assertFalse(helloBeanKey1.canInjectFromFactory(helloBeanKey2));
+
+        assertFalse(helloBeanKey2.canInject(helloBeanKey1));
+        assertFalse(helloBeanKey2.canInjectFromFactory(helloBeanKey1));
+    }
+
+    @Test
+    public void canInjectShouldReturnTrueForTypesThatInherit() {
+        final BeanKey helloBeanKey1 = new BeanKey(new TypeLiteral<List<HelloBean>>() {});
+        final BeanKey helloBeanKey2 = new BeanKey(new TypeLiteral<ArrayList<HelloBean>>() {});
+
+        assertTrue(helloBeanKey1.canInject(helloBeanKey2));
+        assertTrue(helloBeanKey1.canInjectFromFactory(helloBeanKey2));
+
+        assertFalse(helloBeanKey2.canInject(helloBeanKey1));
+        assertFalse(helloBeanKey2.canInjectFromFactory(helloBeanKey1));
+    }
+
+    @Test
+    public void canInjectShouldReturnTrueForTypesThatInheritWithSameQualifier() {
+        final BeanKey helloBeanKey1 = new BeanKey(new TypeLiteral<List<HelloBean>>() {}, "qualifier");
+        final BeanKey helloBeanKey2 = new BeanKey(new TypeLiteral<ArrayList<HelloBean>>() {}, "qualifier");
+
+        assertTrue(helloBeanKey1.canInject(helloBeanKey2));
+        assertTrue(helloBeanKey1.canInjectFromFactory(helloBeanKey2));
+
+        assertFalse(helloBeanKey2.canInject(helloBeanKey1));
+        assertFalse(helloBeanKey2.canInjectFromFactory(helloBeanKey1));
+    }
+
+    @Test
+    public void canInjectShouldReturnTrueForTypesThatInheritWithAnyQualifier() {
+        final BeanKey helloBeanKey1 = new BeanKey(new TypeLiteral<List<HelloBean>>() {}, "any");
+        final BeanKey helloBeanKey2 = new BeanKey(new TypeLiteral<ArrayList<HelloBean>>() {}, "other");
+
+        assertTrue(helloBeanKey1.canInject(helloBeanKey2));
+        assertTrue(helloBeanKey1.canInjectFromFactory(helloBeanKey2));
+
+        assertFalse(helloBeanKey2.canInject(helloBeanKey1));
+        assertFalse(helloBeanKey2.canInjectFromFactory(helloBeanKey1));
+    }
+
+    @Test
+    public void canInjectShouldReturnFalseForDifferentSubTypes() {
+        final BeanKey helloBeanKey = new BeanKey(new TypeLiteral<List<HelloBean>>() {});
+        final BeanKey redBeanKey = new BeanKey(new TypeLiteral<List<RedBean>>() {});
+
+        assertFalse(redBeanKey.canInject(helloBeanKey));
+        assertFalse(redBeanKey.canInjectFromFactory(helloBeanKey));
+
+        assertFalse(helloBeanKey.canInject(redBeanKey));
+        assertFalse(helloBeanKey.canInjectFromFactory(redBeanKey));
+    }
+
+    @Test
+    public void canInjectShouldReturnFalseForDifferentSubTypesWithTheSameQualifier() {
+        final BeanKey helloBeanKey = new BeanKey(new TypeLiteral<List<HelloBean>>() {}, "qualifier");
+        final BeanKey redBeanKey = new BeanKey(new TypeLiteral<List<RedBean>>() {}, "qualifier");
+
+        assertFalse(redBeanKey.canInject(helloBeanKey));
+        assertFalse(redBeanKey.canInjectFromFactory(helloBeanKey));
+
+        assertFalse(helloBeanKey.canInject(redBeanKey));
+        assertFalse(helloBeanKey.canInjectFromFactory(redBeanKey));
+    }
+
+    @Test
+    public void canInjectShouldReturnFalseForDifferentSubTypesWithTheAnyQualifier() {
+        final BeanKey helloBeanKey = new BeanKey(new TypeLiteral<List<HelloBean>>() {}, "any");
+        final BeanKey redBeanKey = new BeanKey(new TypeLiteral<List<RedBean>>() {}, "any");
+
+        assertFalse(redBeanKey.canInject(helloBeanKey));
+        assertFalse(redBeanKey.canInjectFromFactory(helloBeanKey));
+
+        assertFalse(helloBeanKey.canInject(redBeanKey));
+        assertFalse(helloBeanKey.canInjectFromFactory(redBeanKey));
     }
 
     @Test

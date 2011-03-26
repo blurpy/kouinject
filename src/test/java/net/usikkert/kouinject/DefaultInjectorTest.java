@@ -27,12 +27,14 @@ import static org.junit.Assert.*;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import net.usikkert.kouinject.testbeans.BeanCount;
 import net.usikkert.kouinject.testbeans.notscanned.TheInterfaceUser;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.HungryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.SimpleFactoryCreatedBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.stuff.OneStuffBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.ProfileABean;
 import net.usikkert.kouinject.testbeans.scanned.profile.ProfileACBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.BlueBean;
@@ -120,6 +122,30 @@ public class DefaultInjectorTest {
 
         assertNotNull(bean);
         assertTrue(bean.isCreatedByFactory());
+    }
+
+    @Test
+    public void getBeanShouldFindGenericBean() {
+        final List<OneStuffBean> bean = injector.getBean(new TypeLiteral<List<OneStuffBean>>() {});
+        assertNotNull(bean);
+        assertEquals(1, bean.size());
+
+        final OneStuffBean oneStuffBean = bean.get(0);
+        assertNotNull(oneStuffBean);
+    }
+
+    @Test
+    public void getBeansShouldFindGenericBean() {
+        final Collection<List<OneStuffBean>> beans = injector.getBeans(new TypeLiteral<List<OneStuffBean>>() {});
+        assertNotNull(beans);
+        assertEquals(1, beans.size());
+
+        final List<OneStuffBean> oneStuffBeans = beans.iterator().next();
+        assertNotNull(oneStuffBeans);
+        assertEquals(1, oneStuffBeans.size());
+
+        final OneStuffBean oneStuffBean = oneStuffBeans.get(0);
+        assertNotNull(oneStuffBean);
     }
 
     @Test(expected = IllegalArgumentException.class)
