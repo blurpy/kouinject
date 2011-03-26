@@ -20,34 +20,35 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.generics.wildcard;
+
+import net.usikkert.kouinject.annotation.Component;
+import net.usikkert.kouinject.annotation.Produces;
+import net.usikkert.kouinject.testbeans.scanned.generics.Container;
+import net.usikkert.kouinject.testbeans.scanned.hierarchy.ChildBean;
+import net.usikkert.kouinject.testbeans.scanned.hierarchy.MiddleBean;
+import net.usikkert.kouinject.testbeans.scanned.hierarchy.SuperBean;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * A factory bean for creating beans that may be injected using generics with a wildcard.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+@Component
+public class WildcardFactoryBean {
 
-    // All components
-    ALL(118),
-
-    // All components and those created by factories
-    SCANNED(115),
-
-    // All components and those created by factories, without a qualifier
-    SCANNED_WITHOUT_QUALIFIER(86),
-
-    // All from SCANNED, plus those with profiles that can be activated at the same time
-    SCANNED_WITH_PROFILED(124);
-
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
+    @Produces
+    public Container<ChildBean> createChildBeanContainer() {
+        return new Container<ChildBean>(new ChildBean());
     }
 
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    @Produces
+    public Container<MiddleBean> createMiddleBeanContainer() {
+        return new Container<MiddleBean>(new MiddleBean());
+    }
+
+    @Produces
+    public Container<SuperBean> createSuperBeanContainer() {
+        return new Container<SuperBean>(new SuperBean());
     }
 }

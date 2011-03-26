@@ -23,13 +23,19 @@ package net.usikkert.kouinject;
 
 import static org.junit.Assert.*;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import net.usikkert.kouinject.testbeans.scanned.generics.Container;
 import net.usikkert.kouinject.testbeans.scanned.generics.stuff.ListOfStuffBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.stuff.ListOfStuffFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.stuff.OneStuffBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.stuff.TwoStuffBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.wildcard.WildcardFactoryBean;
+import net.usikkert.kouinject.testbeans.scanned.hierarchy.ChildBean;
+import net.usikkert.kouinject.testbeans.scanned.hierarchy.MiddleBean;
+import net.usikkert.kouinject.testbeans.scanned.hierarchy.SuperBean;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -135,5 +141,104 @@ public class GenericBeanInjectionTest {
         assertNotNull(bean.createTwoStuffBeans());
         assertNotNull(bean.createOneStuffBeansInSet());
         assertNotNull(bean.createTwoStuffBeansInSet());
+    }
+
+    @Test
+    public void checkWildcardFactoryBean() {
+        final WildcardFactoryBean bean = injector.getBean(WildcardFactoryBean.class);
+        assertNotNull(bean);
+
+        assertNotNull(bean.createChildBeanContainer());
+        assertNotNull(bean.createMiddleBeanContainer());
+        assertNotNull(bean.createSuperBeanContainer());
+    }
+
+    @Test
+    public void checkAllContainerBeans() {
+        final Collection<Container<?>> beans = injector.getBeans(new TypeLiteral<Container<?>>() {});
+        assertNotNull(beans);
+        assertEquals(3, beans.size());
+
+        assertTrue(containsContainerBeanOf(ChildBean.class, beans));
+        assertTrue(containsContainerBeanOf(MiddleBean.class, beans));
+        assertTrue(containsContainerBeanOf(SuperBean.class, beans));
+    }
+
+    @Test
+    public void checkContainerBeansExtendingSuperBean() {
+        final Collection<Container<? extends SuperBean>> beans = injector.getBeans(new TypeLiteral<Container<? extends SuperBean>>() {});
+        assertNotNull(beans);
+        assertEquals(3, beans.size());
+
+        assertTrue(containsContainerBeanOf(ChildBean.class, beans));
+        assertTrue(containsContainerBeanOf(MiddleBean.class, beans));
+        assertTrue(containsContainerBeanOf(SuperBean.class, beans));
+    }
+
+    @Test
+    public void checkContainerBeansExtendingMiddleBean() {
+        final Collection<Container<? extends MiddleBean>> beans = injector.getBeans(new TypeLiteral<Container<? extends MiddleBean>>() {});
+        assertNotNull(beans);
+        assertEquals(2, beans.size());
+
+        assertTrue(containsContainerBeanOf(ChildBean.class, beans));
+        assertTrue(containsContainerBeanOf(MiddleBean.class, beans));
+        assertFalse(containsContainerBeanOf(SuperBean.class, beans));
+    }
+
+    @Test
+    public void checkContainerBeansExtendingChildBean() {
+        final Collection<Container<? extends ChildBean>> beans = injector.getBeans(new TypeLiteral<Container<? extends ChildBean>>() {});
+        assertNotNull(beans);
+        assertEquals(1, beans.size());
+
+        assertTrue(containsContainerBeanOf(ChildBean.class, beans));
+        assertFalse(containsContainerBeanOf(MiddleBean.class, beans));
+        assertFalse(containsContainerBeanOf(SuperBean.class, beans));
+    }
+
+    @Test
+    public void checkContainerBeansThatAreSuperClassOfSuperBean() {
+        final Collection<Container<? super SuperBean>> beans = injector.getBeans(new TypeLiteral<Container<? super SuperBean>>() {});
+        assertNotNull(beans);
+        assertEquals(1, beans.size());
+
+        assertFalse(containsContainerBeanOf(ChildBean.class, beans));
+        assertFalse(containsContainerBeanOf(MiddleBean.class, beans));
+        assertTrue(containsContainerBeanOf(SuperBean.class, beans));
+    }
+
+    @Test
+    public void checkContainerBeansThatAreSuperClassOfMiddleBean() {
+        final Collection<Container<? super MiddleBean>> beans = injector.getBeans(new TypeLiteral<Container<? super MiddleBean>>() {});
+        assertNotNull(beans);
+        assertEquals(2, beans.size());
+
+        assertFalse(containsContainerBeanOf(ChildBean.class, beans));
+        assertTrue(containsContainerBeanOf(MiddleBean.class, beans));
+        assertTrue(containsContainerBeanOf(SuperBean.class, beans));
+    }
+
+    @Test
+    public void checkContainerBeansThatAreSuperClassOfChildBean() {
+        final Collection<Container<? super ChildBean>> beans = injector.getBeans(new TypeLiteral<Container<? super ChildBean>>() {});
+        assertNotNull(beans);
+        assertEquals(3, beans.size());
+
+        assertTrue(containsContainerBeanOf(ChildBean.class, beans));
+        assertTrue(containsContainerBeanOf(MiddleBean.class, beans));
+        assertTrue(containsContainerBeanOf(SuperBean.class, beans));
+    }
+
+    private boolean containsContainerBeanOf(final Class<?> expectedClass, final Collection beans) {
+        final Collection<Container<?>> containers = beans;
+
+        for (final Container<?> container : containers) {
+            if (container.getContained().getClass().equals(expectedClass)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
