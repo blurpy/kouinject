@@ -154,7 +154,8 @@ public class GenericsHelper {
                 return typesHaveTheSameParameters(thisType, thatType);
             }
 
-            else if (isValidType(thisType) && isValidType(thatClass)) {
+            // Assignment from generic type to raw type, e.g. List list = new ArrayList<String>();
+            else if (isClass(thisType) && isParameterizedType(thatType)) {
                 return true;
             }
         }
@@ -180,10 +181,6 @@ public class GenericsHelper {
         }
 
         return true;
-    }
-
-    private boolean isValidType(final Type type) {
-        return isClass(type) || isParameterizedType(type);
     }
 
     private Type[] getGenericArgumentsAsType(final Type type) {

@@ -206,38 +206,43 @@ public class GenericsHelperTest {
     }
 
     @Test
-    public void isAssignableFromShouldBeTrueForSameTypeWithAndWithoutSubType1() {
+    public void isAssignableFromShouldBeTrueForAssigningSameGenericTypeToRawType() {
         final Type type = new TypeLiteral<List<String>>() {}.getGenericType();
 
 //        final List<String> thatList = null;
 //        final List thisList = thatList; // ok
-        assertTrue(genericsHelper.isAssignableFrom(type, List.class));
-
-//        final List thatList = null;
-//        final List<String> thisList = thatList; // ok, but unchecked assignment
         assertTrue(genericsHelper.isAssignableFrom(List.class, type));
     }
 
     @Test
-    public void isAssignableFromShouldBeTrueForSameTypeWithAndWithoutSubType2() {
+    public void isAssignableFromShouldBeTrueForAssigningGenericTypeToRawSubType() {
         final Type type = new TypeLiteral<ArrayList<String>>() {}.getGenericType();
-
-//        final List thatList = null;
-//        final ArrayList<String> thisList = thatList; // compile error
-        assertFalse(genericsHelper.isAssignableFrom(type, List.class));
 
 //        final ArrayList<String> thatList = null;
 //        final List thisList = thatList; // ok
         assertTrue(genericsHelper.isAssignableFrom(List.class, type));
+
+//        final List thatList = null;
+//        final ArrayList<String> thisList = thatList; // compile error
+        assertFalse(genericsHelper.isAssignableFrom(type, List.class));
     }
 
     @Test
-    public void isAssignableFromShouldBeTrueForSameTypeWithAndWithoutSubType3() {
+    public void isAssignableFromShouldBeFalseForUncheckedCastFromRawTypeToSameGenericType() {
+        final Type type = new TypeLiteral<List<String>>() {}.getGenericType();
+
+//        final List thatList = null;
+//        final List<String> thisList = thatList; // ok, but unchecked assignment
+        assertFalse(genericsHelper.isAssignableFrom(type, List.class));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeFalseForUncheckedCastFromRawTypeToGenericSubType() {
         final Type type = new TypeLiteral<List<String>>() {}.getGenericType();
 
 //        final ArrayList thatList = null;
 //        final List<String> thisList = thatList; // ok, but unchecked assignment
-        assertTrue(genericsHelper.isAssignableFrom(type, ArrayList.class));
+        assertFalse(genericsHelper.isAssignableFrom(type, ArrayList.class));
 
 //        final List<String> thatList = null;
 //        final ArrayList thisList = thatList; // compile error
