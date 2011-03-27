@@ -32,16 +32,6 @@ import net.usikkert.kouinject.TypeLiteral;
 public class CollectionBeanKey extends BeanKey {
 
     /**
-     * Creates a new bean key for a collection of beans.
-     *
-     * @param beanClass The actual bean class for this key.
-     * @param qualifier The qualifier for this key.
-     */
-    public CollectionBeanKey(final Class<?> beanClass, final String qualifier) {
-        super(beanClass, qualifier);
-    }
-
-    /**
      * Creates a new collection bean key for the specified bean type, with the specified qualifier.
      *
      * @param beanType The type literal with the actual type and class for this key.

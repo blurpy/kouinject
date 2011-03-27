@@ -554,7 +554,9 @@ public class BeanKeyTest {
 
     @Test
     public void providerBeanKey() {
-        final BeanKey theGreenBean = new ProviderBeanKey(GreenBean.class, "none");
+        final TypeLiteral<GreenBean> greenBean = new TypeLiteral<GreenBean>() {};
+        final BeanKey theGreenBean = new ProviderBeanKey(greenBean, "none");
+
         assertTrue(theGreenBean.isProvider());
         assertFalse(theGreenBean.isCollection());
         assertFalse(theGreenBean.isCollectionProvider());
@@ -563,7 +565,9 @@ public class BeanKeyTest {
 
     @Test
     public void collectionBeanKey() {
-        final BeanKey theGreenBean = new CollectionBeanKey(GreenBean.class, "none");
+        final TypeLiteral<GreenBean> greenBean = new TypeLiteral<GreenBean>() {};
+        final BeanKey theGreenBean = new CollectionBeanKey(greenBean, "none");
+
         assertFalse(theGreenBean.isProvider());
         assertTrue(theGreenBean.isCollection());
         assertFalse(theGreenBean.isCollectionProvider());
@@ -572,7 +576,9 @@ public class BeanKeyTest {
 
     @Test
     public void collectionProviderBeanKey() {
-        final BeanKey theGreenBean = new CollectionProviderBeanKey(GreenBean.class, "none");
+        final TypeLiteral<GreenBean> greenBean = new TypeLiteral<GreenBean>() {};
+        final BeanKey theGreenBean = new CollectionProviderBeanKey(greenBean, "none");
+
         assertFalse(theGreenBean.isProvider());
         assertFalse(theGreenBean.isCollection());
         assertTrue(theGreenBean.isCollectionProvider());
