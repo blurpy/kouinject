@@ -61,9 +61,11 @@ public class AnnotationBasedFactoryPointHandler implements FactoryPointHandler {
     @Override
     public List<FactoryPoint<?>> getFactoryPoints(final BeanKey factoryBean) {
         Validate.notNull(factoryBean, "Factory bean can not be null");
+        final Class<?> beanClass = factoryBean.getBeanClass();
+        Validate.notNull(beanClass, "Factory class can not be null");
 
-        final List<Method> allMethods = reflectionUtils.findAllMethods(factoryBean.getBeanClass());
-        final List<Member> allMembers = reflectionUtils.findAllMembers(factoryBean.getBeanClass());
+        final List<Method> allMethods = reflectionUtils.findAllMethods(beanClass);
+        final List<Member> allMembers = reflectionUtils.findAllMembers(beanClass);
 
         return findAllFactoryPoints(allMembers, allMethods, factoryBean);
     }

@@ -67,6 +67,7 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
     public BeanData getBeanData(final BeanKey beanKey, final boolean skipConstructor) {
         Validate.notNull(beanKey, "Bean key can not be null");
         final Class<?> beanClass = beanKey.getBeanClass();
+        Validate.notNull(beanClass, "Bean class can not be null");
 
         final List<Method> allMethods = reflectionUtils.findAllMethods(beanClass);
         final List<Member> allMembers = reflectionUtils.findAllMembers(beanClass);

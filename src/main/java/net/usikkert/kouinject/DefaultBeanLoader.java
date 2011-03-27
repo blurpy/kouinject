@@ -347,7 +347,7 @@ public class DefaultBeanLoader implements BeanLoader {
     }
 
     private Object getBeanOrFactoryContext(final BeanKey parameter, final BeanKey dependency) {
-        if (parameter.getBeanClass().equals(FactoryContext.class)) {
+        if (parameter.getBeanType().equals(FactoryContext.class)) {
             return new FactoryContextImpl(dependency.getQualifier());
         }
 
