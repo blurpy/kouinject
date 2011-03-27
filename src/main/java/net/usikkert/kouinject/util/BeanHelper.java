@@ -148,8 +148,9 @@ public class BeanHelper {
         }
 
         else if (isCollection(parameterClass)) {
+            final TypeLiteral<?> actualBeanType = new TypeLiteral<Object>(parameterType) {};
             final TypeLiteral<?> beanTypeFromCollection = getBeanTypeFromGenericType(parameterOwner, parameterType);
-            return new CollectionBeanKey(beanTypeFromCollection, qualifier);
+            return new CollectionBeanKey(actualBeanType, beanTypeFromCollection, qualifier);
         }
 
         else if (isCollectionProvider(parameterClass)) {

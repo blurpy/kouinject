@@ -25,6 +25,7 @@ package net.usikkert.kouinject.beandata;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import net.usikkert.kouinject.TypeLiteral;
@@ -552,6 +553,12 @@ public class BeanKeyTest {
         assertTrue(theGreenBean.isBeanForCreation());
     }
 
+    @Test(expected = UnsupportedOperationException.class)
+    public void defaultBeanKeyShouldFailToGetActualBeanKey() {
+        final BeanKey theGreenBean = new BeanKey(GreenBean.class, "none");
+        theGreenBean.getActualBeanKey();
+    }
+
     @Test
     public void providerBeanKey() {
         final TypeLiteral<GreenBean> greenBean = new TypeLiteral<GreenBean>() {};
@@ -563,15 +570,37 @@ public class BeanKeyTest {
         assertFalse(theGreenBean.isBeanForCreation());
     }
 
+    @Test(expected = UnsupportedOperationException.class)
+    public void providerBeanKeyShouldFailToGetActualBeanKey() {
+        final TypeLiteral<GreenBean> greenBean = new TypeLiteral<GreenBean>() {};
+        final BeanKey theGreenBean = new ProviderBeanKey(greenBean, "none");
+
+        theGreenBean.getActualBeanKey();
+    }
+
     @Test
     public void collectionBeanKey() {
+        final TypeLiteral<Collection<GreenBean>> greenBeanCollection = new TypeLiteral<Collection<GreenBean>>() {};
         final TypeLiteral<GreenBean> greenBean = new TypeLiteral<GreenBean>() {};
-        final BeanKey theGreenBean = new CollectionBeanKey(greenBean, "none");
+        final BeanKey theGreenBean = new CollectionBeanKey(greenBeanCollection, greenBean, "none");
 
         assertFalse(theGreenBean.isProvider());
         assertTrue(theGreenBean.isCollection());
         assertFalse(theGreenBean.isCollectionProvider());
         assertFalse(theGreenBean.isBeanForCreation());
+    }
+
+    @Test
+    public void collectionBeanKeyShouldReturnActualBeanKey() {
+        final TypeLiteral<Collection<GreenBean>> greenBeanCollection = new TypeLiteral<Collection<GreenBean>>() {};
+        final TypeLiteral<GreenBean> greenBean = new TypeLiteral<GreenBean>() {};
+        final BeanKey theGreenBean = new CollectionBeanKey(greenBeanCollection, greenBean, "none");
+
+        final BeanKey actualBeanKey = theGreenBean.getActualBeanKey();
+        assertNotNull(actualBeanKey);
+        assertEquals(greenBeanCollection.getGenericType(), actualBeanKey.getBeanType());
+        assertEquals(greenBeanCollection.getGenericClass(), actualBeanKey.getBeanClass());
+        assertEquals("none", actualBeanKey.getQualifier());
     }
 
     @Test
@@ -583,6 +612,14 @@ public class BeanKeyTest {
         assertFalse(theGreenBean.isCollection());
         assertTrue(theGreenBean.isCollectionProvider());
         assertFalse(theGreenBean.isBeanForCreation());
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void collectionProviderBeanKeyShouldFailToGetActualBeanKey() {
+        final TypeLiteral<GreenBean> greenBean = new TypeLiteral<GreenBean>() {};
+        final BeanKey theGreenBean = new CollectionProviderBeanKey(greenBean, "none");
+
+        theGreenBean.getActualBeanKey();
     }
 
     @Test
@@ -632,8 +669,9 @@ public class BeanKeyTest {
 
     @Test
     public void constructorWithTypeAndQualifierShouldSetTypeAndClassAndQualifierForCollection() {
-        final TypeLiteral<List<String>> beanType = new TypeLiteral<List<String>>() {};
-        final BeanKey beanKey = new CollectionBeanKey(beanType, "q");
+        final TypeLiteral<Collection<String>> collectionBeanType = new TypeLiteral<Collection<String>>() {};
+        final TypeLiteral<String> beanType = new TypeLiteral<String>() {};
+        final BeanKey beanKey = new CollectionBeanKey(collectionBeanType, beanType, "q");
 
         assertSame(beanType.getGenericClass(), beanKey.getBeanClass());
         assertSame(beanType.getGenericType(), beanKey.getBeanType());

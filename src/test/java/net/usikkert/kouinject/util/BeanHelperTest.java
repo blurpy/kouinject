@@ -229,7 +229,12 @@ public class BeanHelperTest {
         assertEquals(2, parameters.size());
 
         checkCollectionParameter(parameters, 1, GreenBean.class, null);
+        checkGenericParameter(parameters, 1, new TypeLiteral<GreenBean>() {});
+        checkActualGenericParameter(parameters, 1, new TypeLiteral<Collection<GreenBean>>() {});
+
         checkCollectionParameter(parameters, 2, CarBean.class, "best");
+        checkGenericParameter(parameters, 2, new TypeLiteral<CarBean>() {});
+        checkActualGenericParameter(parameters, 2, new TypeLiteral<Collection<CarBean>>() {});
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -378,6 +383,7 @@ public class BeanHelperTest {
         assertNotNull(fieldKey);
         checkCollectionParameter(fieldKey, GreenBean.class, null);
         checkGenericParameter(fieldKey, new TypeLiteral<GreenBean>() {});
+        checkActualGenericParameter(fieldKey, new TypeLiteral<Collection<GreenBean>>() {});
     }
 
     @Test
@@ -388,6 +394,7 @@ public class BeanHelperTest {
         assertNotNull(fieldKey);
         checkCollectionParameter(fieldKey, Set.class, null);
         checkGenericParameter(fieldKey, new TypeLiteral<Set<GreenBean>>() {});
+        checkActualGenericParameter(fieldKey, new TypeLiteral<Collection<Set<GreenBean>>>() {});
     }
 
     @Test
@@ -397,6 +404,8 @@ public class BeanHelperTest {
 
         assertNotNull(fieldKey);
         checkCollectionParameter(fieldKey, CarBean.class, "best");
+        checkGenericParameter(fieldKey, new TypeLiteral<CarBean>() {});
+        checkActualGenericParameter(fieldKey, new TypeLiteral<Collection<CarBean>>() {});
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -548,7 +557,12 @@ public class BeanHelperTest {
         assertEquals(2, parameters.size());
 
         checkCollectionParameter(parameters, 1, GreenBean.class, null);
+        checkGenericParameter(parameters, 1, new TypeLiteral<GreenBean>() {});
+        checkActualGenericParameter(parameters, 1, new TypeLiteral<Collection<GreenBean>>() {});
+
         checkCollectionParameter(parameters, 2, CarBean.class, "best");
+        checkGenericParameter(parameters, 2, new TypeLiteral<CarBean>() {});
+        checkActualGenericParameter(parameters, 2, new TypeLiteral<Collection<CarBean>>() {});
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -638,6 +652,14 @@ public class BeanHelperTest {
     private void checkGenericParameter(final BeanKey beanKey, final TypeLiteral<?> expectedType) {
         assertEquals(expectedType.getGenericType(), beanKey.getBeanType());
         assertEquals(expectedType.getGenericClass(), beanKey.getBeanClass());
+    }
+
+    private void checkActualGenericParameter(final List<BeanKey> parameters, final int position, final TypeLiteral<?> expectedType) {
+        checkActualGenericParameter(parameters.get(position -1), expectedType);
+    }
+
+    private void checkActualGenericParameter(final BeanKey beanKey, final TypeLiteral<?> expectedType) {
+        checkGenericParameter(beanKey.getActualBeanKey(), expectedType);
     }
 
     private void checkWildcard(final List<BeanKey> parameters, final int position) {

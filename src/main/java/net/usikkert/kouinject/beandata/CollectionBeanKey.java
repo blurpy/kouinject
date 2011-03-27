@@ -24,6 +24,8 @@ package net.usikkert.kouinject.beandata;
 
 import net.usikkert.kouinject.TypeLiteral;
 
+import org.apache.commons.lang.Validate;
+
 /**
  * A {@link BeanKey} for representing a request for a collection of beans.
  *
@@ -31,14 +33,20 @@ import net.usikkert.kouinject.TypeLiteral;
  */
 public class CollectionBeanKey extends BeanKey {
 
+    private final BeanKey actualBeanKey;
+
     /**
      * Creates a new collection bean key for the specified bean type, with the specified qualifier.
      *
-     * @param beanType The type literal with the actual type and class for this key.
+     * @param actualBeanType The actual collection bean type this key describes.
+     * @param beanType The type used on the collection.
      * @param qualifier The qualifier for this key.
      */
-    public CollectionBeanKey(final TypeLiteral<?> beanType, final String qualifier) {
+    public CollectionBeanKey(final TypeLiteral<?> actualBeanType, final TypeLiteral<?> beanType, final String qualifier) {
         super(beanType, qualifier);
+
+        Validate.notNull(actualBeanType, "Actual bean type can not be null");
+        actualBeanKey = new BeanKey(actualBeanType, qualifier);
     }
 
     /**
@@ -49,6 +57,16 @@ public class CollectionBeanKey extends BeanKey {
     @Override
     public boolean isCollection() {
         return true;
+    }
+
+    /**
+     * Returns the actual collection type as requested originally.
+     *
+     * @return The actual bean type as a new bean key.
+     */
+    @Override
+    public BeanKey getActualBeanKey() {
+        return actualBeanKey;
     }
 
     @Override

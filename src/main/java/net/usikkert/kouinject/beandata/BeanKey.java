@@ -164,6 +164,16 @@ public class BeanKey {
     }
 
     /**
+     * Returns the actual type as requested originally.
+     *
+     * @return The actual bean type as a new bean key.
+     * @throws UnsupportedOperationException Not supported for this key.
+     */
+    public BeanKey getActualBeanKey() {
+        throw new UnsupportedOperationException("Not supported for this key");
+    }
+
+    /**
      * If this key represents a field or parameter marked for injection,
      * could the bean be injected?
      *
