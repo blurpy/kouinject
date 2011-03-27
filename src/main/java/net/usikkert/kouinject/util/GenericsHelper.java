@@ -186,6 +186,23 @@ public class GenericsHelper {
             else if (isClass(thisType) && isParameterizedType(thatType)) {
                 return true;
             }
+
+            // Assigning from a class that implements a generic interface or class to a generic type
+            else if (isParameterizedType(thisType) && isClass(thatType)) {
+                final Type[] genericInterfaces = thatClass.getGenericInterfaces();
+
+                for (final Type genericInterface : genericInterfaces) {
+                    if (isAssignableFrom(thisType, genericInterface)) {
+                        return true;
+                    }
+                }
+
+                final Type genericSuperclass = thatClass.getGenericSuperclass();
+
+                if (genericSuperclass != null && isAssignableFrom(thisType, genericSuperclass)) {
+                    return true;
+                }
+            }
         }
 
         return false;

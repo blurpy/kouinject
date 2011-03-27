@@ -33,7 +33,7 @@ import net.usikkert.kouinject.annotation.Component;
  *
  * @author Christian Ihle
  */
-//@Component // TODO
+@Component
 public class ThingManagerBean {
 
     private final Collection<ThingListenerBean<StartThing>> startThingListeners;

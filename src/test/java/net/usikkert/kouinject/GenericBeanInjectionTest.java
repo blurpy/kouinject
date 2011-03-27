@@ -1,3 +1,4 @@
+
 /***************************************************************************
  *   Copyright 2009-2011 by Christian Ihle                                 *
  *   kontakt@usikkert.net                                                  *
@@ -36,6 +37,17 @@ import net.usikkert.kouinject.testbeans.scanned.generics.stuff.ListOfStuffBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.stuff.ListOfStuffFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.stuff.OneStuffBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.stuff.TwoStuffBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.thing.AbstractMiddleThingListenerBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.thing.AbstractStartThingListenerBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.thing.FirstStartThingListenerBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.thing.MiddleThing;
+import net.usikkert.kouinject.testbeans.scanned.generics.thing.MiddleThingListenerBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.thing.SecondStartThingListenerBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.thing.StartThing;
+import net.usikkert.kouinject.testbeans.scanned.generics.thing.StopThing;
+import net.usikkert.kouinject.testbeans.scanned.generics.thing.StopThingListenerBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.thing.ThingListenerBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.thing.ThingManagerBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.wildcard.WildcardFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.ChildBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.MiddleBean;
@@ -269,6 +281,109 @@ public class GenericBeanInjectionTest {
         final Iterator<Stone> iterator = bean.iterator();
         assertEquals(Integer.valueOf(15), iterator.next().getWeight());
         assertEquals(Integer.valueOf(30), iterator.next().getWeight());
+    }
+
+    @Test
+    public void checkThingManagerBean() {
+        final ThingManagerBean bean = injector.getBean(ThingManagerBean.class);
+        assertNotNull(bean);
+
+        final Collection<ThingListenerBean<StartThing>> startThingListeners = bean.getStartThingListeners();
+        assertNotNull(startThingListeners);
+        assertEquals(2, startThingListeners.size());
+
+        assertTrue(containsBean(startThingListeners, FirstStartThingListenerBean.class));
+        assertTrue(containsBean(startThingListeners, SecondStartThingListenerBean.class));
+
+        for (final ThingListenerBean<StartThing> startThingListener : startThingListeners) {
+            final StartThing startThing = startThingListener.getThing();
+            assertNotNull(startThing);
+        }
+
+        final ThingListenerBean<MiddleThing> middleThingListener = bean.getMiddleThingListener();
+        assertNotNull(middleThingListener);
+        assertEquals(MiddleThingListenerBean.class, middleThingListener.getClass());
+        final MiddleThing middleThing = middleThingListener.getThing();
+        assertNotNull(middleThing);
+
+        final ThingListenerBean<StopThing> stopThingListener = bean.getStopThingListener();
+        assertNotNull(stopThingListener);
+        assertEquals(StopThingListenerBean.class, stopThingListener.getClass());
+        final StopThing stopThing = stopThingListener.getThing();
+        assertNotNull(stopThing);
+    }
+
+    @Test
+    public void checkFirstStartThingListenerBean() {
+        final FirstStartThingListenerBean bean = injector.getBean(FirstStartThingListenerBean.class);
+        assertNotNull(bean);
+
+        final StartThing startThing = bean.getThing();
+        assertNotNull(startThing);
+    }
+
+    @Test
+    public void checkSecondStartThingListenerBean() {
+        final SecondStartThingListenerBean bean1 = injector.getBean(SecondStartThingListenerBean.class);
+        assertNotNull(bean1);
+
+        final StartThing startThing = bean1.getThing();
+        assertNotNull(startThing);
+    }
+
+    @Test
+    public void checkStartThingListenerBeans() {
+        final Collection<AbstractStartThingListenerBean> beans1 = injector.getBeans(AbstractStartThingListenerBean.class);
+        assertNotNull(beans1);
+        assertEquals(2, beans1.size());
+        assertTrue(containsBean(beans1, FirstStartThingListenerBean.class));
+        assertTrue(containsBean(beans1, SecondStartThingListenerBean.class));
+
+        final Collection<ThingListenerBean<StartThing>> beans2 = injector.getBeans(new TypeLiteral<ThingListenerBean<StartThing>>() {});
+        assertNotNull(beans2);
+        assertEquals(2, beans2.size());
+        assertTrue(containsBean(beans2, FirstStartThingListenerBean.class));
+        assertTrue(containsBean(beans2, SecondStartThingListenerBean.class));
+    }
+
+    @Test
+    public void checkMiddleThingListenerBean() {
+        final MiddleThingListenerBean bean = injector.getBean(MiddleThingListenerBean.class);
+        assertNotNull(bean);
+
+        final MiddleThing middleThing = bean.getThing();
+        assertNotNull(middleThing);
+
+        final ThingListenerBean<MiddleThing> bean2 = injector.getBean(new TypeLiteral<ThingListenerBean<MiddleThing>>() {});
+        assertNotNull(bean2);
+        assertEquals(MiddleThingListenerBean.class, bean2.getClass());
+
+        final AbstractMiddleThingListenerBean<MiddleThing> bean3 = injector.getBean(new TypeLiteral<AbstractMiddleThingListenerBean<MiddleThing>>() {});
+        assertNotNull(bean3);
+        assertEquals(MiddleThingListenerBean.class, bean3.getClass());
+    }
+
+    @Test
+    public void checkStopThingListenerBean() {
+        final StopThingListenerBean bean1 = injector.getBean(StopThingListenerBean.class);
+        assertNotNull(bean1);
+
+        final StopThing stopThing = bean1.getThing();
+        assertNotNull(stopThing);
+
+        final ThingListenerBean<StopThing> bean2 = injector.getBean(new TypeLiteral<ThingListenerBean<StopThing>>() {});
+        assertNotNull(bean2);
+        assertEquals(StopThingListenerBean.class, bean2.getClass());
+    }
+
+    private boolean containsBean(final Collection<?> beans, final Class<?> beanClass) {
+        for (final Object bean : beans) {
+            if (bean.getClass().equals(beanClass)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private boolean containsContainerBeanOf(final Class<?> expectedClass, final Collection beans) {

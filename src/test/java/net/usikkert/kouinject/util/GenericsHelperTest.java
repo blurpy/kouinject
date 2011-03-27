@@ -45,7 +45,6 @@ import net.usikkert.kouinject.testbeans.scanned.hierarchy.MiddleBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.SuperBean;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -437,7 +436,6 @@ public class GenericsHelperTest {
     }
 
     @Test
-    @Ignore("Not implemented")
     public void isAssignableFromShouldBeTrueWhenClassImplementsCorrectGenericInterface() {
         final Type thisType = new TypeLiteral<ThingListenerBean<StopThing>>() {}.getGenericType();
 
@@ -451,7 +449,6 @@ public class GenericsHelperTest {
     }
 
     @Test
-    @Ignore("Not implemented")
     public void isAssignableFromShouldBeTrueWhenClassExtendsAbstractClassImplementingCorrectGenericInterface() {
         final Type thisType = new TypeLiteral<ThingListenerBean<StartThing>>() {}.getGenericType();
 
@@ -465,7 +462,6 @@ public class GenericsHelperTest {
     }
 
     @Test
-    @Ignore("Not implemented")
     public void isAssignableFromShouldBeTrueWhenClassExtendsAbstractClassWithCorrectGenericParameter() {
         final Type thisType = new TypeLiteral<ThingListenerBean<MiddleThing>>() {}.getGenericType();
 
