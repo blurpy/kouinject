@@ -77,8 +77,27 @@ public class GenericsHelper {
      *
      * @param type The type to get as a class.
      * @return The type as a class.
+     * @throws IllegalArgumentException If the class could not be determined.
      */
     public Class<?> getAsClass(final Type type) {
+        final Class<?> classOrNull = getAsClassOrNull(type);
+
+        if (classOrNull == null) {
+            throw new IllegalArgumentException("Unsupported generic type: " + type.getClass() + " - " + type);
+        }
+
+        return classOrNull;
+    }
+
+    /**
+     * Returns the type as a class, if possible.
+     *
+     * <p>Example: the type <code>Set&lt;List&lt;String&gt;&gt;</code> would return the class for <code>Set</code>.</p>
+     *
+     * @param type The type to get as a class.
+     * @return The type as a class, or <code>null</code> if the class could not be determined.
+     */
+    public Class<?> getAsClassOrNull(final Type type) {
         Validate.notNull(type, "Type can not be null");
 
         if (isClass(type)) {
@@ -90,7 +109,7 @@ public class GenericsHelper {
             return (Class<?>) parameterizedType.getRawType();
         }
 
-        throw new IllegalArgumentException("Unsupported generic type: " + type);
+        return null;
     }
 
     /**
@@ -141,6 +160,14 @@ public class GenericsHelper {
 
         if (thisType.equals(thatType)) {
             return true;
+        }
+
+        if (isWildcard(thisType)) {
+            return isAssignableFromWildcard((WildcardType) thisType, thatType);
+        }
+
+        if (isWildcard(thatType)) {
+            return false;
         }
 
         final Class<?> thisClass = getAsClass(thisType);
@@ -202,7 +229,15 @@ public class GenericsHelper {
         return false;
     }
 
-    private boolean isWildcard(final Type type) {
+    /**
+     * Checks if the type is a wildcard, as opposed to a class or a type with generic parameters.
+     *
+     * <p>Example: <code>? extends Number</code> would return true, <code>Number</code> would return false.
+     *
+     * @param type The type to check.
+     * @return If the type is a wildcard.
+     */
+    public boolean isWildcard(final Type type) {
         return type instanceof WildcardType;
     }
 

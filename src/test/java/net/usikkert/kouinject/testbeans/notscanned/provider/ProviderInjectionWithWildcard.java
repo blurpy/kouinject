@@ -26,9 +26,10 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import net.usikkert.kouinject.annotation.Component;
+import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 
 /**
- * Bean for testing error handling when trying to inject a provider with a wildcard instead of a bean class.
+ * Bean for testing injection of provider with wildcard.
  *
  * @author Christian Ihle
  */
@@ -36,6 +37,9 @@ import net.usikkert.kouinject.annotation.Component;
 public class ProviderInjectionWithWildcard {
 
     @Inject
-    @SuppressWarnings("unused")
-    private Provider<?> wildcardProvider;
+    private Provider<? extends HelloBean> wildcardProvider;
+
+    public Provider<? extends HelloBean> getWildcardProvider() {
+        return wildcardProvider;
+    }
 }

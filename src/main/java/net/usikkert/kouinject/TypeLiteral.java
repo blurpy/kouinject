@@ -77,7 +77,7 @@ public abstract class TypeLiteral<T> {
         Validate.notNull(type, "Type can not be null");
 
         this.genericType = type;
-        this.genericClass = (Class<T>) genericsHelper.getAsClass(type);
+        this.genericClass = (Class<T>) genericsHelper.getAsClassOrNull(type);
     }
 
     /**
@@ -96,7 +96,7 @@ public abstract class TypeLiteral<T> {
      *
      * <p><code>TypeLiteral&lt;List&lt;String&gt;&gt;</code> will return <code>Class&lt;List&lt;String&gt;&gt;</code>.</p>
      *
-     * @return The type as a regular class.
+     * @return The type as a regular class. Can be <code>null</code>.
      */
     public Class<T> getGenericClass() {
         return genericClass;

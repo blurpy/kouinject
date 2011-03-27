@@ -32,6 +32,7 @@ import java.util.Set;
 
 import net.usikkert.kouinject.TypeLiteral;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.Container;
 import net.usikkert.kouinject.testbeans.scanned.generics.thing.FirstStartThingListenerBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.thing.MiddleThing;
 import net.usikkert.kouinject.testbeans.scanned.generics.thing.MiddleThingListenerBean;
@@ -105,6 +106,50 @@ public class GenericsHelperTest {
         assertEquals(HelloBean.class, asHelloBeanClass);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void getAsClassShouldFailIfArray() {
+        final TypeLiteral<Container<String[]>> arrayContainer = new TypeLiteral<Container<String[]>>() {};
+        final Type arrayType = genericsHelper.getGenericArgumentAsType(arrayContainer.getGenericType());
+
+        genericsHelper.getAsClass(arrayType);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getAsClassShouldFailIfWildcard() {
+        final TypeLiteral<Container<?>> wildcardContainer = new TypeLiteral<Container<?>>() {};
+        final Type wildcardType = genericsHelper.getGenericArgumentAsType(wildcardContainer.getGenericType());
+
+        genericsHelper.getAsClass(wildcardType);
+    }
+
+    @Test
+    public void getAsClassOrNullShouldReturnClass() {
+        final TypeLiteral<String> stringType = new TypeLiteral<String>() {};
+        final Class<?> asStringClass = genericsHelper.getAsClassOrNull(stringType.getGenericType());
+        assertEquals(String.class, asStringClass);
+
+        final Class<?> asHelloBeanClass = genericsHelper.getAsClassOrNull(HelloBean.class);
+        assertEquals(HelloBean.class, asHelloBeanClass);
+    }
+
+    @Test
+    public void getAsClassOrNullShouldReturnNullForArrays() {
+        final TypeLiteral<Container<String[]>> arrayContainer = new TypeLiteral<Container<String[]>>() {};
+        final Type arrayType = genericsHelper.getGenericArgumentAsType(arrayContainer.getGenericType());
+
+        final Class<?> classOrNull = genericsHelper.getAsClassOrNull(arrayType);
+        assertNull(classOrNull);
+    }
+
+    @Test
+    public void getAsClassOrNullShouldReturnNullForWildcards() {
+        final TypeLiteral<Container<?>> wildcardContainer = new TypeLiteral<Container<?>>() {};
+        final Type wildcardType = genericsHelper.getGenericArgumentAsType(wildcardContainer.getGenericType());
+
+        final Class<?> classOrNull = genericsHelper.getAsClassOrNull(wildcardType);
+        assertNull(classOrNull);
+    }
+
     @Test
     public void isClass() {
         assertTrue(genericsHelper.isClass(HelloBean.class));
@@ -129,6 +174,18 @@ public class GenericsHelperTest {
         final TypeLiteral<List<String>> listOfStringType = new TypeLiteral<List<String>>() {};
         assertTrue(genericsHelper.isParameterizedType(listOfStringType.getGenericType()));
         assertFalse(genericsHelper.isParameterizedType(listOfStringType.getGenericClass()));
+    }
+
+    @Test
+    public void isWildcard() {
+        assertFalse(genericsHelper.isWildcard(HelloBean.class));
+
+        final TypeLiteral<Container<?>> wildcardContainer = new TypeLiteral<Container<?>>() {};
+        assertFalse(genericsHelper.isWildcard(wildcardContainer.getGenericType()));
+        assertFalse(genericsHelper.isWildcard(wildcardContainer.getGenericClass()));
+
+        final Type wildcardType = genericsHelper.getGenericArgumentAsType(wildcardContainer.getGenericType());
+        assertTrue(genericsHelper.isWildcard(wildcardType));
     }
 
     @Test
@@ -264,6 +321,16 @@ public class GenericsHelperTest {
     }
 
     @Test
+    public void isAssignableFromShouldBeTrueForDirectWildcardWithExtendsAndCorrectInheritance() {
+        final Type thisType = new TypeLiteral<Set<? extends SuperBean>>() {}.getGenericType();
+        final Type thisWildcard = genericsHelper.getGenericArgumentAsType(thisType);
+        final Type thatType = new TypeLiteral<MiddleBean>() {}.getGenericType();
+
+        assertTrue(genericsHelper.isAssignableFrom(thisWildcard, thatType));
+        assertFalse(genericsHelper.isAssignableFrom(thatType, thisWildcard));
+    }
+
+    @Test
     public void isAssignableFromShouldBeFalseForWildcardWithExtendsAndInvertedInheritance() {
         final Type thisType = new TypeLiteral<Set<? extends ChildBean>>() {}.getGenericType();
         final Type thatType = new TypeLiteral<Set<MiddleBean>>() {}.getGenericType();
@@ -289,6 +356,16 @@ public class GenericsHelperTest {
 //        final Set<? super ChildBean> thatSet = null;
 //        final Set<MiddleBean> thisSet = thatSet; // compile error
         assertFalse(genericsHelper.isAssignableFrom(thatType, thisType));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeTrueForDirectWildcardWithSuperAndCorrectInheritance() {
+        final Type thisType = new TypeLiteral<Set<? super ChildBean>>() {}.getGenericType();
+        final Type thisWildcard = genericsHelper.getGenericArgumentAsType(thisType);
+        final Type thatType = new TypeLiteral<MiddleBean>() {}.getGenericType();
+
+        assertTrue(genericsHelper.isAssignableFrom(thisWildcard, thatType));
+        assertFalse(genericsHelper.isAssignableFrom(thatType, thisWildcard));
     }
 
     @Test

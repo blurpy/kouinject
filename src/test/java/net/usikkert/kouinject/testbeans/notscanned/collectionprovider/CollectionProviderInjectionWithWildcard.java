@@ -26,9 +26,10 @@ import javax.inject.Inject;
 
 import net.usikkert.kouinject.CollectionProvider;
 import net.usikkert.kouinject.annotation.Component;
+import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 
 /**
- * Bean for testing error handling when trying to inject a CollectionProvider with a wildcard instead of a bean class.
+ * Bean for testing injection of CollectionProvider with wildcard.
  *
  * @author Christian Ihle
  */
@@ -36,9 +37,9 @@ import net.usikkert.kouinject.annotation.Component;
 public class CollectionProviderInjectionWithWildcard {
 
     @Inject
-    private CollectionProvider<?> wildcardCollectionProvider;
+    private CollectionProvider<? extends HelloBean> wildcardCollectionProvider;
 
-    public CollectionProvider<?> getWildcardCollectionProvider() {
+    public CollectionProvider<? extends HelloBean> getWildcardCollectionProvider() {
         return wildcardCollectionProvider;
     }
 }

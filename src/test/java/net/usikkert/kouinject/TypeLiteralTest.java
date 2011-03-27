@@ -31,7 +31,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Provider;
+
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
+import net.usikkert.kouinject.util.GenericsHelper;
 
 import org.junit.Test;
 
@@ -41,6 +44,8 @@ import org.junit.Test;
  * @author Christian Ihle
  */
 public class TypeLiteralTest {
+
+    private final GenericsHelper genericsHelper = new GenericsHelper();
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldFailIfUsedWithoutGenericType() {
@@ -186,5 +191,16 @@ public class TypeLiteralTest {
     @Test(expected = IllegalArgumentException.class)
     public void shouldValidateTypeInConstructor() {
         new TypeLiteral(null) {};
+    }
+
+    @Test
+    public void shouldReturnNullForClassWhenUsedWithWildcardType() {
+        final TypeLiteral<Provider<? extends HelloBean>> wildcardProvider = new TypeLiteral<Provider<? extends HelloBean>>() {};
+        final Type wildcardType = genericsHelper.getGenericArgumentAsType(wildcardProvider.getGenericType());
+        assertTrue(genericsHelper.isWildcard(wildcardType));
+
+        final TypeLiteral<Object> typeLiteral = new TypeLiteral<Object>(wildcardType) {};
+        assertEquals(wildcardType, typeLiteral.getGenericType());
+        assertNull(typeLiteral.getGenericClass());
     }
 }

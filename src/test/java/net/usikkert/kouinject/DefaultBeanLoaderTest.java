@@ -56,6 +56,8 @@ import net.usikkert.kouinject.testbeans.notscanned.collection.CollectionInjectio
 import net.usikkert.kouinject.testbeans.notscanned.collection.ListInjection;
 import net.usikkert.kouinject.testbeans.notscanned.collection.SetInjection;
 import net.usikkert.kouinject.testbeans.notscanned.collectionprovider.CollectionProviderInjectionWithNoMatchingBeans;
+import net.usikkert.kouinject.testbeans.notscanned.collectionprovider.CollectionProviderInjectionWithWildcard;
+import net.usikkert.kouinject.testbeans.notscanned.collectionprovider.CollectionProviderInjectionWithoutTypeArgument;
 import net.usikkert.kouinject.testbeans.notscanned.instance.Instance1Bean;
 import net.usikkert.kouinject.testbeans.notscanned.instance.Instance2Bean;
 import net.usikkert.kouinject.testbeans.notscanned.instance.Instance3Bean;
@@ -575,12 +577,23 @@ public class DefaultBeanLoaderTest {
         beanLoader.getBeans(Object.class, "nomatch");
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void injectionOfCollectionWithWildcardShouldFail() {
+    @Test
+    public void injectionOfCollectionWithWildcardShouldWork() {
         final Set<BeanKey> beans = new HashSet<BeanKey>();
         beans.add(new BeanKey(CollectionInjectionWithWildcard.class));
+        beans.add(new BeanKey(HelloBean.class));
 
-        createBeanLoaderWithBeans(beans);
+        final DefaultBeanLoader loader = createBeanLoaderWithBeans(beans);
+
+        final CollectionInjectionWithWildcard bean = loader.getBean(CollectionInjectionWithWildcard.class);
+        assertNotNull(bean);
+
+        final Collection<? extends HelloBean> wildcardCollection = bean.getWildcardCollection();
+        assertNotNull(wildcardCollection);
+        assertEquals(1, wildcardCollection.size());
+
+        final HelloBean helloBean = wildcardCollection.iterator().next();
+        assertNotNull(helloBean);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -591,18 +604,58 @@ public class DefaultBeanLoaderTest {
         createBeanLoaderWithBeans(beans);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void injectionOfProviderWithWildcardShouldFail() {
+    @Test
+    public void injectionOfProviderWithWildcardShouldWork() {
         final Set<BeanKey> beans = new HashSet<BeanKey>();
         beans.add(new BeanKey(ProviderInjectionWithWildcard.class));
+        beans.add(new BeanKey(HelloBean.class));
 
-        createBeanLoaderWithBeans(beans);
+        final DefaultBeanLoader loader = createBeanLoaderWithBeans(beans);
+
+        final ProviderInjectionWithWildcard bean = loader.getBean(ProviderInjectionWithWildcard.class);
+        assertNotNull(bean);
+
+        final Provider<? extends HelloBean> wildcardProvider = bean.getWildcardProvider();
+        assertNotNull(wildcardProvider);
+
+        final HelloBean helloBean = wildcardProvider.get();
+        assertNotNull(helloBean);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void injectionOfProviderWithoutTypeArgumentShouldFail() {
         final Set<BeanKey> beans = new HashSet<BeanKey>();
         beans.add(new BeanKey(ProviderInjectionWithoutTypeArgument.class));
+
+        createBeanLoaderWithBeans(beans);
+    }
+
+    @Test
+    public void injectionOfCollectionProviderWithWildcardShouldWork() {
+        final Set<BeanKey> beans = new HashSet<BeanKey>();
+        beans.add(new BeanKey(CollectionProviderInjectionWithWildcard.class));
+        beans.add(new BeanKey(HelloBean.class));
+
+        final DefaultBeanLoader loader = createBeanLoaderWithBeans(beans);
+
+        final CollectionProviderInjectionWithWildcard bean = loader.getBean(CollectionProviderInjectionWithWildcard.class);
+        assertNotNull(bean);
+
+        final CollectionProvider<? extends HelloBean> wildcardCollectionProvider = bean.getWildcardCollectionProvider();
+        assertNotNull(wildcardCollectionProvider);
+
+        final Collection<? extends HelloBean> helloBeans = wildcardCollectionProvider.get();
+        assertNotNull(helloBeans);
+        assertEquals(1, helloBeans.size());
+
+        final HelloBean helloBean = helloBeans.iterator().next();
+        assertNotNull(helloBean);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void injectionOfCollectionProviderWithoutTypeArgumentShouldFail() {
+        final Set<BeanKey> beans = new HashSet<BeanKey>();
+        beans.add(new BeanKey(CollectionProviderInjectionWithoutTypeArgument.class));
 
         createBeanLoaderWithBeans(beans);
     }

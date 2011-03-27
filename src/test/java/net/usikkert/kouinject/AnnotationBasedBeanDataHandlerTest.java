@@ -451,28 +451,13 @@ public class AnnotationBasedBeanDataHandlerTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void getBeanDataShouldFailIfCollectionProviderIsUsedWithWildcard() {
-        handler.getBeanData(new BeanKey(CollectionProviderInjectionWithWildcard.class), false);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
     public void getBeanDataShouldFailIfCollectionProviderIsUsedWithoutTypeArgument() {
         handler.getBeanData(new BeanKey(CollectionProviderInjectionWithoutTypeArgument.class), false);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void getBeanDataShouldFailIfCollectionIsUsedWithWildcard() {
-        handler.getBeanData(new BeanKey(CollectionInjectionWithWildcard.class), false);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
     public void getBeanDataShouldFailIfCollectionIsUsedWithoutTypeArgument() {
         handler.getBeanData(new BeanKey(CollectionInjectionWithoutTypeArgument.class), false);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void getBeanDataShouldFailIfProviderIsUsedWithWildcard() {
-        handler.getBeanData(new BeanKey(ProviderInjectionWithWildcard.class), false);
     }
 
     @Test(expected = IllegalArgumentException.class)

@@ -26,6 +26,7 @@ import static org.junit.Assert.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -60,6 +61,8 @@ import org.junit.Test;
  * @author Christian Ihle
  */
 public class BeanHelperTest {
+
+    private final GenericsHelper genericsHelper = new GenericsHelper();
 
     private BeanHelper beanHelper;
 
@@ -177,10 +180,15 @@ public class BeanHelperTest {
         beanHelper.findParameterKeys(method);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void findParameterKeysForMethodShouldFailIfProviderIsUsingGenericWildcard() throws NoSuchMethodException {
+    @Test
+    public void findParameterKeysForMethodShouldHandleIfProviderIsUsingGenericWildcard() throws NoSuchMethodException {
         final Method method = getMethod("methodWithProviderWithGenericWildCard", Provider.class);
-        beanHelper.findParameterKeys(method);
+        final List<BeanKey> parameters = beanHelper.findParameterKeys(method);
+
+        assertNotNull(parameters);
+        assertEquals(1, parameters.size());
+        checkWildcard(parameters, 1);
+        assertTrue(parameters.get(0).isProvider());
     }
 
     @Test
@@ -201,10 +209,15 @@ public class BeanHelperTest {
         beanHelper.findParameterKeys(method);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void findParameterKeysForMethodShouldFailIfCollectionProviderIsUsingGenericWildcard() throws NoSuchMethodException {
+    @Test
+    public void findParameterKeysForMethodShouldHandleIfCollectionProviderIsUsingGenericWildcard() throws NoSuchMethodException {
         final Method method = getMethod("methodWithCollectionProviderWithGenericWildCard", CollectionProvider.class);
-        beanHelper.findParameterKeys(method);
+        final List<BeanKey> parameters = beanHelper.findParameterKeys(method);
+
+        assertNotNull(parameters);
+        assertEquals(1, parameters.size());
+        checkWildcard(parameters, 1);
+        assertTrue(parameters.get(0).isCollectionProvider());
     }
 
     @Test
@@ -225,10 +238,15 @@ public class BeanHelperTest {
         beanHelper.findParameterKeys(method);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void findParameterKeysForMethodShouldFailIfCollectionIsUsingGenericWildcard() throws NoSuchMethodException {
+    @Test
+    public void findParameterKeysForMethodShouldHandleIfCollectionIsUsingGenericWildcard() throws NoSuchMethodException {
         final Method method = getMethod("methodWithCollectionWithGenericWildCard", Collection.class);
-        beanHelper.findParameterKeys(method);
+        final List<BeanKey> parameters = beanHelper.findParameterKeys(method);
+
+        assertNotNull(parameters);
+        assertEquals(1, parameters.size());
+        checkWildcard(parameters, 1);
+        assertTrue(parameters.get(0).isCollection());
     }
 
     @Test
@@ -297,10 +315,14 @@ public class BeanHelperTest {
         beanHelper.findFieldKey(field);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void findFieldKeyShouldFailIfProviderIsUsingGenericWildCard() throws NoSuchFieldException {
+    @Test
+    public void findFieldKeyShouldHandleIfProviderIsUsingGenericWildCard() throws NoSuchFieldException {
         final Field field = getField("providerWithWildCard");
-        beanHelper.findFieldKey(field);
+        final BeanKey fieldKey = beanHelper.findFieldKey(field);
+
+        assertNotNull(fieldKey);
+        checkWildcard(fieldKey);
+        assertTrue(fieldKey.isProvider());
     }
 
     @Test
@@ -338,10 +360,14 @@ public class BeanHelperTest {
         beanHelper.findFieldKey(field);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void findFieldKeyShouldFailIfCollectionProviderIsUsingGenericWildCard() throws NoSuchFieldException {
+    @Test
+    public void findFieldKeyShouldHandleIfCollectionProviderIsUsingGenericWildCard() throws NoSuchFieldException {
         final Field field = getField("collectionProviderWithWildCard");
-        beanHelper.findFieldKey(field);
+        final BeanKey fieldKey = beanHelper.findFieldKey(field);
+
+        assertNotNull(fieldKey);
+        checkWildcard(fieldKey);
+        assertTrue(fieldKey.isCollectionProvider());
     }
 
     @Test
@@ -379,10 +405,14 @@ public class BeanHelperTest {
         beanHelper.findFieldKey(field);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void findFieldKeyShouldFailIfCollectionIsUsingGenericWildCard() throws NoSuchFieldException {
+    @Test
+    public void findFieldKeyShouldHandleIfCollectionIsUsingGenericWildCard() throws NoSuchFieldException {
         final Field field = getField("collectionWithWildCard");
-        beanHelper.findFieldKey(field);
+        final BeanKey fieldKey = beanHelper.findFieldKey(field);
+
+        assertNotNull(fieldKey);
+        checkWildcard(fieldKey);
+        assertTrue(fieldKey.isCollection());
     }
 
     @Test
@@ -469,10 +499,15 @@ public class BeanHelperTest {
         beanHelper.findParameterKeys(constructor);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void findParameterKeysForConstructorShouldFailIfProviderIsUsingGenericWildcard() throws NoSuchMethodException {
+    @Test
+    public void findParameterKeysForConstructorShouldHandleIfProviderIsUsingGenericWildcard() throws NoSuchMethodException {
         final Constructor<?> constructor = getConstructor(Provider.class, JavaBean.class);
-        beanHelper.findParameterKeys(constructor);
+        final List<BeanKey> parameters = beanHelper.findParameterKeys(constructor);
+
+        assertNotNull(parameters);
+        assertEquals(2, parameters.size());
+        checkWildcard(parameters, 1);
+        assertTrue(parameters.get(0).isProvider());
     }
 
     @Test
@@ -493,10 +528,15 @@ public class BeanHelperTest {
         beanHelper.findParameterKeys(constructor);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void findParameterKeysForConstructorShouldFailIfCollectionProviderIsUsingGenericWildcard() throws NoSuchMethodException {
+    @Test
+    public void findParameterKeysForConstructorShouldHandleIfCollectionProviderIsUsingGenericWildcard() throws NoSuchMethodException {
         final Constructor<?> constructor = getConstructor(CollectionProvider.class, JavaBean.class);
-        beanHelper.findParameterKeys(constructor);
+        final List<BeanKey> parameters = beanHelper.findParameterKeys(constructor);
+
+        assertNotNull(parameters);
+        assertEquals(2, parameters.size());
+        checkWildcard(parameters, 1);
+        assertTrue(parameters.get(0).isCollectionProvider());
     }
 
     @Test
@@ -517,10 +557,15 @@ public class BeanHelperTest {
         beanHelper.findParameterKeys(constructor);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void findParameterKeysForConstructorShouldFailIfCollectionIsUsingGenericWildcard() throws NoSuchMethodException {
+    @Test
+    public void findParameterKeysForConstructorShouldHandleIfCollectionIsUsingGenericWildcard() throws NoSuchMethodException {
         final Constructor<?> constructor = getConstructor(Collection.class, JavaBean.class);
-        beanHelper.findParameterKeys(constructor);
+        final List<BeanKey> parameters = beanHelper.findParameterKeys(constructor);
+
+        assertNotNull(parameters);
+        assertEquals(2, parameters.size());
+        checkWildcard(parameters, 1);
+        assertTrue(parameters.get(0).isCollection());
     }
 
     @Test
@@ -593,6 +638,22 @@ public class BeanHelperTest {
     private void checkGenericParameter(final BeanKey beanKey, final TypeLiteral<?> expectedType) {
         assertEquals(expectedType.getGenericType(), beanKey.getBeanType());
         assertEquals(expectedType.getGenericClass(), beanKey.getBeanClass());
+    }
+
+    private void checkWildcard(final List<BeanKey> parameters, final int position) {
+        final BeanKey beanKey = getParameter(parameters, position);
+        checkWildcard(beanKey);
+    }
+
+    private void checkWildcard(final BeanKey beanKey) {
+        assertNull(beanKey.getQualifier());
+        assertNull(beanKey.getBeanClass());
+
+        final TypeLiteral<Provider<?>> typeWithWildcard = new TypeLiteral<Provider<?>>() {};
+        final Type wildcard = genericsHelper.getGenericArgumentAsType(typeWithWildcard.getGenericType());
+        assertTrue(genericsHelper.isWildcard(wildcard));
+
+        assertEquals(wildcard, beanKey.getBeanType());
     }
 
     private BeanKey getParameter(final List<BeanKey> parameters, final int position) {
