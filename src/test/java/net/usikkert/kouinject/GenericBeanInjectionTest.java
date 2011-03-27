@@ -48,12 +48,18 @@ import net.usikkert.kouinject.testbeans.scanned.generics.thing.StopThing;
 import net.usikkert.kouinject.testbeans.scanned.generics.thing.StopThingListenerBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.thing.ThingListenerBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.thing.ThingManagerBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.AbstractDualVariableBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.ConcreteDualVariableBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.DualVariableInterfaceBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.VariableOne;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.VariableTwo;
 import net.usikkert.kouinject.testbeans.scanned.generics.wildcard.WildcardFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.ChildBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.MiddleBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.SuperBean;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -374,6 +380,29 @@ public class GenericBeanInjectionTest {
         final ThingListenerBean<StopThing> bean2 = injector.getBean(new TypeLiteral<ThingListenerBean<StopThing>>() {});
         assertNotNull(bean2);
         assertEquals(StopThingListenerBean.class, bean2.getClass());
+    }
+
+    // TODO remember test of GenericsHelper
+    @Test
+    @Ignore("Not implemented support for TypeVariable")
+    public void checkConcreteDualVariableBean() {
+        final ConcreteDualVariableBean bean1 = injector.getBean(ConcreteDualVariableBean.class);
+        assertNotNull(bean1);
+
+        final AbstractDualVariableBean<VariableOne> bean2 = injector.getBean(new TypeLiteral<AbstractDualVariableBean<VariableOne>>() {});
+        assertNotNull(bean2);
+        assertEquals(ConcreteDualVariableBean.class, bean2.getClass());
+
+        final DualVariableInterfaceBean<VariableOne, VariableTwo> bean3 =
+                injector.getBean(new TypeLiteral<DualVariableInterfaceBean<VariableOne, VariableTwo>>() {});
+        assertNotNull(bean3);
+        assertEquals(ConcreteDualVariableBean.class, bean3.getClass());
+
+        final VariableOne first = bean3.getFirst();
+        assertNotNull(first);
+
+        final VariableTwo second = bean3.getSecond();
+        assertNotNull(second);
     }
 
     private boolean containsBean(final Collection<?> beans, final Class<?> beanClass) {

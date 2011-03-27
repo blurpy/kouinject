@@ -20,34 +20,17 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.generics.typevariable;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * An abstract class with a type variable that is passed from the implementation to the interface.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+public abstract class AbstractDualVariableBean<F> implements DualVariableInterfaceBean<F, VariableTwo> {
 
-    // All components
-    ALL(126),
-
-    // All components and those created by factories
-    SCANNED(124),
-
-    // All components and those created by factories, without a qualifier
-    SCANNED_WITHOUT_QUALIFIER(95),
-
-    // All from SCANNED, plus those with profiles that can be activated at the same time
-    SCANNED_WITH_PROFILED(133);
-
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
-    }
-
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    @Override
+    public VariableTwo getSecond() {
+        return new VariableTwo();
     }
 }

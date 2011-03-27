@@ -20,34 +20,21 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.generics.typevariable;
+
+import net.usikkert.kouinject.annotation.Component;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * A bean implementing an interface that requires 2 type variables. One of them is visible from
+ * here, and the other is visible in the abstract class. For testing of type variable.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+@Component
+public class ConcreteDualVariableBean extends AbstractDualVariableBean<VariableOne> {
 
-    // All components
-    ALL(126),
-
-    // All components and those created by factories
-    SCANNED(124),
-
-    // All components and those created by factories, without a qualifier
-    SCANNED_WITHOUT_QUALIFIER(95),
-
-    // All from SCANNED, plus those with profiles that can be activated at the same time
-    SCANNED_WITH_PROFILED(133);
-
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
-    }
-
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    @Override
+    public VariableOne getFirst() {
+        return new VariableOne();
     }
 }
