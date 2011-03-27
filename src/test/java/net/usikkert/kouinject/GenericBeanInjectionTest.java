@@ -24,10 +24,14 @@ package net.usikkert.kouinject;
 import static org.junit.Assert.*;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import net.usikkert.kouinject.testbeans.scanned.generics.Container;
+import net.usikkert.kouinject.testbeans.scanned.generics.collection.CollectionFactoryBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.collection.CollectionUsingBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.collection.Stone;
 import net.usikkert.kouinject.testbeans.scanned.generics.stuff.ListOfStuffBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.stuff.ListOfStuffFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.stuff.OneStuffBean;
@@ -228,6 +232,43 @@ public class GenericBeanInjectionTest {
         assertTrue(containsContainerBeanOf(ChildBean.class, beans));
         assertTrue(containsContainerBeanOf(MiddleBean.class, beans));
         assertTrue(containsContainerBeanOf(SuperBean.class, beans));
+    }
+
+    @Test
+    public void checkCollectionFactoryBean() {
+        final CollectionFactoryBean bean = injector.getBean(CollectionFactoryBean.class);
+        assertNotNull(bean);
+
+        final Collection<Stone> stoneCollection = bean.createStoneCollection();
+        assertNotNull(stoneCollection);
+        assertEquals(2, stoneCollection.size());
+    }
+
+    @Test
+    public void checkCollectionUsingBean() {
+        final CollectionUsingBean bean = injector.getBean(CollectionUsingBean.class);
+        assertNotNull(bean);
+
+        final Collection<Stone> stoneCollection = bean.getStoneCollection();
+        assertNotNull(stoneCollection);
+        assertEquals(2, stoneCollection.size());
+
+        final Iterator<Stone> iterator = stoneCollection.iterator();
+        assertEquals(Integer.valueOf(15), iterator.next().getWeight());
+        assertEquals(Integer.valueOf(30), iterator.next().getWeight());
+    }
+
+    @Test
+    public void checkStoneCollection() {
+        final Collection<Stone> bean = injector.getBean(new TypeLiteral<Collection<Stone>>() {});
+        assertNotNull(bean);
+
+        assertNotNull(bean);
+        assertEquals(2, bean.size());
+
+        final Iterator<Stone> iterator = bean.iterator();
+        assertEquals(Integer.valueOf(15), iterator.next().getWeight());
+        assertEquals(Integer.valueOf(30), iterator.next().getWeight());
     }
 
     private boolean containsContainerBeanOf(final Class<?> expectedClass, final Collection beans) {

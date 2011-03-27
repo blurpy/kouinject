@@ -388,7 +388,16 @@ public class DefaultBeanLoader implements BeanLoader {
         }
 
         if (dependency.isCollection()) {
-            return getBeans(dependency);
+            final BeanKey actualBeanKey = dependency.getActualBeanKey();
+
+            if (factoryPointMap.containsFactoryPoint(actualBeanKey)) {
+                // The default handling of this collection is overridden by a factory
+                return getBean(actualBeanKey);
+            }
+
+            else {
+                return getBeans(dependency);
+            }
         }
 
         if (dependency.isCollectionProvider()) {

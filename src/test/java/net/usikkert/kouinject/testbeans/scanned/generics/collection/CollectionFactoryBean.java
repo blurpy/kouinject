@@ -20,34 +20,31 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.generics.collection;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import net.usikkert.kouinject.annotation.Component;
+import net.usikkert.kouinject.annotation.Produces;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * A factory that creates collections, for testing that it's possible to override the default
+ * collection support in the injector.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+@Component
+public class CollectionFactoryBean {
 
-    // All components
-    ALL(120),
+    @Produces
+    public Collection<Stone> createStoneCollection() {
+        final List<Stone> stones = new ArrayList<Stone>();
 
-    // All components and those created by factories
-    SCANNED(118),
+        stones.add(new Stone(15));
+        stones.add(new Stone(30));
 
-    // All components and those created by factories, without a qualifier
-    SCANNED_WITHOUT_QUALIFIER(89),
-
-    // All from SCANNED, plus those with profiles that can be activated at the same time
-    SCANNED_WITH_PROFILED(127);
-
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
-    }
-
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+        return stones;
     }
 }

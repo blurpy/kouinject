@@ -20,34 +20,22 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.generics.collection;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * A stone.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+public class Stone {
 
-    // All components
-    ALL(120),
+    private final Integer weight;
 
-    // All components and those created by factories
-    SCANNED(118),
-
-    // All components and those created by factories, without a qualifier
-    SCANNED_WITHOUT_QUALIFIER(89),
-
-    // All from SCANNED, plus those with profiles that can be activated at the same time
-    SCANNED_WITH_PROFILED(127);
-
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
+    public Stone(final Integer weight) {
+        this.weight = weight;
     }
 
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    public Integer getWeight() {
+        return weight;
     }
 }
