@@ -52,7 +52,6 @@ import net.usikkert.kouinject.testbeans.scanned.hierarchy.MiddleBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.SuperBean;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -483,7 +482,6 @@ public class GenericsHelperTest {
     }
 
     @Test
-    @Ignore("Not implemented support for TypeVariable")
     public void isAssignableFromShouldBeTrueWhenTypeVariablesAreInheritedAndMatch() {
         final Type thisType = new TypeLiteral<DualVariableInterfaceBean<VariableOnePointTwo, VariableTwo>>() {}.getGenericType();
 
@@ -497,7 +495,6 @@ public class GenericsHelperTest {
     }
 
     @Test
-    @Ignore("Not implemented support for TypeVariable")
     public void isAssignableFromShouldBeTrueWhenOneTypeVariableIsDefinedInClassAndOneAtRuntimeAndMatch() {
         final Type thisType = new TypeLiteral<DualVariableInterfaceBean<VariableOnePointTwo, VariableTwo>>() {}.getGenericType();
         final Type thatType = new TypeLiteral<AbstractDualVariableBean<VariableOnePointTwo>>() {}.getGenericType();

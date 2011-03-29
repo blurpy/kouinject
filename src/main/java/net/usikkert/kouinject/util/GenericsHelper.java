@@ -24,7 +24,10 @@ package net.usikkert.kouinject.util;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.Validate;
 
@@ -158,12 +161,17 @@ public class GenericsHelper {
         Validate.notNull(thisType, "This type can not be null");
         Validate.notNull(thatType, "That type can not be null");
 
+        return isAssignableFromUsingMap(thisType, thatType, new HashMap<TypeVariable<?>, Type>());
+    }
+
+    private boolean isAssignableFromUsingMap(final Type thisType, final Type thatType,
+                                             final Map<TypeVariable<?>, Type> typeVariableMap) {
         if (thisType.equals(thatType)) {
             return true;
         }
 
         if (isWildcard(thisType)) {
-            return isAssignableFromWildcard((WildcardType) thisType, thatType);
+            return isAssignableFromWildcard((WildcardType) thisType, thatType, typeVariableMap);
         }
 
         if (isWildcard(thatType)) {
@@ -179,7 +187,9 @@ public class GenericsHelper {
             }
 
             else if (isParameterizedType(thisType) && isParameterizedType(thatType)) {
-                if (typesHaveTheSameParameters(thisType, thatType)) {
+                mapTypeVariablesToActualTypes(thatType, thatClass, typeVariableMap);
+
+                if (typesHaveTheSameParameters(thisType, thatType, typeVariableMap)) {
                     return true;
                 }
             }
@@ -190,7 +200,7 @@ public class GenericsHelper {
             }
 
             // Assigning from a class that implements a generic interface or class to a generic type
-            if (isAssignableFromSuperTypes(thisType, thatClass)) {
+            if (isAssignableFromSuperTypes(thisType, thatClass, typeVariableMap)) {
                 return true;
             }
         }
@@ -198,15 +208,18 @@ public class GenericsHelper {
         return false;
     }
 
-    private boolean isAssignableFromSuperTypes(final Type thisType, final Class<?> thatClass) {
-        return isAssignableFromSuperInterfaces(thisType, thatClass) || isAssignableFromSuperClass(thisType, thatClass);
+    private boolean isAssignableFromSuperTypes(final Type thisType, final Class<?> thatClass,
+                                               final Map<TypeVariable<?>, Type> typeVariableMap) {
+        return isAssignableFromSuperInterfaces(thisType, thatClass, typeVariableMap) ||
+               isAssignableFromSuperClass(thisType, thatClass, typeVariableMap);
     }
 
-    private boolean isAssignableFromSuperInterfaces(final Type thisType, final Class<?> thatClass) {
+    private boolean isAssignableFromSuperInterfaces(final Type thisType, final Class<?> thatClass,
+                                                    final Map<TypeVariable<?>, Type> typeVariableMap) {
         final Type[] genericInterfaces = thatClass.getGenericInterfaces();
 
         for (final Type genericInterface : genericInterfaces) {
-            if (isAssignableFrom(thisType, genericInterface)) {
+            if (isAssignableFromUsingMap(thisType, genericInterface, typeVariableMap)) {
                 return true;
             }
         }
@@ -214,12 +227,14 @@ public class GenericsHelper {
         return false;
     }
 
-    private boolean isAssignableFromSuperClass(final Type thisType, final Class<?> thatClass) {
+    private boolean isAssignableFromSuperClass(final Type thisType, final Class<?> thatClass,
+                                               final Map<TypeVariable<?>, Type> typeVariableMap) {
         final Type genericSuperclass = thatClass.getGenericSuperclass();
-        return genericSuperclass != null && isAssignableFrom(thisType, genericSuperclass);
+        return genericSuperclass != null && isAssignableFromUsingMap(thisType, genericSuperclass, typeVariableMap);
     }
 
-    private boolean typesHaveTheSameParameters(final Type thisType, final Type thatType) {
+    private boolean typesHaveTheSameParameters(final Type thisType, final Type thatType,
+                                               final Map<TypeVariable<?>, Type> typeVariableMap) {
         final Type[] thisArguments = getGenericArgumentsAsType(thisType);
         final Type[] thatArguments = getGenericArgumentsAsType(thatType);
 
@@ -231,7 +246,7 @@ public class GenericsHelper {
             final Type thisArgument = thisArguments[i];
             final Type thatArgument = thatArguments[i];
 
-            if (!typesHaveTheSameParameter(thisArgument, thatArgument)) {
+            if (!typesHaveTheSameParameter(thisArgument, thatArgument, typeVariableMap)) {
                 return false;
             }
         }
@@ -244,17 +259,29 @@ public class GenericsHelper {
         return parameterizedType.getActualTypeArguments();
     }
 
-    private boolean typesHaveTheSameParameter(final Type thisArgument, final Type thatArgument) {
+    private boolean typesHaveTheSameParameter(final Type thisArgument, final Type thatArgument,
+                                              final Map<TypeVariable<?>, Type> typeVariableMap) {
         if (thisArgument.equals(thatArgument)) {
             return true;
         }
 
         if (isWildcard(thisArgument)) {
             final WildcardType thisWildcard = (WildcardType) thisArgument;
-            return isAssignableFromWildcard(thisWildcard, thatArgument);
+            return isAssignableFromWildcard(thisWildcard, thatArgument, typeVariableMap);
+        }
+
+        else if (isTypeVariable(thatArgument)) {
+            final TypeVariable<?> thatTypeVariable = (TypeVariable<?>) thatArgument;
+            final Type thatResolvedType = typeVariableMap.get(thatTypeVariable);
+
+            return typesHaveTheSameParameter(thisArgument, thatResolvedType, typeVariableMap);
         }
 
         return false;
+    }
+
+    private boolean isTypeVariable(final Type type) {
+        return type instanceof TypeVariable<?>;
     }
 
     /**
@@ -269,18 +296,19 @@ public class GenericsHelper {
         return type instanceof WildcardType;
     }
 
-    private boolean isAssignableFromWildcard(final WildcardType thisWildcard, final Type thatType) {
+    private boolean isAssignableFromWildcard(final WildcardType thisWildcard, final Type thatType,
+                                             final Map<TypeVariable<?>, Type> typeVariableMap) {
         final Type[] upperBounds = thisWildcard.getUpperBounds();
         final Type[] lowerBounds = thisWildcard.getLowerBounds();
 
         for (final Type upperBound : upperBounds) {
-            if (!isAssignableFrom(upperBound, thatType)) {
+            if (!isAssignableFromUsingMap(upperBound, thatType, typeVariableMap)) {
                 return false;
             }
         }
 
         for (final Type lowerBound : lowerBounds) {
-            if (!isAssignableFrom(thatType, lowerBound)) {
+            if (!isAssignableFromUsingMap(thatType, lowerBound, typeVariableMap)) {
                 return false;
             }
         }
@@ -298,5 +326,32 @@ public class GenericsHelper {
         }
 
         throw new IllegalArgumentException("Unsupported generic type: " + type);
+    }
+
+    /**
+     * Type variables can be "passed on" between several layers of interfaces or superclasses,
+     * and that will lead to a type parameter being a type variable instead. This
+     * map will keep a reference to all the type variables and their actual types, so
+     * that they can be resolved later when it's necessary to match type parameters.
+     *
+     * TODO example
+     *
+     * TODO is it necessary to "rewind" the mapping? It's possible to have:
+     * S = SomeClass
+     * F = S
+     * F could be changed to point to SomeClass instead of S. But will F ever be needed?
+     */
+    private void mapTypeVariablesToActualTypes(final Type thatType, final Class<?> thatClass,
+                                               final Map<TypeVariable<?>, Type> typeVariableMap) {
+        final ParameterizedType thatParameterizedType = getAsParameterizedType(thatType);
+        final Type[] actualTypeArguments = thatParameterizedType.getActualTypeArguments();
+        final TypeVariable<?>[] typeParameters = thatClass.getTypeParameters();
+
+        for (int i = 0; i < typeParameters.length; i++) {
+            final TypeVariable<?> typeParameter = typeParameters[i];
+            final Type actualTypeArgument = actualTypeArguments[i];
+
+            typeVariableMap.put(typeParameter, actualTypeArgument);
+        }
     }
 }

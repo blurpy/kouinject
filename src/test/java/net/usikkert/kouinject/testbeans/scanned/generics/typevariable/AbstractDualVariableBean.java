@@ -25,9 +25,13 @@ package net.usikkert.kouinject.testbeans.scanned.generics.typevariable;
 /**
  * An abstract class with a type variable that is passed from the implementation to the interface.
  *
+ * <p>Using the type variable name "S" for the first variable her, while it is the name of the second
+ * variable in the interface. This is to verify that there wont be name issues when the injector resolves
+ * variables to actual types.</p>
+ *
  * @author Christian Ihle
  */
-public abstract class AbstractDualVariableBean<K> implements DualVariableInterfaceBean<K, VariableTwo> {
+public abstract class AbstractDualVariableBean<S> implements DualVariableInterfaceBean<S, VariableTwo> {
 
     @Override
     public VariableTwo getSecond() {

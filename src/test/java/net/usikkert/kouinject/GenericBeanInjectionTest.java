@@ -59,7 +59,6 @@ import net.usikkert.kouinject.testbeans.scanned.hierarchy.MiddleBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.SuperBean;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -383,7 +382,6 @@ public class GenericBeanInjectionTest {
     }
 
     @Test
-    @Ignore("Not implemented support for TypeVariable")
     public void checkConcreteDualVariableBean() {
         final ConcreteDualVariableBean bean1 = injector.getBean(ConcreteDualVariableBean.class);
         assertNotNull(bean1);
