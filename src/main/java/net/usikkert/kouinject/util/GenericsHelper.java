@@ -179,7 +179,9 @@ public class GenericsHelper {
             }
 
             else if (isParameterizedType(thisType) && isParameterizedType(thatType)) {
-                return typesHaveTheSameParameters(thisType, thatType);
+                if (typesHaveTheSameParameters(thisType, thatType)) {
+                    return true;
+                }
             }
 
             // Assignment from generic type to raw type, e.g. List list = new ArrayList<String>();
@@ -188,24 +190,33 @@ public class GenericsHelper {
             }
 
             // Assigning from a class that implements a generic interface or class to a generic type
-            else if (isParameterizedType(thisType) && isClass(thatType)) {
-                final Type[] genericInterfaces = thatClass.getGenericInterfaces();
-
-                for (final Type genericInterface : genericInterfaces) {
-                    if (isAssignableFrom(thisType, genericInterface)) {
-                        return true;
-                    }
-                }
-
-                final Type genericSuperclass = thatClass.getGenericSuperclass();
-
-                if (genericSuperclass != null && isAssignableFrom(thisType, genericSuperclass)) {
-                    return true;
-                }
+            if (isAssignableFromSuperTypes(thisType, thatClass)) {
+                return true;
             }
         }
 
         return false;
+    }
+
+    private boolean isAssignableFromSuperTypes(final Type thisType, final Class<?> thatClass) {
+        return isAssignableFromSuperInterfaces(thisType, thatClass) || isAssignableFromSuperClass(thisType, thatClass);
+    }
+
+    private boolean isAssignableFromSuperInterfaces(final Type thisType, final Class<?> thatClass) {
+        final Type[] genericInterfaces = thatClass.getGenericInterfaces();
+
+        for (final Type genericInterface : genericInterfaces) {
+            if (isAssignableFrom(thisType, genericInterface)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean isAssignableFromSuperClass(final Type thisType, final Class<?> thatClass) {
+        final Type genericSuperclass = thatClass.getGenericSuperclass();
+        return genericSuperclass != null && isAssignableFrom(thisType, genericSuperclass);
     }
 
     private boolean typesHaveTheSameParameters(final Type thisType, final Type thatType) {
