@@ -40,11 +40,19 @@ import net.usikkert.kouinject.testbeans.scanned.generics.thing.StartThing;
 import net.usikkert.kouinject.testbeans.scanned.generics.thing.StopThing;
 import net.usikkert.kouinject.testbeans.scanned.generics.thing.StopThingListenerBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.thing.ThingListenerBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.AbstractDualVariableBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.ConcreteDualVariableBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.DualVariableInterfaceBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.VariableOne;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.VariableOnePointTwo;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.VariableTwo;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.VariableTwoPointTwo;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.ChildBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.MiddleBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.SuperBean;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -472,5 +480,60 @@ public class GenericsHelperTest {
 //        final ThingListenerBean<MiddleThing> thatBean = null;
 //        final MiddleThingListenerBean thisBean = thatBean; // compiler error
         assertFalse(genericsHelper.isAssignableFrom(MiddleThingListenerBean.class, thisType));
+    }
+
+    @Test
+    @Ignore("Not implemented support for TypeVariable")
+    public void isAssignableFromShouldBeTrueWhenTypeVariablesAreInheritedAndMatch() {
+        final Type thisType = new TypeLiteral<DualVariableInterfaceBean<VariableOnePointTwo, VariableTwo>>() {}.getGenericType();
+
+//        final ConcreteDualVariableBean thatBean = null;
+//        final DualVariableInterfaceBean<VariableOnePointTwo, VariableTwo> thisBean = thatBean; // ok
+        assertTrue(genericsHelper.isAssignableFrom(thisType, ConcreteDualVariableBean.class));
+
+//        final DualVariableInterfaceBean<VariableOnePointTwo, VariableTwo> thatBean = null;
+//        final ConcreteDualVariableBean thisBean = thatBean; // compiler error
+        assertFalse(genericsHelper.isAssignableFrom(ConcreteDualVariableBean.class, thisType));
+    }
+
+    @Test
+    @Ignore("Not implemented support for TypeVariable")
+    public void isAssignableFromShouldBeTrueWhenOneTypeVariableIsDefinedInClassAndOneAtRuntimeAndMatch() {
+        final Type thisType = new TypeLiteral<DualVariableInterfaceBean<VariableOnePointTwo, VariableTwo>>() {}.getGenericType();
+        final Type thatType = new TypeLiteral<AbstractDualVariableBean<VariableOnePointTwo>>() {}.getGenericType();
+
+//        final AbstractDualVariableBean<VariableOnePointTwo> thatBean = null;
+//        final DualVariableInterfaceBean<VariableOnePointTwo, VariableTwo> thisBean = thatBean; // ok
+        assertTrue(genericsHelper.isAssignableFrom(thisType, thatType));
+
+//        final DualVariableInterfaceBean<VariableOnePointTwo, VariableTwo> thatBean = null;
+//        final AbstractDualVariableBean<VariableOnePointTwo> thisBean = thatBean; // compiler error
+        assertFalse(genericsHelper.isAssignableFrom(thatType, thisType));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeFalseWhenTypeVariablesAreInheritedAndFirstDontMatch() {
+        final Type thisType = new TypeLiteral<DualVariableInterfaceBean<VariableOne, VariableTwo>>() {}.getGenericType();
+
+//        final ConcreteDualVariableBean thatBean = null;
+//        final DualVariableInterfaceBean<VariableOne, VariableTwo> thisBean = thatBean; // compiler error
+        assertFalse(genericsHelper.isAssignableFrom(thisType, ConcreteDualVariableBean.class));
+
+//        final DualVariableInterfaceBean<VariableOne, VariableTwo> thatBean = null;
+//        final ConcreteDualVariableBean thisBean = thatBean; // compiler error
+        assertFalse(genericsHelper.isAssignableFrom(ConcreteDualVariableBean.class, thisType));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeFalseWhenTypeVariablesAreInheritedAndSecondDontMatch() {
+        final Type thisType = new TypeLiteral<DualVariableInterfaceBean<VariableOnePointTwo, VariableTwoPointTwo>>() {}.getGenericType();
+
+//        final ConcreteDualVariableBean thatBean = null;
+//        final DualVariableInterfaceBean<VariableOnePointTwo, VariableTwoPointTwo> thisBean = thatBean; // compiler error
+        assertFalse(genericsHelper.isAssignableFrom(thisType, ConcreteDualVariableBean.class));
+
+//        final DualVariableInterfaceBean<VariableOnePointTwo, VariableTwoPointTwo> thatBean = null;
+//        final ConcreteDualVariableBean thisBean = thatBean; // compiler error
+        assertFalse(genericsHelper.isAssignableFrom(ConcreteDualVariableBean.class, thisType));
     }
 }
