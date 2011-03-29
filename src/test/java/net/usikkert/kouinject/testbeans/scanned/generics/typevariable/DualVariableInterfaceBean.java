@@ -31,4 +31,7 @@ public interface DualVariableInterfaceBean<F, S> {
 
     F getFirst();
     S getSecond();
+
+    void doFirst(F first);
+    void doSecond(S second);
 }

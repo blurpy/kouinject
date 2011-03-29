@@ -22,24 +22,11 @@
 
 package net.usikkert.kouinject.testbeans.scanned.generics.typevariable;
 
-import net.usikkert.kouinject.annotation.Component;
-
 /**
- * A bean implementing an interface that requires 2 type variables. One of them is visible from
- * here, and the other is visible in the abstract class. For testing of type variable.
+ * A variable to use on a type variable.
  *
  * @author Christian Ihle
  */
-@Component
-public class ConcreteDualVariableBean extends AbstractDualVariableBean<VariableOnePointTwo> {
+public class VariableTwoPointTwo extends VariableTwo {
 
-    @Override
-    public VariableOnePointTwo getFirst() {
-        return new VariableOnePointTwo();
-    }
-
-    @Override
-    public void doFirst(final VariableOnePointTwo variableOnePointTwo) {
-
-    }
 }

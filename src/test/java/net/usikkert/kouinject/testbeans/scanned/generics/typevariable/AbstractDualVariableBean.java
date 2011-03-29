@@ -27,10 +27,15 @@ package net.usikkert.kouinject.testbeans.scanned.generics.typevariable;
  *
  * @author Christian Ihle
  */
-public abstract class AbstractDualVariableBean<F> implements DualVariableInterfaceBean<F, VariableTwo> {
+public abstract class AbstractDualVariableBean<K> implements DualVariableInterfaceBean<K, VariableTwo> {
 
     @Override
     public VariableTwo getSecond() {
         return new VariableTwo();
+    }
+
+    @Override
+    public void doSecond(final VariableTwo variableTwo) {
+
     }
 }
