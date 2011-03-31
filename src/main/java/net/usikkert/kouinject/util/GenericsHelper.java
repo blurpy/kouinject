@@ -266,8 +266,13 @@ public class GenericsHelper {
         }
 
         if (isWildcard(thisArgument)) {
-            final WildcardType thisWildcard = (WildcardType) thisArgument;
-            return isAssignableFromWildcard(thisWildcard, thatArgument, typeVariableMap);
+            if (isWildcard(thatArgument)) {
+                return wildcardsAreAssignable((WildcardType) thisArgument, (WildcardType) thatArgument, typeVariableMap);
+            }
+
+            else {
+                return isAssignableFromWildcard((WildcardType) thisArgument, thatArgument, typeVariableMap);
+            }
         }
 
         else if (isTypeVariable(thatArgument)) {
@@ -309,6 +314,40 @@ public class GenericsHelper {
 
         for (final Type lowerBound : lowerBounds) {
             if (!isAssignableFromUsingMap(thatType, lowerBound, typeVariableMap)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private boolean wildcardsAreAssignable(final WildcardType thisWildcard, final WildcardType thatWildcard,
+                                           final Map<TypeVariable<?>, Type> typeVariableMap) {
+        final Type[] thisWildcardUpperBounds = thisWildcard.getUpperBounds();
+        final Type[] thisWildcardLowerBounds = thisWildcard.getLowerBounds();
+
+        final Type[] thatWildcardUpperBounds = thatWildcard.getUpperBounds();
+        final Type[] thatWildcardLowerBounds = thatWildcard.getLowerBounds();
+
+        if (thisWildcardLowerBounds.length != thatWildcardLowerBounds.length ||
+            thisWildcardUpperBounds.length != thatWildcardUpperBounds.length) {
+            return false;
+        }
+
+        for (int i = 0; i < thisWildcardUpperBounds.length; i++) {
+            final Type thisWildcardUpperBound = thisWildcardUpperBounds[i];
+            final Type thatWildcardUpperBound = thatWildcardUpperBounds[i];
+
+            if (!isAssignableFromUsingMap(thisWildcardUpperBound, thatWildcardUpperBound, typeVariableMap)) {
+                return false;
+            }
+        }
+
+        for (int i = 0; i < thisWildcardLowerBounds.length; i++) {
+            final Type thisWildcardLowerBound = thisWildcardLowerBounds[i];
+            final Type thatWildcardLowerBound = thatWildcardLowerBounds[i];
+
+            if (!isAssignableFromUsingMap(thatWildcardLowerBound, thisWildcardLowerBound, typeVariableMap)) {
                 return false;
             }
         }

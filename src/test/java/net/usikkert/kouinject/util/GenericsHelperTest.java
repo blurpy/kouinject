@@ -26,6 +26,7 @@ import static org.junit.Assert.*;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -385,6 +386,208 @@ public class GenericsHelperTest {
 
 //        final Set<? super SuperBean> thatSet = null;
 //        final Set<MiddleBean> thisSet = thatSet; // compile error
+        assertFalse(genericsHelper.isAssignableFrom(thatType, thisType));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeTrueWhenAssigningWildcardWithSuperToTheSameWildcard() {
+        final Type thisType = new TypeLiteral<Set<? super SuperBean>>() {}.getGenericType();
+        final Type thatType = new TypeLiteral<Set<? super SuperBean>>() {}.getGenericType();
+
+//        final Set<? super SuperBean> thatBean = null;
+//        final Set<? super SuperBean> thisBean = thatBean; // ok
+        assertTrue(genericsHelper.isAssignableFrom(thisType, thatType));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeTrueWhenAssigningWildcardWithExtendsToTheSameWildcard() {
+        final Type thisType = new TypeLiteral<Set<? extends SuperBean>>() {}.getGenericType();
+        final Type thatType = new TypeLiteral<Set<? extends SuperBean>>() {}.getGenericType();
+
+//        final Set<? extends SuperBean> thatBean = null;
+//        final Set<? extends SuperBean> thisBean = thatBean; // ok
+        assertTrue(genericsHelper.isAssignableFrom(thisType, thatType));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeTrueWhenAssigningUnboundWildcardToTheSameWildcard() {
+        final Type thisType = new TypeLiteral<Set<?>>() {}.getGenericType();
+        final Type thatType = new TypeLiteral<Set<?>>() {}.getGenericType();
+
+//        final Set<?> thatBean = null;
+//        final Set<?> thisBean = thatBean; // ok
+        assertTrue(genericsHelper.isAssignableFrom(thisType, thatType));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeFalseWhenAssigningWildcardWithSuperToWildcardWithExtends() {
+        final Type thisType1 = new TypeLiteral<Set<? super SuperBean>>() {}.getGenericType();
+        final Type thisType2 = new TypeLiteral<Set<? super MiddleBean>>() {}.getGenericType();
+        final Type thisType3 = new TypeLiteral<Set<? super ChildBean>>() {}.getGenericType();
+
+        final Type thatType1 = new TypeLiteral<Set<? extends SuperBean>>() {}.getGenericType();
+        final Type thatType2 = new TypeLiteral<Set<? extends MiddleBean>>() {}.getGenericType();
+        final Type thatType3 = new TypeLiteral<Set<? extends ChildBean>>() {}.getGenericType();
+
+        // compiler error on all of them
+        assertFalse(genericsHelper.isAssignableFrom(thisType1, thatType1));
+        assertFalse(genericsHelper.isAssignableFrom(thisType1, thatType2));
+        assertFalse(genericsHelper.isAssignableFrom(thisType1, thatType3));
+        assertFalse(genericsHelper.isAssignableFrom(thisType2, thatType1));
+        assertFalse(genericsHelper.isAssignableFrom(thisType2, thatType2));
+        assertFalse(genericsHelper.isAssignableFrom(thisType2, thatType3));
+        assertFalse(genericsHelper.isAssignableFrom(thisType3, thatType1));
+        assertFalse(genericsHelper.isAssignableFrom(thisType3, thatType2));
+        assertFalse(genericsHelper.isAssignableFrom(thisType3, thatType3));
+
+        assertFalse(genericsHelper.isAssignableFrom(thatType1, thisType1));
+        assertFalse(genericsHelper.isAssignableFrom(thatType1, thisType2));
+        assertFalse(genericsHelper.isAssignableFrom(thatType1, thisType3));
+        assertFalse(genericsHelper.isAssignableFrom(thatType2, thisType1));
+        assertFalse(genericsHelper.isAssignableFrom(thatType2, thisType2));
+        assertFalse(genericsHelper.isAssignableFrom(thatType2, thisType3));
+        assertFalse(genericsHelper.isAssignableFrom(thatType3, thisType1));
+        assertFalse(genericsHelper.isAssignableFrom(thatType3, thisType2));
+        assertFalse(genericsHelper.isAssignableFrom(thatType3, thisType3));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeTrueWhenAssigningWildcardWithExtendsWithCorrectInheritance() {
+        final Type thisType = new TypeLiteral<Set<? extends MiddleBean>>() {}.getGenericType();
+        final Type thatType = new TypeLiteral<Set<? extends SuperBean>>() {}.getGenericType();
+
+//        final Set<? extends SuperBean> thatBean = null;
+//        final Set<? extends MiddleBean> thisBean = thatBean; // compiler error
+        assertFalse(genericsHelper.isAssignableFrom(thisType, thatType));
+
+//        final Set<? extends MiddleBean> thatBean = null;
+//        final Set<? extends SuperBean> thisBean = thatBean; // ok
+        assertTrue(genericsHelper.isAssignableFrom(thatType, thisType));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeTrueWhenAssigningWildcardWithSuperWithCorrectInheritance() {
+        final Type thisType = new TypeLiteral<Set<? super MiddleBean>>() {}.getGenericType();
+        final Type thatType = new TypeLiteral<Set<? super ChildBean>>() {}.getGenericType();
+
+//        final Set<? super ChildBean> thatBean = null;
+//        final Set<? super MiddleBean> thisBean = thatBean; // compiler error
+        assertFalse(genericsHelper.isAssignableFrom(thisType, thatType));
+
+//        final Set<? super MiddleBean> thatBean = null;
+//        final Set<? super ChildBean> thisBean = thatBean; // ok
+        assertTrue(genericsHelper.isAssignableFrom(thatType, thisType));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeFalseWhenAssigningWildcardWithSuperToGenericParameter() {
+        final Type thatType = new TypeLiteral<Set<? super MiddleBean>>() {}.getGenericType();
+        final Type thisType1 = new TypeLiteral<Set<ChildBean>>() {}.getGenericType();
+        final Type thisType2 = new TypeLiteral<Set<MiddleBean>>() {}.getGenericType();
+        final Type thisType3 = new TypeLiteral<Set<SuperBean>>() {}.getGenericType();
+
+//        final Set<? super MiddleBean> thatBean = null;
+//        final Set<ChildBean> thisBean1 = thatBean; // compiler error
+//        final Set<MiddleBean> thisBean2 = thatBean; // compiler error
+//        final Set<SuperBean> thisBean3 = thatBean; // compiler error
+
+        assertFalse(genericsHelper.isAssignableFrom(thisType1, thatType));
+        assertFalse(genericsHelper.isAssignableFrom(thisType2, thatType));
+        assertFalse(genericsHelper.isAssignableFrom(thisType3, thatType));
+
+//        final Set<ChildBean> thisBean1 = null;
+//        final Set<MiddleBean> thisBean2 = null;
+//        final Set<SuperBean> thisBean3 = null;
+//        final Set<? super MiddleBean> thatBean = thisBean1; // compiler error
+//        final Set<? super MiddleBean> thatBean = thisBean2; // ok
+//        final Set<? super MiddleBean> thatBean = thisBean3; // ok
+
+        assertFalse(genericsHelper.isAssignableFrom(thatType, thisType1));
+        assertTrue(genericsHelper.isAssignableFrom(thatType, thisType2));
+        assertTrue(genericsHelper.isAssignableFrom(thatType, thisType3));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeFalseWhenAssigningWildcardWithExtendsToGenericParameter() {
+        final Type thatType = new TypeLiteral<Set<? extends MiddleBean>>() {}.getGenericType();
+        final Type thisType1 = new TypeLiteral<Set<ChildBean>>() {}.getGenericType();
+        final Type thisType2 = new TypeLiteral<Set<MiddleBean>>() {}.getGenericType();
+        final Type thisType3 = new TypeLiteral<Set<SuperBean>>() {}.getGenericType();
+
+//        final Set<? extends MiddleBean> thatBean = null;
+//        final Set<ChildBean> thisBean1 = thatBean; // compiler error
+//        final Set<MiddleBean> thisBean2 = thatBean; // compiler error
+//        final Set<SuperBean> thisBean3 = thatBean; // compiler error
+
+        assertFalse(genericsHelper.isAssignableFrom(thisType1, thatType));
+        assertFalse(genericsHelper.isAssignableFrom(thisType2, thatType));
+        assertFalse(genericsHelper.isAssignableFrom(thisType3, thatType));
+
+//        final Set<ChildBean> thisBean1 = null;
+//        final Set<MiddleBean> thisBean2 = null;
+//        final Set<SuperBean> thisBean3 = null;
+//        final Set<? extends MiddleBean> thatBean = thisBean1; // ok
+//        final Set<? extends MiddleBean> thatBean = thisBean2; // ok
+//        final Set<? extends MiddleBean> thatBean = thisBean3; // compiler error
+
+        assertTrue(genericsHelper.isAssignableFrom(thatType, thisType1));
+        assertTrue(genericsHelper.isAssignableFrom(thatType, thisType2));
+        assertFalse(genericsHelper.isAssignableFrom(thatType, thisType3));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeTrueWhenAssigningABoundWildcardToAnUnboundWildcard() {
+        final Type thatType = new TypeLiteral<Set<? extends MiddleBean>>() {}.getGenericType();
+        final Type thisType = new TypeLiteral<Set<?>>() {}.getGenericType();
+
+//        final Set<? extends MiddleBean> thatBean = null;
+//        final Set<?> thisBean = thatBean; // ok
+        assertTrue(genericsHelper.isAssignableFrom(thisType, thatType));
+
+//        final Set<?> thatBean = null;
+//        final Set<? extends MiddleBean> thisBean = thatBean; // compiler error
+        assertFalse(genericsHelper.isAssignableFrom(thatType, thisType));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeTrueWhenAssigningGenericParameterToAnUnboundWildcard() {
+        final Type thatType = new TypeLiteral<Set<MiddleBean>>() {}.getGenericType();
+        final Type thisType = new TypeLiteral<Set<?>>() {}.getGenericType();
+
+//        final Set<MiddleBean> thatBean = null;
+//        final Set<?> thisBean = thatBean; // ok
+        assertTrue(genericsHelper.isAssignableFrom(thisType, thatType));
+
+//        final Set<?> thatBean = null;
+//        final Set<MiddleBean> thisBean = thatBean; // compiler error
+        assertFalse(genericsHelper.isAssignableFrom(thatType, thisType));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeFalseWhenCompatibleWildcardsAreUsedALevelTooDeep() {
+        final Type thatType = new TypeLiteral<Collection<Container<? extends MiddleBean>>>() {}.getGenericType();
+        final Type thisType = new TypeLiteral<Collection<Container<?>>>() {}.getGenericType();
+
+//        final Collection<Container<? extends MiddleBean>> thatBean = null;
+//        final Collection<Container<?>> thisBean = thatBean; // compiler error
+        assertFalse(genericsHelper.isAssignableFrom(thisType, thatType));
+
+//        final Collection<Container<?>> thatBean = null;
+//        final Collection<Container<? extends MiddleBean>> thisBean = thatBean; // compiler error
+        assertFalse(genericsHelper.isAssignableFrom(thatType, thisType));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeTrueWhenAssigningAParameterWithAWildcardToAWildcard() {
+        final Type thatType = new TypeLiteral<Collection<Container<? extends MiddleBean>>>() {}.getGenericType();
+        final Type thisType = new TypeLiteral<Collection<?>>() {}.getGenericType();
+
+//        final Collection<Container<? extends MiddleBean>> thatBean = null;
+//        final Collection<?> thisBean = thatBean; // ok
+        assertTrue(genericsHelper.isAssignableFrom(thisType, thatType));
+
+//        final Collection<?> thatBean = null;
+//        final Collection<Container<? extends MiddleBean>> thisBean = thatBean; // compiler error
         assertFalse(genericsHelper.isAssignableFrom(thatType, thisType));
     }
 
