@@ -297,7 +297,22 @@ public class GenericsHelperTest {
 
 //        final List thatList = null;
 //        final List<String> thisList = thatList; // ok, but unchecked assignment
+        // Valid, but not type safe. Not allowed.
         assertFalse(genericsHelper.isAssignableFrom(type, List.class));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeFalseForCastFromRawTypeToUnboundedGenericType() {
+        final Type thisType = new TypeLiteral<List<?>>() {}.getGenericType();
+
+//        final List thatBean = null;
+//        final List<?> thisBean = thatBean; // ok
+        // Type safe and valid, but not allowed because of the limitations added for the above test
+        assertFalse(genericsHelper.isAssignableFrom(thisType, List.class));
+
+//        final List<?> thatBean = null;
+//        final List thisBean = thatBean; // ok
+        assertTrue(genericsHelper.isAssignableFrom(List.class, thisType));
     }
 
     @Test
@@ -735,5 +750,55 @@ public class GenericsHelperTest {
 //        final DualVariableInterfaceBean<VariableOnePointTwo, VariableTwoPointTwo> thatBean = null;
 //        final ConcreteDualVariableBean thisBean = thatBean; // compiler error
         assertFalse(genericsHelper.isAssignableFrom(ConcreteDualVariableBean.class, thisType));
+    }
+
+    @Test
+    public void isAssignableShouldBeTrueWhenAssigningFromClassWithTypeVariableToTypeWithUnboundWildcard() {
+        final Type thisType = new TypeLiteral<AbstractDualVariableBean<?>>() {}.getGenericType();
+
+//        final ConcreteDualVariableBean thatBean = null;
+//        final AbstractDualVariableBean<?> thisBean = thatBean; // ok
+        assertTrue(genericsHelper.isAssignableFrom(thisType, ConcreteDualVariableBean.class));
+
+//        final AbstractDualVariableBean<?> thatBean = null;
+//        final ConcreteDualVariableBean thisBean = thatBean; // compiler error
+        assertFalse(genericsHelper.isAssignableFrom(ConcreteDualVariableBean.class, thisType));
+    }
+
+    @Test
+    public void isAssignableShouldBeTrueWhenAssigningFromClassWithTypeVariableToTypeWithCorrectWildcard() {
+        final Type thisType = new TypeLiteral<AbstractDualVariableBean<? extends VariableOne>>() {}.getGenericType();
+
+//        final ConcreteDualVariableBean thatBean = null;
+//        final AbstractDualVariableBean<? extends VariableOne> thisBean = thatBean; // ok
+        assertTrue(genericsHelper.isAssignableFrom(thisType, ConcreteDualVariableBean.class));
+
+//        final AbstractDualVariableBean<? extends VariableOne> thatBean = null;
+//        final ConcreteDualVariableBean thisBean = thatBean; // compiler error
+        assertFalse(genericsHelper.isAssignableFrom(ConcreteDualVariableBean.class, thisType));
+    }
+
+    @Test
+    public void isAssignableShouldBeFalseWhenAssigningFromClassWithTypeVariableToTypeWithWrongWildcard() {
+        final Type thisType = new TypeLiteral<AbstractDualVariableBean<? extends VariableTwo>>() {}.getGenericType();
+
+//        final ConcreteDualVariableBean thatBean = null;
+//        final AbstractDualVariableBean<? extends VariableTwo> thisBean = thatBean; // compiler error
+        assertFalse(genericsHelper.isAssignableFrom(thisType, ConcreteDualVariableBean.class));
+
+//        final AbstractDualVariableBean<? extends VariableTwo> thatBean = null;
+//        final ConcreteDualVariableBean thisBean = thatBean; // compiler error
+        assertFalse(genericsHelper.isAssignableFrom(ConcreteDualVariableBean.class, thisType));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeTrueWhenAssigningTwoGenericClassesWithoutGenericParameters() {
+//        final ConcreteDualVariableBean thatBean = null;
+//        final AbstractDualVariableBean thisBean = thatBean; // ok, but not really type safe. Allowed for now.
+        assertTrue(genericsHelper.isAssignableFrom(AbstractDualVariableBean.class, ConcreteDualVariableBean.class));
+
+//        final AbstractDualVariableBean thatBean = null;
+//        final ConcreteDualVariableBean thisBean = thatBean; // compiler error
+        assertFalse(genericsHelper.isAssignableFrom(ConcreteDualVariableBean.class, AbstractDualVariableBean.class));
     }
 }
