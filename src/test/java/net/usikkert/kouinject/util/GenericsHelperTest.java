@@ -204,6 +204,14 @@ public class GenericsHelperTest {
     }
 
     @Test
+    public void isAssignableFromShouldBeTrueForTheSameGenericClassWithoutTypeArguments() {
+//        final List thatBean = null;
+//        final List thisBean = thatBean; // ok
+        assertTrue(genericsHelper.isAssignableFrom(List.class, List.class));
+        assertTrue(List.class.isAssignableFrom(List.class));
+    }
+
+    @Test
     public void isAssignableFromShouldBeTrueForSubTypeClass() {
 //        final String thatString = null;
 //        final Object thisObject = thatString; // ok
@@ -214,6 +222,32 @@ public class GenericsHelperTest {
 //        final String thisString = thatObject; // compile error
         assertFalse(genericsHelper.isAssignableFrom(String.class, Object.class));
         assertFalse(String.class.isAssignableFrom(Object.class));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeTrueForSubTypeGenericClassWhenUsedRaw() {
+//        final List thatList = null;
+//        final Object thisObject = thatList; // ok
+        assertTrue(genericsHelper.isAssignableFrom(Object.class, List.class));
+        assertTrue(Object.class.isAssignableFrom(List.class));
+
+//        final Object thatObject = null;
+//        final List thisList = thatObject; // compile error
+        assertFalse(genericsHelper.isAssignableFrom(List.class, Object.class));
+        assertFalse(List.class.isAssignableFrom(Object.class));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeTrueForSubTypeGenericClassesWhenBothUsedRaw() {
+//        final ArrayList thatList = null;
+//        final List thisList = thatList; // ok
+        assertTrue(genericsHelper.isAssignableFrom(List.class, ArrayList.class));
+        assertTrue(List.class.isAssignableFrom(ArrayList.class));
+
+//        final List thatList = null;
+//        final ArrayList thisList = thatList; // compiler error
+        assertFalse(genericsHelper.isAssignableFrom(ArrayList.class, List.class));
+        assertFalse(ArrayList.class.isAssignableFrom(List.class));
     }
 
     @Test
@@ -800,5 +834,42 @@ public class GenericsHelperTest {
 //        final AbstractDualVariableBean thatBean = null;
 //        final ConcreteDualVariableBean thisBean = thatBean; // compiler error
         assertFalse(genericsHelper.isAssignableFrom(ConcreteDualVariableBean.class, AbstractDualVariableBean.class));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeTrueWhenAssigningGenericClassWithoutGenericParametersToObject() {
+//        final AbstractDualVariableBean thatBean = null;
+//        final Object thisBean = thatBean; // ok
+        assertTrue(genericsHelper.isAssignableFrom(Object.class, AbstractDualVariableBean.class));
+
+//        final Object thatBean = null;
+//        final AbstractDualVariableBean thisBean = thatBean; // compiler error
+        assertFalse(genericsHelper.isAssignableFrom(AbstractDualVariableBean.class, Object.class));
+    }
+
+    @Test
+    public void isAssignableShouldBeTrueWhenAssigningFromClassWithTypeVariableToObject() {
+        final Type thatType = new TypeLiteral<List<String>>() {}.getGenericType();
+
+//        final List<String> thatBean = null;
+//        final Object thisBean = thatBean; // ok
+        assertTrue(genericsHelper.isAssignableFrom(Object.class, thatType));
+
+//        final Object thatBean = null;
+//        final List<String> thisBean = thatBean; // compiler error
+        assertFalse(genericsHelper.isAssignableFrom(thatType, Object.class));
+    }
+
+    @Test
+    public void isAssignableShouldBeTrueWhenAssigningFromClassWithWildcardToObject() {
+        final Type thatType = new TypeLiteral<List<?>>() {}.getGenericType();
+
+//        final List<?> thatBean = null;
+//        final Object thisBean = thatBean; // ok
+        assertTrue(genericsHelper.isAssignableFrom(Object.class, thatType));
+
+//        final Object thatBean = null;
+//        final List<?> thisBean = thatBean; // compiler error
+        assertFalse(genericsHelper.isAssignableFrom(thatType, Object.class));
     }
 }
