@@ -27,6 +27,7 @@ import static org.mockito.Mockito.*;
 
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
+import java.util.Iterator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -47,42 +48,101 @@ public class TypeMapTest {
 
     @Test
     public void getActualTypeShouldReturnNullIfKeyDoesNotExist() {
+        assertEquals(0, typeMap.size());
+
         final Type actualType = typeMap.getActualType(mock(TypeVariable.class));
         assertNull(actualType);
     }
 
     @Test
     public void getActualTypeShouldReturnValueWhenKeyExists() {
-        final TypeVariable<?> typeVariable = mock(TypeVariable.class);
-        final Type actualType = mock(Type.class);
+        final TypeVariable<?> typeVariable = createTypeVariableMock("type variable one");
+        final Type actualType = createTypeMock("type one");
 
         typeMap.addActualType(typeVariable, actualType);
 
         final Type value = typeMap.getActualType(typeVariable);
         assertSame(actualType, value);
+        assertEquals(1, typeMap.size());
     }
 
     @Test
     public void getActualTypeShouldHandleSeveralKeyValuePairs() {
-        final TypeVariable<?> typeVariable1 = mock(TypeVariable.class);
-        final Type actualType1 = mock(Type.class);
+        final TypeVariable<?> typeVariable1 = createTypeVariableMock("type variable one");
+        final Type actualType1 = createTypeMock("type one");
         typeMap.addActualType(typeVariable1, actualType1);
 
         final Type value1 = typeMap.getActualType(typeVariable1);
         assertSame(actualType1, value1);
 
-        final TypeVariable<?> typeVariable2 = mock(TypeVariable.class);
-        final Type actualType2 = mock(Type.class);
+        final TypeVariable<?> typeVariable2 = createTypeVariableMock("type variable two");
+        final Type actualType2 = createTypeMock("type two");
         typeMap.addActualType(typeVariable2, actualType2);
 
         final Type value2 = typeMap.getActualType(typeVariable2);
         assertSame(actualType2, value2);
 
-        final TypeVariable<?> typeVariable3 = mock(TypeVariable.class);
-        final Type actualType3 = mock(Type.class);
+        final TypeVariable<?> typeVariable3 = createTypeVariableMock("type variable three");
+        final Type actualType3 = createTypeMock("type three");
         typeMap.addActualType(typeVariable3, actualType3);
 
         final Type value3 = typeMap.getActualType(typeVariable3);
         assertSame(actualType3, value3);
+
+        assertEquals(3, typeMap.size());
+    }
+
+    @Test
+    public void getKeysShouldReturnAllTheAddedKeys() {
+        final TypeVariable<?> typeVariable1 = createTypeVariableMock("type variable one");
+        final Type actualType1 = createTypeMock("type one");
+        typeMap.addActualType(typeVariable1, actualType1);
+
+        final TypeVariable<?> typeVariable2 = createTypeVariableMock("type variable two");
+        final Type actualType2 = createTypeMock("type two");
+        typeMap.addActualType(typeVariable2, actualType2);
+
+        final Iterator<TypeVariable<?>> iterator = typeMap.getKeys().iterator();
+
+        final TypeVariable<?> first = iterator.next();
+        final TypeVariable<?> second = iterator.next();
+
+        assertSame(typeVariable1, first);
+        assertSame(actualType1, typeMap.getActualType(first));
+
+        assertSame(typeVariable2, second);
+        assertSame(actualType2, typeMap.getActualType(second));
+    }
+
+    @Test
+    public void addActualTypeShouldResolveExistingTypesWhenActualTypeIsTypeVariable() {
+        final Type actualType = createTypeMock("type one");
+
+        final TypeVariable<?> typeVariable1 = createTypeVariableMock("type variable one");
+        typeMap.addActualType(typeVariable1, actualType);
+
+        final TypeVariable<?> typeVariable2 = createTypeVariableMock("type variable two");
+        typeMap.addActualType(typeVariable2, typeVariable1);
+
+        final TypeVariable<?> typeVariable3 = createTypeVariableMock("type variable three");
+        typeMap.addActualType(typeVariable3, typeVariable2);
+
+        assertSame(actualType, typeMap.getActualType(typeVariable1));
+        assertSame(actualType, typeMap.getActualType(typeVariable2));
+        assertSame(actualType, typeMap.getActualType(typeVariable3));
+    }
+
+    private Type createTypeMock(final String name) {
+        final Type type = mock(Type.class);
+        when(type.toString()).thenReturn(name);
+
+        return type;
+    }
+
+    private TypeVariable<?> createTypeVariableMock(final String name) {
+        final TypeVariable<?> typeVariable = mock(TypeVariable.class);
+        when(typeVariable.toString()).thenReturn(name);
+
+        return typeVariable;
     }
 }

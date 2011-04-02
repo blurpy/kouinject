@@ -25,6 +25,7 @@ package net.usikkert.kouinject.util;
 import static org.junit.Assert.*;
 
 import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -32,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 
 import net.usikkert.kouinject.TypeLiteral;
+import net.usikkert.kouinject.generics.TypeMap;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.Container;
 import net.usikkert.kouinject.testbeans.scanned.generics.thing.FirstStartThingListenerBean;
@@ -871,5 +873,54 @@ public class GenericsHelperTest {
 //        final Object thatBean = null;
 //        final List<?> thisBean = thatBean; // compiler error
         assertFalse(genericsHelper.isAssignableFrom(thatType, Object.class));
+    }
+
+    @Test
+    public void mapTypeVariablesToActualTypesShouldHandleInheritance() {
+        final TypeMap typeMap = genericsHelper.mapTypeVariablesToActualTypes(ConcreteDualVariableBean.class);
+        assertEquals(3, typeMap.size());
+
+        final TypeVariable<?> interfaceF = getTypeVariable("F", DualVariableInterfaceBean.class, typeMap);
+        assertNotNull(interfaceF);
+        assertEquals(VariableOnePointTwo.class, typeMap.getActualType(interfaceF));
+
+        final TypeVariable<?> interfaceS = getTypeVariable("S", DualVariableInterfaceBean.class, typeMap);
+        assertNotNull(interfaceS);
+        assertEquals(VariableTwo.class, typeMap.getActualType(interfaceS));
+
+        final TypeVariable<?> abstractS = getTypeVariable("S", AbstractDualVariableBean.class, typeMap);
+        assertNotNull(abstractS);
+        assertEquals(VariableOnePointTwo.class, typeMap.getActualType(abstractS));
+    }
+
+    @Test
+    public void mapTypeVariablesToActualTypesShouldHandleNoTypeVariables() {
+        final TypeMap typeMap = genericsHelper.mapTypeVariablesToActualTypes(HelloBean.class);
+        assertEquals(0, typeMap.size());
+    }
+
+    @Test
+    public void mapTypeVariablesToActualTypesShouldHandleNotResolvingAllTypes() {
+        final TypeMap typeMap = genericsHelper.mapTypeVariablesToActualTypes(ArrayList.class);
+        assertEquals(5, typeMap.size());
+
+        final Set<TypeVariable<?>> keys = typeMap.getKeys();
+
+        for (final TypeVariable<?> key : keys) {
+            final Type actualType = typeMap.getActualType(key);
+            assertNull(actualType);
+        }
+    }
+
+    private TypeVariable<?> getTypeVariable(final String name, final Class<?> ownerClass, final TypeMap typeMap) {
+        final Set<TypeVariable<?>> keys = typeMap.getKeys();
+
+        for (final TypeVariable<?> key : keys) {
+            if (key.getName().equals(name) && key.getGenericDeclaration().equals(ownerClass)) {
+                return key;
+            }
+        }
+
+        return null;
     }
 }

@@ -26,6 +26,7 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 
@@ -68,6 +69,42 @@ public class TypeMap {
         Validate.notNull(typeVariable, "Type variable can not be null");
         Validate.notNull(actualType, "Actual type can not be null");
 
-        typeMap.put(typeVariable, actualType);
+        final Type typeToAdd = resolveActualType(actualType);
+        typeMap.put(typeVariable, typeToAdd);
+    }
+
+    /**
+     * Handles cases where the actual type is a type variable. Tries to find a type in the map that
+     * isn't a type variable, and uses that instead.
+     *
+     * @param actualType An actual type that may be a type variable.
+     * @return Hopefully the real actual type that the type variable points to.
+     */
+    private Type resolveActualType(final Type actualType) {
+        Type typeToAdd = actualType;
+
+        while (typeToAdd instanceof TypeVariable<?>) {
+            typeToAdd = getActualType((TypeVariable<?>) actualType);
+        }
+
+        return typeToAdd;
+    }
+
+    /**
+     * Returns the number of elements in the map.
+     *
+     * @return The size of the map.
+     */
+    public int size() {
+        return typeMap.size();
+    }
+
+    /**
+     * Returns all the keys in the map.
+     *
+     * @return All the keys.
+     */
+    public Set<TypeVariable<?>> getKeys() {
+        return typeMap.keySet();
     }
 }

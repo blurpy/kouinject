@@ -360,6 +360,33 @@ public class GenericsHelper {
         throw new IllegalArgumentException("Unsupported generic type: " + type);
     }
 
+    public TypeMap mapTypeVariablesToActualTypes(final Class<?> aClass) {
+        final TypeMap typeMap = new TypeMap();
+        mapTypeVariablesToActualTypes(aClass, typeMap);
+
+        return typeMap;
+    }
+
+    private void mapTypeVariablesToActualTypes(final Type type, final TypeMap typeMap) {
+        final Class<?> asClass = getAsClass(type);
+
+        if (isParameterizedType(type)) {
+            mapTypeVariablesToActualTypes(type, asClass, typeMap);
+        }
+
+        final Type[] genericInterfaces = asClass.getGenericInterfaces();
+
+        for (final Type genericInterface : genericInterfaces) {
+            mapTypeVariablesToActualTypes(genericInterface, typeMap);
+        }
+
+        final Type genericSuperclass = asClass.getGenericSuperclass();
+
+        if (genericSuperclass != null) {
+            mapTypeVariablesToActualTypes(genericSuperclass, typeMap);
+        }
+    }
+
     /**
      * Type variables can be "passed on" between several layers of interfaces or superclasses,
      * and that will lead to a type parameter being a type variable instead. This
