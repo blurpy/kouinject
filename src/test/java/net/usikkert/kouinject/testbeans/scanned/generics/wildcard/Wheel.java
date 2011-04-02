@@ -22,38 +22,11 @@
 
 package net.usikkert.kouinject.testbeans.scanned.generics.wildcard;
 
-import net.usikkert.kouinject.annotation.Component;
-import net.usikkert.kouinject.annotation.Produces;
-import net.usikkert.kouinject.testbeans.scanned.generics.Container;
-import net.usikkert.kouinject.testbeans.scanned.hierarchy.ChildBean;
-import net.usikkert.kouinject.testbeans.scanned.hierarchy.MiddleBean;
-import net.usikkert.kouinject.testbeans.scanned.hierarchy.SuperBean;
-
 /**
- * A factory bean for creating beans that may be injected using generics with a wildcard.
+ * An interface for wheels.
  *
  * @author Christian Ihle
  */
-@Component
-public class WildcardFactoryBean {
+public interface Wheel {
 
-    @Produces
-    public Container<ChildBean> createChildBeanContainer() {
-        return new Container<ChildBean>(new ChildBean());
-    }
-
-    @Produces
-    public Container<MiddleBean> createMiddleBeanContainer() {
-        return new Container<MiddleBean>(new MiddleBean());
-    }
-
-    @Produces
-    public Container<SuperBean> createSuperBeanContainer() {
-        return new Container<SuperBean>(new SuperBean());
-    }
-
-    @Produces
-    public Container<? extends Wheel> createWheelContainer() {
-        return new Container<Wheel>(new RubberWheel());
-    }
 }

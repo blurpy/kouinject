@@ -53,6 +53,8 @@ import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.ConcreteDu
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.DualVariableInterfaceBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.VariableOnePointTwo;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.VariableTwo;
+import net.usikkert.kouinject.testbeans.scanned.generics.wildcard.RubberWheel;
+import net.usikkert.kouinject.testbeans.scanned.generics.wildcard.Wheel;
 import net.usikkert.kouinject.testbeans.scanned.generics.wildcard.WildcardFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.ChildBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.MiddleBean;
@@ -172,17 +174,19 @@ public class GenericBeanInjectionTest {
         assertNotNull(bean.createChildBeanContainer());
         assertNotNull(bean.createMiddleBeanContainer());
         assertNotNull(bean.createSuperBeanContainer());
+        assertNotNull(bean.createWheelContainer());
     }
 
     @Test
     public void checkAllContainerBeans() {
         final Collection<Container<?>> beans = injector.getBeans(new TypeLiteral<Container<?>>() {});
         assertNotNull(beans);
-        assertEquals(3, beans.size());
+        assertEquals(4, beans.size());
 
         assertTrue(containsContainerBeanOf(ChildBean.class, beans));
         assertTrue(containsContainerBeanOf(MiddleBean.class, beans));
         assertTrue(containsContainerBeanOf(SuperBean.class, beans));
+        assertTrue(containsContainerBeanOf(RubberWheel.class, beans));
     }
 
     @Test
@@ -403,6 +407,16 @@ public class GenericBeanInjectionTest {
         final VariableTwo second = bean3.getSecond();
         assertNotNull(second);
         bean3.doSecond(new VariableTwo());
+    }
+
+    @Test
+    public void checkContainerWithWheel() {
+        final Container<? extends Wheel> bean = injector.getBean(new TypeLiteral<Container<? extends Wheel>>() {});
+        assertNotNull(bean);
+
+        final Wheel contained = bean.getContained();
+        assertNotNull(contained);
+        assertEquals(RubberWheel.class, contained.getClass());
     }
 
     private boolean containsBean(final Collection<?> beans, final Class<?> beanClass) {
