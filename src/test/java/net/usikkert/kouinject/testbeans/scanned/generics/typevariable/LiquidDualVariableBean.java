@@ -22,14 +22,26 @@
 
 package net.usikkert.kouinject.testbeans.scanned.generics.typevariable;
 
-import net.usikkert.kouinject.annotation.Component;
-
 /**
- * The liquid Fanta.
+ * A bean for testing correct resolving of type variables in factories.
  *
  * @author Christian Ihle
  */
-//@Component
-public class Fanta implements Liquid {
+public class LiquidDualVariableBean<T extends Liquid> extends AbstractDualVariableBean<T> {
 
+    private final T t;
+
+    public LiquidDualVariableBean(final T t) {
+        this.t = t;
+    }
+
+    @Override
+    public T getFirst() {
+        return t;
+    }
+
+    @Override
+    public void doFirst(final T t) {
+
+    }
 }

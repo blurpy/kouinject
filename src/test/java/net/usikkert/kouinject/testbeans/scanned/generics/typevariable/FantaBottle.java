@@ -25,11 +25,11 @@ package net.usikkert.kouinject.testbeans.scanned.generics.typevariable;
 import net.usikkert.kouinject.annotation.Component;
 
 /**
- * The liquid Fanta.
+ * A bottle with Fanta.
  *
  * @author Christian Ihle
  */
 //@Component
-public class Fanta implements Liquid {
+public class FantaBottle extends Bottle<Fanta> {
 
 }

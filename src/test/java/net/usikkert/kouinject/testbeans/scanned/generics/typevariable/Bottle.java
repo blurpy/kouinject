@@ -22,14 +22,43 @@
 
 package net.usikkert.kouinject.testbeans.scanned.generics.typevariable;
 
-import net.usikkert.kouinject.annotation.Component;
+import javax.inject.Inject;
+
+import net.usikkert.kouinject.annotation.Produces;
+import net.usikkert.kouinject.testbeans.scanned.generics.Container;
 
 /**
- * The liquid Fanta.
+ * A bottle of liquid.
  *
  * @author Christian Ihle
  */
-//@Component
-public class Fanta implements Liquid {
+public class Bottle<T extends Liquid> {
 
+    @Inject
+    private T t;
+
+    private T methodT;
+
+    public Bottle() {
+
+    }
+
+    public T getMethodT() {
+        return methodT;
+    }
+
+    @Inject
+    public void setMethodT(final T methodT) {
+        this.methodT = methodT;
+    }
+
+    @Produces
+    public Container<T> createContainer() {
+        return new Container<T>(t);
+    }
+
+    @Produces
+    public LiquidDualVariableBean<T> createDualVariableBean() {
+        return new LiquidDualVariableBean<T>(t);
+    }
 }

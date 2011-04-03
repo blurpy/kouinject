@@ -38,15 +38,12 @@ import net.usikkert.kouinject.beandata.BeanKey;
 import net.usikkert.kouinject.beandata.ConstructorData;
 import net.usikkert.kouinject.beandata.FieldData;
 import net.usikkert.kouinject.beandata.MethodData;
-import net.usikkert.kouinject.testbeans.notscanned.collection.CollectionInjectionWithWildcard;
 import net.usikkert.kouinject.testbeans.notscanned.collection.CollectionInjectionWithoutTypeArgument;
-import net.usikkert.kouinject.testbeans.notscanned.collectionprovider.CollectionProviderInjectionWithWildcard;
 import net.usikkert.kouinject.testbeans.notscanned.collectionprovider.CollectionProviderInjectionWithoutTypeArgument;
 import net.usikkert.kouinject.testbeans.notscanned.notloaded.NamedQualifierUsedWithoutNameBean;
 import net.usikkert.kouinject.testbeans.notscanned.notloaded.NoMatchingConstructorBean;
 import net.usikkert.kouinject.testbeans.notscanned.notloaded.TooManyMatchingConstructorsBean;
 import net.usikkert.kouinject.testbeans.notscanned.notloaded.TooManyQualifiersBean;
-import net.usikkert.kouinject.testbeans.notscanned.provider.ProviderInjectionWithWildcard;
 import net.usikkert.kouinject.testbeans.notscanned.provider.ProviderInjectionWithoutTypeArgument;
 import net.usikkert.kouinject.testbeans.scanned.CarBean;
 import net.usikkert.kouinject.testbeans.scanned.ConstructorBean;
@@ -64,6 +61,8 @@ import net.usikkert.kouinject.testbeans.scanned.collection.HungryBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.HungryQualifierBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungryBean;
 import net.usikkert.kouinject.testbeans.scanned.collectionprovider.ProvidedHungryQualifierBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Fanta;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.FantaBottle;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.ChildBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.interfacebean.InterfaceBean;
@@ -521,6 +520,30 @@ public class AnnotationBasedBeanDataHandlerTest {
         final BeanData beanData = handler.getBeanData(new BeanKey(CarBean.class), false);
 
         assertFalse(beanData.isSingleton());
+    }
+
+    @Test
+    public void getBeanDataShouldReplaceTypeVariablesInFields() {
+        final BeanData beanData = handler.getBeanData(new BeanKey(FantaBottle.class), true);
+        assertNotNull(beanData);
+
+        final List<FieldData> fields = beanData.getFields();
+        assertEquals(1, fields.size());
+
+        final FieldData fieldData = fields.get(0);
+        assertTrue(containsDependency(fieldData.getDependencies(), Fanta.class));
+    }
+
+    @Test
+    public void getBeanDataShouldReplaceTypeVariablesInMethods() {
+        final BeanData beanData = handler.getBeanData(new BeanKey(FantaBottle.class), true);
+        assertNotNull(beanData);
+
+        final List<MethodData> methods = beanData.getMethods();
+        assertEquals(1, methods.size());
+
+        final MethodData methodData = methods.get(0);
+        assertTrue(containsDependency(methodData.getDependencies(), Fanta.class));
     }
 
     @Test(expected = RuntimeException.class)
