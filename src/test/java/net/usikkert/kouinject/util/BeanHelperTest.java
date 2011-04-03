@@ -37,6 +37,8 @@ import net.usikkert.kouinject.CollectionProvider;
 import net.usikkert.kouinject.TypeLiteral;
 import net.usikkert.kouinject.beandata.BeanKey;
 import net.usikkert.kouinject.generics.TypeMap;
+import net.usikkert.kouinject.generics.TypeVariableBean;
+import net.usikkert.kouinject.generics.TypeVariableBeanWithFanta;
 import net.usikkert.kouinject.testbeans.notscanned.BeanHelperBean;
 import net.usikkert.kouinject.testbeans.notscanned.SomeEnum;
 import net.usikkert.kouinject.testbeans.notscanned.TheInterface;
@@ -46,6 +48,7 @@ import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
 import net.usikkert.kouinject.testbeans.scanned.date.DateBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Fanta;
 import net.usikkert.kouinject.testbeans.scanned.notloaded.NoBean;
 import net.usikkert.kouinject.testbeans.scanned.notloaded.QualifierBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.ColorBean;
@@ -594,6 +597,95 @@ public class BeanHelperTest {
 
         checkRegularParameter(parameters, 1, Set.class, null);
         checkGenericParameter(parameters, 1, new TypeLiteral<Set<CoffeeBean>>() {});
+    }
+
+    @Test
+    public void findFieldKeyShouldReplaceTypeVariablesOfNormalBean() throws NoSuchFieldException {
+        final Field field = TypeVariableBean.class.getDeclaredField("standaloneT");
+        assertTrue(genericsHelper.isTypeVariable(field.getGenericType()));
+
+        final TypeMap realTypeMap = genericsHelper.mapTypeVariablesToActualTypes(TypeVariableBeanWithFanta.class);
+        final BeanKey fieldKey = beanHelper.findFieldKey(field, realTypeMap);
+
+        assertNotNull(fieldKey);
+        checkRegularParameter(fieldKey, Fanta.class, "justT");
+        checkGenericParameter(fieldKey, new TypeLiteral<Fanta>() {});
+    }
+
+    @Test
+    public void findFieldKeyShouldReplaceTypeVariablesOfProviderBean() throws NoSuchFieldException {
+        final Field field = TypeVariableBean.class.getDeclaredField("providerWithT");
+
+        final TypeMap realTypeMap = genericsHelper.mapTypeVariablesToActualTypes(TypeVariableBeanWithFanta.class);
+        final BeanKey fieldKey = beanHelper.findFieldKey(field, realTypeMap);
+
+        assertNotNull(fieldKey);
+        checkProviderParameter(fieldKey, Fanta.class, "providerT");
+        checkGenericParameter(fieldKey, new TypeLiteral<Fanta>() {});
+    }
+
+    @Test
+    public void findFieldKeyShouldReplaceTypeVariablesOfCollectionProviderBean() throws NoSuchFieldException {
+        final Field field = TypeVariableBean.class.getDeclaredField("collectionProviderWithT");
+
+        final TypeMap realTypeMap = genericsHelper.mapTypeVariablesToActualTypes(TypeVariableBeanWithFanta.class);
+        final BeanKey fieldKey = beanHelper.findFieldKey(field, realTypeMap);
+
+        assertNotNull(fieldKey);
+        checkCollectionProviderParameter(fieldKey, Fanta.class, "collectionProviderT");
+        checkGenericParameter(fieldKey, new TypeLiteral<Fanta>() {});
+    }
+
+    @Test
+    public void findFieldKeyShouldReplaceTypeVariablesOfCollectionBean() throws NoSuchFieldException {
+        final Field field = TypeVariableBean.class.getDeclaredField("collectionWithT");
+
+        final TypeMap realTypeMap = genericsHelper.mapTypeVariablesToActualTypes(TypeVariableBeanWithFanta.class);
+        final BeanKey fieldKey = beanHelper.findFieldKey(field, realTypeMap);
+
+        assertNotNull(fieldKey);
+        checkCollectionParameter(fieldKey, Fanta.class, "collectionT");
+        checkGenericParameter(fieldKey, new TypeLiteral<Fanta>() {});
+    }
+
+    @Test
+    public void findParameterKeysForMethodShouldReplaceTypeVariables() throws NoSuchMethodException {
+        final Method method = TypeVariableBean.class.getDeclaredMethod("methodWithT", Object.class);
+
+        final TypeMap realTypeMap = genericsHelper.mapTypeVariablesToActualTypes(TypeVariableBeanWithFanta.class);
+        final List<BeanKey> parameterKeys = beanHelper.findParameterKeys(method, realTypeMap);
+
+        assertNotNull(parameterKeys);
+        assertEquals(1, parameterKeys.size());
+
+        checkRegularParameter(parameterKeys, 1, Fanta.class, "methodT");
+        checkGenericParameter(parameterKeys, 1, new TypeLiteral<Fanta>() {});
+    }
+
+    @Test
+    public void findParameterKeysForConstructorShouldReplaceTypeVariables() throws NoSuchMethodException {
+        final Constructor<?> constructor = TypeVariableBean.class.getDeclaredConstructor(Object.class);
+
+        final TypeMap realTypeMap = genericsHelper.mapTypeVariablesToActualTypes(TypeVariableBeanWithFanta.class);
+        final List<BeanKey> parameterKeys = beanHelper.findParameterKeys(constructor, realTypeMap);
+
+        assertNotNull(parameterKeys);
+        assertEquals(1, parameterKeys.size());
+
+        checkRegularParameter(parameterKeys, 1, Fanta.class, "constructorT");
+        checkGenericParameter(parameterKeys, 1, new TypeLiteral<Fanta>() {});
+    }
+
+    @Test
+    public void findFactoryReturnTypeShouldReplaceTypeVariables() throws NoSuchMethodException {
+        final Method method = TypeVariableBean.class.getDeclaredMethod("factoryWithT");
+
+        final TypeMap realTypeMap = genericsHelper.mapTypeVariablesToActualTypes(TypeVariableBeanWithFanta.class);
+        final BeanKey returnType = beanHelper.findFactoryReturnType(method, realTypeMap);
+
+        assertNotNull(returnType);
+        checkRegularParameter(returnType, Fanta.class, "factoryT");
+        checkGenericParameter(returnType, new TypeLiteral<Fanta>() {});
     }
 
     private void checkRegularParameter(final List<BeanKey> parameters, final int position,

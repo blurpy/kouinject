@@ -71,9 +71,10 @@ public class BeanHelper {
             throw new UnsupportedOperationException("Can't return void from a factory method: " + factoryMethod);
         }
 
+        final Type wrappedType = genericsHelper.wrapTypeAndReplaceTypeVariables(genericReturnType, typeMap);
         final Annotation[] annotations = factoryMethod.getAnnotations();
         final String qualifier = qualifierHandler.getQualifier(factoryMethod, annotations);
-        final TypeLiteral<Object> beanType = new TypeLiteral<Object>(genericReturnType) {};
+        final TypeLiteral<Object> beanType = new TypeLiteral<Object>(wrappedType) {};
 
         return new BeanKey(beanType, qualifier);
     }
@@ -93,7 +94,7 @@ public class BeanHelper {
         final Type[] genericParameterTypes = method.getGenericParameterTypes();
         final Annotation[][] parameterAnnotations = method.getParameterAnnotations();
 
-        return findParameterKeys(method, parameterTypes, genericParameterTypes, parameterAnnotations);
+        return findParameterKeys(method, parameterTypes, genericParameterTypes, parameterAnnotations, typeMap);
     }
 
     /**
@@ -111,7 +112,7 @@ public class BeanHelper {
         final Type[] genericParameterTypes = constructor.getGenericParameterTypes();
         final Annotation[][] parameterAnnotations = constructor.getParameterAnnotations();
 
-        return findParameterKeys(constructor, parameterTypes, genericParameterTypes, parameterAnnotations);
+        return findParameterKeys(constructor, parameterTypes, genericParameterTypes, parameterAnnotations, typeMap);
     }
 
     /**
@@ -127,20 +128,23 @@ public class BeanHelper {
 
         final Class<?> type = field.getType();
         final Type genericType = field.getGenericType();
+        final Type wrappedType = genericsHelper.wrapTypeAndReplaceTypeVariables(genericType, typeMap);
         final Annotation[] annotations = field.getAnnotations();
 
-        return findParameterKey(field, type, genericType, annotations);
+        return findParameterKey(field, type, wrappedType, annotations);
     }
 
     private List<BeanKey> findParameterKeys(final Object parameterOwner, final Class<?>[] parameterTypes,
-                                            final Type[] genericParameterTypes, final Annotation[][] annotations) {
+                                            final Type[] genericParameterTypes, final Annotation[][] annotations,
+                                            final TypeMap typeMap) {
         final List<BeanKey> parameters = new ArrayList<BeanKey>();
 
         for (int i = 0; i < parameterTypes.length; i++) {
             final Class<?> parameterClass = parameterTypes[i];
             final Type parameterType = genericParameterTypes[i];
+            final Type wrappedType = genericsHelper.wrapTypeAndReplaceTypeVariables(parameterType, typeMap);
 
-            final BeanKey parameter = findParameterKey(parameterOwner, parameterClass, parameterType, annotations[i]);
+            final BeanKey parameter = findParameterKey(parameterOwner, parameterClass, wrappedType, annotations[i]);
             parameters.add(parameter);
         }
 

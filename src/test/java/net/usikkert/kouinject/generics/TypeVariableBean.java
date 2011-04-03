@@ -22,8 +22,13 @@
 
 package net.usikkert.kouinject.generics;
 
+import java.util.Collection;
 import java.util.Set;
 
+import javax.inject.Named;
+import javax.inject.Provider;
+
+import net.usikkert.kouinject.CollectionProvider;
 import net.usikkert.kouinject.testbeans.scanned.generics.Container;
 
 /**
@@ -33,9 +38,37 @@ import net.usikkert.kouinject.testbeans.scanned.generics.Container;
  */
 public abstract class TypeVariableBean<T> {
 
+    @Named("justT")
     private T standaloneT;
+
+    @Named("providerT")
+    private Provider<T> providerWithT;
+
+    @Named("collectionT")
+    private Collection<T> collectionWithT;
+
+    @Named("collectionProviderT")
+    private CollectionProvider<T> collectionProviderWithT;
+
     private Container<T> containerOfT;
     private Set<Container<T>> setOfContainersOfT;
     private Set<Container<? extends T>> setOfContainersOfExtendsT;
     private Set<Container<? super T>> setOfContainersOfSuperT;
+
+    public TypeVariableBean() {
+
+    }
+
+    public TypeVariableBean(@Named("constructorT") final T t) {
+
+    }
+
+    public void methodWithT(@Named("methodT") final T t) {
+
+    }
+
+    @Named("factoryT")
+    public T factoryWithT() {
+        return null;
+    }
 }
