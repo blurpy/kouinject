@@ -29,7 +29,7 @@ import net.usikkert.kouinject.annotation.Component;
  *
  * @author Christian Ihle
  */
-//@Component
+@Component
 public class Fanta implements Liquid {
 
 }

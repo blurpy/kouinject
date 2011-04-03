@@ -116,6 +116,8 @@ import net.usikkert.kouinject.testbeans.scanned.factory.ThreeParametersFactoryCr
 import net.usikkert.kouinject.testbeans.scanned.folder.folder1.Folder1Bean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder2.Folder2Bean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder3.Folder3Bean;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Fanta;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Liquid;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.ChildBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractBeanImpl;
@@ -617,6 +619,16 @@ public class BeanInjectionTest {
         final OneParameterFactoryCreatedBean oneParameterFactoryCreatedBean = bean.getOneParameterFactoryCreatedBean();
         assertNotNull(oneParameterFactoryCreatedBean);
         assertTrue(oneParameterFactoryCreatedBean.isCreatedByFactory());
+    }
+
+    @Test
+    public void checkFanta() {
+        final Fanta fanta = injector.getBean(Fanta.class);
+        assertNotNull(fanta);
+
+        final Liquid liquid = injector.getBean(Liquid.class);
+        assertNotNull(liquid);
+        assertEquals(Fanta.class, liquid.getClass());
     }
 
     @Test
