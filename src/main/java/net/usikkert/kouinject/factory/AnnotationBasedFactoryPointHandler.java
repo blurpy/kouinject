@@ -32,6 +32,7 @@ import javax.inject.Inject;
 import net.usikkert.kouinject.AnnotationBasedScopeHandler;
 import net.usikkert.kouinject.annotation.Produces;
 import net.usikkert.kouinject.beandata.BeanKey;
+import net.usikkert.kouinject.generics.TypeMap;
 import net.usikkert.kouinject.util.BeanHelper;
 import net.usikkert.kouinject.util.ReflectionUtils;
 
@@ -64,14 +65,15 @@ public class AnnotationBasedFactoryPointHandler implements FactoryPointHandler {
         final Class<?> beanClass = factoryBean.getBeanClass();
         Validate.notNull(beanClass, "Factory class can not be null");
 
+        final TypeMap typeMap = new TypeMap(); // TODO
         final List<Method> allMethods = reflectionUtils.findAllMethods(beanClass);
         final List<Member> allMembers = reflectionUtils.findAllMembers(beanClass);
 
-        return findAllFactoryPoints(allMembers, allMethods, factoryBean);
+        return findAllFactoryPoints(allMembers, allMethods, factoryBean, typeMap);
     }
 
     private List<FactoryPoint<?>> findAllFactoryPoints(final List<Member> allMembers, final List<Method> allMethods,
-                                                    final BeanKey factoryBean) {
+                                                       final BeanKey factoryBean, final TypeMap typeMap) {
         final List<FactoryPoint<?>> factoryPoints = new ArrayList<FactoryPoint<?>>();
 
         for (final Member member : allMembers) {
@@ -81,7 +83,7 @@ public class AnnotationBasedFactoryPointHandler implements FactoryPointHandler {
                 if (methodIsFactoryPoint(method) && !reflectionUtils.isOverridden(method, allMethods)) {
                     failIfInjectionPoint(method);
 
-                    final FactoryPointMethod<?> factoryPointMethod = createFactoryPointMethod(method, factoryBean);
+                    final FactoryPointMethod<?> factoryPointMethod = createFactoryPointMethod(method, factoryBean, typeMap);
                     factoryPoints.add(factoryPointMethod);
                 }
             }
@@ -104,9 +106,10 @@ public class AnnotationBasedFactoryPointHandler implements FactoryPointHandler {
         return method.isAnnotationPresent(INJECTION_ANNOTATION);
     }
 
-    private <T> FactoryPointMethod<T> createFactoryPointMethod(final Method method, final BeanKey factoryBean) {
-        final List<BeanKey> parameters = beanHelper.findParameterKeys(method);
-        final BeanKey returnType = beanHelper.findFactoryReturnType(method);
+    private <T> FactoryPointMethod<T> createFactoryPointMethod(final Method method, final BeanKey factoryBean,
+                                                               final TypeMap typeMap) {
+        final List<BeanKey> parameters = beanHelper.findParameterKeys(method, typeMap);
+        final BeanKey returnType = beanHelper.findFactoryReturnType(method, typeMap);
         final boolean singleton = scopeHandler.isSingleton(method);
 
         return new FactoryPointMethod<T>(method, factoryBean, returnType, parameters, singleton);

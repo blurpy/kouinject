@@ -37,6 +37,7 @@ import net.usikkert.kouinject.beandata.ConstructorData;
 import net.usikkert.kouinject.beandata.FieldData;
 import net.usikkert.kouinject.beandata.InjectionPoint;
 import net.usikkert.kouinject.beandata.MethodData;
+import net.usikkert.kouinject.generics.TypeMap;
 import net.usikkert.kouinject.util.BeanHelper;
 import net.usikkert.kouinject.util.ReflectionUtils;
 
@@ -69,26 +70,29 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
         final Class<?> beanClass = beanKey.getBeanClass();
         Validate.notNull(beanClass, "Bean class can not be null");
 
+        final TypeMap typeMap = new TypeMap(); // TODO
         final List<Method> allMethods = reflectionUtils.findAllMethods(beanClass);
         final List<Member> allMembers = reflectionUtils.findAllMembers(beanClass);
-        final List<InjectionPoint> injectionPoints = findInjectionPoints(allMembers, allMethods);
-        final ConstructorData constructorData = createConstructorDataIfNeeded(beanClass, skipConstructor);
+        final List<InjectionPoint> injectionPoints = findInjectionPoints(allMembers, allMethods, typeMap);
+        final ConstructorData constructorData = createConstructorDataIfNeeded(beanClass, skipConstructor, typeMap);
         final boolean singleton = scopeHandler.isSingleton(beanClass);
 
         return new BeanData(beanKey, constructorData, injectionPoints, singleton);
     }
 
-    private ConstructorData createConstructorDataIfNeeded(final Class<?> beanClass, final boolean skipConstructor) {
+    private ConstructorData createConstructorDataIfNeeded(final Class<?> beanClass, final boolean skipConstructor,
+                                                          final TypeMap typeMap) {
         if (skipConstructor) {
             return null;
         }
 
         final Constructor<?> constructor = findConstructor(beanClass);
 
-        return createConstructorData(constructor);
+        return createConstructorData(constructor, typeMap);
     }
 
-    private List<InjectionPoint> findInjectionPoints(final List<Member> allMembers, final List<Method> allMethods) {
+    private List<InjectionPoint> findInjectionPoints(final List<Member> allMembers, final List<Method> allMethods,
+                                                     final TypeMap typeMap) {
         final List<InjectionPoint> injectionPoints = new ArrayList<InjectionPoint>();
 
         for (final Member member : allMembers) {
@@ -96,7 +100,7 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
                 final Field field = (Field) member;
 
                 if (fieldNeedsInjection(field)) {
-                    final FieldData fieldData = createFieldData(field);
+                    final FieldData fieldData = createFieldData(field, typeMap);
                     injectionPoints.add(fieldData);
                 }
             }
@@ -105,7 +109,7 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
                 final Method method = (Method) member;
 
                 if (methodNeedsInjection(method) && !reflectionUtils.isOverridden(method, allMethods)) {
-                    final MethodData methodData = createMethodData(method);
+                    final MethodData methodData = createMethodData(method, typeMap);
                     injectionPoints.add(methodData);
                 }
             }
@@ -124,8 +128,8 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
                 && field.isAnnotationPresent(INJECTION_ANNOTATION);
     }
 
-    private FieldData createFieldData(final Field field) {
-        final BeanKey dependency = beanHelper.findFieldKey(field);
+    private FieldData createFieldData(final Field field, final TypeMap typeMap) {
+        final BeanKey dependency = beanHelper.findFieldKey(field, typeMap);
 
         return new FieldData(field, dependency);
     }
@@ -134,8 +138,8 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
         return !reflectionUtils.isStatic(method) && method.isAnnotationPresent(INJECTION_ANNOTATION);
     }
 
-    private MethodData createMethodData(final Method method) {
-        final List<BeanKey> dependencies = beanHelper.findParameterKeys(method);
+    private MethodData createMethodData(final Method method, final TypeMap typeMap) {
+        final List<BeanKey> dependencies = beanHelper.findParameterKeys(method, typeMap);
 
         return new MethodData(method, dependencies);
     }
@@ -172,8 +176,8 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
         return constructor.isAnnotationPresent(INJECTION_ANNOTATION);
     }
 
-    private ConstructorData createConstructorData(final Constructor<?> constructor) {
-        final List<BeanKey> dependencies = beanHelper.findParameterKeys(constructor);
+    private ConstructorData createConstructorData(final Constructor<?> constructor, final TypeMap typeMap) {
+        final List<BeanKey> dependencies = beanHelper.findParameterKeys(constructor, typeMap);
 
         return new ConstructorData(constructor, dependencies);
     }

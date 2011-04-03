@@ -40,6 +40,7 @@ import net.usikkert.kouinject.beandata.BeanKey;
 import net.usikkert.kouinject.beandata.CollectionBeanKey;
 import net.usikkert.kouinject.beandata.CollectionProviderBeanKey;
 import net.usikkert.kouinject.beandata.ProviderBeanKey;
+import net.usikkert.kouinject.generics.TypeMap;
 
 import org.apache.commons.lang.Validate;
 
@@ -57,10 +58,12 @@ public class BeanHelper {
      * Finds the return type of the factory method. The return type includes the qualifier on the method.
      *
      * @param factoryMethod The factory method to find the return type of.
+     * @param typeMap The type map to use to resolve actual type parameters when encountering type variables.
      * @return The return type, as a {@link BeanKey}.
      */
-    public BeanKey findFactoryReturnType(final Method factoryMethod) {
+    public BeanKey findFactoryReturnType(final Method factoryMethod, final TypeMap typeMap) {
         Validate.notNull(factoryMethod, "Factory method can not be null");
+         Validate.notNull(typeMap, "Type map can not be null");
 
         final Type genericReturnType = factoryMethod.getGenericReturnType();
 
@@ -79,10 +82,12 @@ public class BeanHelper {
      * Gets all the parameters of a method, with associated qualifiers, as a list of bean keys.
      *
      * @param method The method to find the parameters of.
+     * @param typeMap The type map to use to resolve actual type parameters when encountering type variables.
      * @return The methods parameters as bean keys.
      */
-    public List<BeanKey> findParameterKeys(final Method method) {
+    public List<BeanKey> findParameterKeys(final Method method, final TypeMap typeMap) {
         Validate.notNull(method, "Method can not be null");
+        Validate.notNull(typeMap, "Type map can not be null");
 
         final Class<?>[] parameterTypes = method.getParameterTypes();
         final Type[] genericParameterTypes = method.getGenericParameterTypes();
@@ -95,10 +100,12 @@ public class BeanHelper {
      * Gets all the parameters of a constructor, with associated qualifiers, as a list of bean keys.
      *
      * @param constructor The constructor to find the parameters of.
+     * @param typeMap The type map to use to resolve actual type parameters when encountering type variables.
      * @return The constructor parameters as bean keys.
      */
-    public List<BeanKey> findParameterKeys(final Constructor<?> constructor) {
+    public List<BeanKey> findParameterKeys(final Constructor<?> constructor, final TypeMap typeMap) {
         Validate.notNull(constructor, "Constructor can not be null");
+        Validate.notNull(typeMap, "Type map can not be null");
 
         final Class<?>[] parameterTypes = constructor.getParameterTypes();
         final Type[] genericParameterTypes = constructor.getGenericParameterTypes();
@@ -111,10 +118,12 @@ public class BeanHelper {
      * Gets the type from the field, with associated qualifier, as a bean key.
      *
      * @param field The field to find the type of.
+     * @param typeMap The type map to use to resolve actual type parameters when encountering type variables.
      * @return The field as a bean key.
      */
-    public BeanKey findFieldKey(final Field field) {
+    public BeanKey findFieldKey(final Field field, final TypeMap typeMap) {
         Validate.notNull(field, "Field can not be null");
+        Validate.notNull(typeMap, "Type map can not be null");
 
         final Class<?> type = field.getType();
         final Type genericType = field.getGenericType();

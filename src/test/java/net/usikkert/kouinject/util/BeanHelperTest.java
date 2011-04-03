@@ -36,6 +36,7 @@ import javax.inject.Provider;
 import net.usikkert.kouinject.CollectionProvider;
 import net.usikkert.kouinject.TypeLiteral;
 import net.usikkert.kouinject.beandata.BeanKey;
+import net.usikkert.kouinject.generics.TypeMap;
 import net.usikkert.kouinject.testbeans.notscanned.BeanHelperBean;
 import net.usikkert.kouinject.testbeans.notscanned.SomeEnum;
 import net.usikkert.kouinject.testbeans.notscanned.TheInterface;
@@ -63,6 +64,7 @@ import org.junit.Test;
 public class BeanHelperTest {
 
     private final GenericsHelper genericsHelper = new GenericsHelper();
+    private final TypeMap typeMap = new TypeMap();
 
     private BeanHelper beanHelper;
 
@@ -74,7 +76,7 @@ public class BeanHelperTest {
     @Test
     public void findFactoryReturnTypeShouldFindTheCorrectClass() throws NoSuchMethodException {
         final Method method = getMethod("helloBeanFactoryMethod");
-        final BeanKey returnType = beanHelper.findFactoryReturnType(method);
+        final BeanKey returnType = beanHelper.findFactoryReturnType(method, typeMap);
 
         assertNotNull(returnType);
         checkRegularParameter(returnType, HelloBean.class, null);
@@ -84,7 +86,7 @@ public class BeanHelperTest {
     @Test
     public void findFactoryReturnTypeShouldFindTheCorrectQualifier() throws NoSuchMethodException {
         final Method method = getMethod("scopedAndQualifiedFactoryMethod");
-        final BeanKey returnType = beanHelper.findFactoryReturnType(method);
+        final BeanKey returnType = beanHelper.findFactoryReturnType(method, typeMap);
 
         assertNotNull(returnType);
         checkRegularParameter(returnType, JavaBean.class, "Blue");
@@ -93,7 +95,7 @@ public class BeanHelperTest {
     @Test
     public void findFactoryReturnTypeShouldFindTheCorrectType() throws NoSuchMethodException {
         final Method method = getMethod("genericFactoryMethod");
-        final BeanKey returnType = beanHelper.findFactoryReturnType(method);
+        final BeanKey returnType = beanHelper.findFactoryReturnType(method, typeMap);
 
         assertNotNull(returnType);
         checkRegularParameter(returnType, Set.class, "Green");
@@ -103,13 +105,13 @@ public class BeanHelperTest {
     @Test(expected = UnsupportedOperationException.class)
     public void findFactoryReturnTypeShouldFailOnVoid() throws NoSuchMethodException {
         final Method method = getMethod("voidFactoryMethod");
-        beanHelper.findFactoryReturnType(method);
+        beanHelper.findFactoryReturnType(method, typeMap);
     }
 
     @Test
     public void findParameterKeysForMethodShouldHandleMethodsWithNoParameters() throws NoSuchMethodException {
         final Method method = getMethod("methodWithNoParameters");
-        final List<BeanKey> parameters = beanHelper.findParameterKeys(method);
+        final List<BeanKey> parameters = beanHelper.findParameterKeys(method, typeMap);
 
         assertNotNull(parameters);
         assertTrue(parameters.isEmpty());
@@ -118,7 +120,7 @@ public class BeanHelperTest {
     @Test
     public void findParameterKeysForMethodShouldFindSingleParameterWithoutQualifier() throws NoSuchMethodException {
         final Method method = getMethod("methodWithSingleParameter", TheInterface.class);
-        final List<BeanKey> parameters = beanHelper.findParameterKeys(method);
+        final List<BeanKey> parameters = beanHelper.findParameterKeys(method, typeMap);
 
         assertNotNull(parameters);
         assertEquals(1, parameters.size());
@@ -130,7 +132,7 @@ public class BeanHelperTest {
     @Test
     public void findParameterKeysForMethodShouldHandlePrivateMethods() throws NoSuchMethodException {
         final Method method = getMethod("privateMethod", SomeEnum.class);
-        final List<BeanKey> parameters = beanHelper.findParameterKeys(method);
+        final List<BeanKey> parameters = beanHelper.findParameterKeys(method, typeMap);
 
         assertNotNull(parameters);
         assertEquals(1, parameters.size());
@@ -141,7 +143,7 @@ public class BeanHelperTest {
     @Test
     public void findParameterKeysForMethodShouldFindParameterWithQualifier() throws NoSuchMethodException {
         final Method method = getMethod("methodWithQualifiedParameter", TheInterfaceUser.class);
-        final List<BeanKey> parameters = beanHelper.findParameterKeys(method);
+        final List<BeanKey> parameters = beanHelper.findParameterKeys(method, typeMap);
 
         assertNotNull(parameters);
         assertEquals(1, parameters.size());
@@ -152,7 +154,7 @@ public class BeanHelperTest {
     @Test
     public void findParameterKeysForMethodShouldFindSeveralParameters() throws NoSuchMethodException {
         final Method method = getMethod("methodWithSeveralParameters", DateBean.class, ColorBean.class, CoffeeBean.class);
-        final List<BeanKey> parameters = beanHelper.findParameterKeys(method);
+        final List<BeanKey> parameters = beanHelper.findParameterKeys(method, typeMap);
 
         assertNotNull(parameters);
         assertEquals(3, parameters.size());
@@ -165,7 +167,7 @@ public class BeanHelperTest {
     @Test
     public void findParameterKeysForMethodShouldFindProvider() throws NoSuchMethodException {
         final Method method = getMethod("methodWithProvider", Provider.class, Provider.class);
-        final List<BeanKey> parameters = beanHelper.findParameterKeys(method);
+        final List<BeanKey> parameters = beanHelper.findParameterKeys(method, typeMap);
 
         assertNotNull(parameters);
         assertEquals(2, parameters.size());
@@ -177,13 +179,13 @@ public class BeanHelperTest {
     @Test(expected = IllegalArgumentException.class)
     public void findParameterKeysForMethodShouldFailIfProviderIsMissingGenericType() throws NoSuchMethodException {
         final Method method = getMethod("methodWithProviderWithoutGenericType", Provider.class);
-        beanHelper.findParameterKeys(method);
+        beanHelper.findParameterKeys(method, typeMap);
     }
 
     @Test
     public void findParameterKeysForMethodShouldHandleIfProviderIsUsingGenericWildcard() throws NoSuchMethodException {
         final Method method = getMethod("methodWithProviderWithGenericWildCard", Provider.class);
-        final List<BeanKey> parameters = beanHelper.findParameterKeys(method);
+        final List<BeanKey> parameters = beanHelper.findParameterKeys(method, typeMap);
 
         assertNotNull(parameters);
         assertEquals(1, parameters.size());
@@ -194,7 +196,7 @@ public class BeanHelperTest {
     @Test
     public void findParameterKeysForMethodShouldFindCollectionProvider() throws NoSuchMethodException {
         final Method method = getMethod("methodWithCollectionProvider", CollectionProvider.class, CollectionProvider.class);
-        final List<BeanKey> parameters = beanHelper.findParameterKeys(method);
+        final List<BeanKey> parameters = beanHelper.findParameterKeys(method, typeMap);
 
         assertNotNull(parameters);
         assertEquals(2, parameters.size());
@@ -206,13 +208,13 @@ public class BeanHelperTest {
     @Test(expected = IllegalArgumentException.class)
     public void findParameterKeysForMethodShouldFailIfCollectionProviderIsMissingGenericType() throws NoSuchMethodException {
         final Method method = getMethod("methodWithCollectionProviderWithoutGenericType", CollectionProvider.class);
-        beanHelper.findParameterKeys(method);
+        beanHelper.findParameterKeys(method, typeMap);
     }
 
     @Test
     public void findParameterKeysForMethodShouldHandleIfCollectionProviderIsUsingGenericWildcard() throws NoSuchMethodException {
         final Method method = getMethod("methodWithCollectionProviderWithGenericWildCard", CollectionProvider.class);
-        final List<BeanKey> parameters = beanHelper.findParameterKeys(method);
+        final List<BeanKey> parameters = beanHelper.findParameterKeys(method, typeMap);
 
         assertNotNull(parameters);
         assertEquals(1, parameters.size());
@@ -223,7 +225,7 @@ public class BeanHelperTest {
     @Test
     public void findParameterKeysForMethodShouldFindCollection() throws NoSuchMethodException {
         final Method method = getMethod("methodWithCollection", Collection.class, Collection.class);
-        final List<BeanKey> parameters = beanHelper.findParameterKeys(method);
+        final List<BeanKey> parameters = beanHelper.findParameterKeys(method, typeMap);
 
         assertNotNull(parameters);
         assertEquals(2, parameters.size());
@@ -240,13 +242,13 @@ public class BeanHelperTest {
     @Test(expected = IllegalArgumentException.class)
     public void findParameterKeysForMethodShouldFailIfCollectionIsMissingGenericType() throws NoSuchMethodException {
         final Method method = getMethod("methodWithCollectionWithoutGenericType", Collection.class);
-        beanHelper.findParameterKeys(method);
+        beanHelper.findParameterKeys(method, typeMap);
     }
 
     @Test
     public void findParameterKeysForMethodShouldHandleIfCollectionIsUsingGenericWildcard() throws NoSuchMethodException {
         final Method method = getMethod("methodWithCollectionWithGenericWildCard", Collection.class);
-        final List<BeanKey> parameters = beanHelper.findParameterKeys(method);
+        final List<BeanKey> parameters = beanHelper.findParameterKeys(method, typeMap);
 
         assertNotNull(parameters);
         assertEquals(1, parameters.size());
@@ -257,7 +259,7 @@ public class BeanHelperTest {
     @Test
     public void findParameterKeysForMethodShouldFindCorrectType() throws NoSuchMethodException {
         final Method method = getMethod("methodWithGenericParameter", Set.class);
-        final List<BeanKey> parameters = beanHelper.findParameterKeys(method);
+        final List<BeanKey> parameters = beanHelper.findParameterKeys(method, typeMap);
 
         assertNotNull(parameters);
         assertEquals(1, parameters.size());
@@ -269,7 +271,7 @@ public class BeanHelperTest {
     @Test
     public void findFieldKeyShouldFindClassWithoutQualifier() throws NoSuchFieldException {
         final Field field = getField("field");
-        final BeanKey fieldKey = beanHelper.findFieldKey(field);
+        final BeanKey fieldKey = beanHelper.findFieldKey(field, typeMap);
 
         assertNotNull(fieldKey);
         checkRegularParameter(fieldKey, TheInterface.class, null);
@@ -279,7 +281,7 @@ public class BeanHelperTest {
     @Test
     public void findFieldKeyShouldFindClassWithQualifier() throws NoSuchFieldException {
         final Field field = getField("fieldWithQualifier");
-        final BeanKey fieldKey = beanHelper.findFieldKey(field);
+        final BeanKey fieldKey = beanHelper.findFieldKey(field, typeMap);
 
         assertNotNull(fieldKey);
         checkRegularParameter(fieldKey, TheInterfaceUser.class, "ping");
@@ -288,7 +290,7 @@ public class BeanHelperTest {
     @Test
     public void findFieldKeyShouldFindProviderWithoutQualifier() throws NoSuchFieldException {
         final Field field = getField("provider");
-        final BeanKey fieldKey = beanHelper.findFieldKey(field);
+        final BeanKey fieldKey = beanHelper.findFieldKey(field, typeMap);
 
         assertNotNull(fieldKey);
         checkProviderParameter(fieldKey, RedBean.class, null);
@@ -298,7 +300,7 @@ public class BeanHelperTest {
     @Test
     public void findFieldKeyShouldFindProviderWithGenericParameter() throws NoSuchFieldException {
         final Field field = getField("providerWithGenericParameter");
-        final BeanKey fieldKey = beanHelper.findFieldKey(field);
+        final BeanKey fieldKey = beanHelper.findFieldKey(field, typeMap);
 
         assertNotNull(fieldKey);
         checkProviderParameter(fieldKey, Set.class, null);
@@ -308,7 +310,7 @@ public class BeanHelperTest {
     @Test
     public void findFieldKeyShouldFindProviderWithQualifier() throws NoSuchFieldException {
         final Field field = getField("providerWithQualifier");
-        final BeanKey fieldKey = beanHelper.findFieldKey(field);
+        final BeanKey fieldKey = beanHelper.findFieldKey(field, typeMap);
 
         assertNotNull(fieldKey);
         checkProviderParameter(fieldKey, NoBean.class, "great");
@@ -317,13 +319,13 @@ public class BeanHelperTest {
     @Test(expected = IllegalArgumentException.class)
     public void findFieldKeyShouldFailIfProviderIsMissingGenericType() throws NoSuchFieldException {
         final Field field = getField("providerWithoutGenericType");
-        beanHelper.findFieldKey(field);
+        beanHelper.findFieldKey(field, typeMap);
     }
 
     @Test
     public void findFieldKeyShouldHandleIfProviderIsUsingGenericWildCard() throws NoSuchFieldException {
         final Field field = getField("providerWithWildCard");
-        final BeanKey fieldKey = beanHelper.findFieldKey(field);
+        final BeanKey fieldKey = beanHelper.findFieldKey(field, typeMap);
 
         assertNotNull(fieldKey);
         checkWildcard(fieldKey);
@@ -333,7 +335,7 @@ public class BeanHelperTest {
     @Test
     public void findFieldKeyShouldFindCollectionProviderWithoutQualifier() throws NoSuchFieldException {
         final Field field = getField("collectionProvider");
-        final BeanKey fieldKey = beanHelper.findFieldKey(field);
+        final BeanKey fieldKey = beanHelper.findFieldKey(field, typeMap);
 
         assertNotNull(fieldKey);
         checkCollectionProviderParameter(fieldKey, YellowBean.class, null);
@@ -343,7 +345,7 @@ public class BeanHelperTest {
     @Test
     public void findFieldKeyShouldFindCollectionProviderWithGenericParameter() throws NoSuchFieldException {
         final Field field = getField("collectionProviderWithGenericParameter");
-        final BeanKey fieldKey = beanHelper.findFieldKey(field);
+        final BeanKey fieldKey = beanHelper.findFieldKey(field, typeMap);
 
         assertNotNull(fieldKey);
         checkCollectionProviderParameter(fieldKey, Set.class, null);
@@ -353,7 +355,7 @@ public class BeanHelperTest {
     @Test
     public void findFieldKeyShouldFindCollectionProviderWithQualifier() throws NoSuchFieldException {
         final Field field = getField("collectionProviderWithQualifier");
-        final BeanKey fieldKey = beanHelper.findFieldKey(field);
+        final BeanKey fieldKey = beanHelper.findFieldKey(field, typeMap);
 
         assertNotNull(fieldKey);
         checkCollectionProviderParameter(fieldKey, QualifierBean.class, "awesome");
@@ -362,13 +364,13 @@ public class BeanHelperTest {
     @Test(expected = IllegalArgumentException.class)
     public void findFieldKeyShouldFailIfCollectionProviderIsMissingGenericType() throws NoSuchFieldException {
         final Field field = getField("collectionProviderWithoutGenericType");
-        beanHelper.findFieldKey(field);
+        beanHelper.findFieldKey(field, typeMap);
     }
 
     @Test
     public void findFieldKeyShouldHandleIfCollectionProviderIsUsingGenericWildCard() throws NoSuchFieldException {
         final Field field = getField("collectionProviderWithWildCard");
-        final BeanKey fieldKey = beanHelper.findFieldKey(field);
+        final BeanKey fieldKey = beanHelper.findFieldKey(field, typeMap);
 
         assertNotNull(fieldKey);
         checkWildcard(fieldKey);
@@ -378,7 +380,7 @@ public class BeanHelperTest {
     @Test
     public void findFieldKeyShouldFindCollectionWithoutQualifier() throws NoSuchFieldException {
         final Field field = getField("collection");
-        final BeanKey fieldKey = beanHelper.findFieldKey(field);
+        final BeanKey fieldKey = beanHelper.findFieldKey(field, typeMap);
 
         assertNotNull(fieldKey);
         checkCollectionParameter(fieldKey, GreenBean.class, null);
@@ -389,7 +391,7 @@ public class BeanHelperTest {
     @Test
     public void findFieldKeyShouldFindCollectionWithGenericParameter() throws NoSuchFieldException {
         final Field field = getField("collectionWithGenericParameter");
-        final BeanKey fieldKey = beanHelper.findFieldKey(field);
+        final BeanKey fieldKey = beanHelper.findFieldKey(field, typeMap);
 
         assertNotNull(fieldKey);
         checkCollectionParameter(fieldKey, Set.class, null);
@@ -400,7 +402,7 @@ public class BeanHelperTest {
     @Test
     public void findFieldKeyShouldFindCollectionWithQualifier() throws NoSuchFieldException {
         final Field field = getField("collectionWithQualifier");
-        final BeanKey fieldKey = beanHelper.findFieldKey(field);
+        final BeanKey fieldKey = beanHelper.findFieldKey(field, typeMap);
 
         assertNotNull(fieldKey);
         checkCollectionParameter(fieldKey, CarBean.class, "best");
@@ -411,13 +413,13 @@ public class BeanHelperTest {
     @Test(expected = IllegalArgumentException.class)
     public void findFieldKeyShouldFailIfCollectionIsMissingGenericType() throws NoSuchFieldException {
         final Field field = getField("collectionWithoutGenericType");
-        beanHelper.findFieldKey(field);
+        beanHelper.findFieldKey(field, typeMap);
     }
 
     @Test
     public void findFieldKeyShouldHandleIfCollectionIsUsingGenericWildCard() throws NoSuchFieldException {
         final Field field = getField("collectionWithWildCard");
-        final BeanKey fieldKey = beanHelper.findFieldKey(field);
+        final BeanKey fieldKey = beanHelper.findFieldKey(field, typeMap);
 
         assertNotNull(fieldKey);
         checkWildcard(fieldKey);
@@ -427,7 +429,7 @@ public class BeanHelperTest {
     @Test
     public void findFieldKeyShouldFindTheCorrectType() throws NoSuchFieldException {
         final Field field = getField("genericField");
-        final BeanKey fieldKey = beanHelper.findFieldKey(field);
+        final BeanKey fieldKey = beanHelper.findFieldKey(field, typeMap);
 
         assertNotNull(fieldKey);
         checkRegularParameter(fieldKey, Set.class, null);
@@ -437,7 +439,7 @@ public class BeanHelperTest {
     @Test
     public void findParameterKeysForConstructorShouldHandleConstructorsWithNoParameters() throws NoSuchMethodException {
         final Constructor<?> constructor = getConstructor();
-        final List<BeanKey> parameters = beanHelper.findParameterKeys(constructor);
+        final List<BeanKey> parameters = beanHelper.findParameterKeys(constructor, typeMap);
 
         assertNotNull(parameters);
         assertTrue(parameters.isEmpty());
@@ -446,7 +448,7 @@ public class BeanHelperTest {
     @Test
     public void findParameterKeysForConstructorShouldFindSingleParameterWithoutQualifier() throws NoSuchMethodException {
         final Constructor<?> constructor = getConstructor(TheInterface.class);
-        final List<BeanKey> parameters = beanHelper.findParameterKeys(constructor);
+        final List<BeanKey> parameters = beanHelper.findParameterKeys(constructor, typeMap);
 
         assertNotNull(parameters);
         assertEquals(1, parameters.size());
@@ -458,7 +460,7 @@ public class BeanHelperTest {
     @Test
     public void findParameterKeysForConstructorShouldHandlePrivateMethods() throws NoSuchMethodException {
         final Constructor<?> constructor = getConstructor(SomeEnum.class);
-        final List<BeanKey> parameters = beanHelper.findParameterKeys(constructor);
+        final List<BeanKey> parameters = beanHelper.findParameterKeys(constructor, typeMap);
 
         assertNotNull(parameters);
         assertEquals(1, parameters.size());
@@ -469,7 +471,7 @@ public class BeanHelperTest {
     @Test
     public void findParameterKeysForConstructorShouldFindParameterWithQualifier() throws NoSuchMethodException {
         final Constructor<?> constructor = getConstructor(TheInterfaceUser.class);
-        final List<BeanKey> parameters = beanHelper.findParameterKeys(constructor);
+        final List<BeanKey> parameters = beanHelper.findParameterKeys(constructor, typeMap);
 
         assertNotNull(parameters);
         assertEquals(1, parameters.size());
@@ -480,7 +482,7 @@ public class BeanHelperTest {
     @Test
     public void findParameterKeysForConstructorShouldFindSeveralParameters() throws NoSuchMethodException {
         final Constructor<?> constructor = getConstructor(DateBean.class, ColorBean.class, CoffeeBean.class);
-        final List<BeanKey> parameters = beanHelper.findParameterKeys(constructor);
+        final List<BeanKey> parameters = beanHelper.findParameterKeys(constructor, typeMap);
 
         assertNotNull(parameters);
         assertEquals(3, parameters.size());
@@ -493,7 +495,7 @@ public class BeanHelperTest {
     @Test
     public void findParameterKeysForConstructorShouldFindProvider() throws NoSuchMethodException {
         final Constructor<?> constructor = getConstructor(Provider.class, Provider.class);
-        final List<BeanKey> parameters = beanHelper.findParameterKeys(constructor);
+        final List<BeanKey> parameters = beanHelper.findParameterKeys(constructor, typeMap);
 
         assertNotNull(parameters);
         assertEquals(2, parameters.size());
@@ -505,13 +507,13 @@ public class BeanHelperTest {
     @Test(expected = IllegalArgumentException.class)
     public void findParameterKeysForConstructorShouldFailIfProviderIsMissingGenericType() throws NoSuchMethodException {
         final Constructor<?> constructor = getConstructor(Provider.class, HelloBean.class);
-        beanHelper.findParameterKeys(constructor);
+        beanHelper.findParameterKeys(constructor, typeMap);
     }
 
     @Test
     public void findParameterKeysForConstructorShouldHandleIfProviderIsUsingGenericWildcard() throws NoSuchMethodException {
         final Constructor<?> constructor = getConstructor(Provider.class, JavaBean.class);
-        final List<BeanKey> parameters = beanHelper.findParameterKeys(constructor);
+        final List<BeanKey> parameters = beanHelper.findParameterKeys(constructor, typeMap);
 
         assertNotNull(parameters);
         assertEquals(2, parameters.size());
@@ -522,7 +524,7 @@ public class BeanHelperTest {
     @Test
     public void findParameterKeysForConstructorShouldFindCollectionProvider() throws NoSuchMethodException {
         final Constructor<?> constructor = getConstructor(CollectionProvider.class, CollectionProvider.class);
-        final List<BeanKey> parameters = beanHelper.findParameterKeys(constructor);
+        final List<BeanKey> parameters = beanHelper.findParameterKeys(constructor, typeMap);
 
         assertNotNull(parameters);
         assertEquals(2, parameters.size());
@@ -534,13 +536,13 @@ public class BeanHelperTest {
     @Test(expected = IllegalArgumentException.class)
     public void findParameterKeysForConstructorShouldFailIfCollectionProviderIsMissingGenericType() throws NoSuchMethodException {
         final Constructor<?> constructor = getConstructor(CollectionProvider.class, HelloBean.class);
-        beanHelper.findParameterKeys(constructor);
+        beanHelper.findParameterKeys(constructor, typeMap);
     }
 
     @Test
     public void findParameterKeysForConstructorShouldHandleIfCollectionProviderIsUsingGenericWildcard() throws NoSuchMethodException {
         final Constructor<?> constructor = getConstructor(CollectionProvider.class, JavaBean.class);
-        final List<BeanKey> parameters = beanHelper.findParameterKeys(constructor);
+        final List<BeanKey> parameters = beanHelper.findParameterKeys(constructor, typeMap);
 
         assertNotNull(parameters);
         assertEquals(2, parameters.size());
@@ -551,7 +553,7 @@ public class BeanHelperTest {
     @Test
     public void findParameterKeysForConstructorShouldFindCollection() throws NoSuchMethodException {
         final Constructor<?> constructor = getConstructor(Collection.class, Collection.class);
-        final List<BeanKey> parameters = beanHelper.findParameterKeys(constructor);
+        final List<BeanKey> parameters = beanHelper.findParameterKeys(constructor, typeMap);
 
         assertNotNull(parameters);
         assertEquals(2, parameters.size());
@@ -568,13 +570,13 @@ public class BeanHelperTest {
     @Test(expected = IllegalArgumentException.class)
     public void findParameterKeysForConstructorShouldFailIfCollectionIsMissingGenericType() throws NoSuchMethodException {
         final Constructor<?> constructor = getConstructor(Collection.class, HelloBean.class);
-        beanHelper.findParameterKeys(constructor);
+        beanHelper.findParameterKeys(constructor, typeMap);
     }
 
     @Test
     public void findParameterKeysForConstructorShouldHandleIfCollectionIsUsingGenericWildcard() throws NoSuchMethodException {
         final Constructor<?> constructor = getConstructor(Collection.class, JavaBean.class);
-        final List<BeanKey> parameters = beanHelper.findParameterKeys(constructor);
+        final List<BeanKey> parameters = beanHelper.findParameterKeys(constructor, typeMap);
 
         assertNotNull(parameters);
         assertEquals(2, parameters.size());
@@ -585,7 +587,7 @@ public class BeanHelperTest {
     @Test
     public void findParameterKeysForConstructorShouldFindCorrectType() throws NoSuchMethodException {
         final Constructor<?> constructor = getConstructor(Set.class);
-        final List<BeanKey> parameters = beanHelper.findParameterKeys(constructor);
+        final List<BeanKey> parameters = beanHelper.findParameterKeys(constructor, typeMap);
 
         assertNotNull(parameters);
         assertEquals(1, parameters.size());
