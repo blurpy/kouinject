@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
-import java.util.Iterator;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -102,16 +102,16 @@ public class TypeMapTest {
         final Type actualType2 = createTypeMock("type two");
         typeMap.addActualType(typeVariable2, actualType2);
 
-        final Iterator<TypeVariable<?>> iterator = typeMap.getKeys().iterator();
+        assertEquals(2, typeMap.size());
 
-        final TypeVariable<?> first = iterator.next();
-        final TypeVariable<?> second = iterator.next();
+        final Set<TypeVariable<?>> keys = typeMap.getKeys();
+        assertEquals(2, keys.size());
 
-        assertSame(typeVariable1, first);
-        assertSame(actualType1, typeMap.getActualType(first));
+        assertTrue(keys.contains(typeVariable1));
+        assertSame(actualType1, typeMap.getActualType(typeVariable1));
 
-        assertSame(typeVariable2, second);
-        assertSame(actualType2, typeMap.getActualType(second));
+        assertTrue(keys.contains(typeVariable2));
+        assertSame(actualType2, typeMap.getActualType(typeVariable2));
     }
 
     @Test
