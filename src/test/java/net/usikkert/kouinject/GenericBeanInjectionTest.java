@@ -49,8 +49,12 @@ import net.usikkert.kouinject.testbeans.scanned.generics.thing.StopThingListener
 import net.usikkert.kouinject.testbeans.scanned.generics.thing.ThingListenerBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.thing.ThingManagerBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.AbstractDualVariableBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Bottle;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.ConcreteDualVariableBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.DualVariableInterfaceBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Fanta;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.FantaBottle;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.LiquidDualVariableBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.VariableOnePointTwo;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.VariableTwo;
 import net.usikkert.kouinject.testbeans.scanned.generics.wildcard.RubberWheel;
@@ -181,12 +185,13 @@ public class GenericBeanInjectionTest {
     public void checkAllContainerBeans() {
         final Collection<Container<?>> beans = injector.getBeans(new TypeLiteral<Container<?>>() {});
         assertNotNull(beans);
-        assertEquals(4, beans.size());
+        assertEquals(5, beans.size());
 
         assertTrue(containsContainerBeanOf(ChildBean.class, beans));
         assertTrue(containsContainerBeanOf(MiddleBean.class, beans));
         assertTrue(containsContainerBeanOf(SuperBean.class, beans));
         assertTrue(containsContainerBeanOf(RubberWheel.class, beans));
+        assertTrue(containsContainerBeanOf(Fanta.class, beans));
     }
 
     @Test
@@ -417,6 +422,54 @@ public class GenericBeanInjectionTest {
         final Wheel contained = bean.getContained();
         assertNotNull(contained);
         assertEquals(RubberWheel.class, contained.getClass());
+    }
+
+    @Test
+    public void checkFantaBottle() {
+        final FantaBottle fantaBottle = injector.getBean(FantaBottle.class);
+        assertNotNull(fantaBottle);
+
+        final Fanta t = fantaBottle.getT();
+        assertNotNull(t);
+
+        final Fanta methodT = fantaBottle.getMethodT();
+        assertNotNull(methodT);
+
+        final Bottle<Fanta> bottleOfFanta = injector.getBean(new TypeLiteral<Bottle<Fanta>>() {});
+        assertNotNull(bottleOfFanta);
+        assertEquals(FantaBottle.class, bottleOfFanta.getClass());
+    }
+
+    @Test
+    public void checkContainerOfFanta() {
+        final Container<Fanta> bean = injector.getBean(new TypeLiteral<Container<Fanta>>() {});
+        assertNotNull(bean);
+
+        final Fanta contained = bean.getContained();
+        assertNotNull(contained);
+    }
+
+    @Test
+    public void checkLiquidDualVariableBean() {
+        final LiquidDualVariableBean<Fanta> bean1 = injector.getBean(new TypeLiteral<LiquidDualVariableBean<Fanta>>() {});
+        assertNotNull(bean1);
+
+        final Fanta first = bean1.getFirst();
+        assertNotNull(first);
+        bean1.doFirst(new Fanta());
+
+        final VariableTwo second = bean1.getSecond();
+        assertNotNull(second);
+        bean1.doSecond(new VariableTwo());
+
+        final AbstractDualVariableBean<Fanta> bean2 = injector.getBean(new TypeLiteral<AbstractDualVariableBean<Fanta>>() {});
+        assertNotNull(bean2);
+        assertEquals(LiquidDualVariableBean.class, bean2.getClass());
+
+         final DualVariableInterfaceBean<Fanta, VariableTwo> bean3 =
+                 injector.getBean(new TypeLiteral<DualVariableInterfaceBean<Fanta, VariableTwo>>() {});
+        assertNotNull(bean3);
+        assertEquals(LiquidDualVariableBean.class, bean3.getClass());
     }
 
     private boolean containsBean(final Collection<?> beans, final Class<?> beanClass) {

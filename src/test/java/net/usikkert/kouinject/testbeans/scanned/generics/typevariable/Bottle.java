@@ -28,7 +28,7 @@ import net.usikkert.kouinject.annotation.Produces;
 import net.usikkert.kouinject.testbeans.scanned.generics.Container;
 
 /**
- * A bottle of liquid.
+ * A bottle of liquid, for testing type variables in both injection points and in factories.
  *
  * @author Christian Ihle
  */
@@ -41,6 +41,10 @@ public class Bottle<T extends Liquid> {
 
     public Bottle() {
 
+    }
+
+    public T getT() {
+        return t;
     }
 
     public T getMethodT() {

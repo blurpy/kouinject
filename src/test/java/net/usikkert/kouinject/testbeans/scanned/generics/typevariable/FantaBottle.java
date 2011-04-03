@@ -25,11 +25,11 @@ package net.usikkert.kouinject.testbeans.scanned.generics.typevariable;
 import net.usikkert.kouinject.annotation.Component;
 
 /**
- * A bottle with Fanta.
+ * A bottle with Fanta, for testing type variables.
  *
  * @author Christian Ihle
  */
-//@Component
+@Component
 public class FantaBottle extends Bottle<Fanta> {
 
 }
