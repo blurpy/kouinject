@@ -24,8 +24,10 @@ package net.usikkert.kouinject.factory;
 
 import static org.junit.Assert.*;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
+import net.usikkert.kouinject.TypeLiteral;
 import net.usikkert.kouinject.beandata.BeanKey;
 import net.usikkert.kouinject.testbeans.notscanned.factory.InjectFactoryBean;
 import net.usikkert.kouinject.testbeans.notscanned.factory.StaticFactoryBean;
@@ -53,6 +55,10 @@ import net.usikkert.kouinject.testbeans.scanned.factory.SimpleFactoryCreatedBean
 import net.usikkert.kouinject.testbeans.scanned.factory.SingletonFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.ThirdMultipleFactoryCreatedBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.ThreeParametersFactoryCreatedBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.Container;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Fanta;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.FantaBottle;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.LiquidDualVariableBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.ColorBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.OrangeBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.RedBean;
@@ -318,6 +324,22 @@ public class AnnotationBasedFactoryPointHandlerTest {
         final OneParameterFactoryCreatedBean bean = factoryPoint.create(new ParameterFactoryBean(), new HelloBean());
         assertNotNull(bean);
 
+    }
+
+    @Test
+    public void getFactoryPointsShouldReplaceTypeVariables() {
+        final List<FactoryPoint<?>> factoryPoints = handler.getFactoryPoints(new BeanKey(FantaBottle.class));
+        assertEquals(2, factoryPoints.size());
+
+        final FactoryPoint<?> factoryPoint1 = factoryPoints.get(0);
+        final Type factoryPoint1ReturnType = factoryPoint1.getReturnType().getBeanType();
+        final Type factoryPoint1ExpectedType = new TypeLiteral<Container<Fanta>>() {}.getGenericType();
+        assertTrue(factoryPoint1ReturnType.equals(factoryPoint1ExpectedType));
+
+        final FactoryPoint<?> factoryPoint2 = factoryPoints.get(1);
+        final Type factoryPoint2ReturnType = factoryPoint2.getReturnType().getBeanType();
+        final Type factoryPoint2ExpectedType = new TypeLiteral<LiquidDualVariableBean<Fanta>>() {}.getGenericType();
+        assertTrue(factoryPoint2ReturnType.equals(factoryPoint2ExpectedType));
     }
 
     private void checkBeanKey(final BeanKey key, final Class<?> aClass, final String qualifier) {
