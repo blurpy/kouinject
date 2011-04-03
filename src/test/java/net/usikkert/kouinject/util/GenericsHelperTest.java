@@ -24,6 +24,7 @@ package net.usikkert.kouinject.util;
 
 import static org.junit.Assert.*;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
@@ -34,6 +35,8 @@ import java.util.Set;
 
 import net.usikkert.kouinject.TypeLiteral;
 import net.usikkert.kouinject.generics.TypeMap;
+import net.usikkert.kouinject.generics.TypeVariableBean;
+import net.usikkert.kouinject.generics.TypeVariableBeanWithFanta;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.Container;
 import net.usikkert.kouinject.testbeans.scanned.generics.thing.FirstStartThingListenerBean;
@@ -46,6 +49,8 @@ import net.usikkert.kouinject.testbeans.scanned.generics.thing.ThingListenerBean
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.AbstractDualVariableBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.ConcreteDualVariableBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.DualVariableInterfaceBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Fanta;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Pepsi;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.VariableOne;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.VariableOnePointTwo;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.VariableTwo;
@@ -910,6 +915,116 @@ public class GenericsHelperTest {
             final Type actualType = typeMap.getActualType(key);
             assertNull(actualType);
         }
+    }
+
+    @Test
+    public void wrapTypeAndReplaceTypeVariablesShouldReplaceTypeVariableAsMainType() throws NoSuchFieldException {
+        final TypeMap typeMap = genericsHelper.mapTypeVariablesToActualTypes(TypeVariableBeanWithFanta.class);
+        final Class<Fanta> expectedType = Fanta.class;
+
+        final Type fieldType = getTypeFromField("standaloneT");
+        assertFalse(expectedType.equals(fieldType));
+
+        final Type typeFromMap = typeMap.getActualType((TypeVariable<?>) fieldType);
+        assertEquals(expectedType, typeFromMap);
+
+        final Type wrappedType = genericsHelper.wrapTypeAndReplaceTypeVariables(fieldType, typeMap);
+        assertEquals(expectedType, wrappedType);
+    }
+
+    @Test
+    public void wrapTypeAndReplaceTypeVariablesShouldLeaveTypeVariableAsIsIfNoReplacementWasFoundForMainType() throws NoSuchFieldException {
+        final TypeMap typeMap = new TypeMap();
+        final Type fieldType = getTypeFromField("standaloneT");
+
+        final Type typeFromMap = typeMap.getActualType((TypeVariable<?>) fieldType);
+        assertNull(typeFromMap);
+
+        final Type wrappedType = genericsHelper.wrapTypeAndReplaceTypeVariables(fieldType, typeMap);
+        assertTrue(genericsHelper.isTypeVariable(wrappedType));
+    }
+
+    @Test
+    public void wrapTypeAndReplaceTypeVariablesShouldReplaceTypeVariableAsSubType() throws NoSuchFieldException {
+        final TypeMap typeMap = genericsHelper.mapTypeVariablesToActualTypes(TypeVariableBeanWithFanta.class);
+        final Type expectedType = new TypeLiteral<Container<Fanta>>() {}.getGenericType();
+        final Type unexpectedType = new TypeLiteral<Container<Pepsi>>() {}.getGenericType();
+
+        final Type fieldType = getTypeFromField("containerOfT");
+        assertFalse(expectedType.equals(fieldType));
+
+        final Type wrappedType = genericsHelper.wrapTypeAndReplaceTypeVariables(fieldType, typeMap);
+        assertEquals(expectedType, wrappedType);
+        assertEquals(wrappedType, expectedType);
+
+        assertFalse(unexpectedType.equals(wrappedType));
+        assertFalse(wrappedType.equals(unexpectedType));
+    }
+
+    @Test
+    public void wrapTypeAndReplaceTypeVariablesShouldLeaveTypeVariableAsIsIfNoReplacementWasFoundForSubType() throws NoSuchFieldException {
+        final TypeMap typeMap = new TypeMap();
+        final Type fieldType = getTypeFromField("containerOfT");
+
+        final Type wrappedType = genericsHelper.wrapTypeAndReplaceTypeVariables(fieldType, typeMap);
+        final Type wrappedTypeArgument = genericsHelper.getGenericArgumentAsType(wrappedType);
+        assertTrue(genericsHelper.isTypeVariable(wrappedTypeArgument));
+    }
+
+    @Test
+    public void wrapTypeAndReplaceTypeVariablesShouldReplaceTypeVariableAsSubSubType() throws NoSuchFieldException {
+        final TypeMap typeMap = genericsHelper.mapTypeVariablesToActualTypes(TypeVariableBeanWithFanta.class);
+        final Type expectedType = new TypeLiteral<Set<Container<Fanta>>>() {}.getGenericType();
+        final Type unexpectedType = new TypeLiteral<Set<Container<Pepsi>>>() {}.getGenericType();
+
+        final Type fieldType = getTypeFromField("setOfContainersOfT");
+        assertFalse(expectedType.equals(fieldType));
+
+        final Type wrappedType = genericsHelper.wrapTypeAndReplaceTypeVariables(fieldType, typeMap);
+        assertEquals(expectedType, wrappedType);
+        assertEquals(wrappedType, expectedType);
+
+        assertFalse(unexpectedType.equals(wrappedType));
+        assertFalse(wrappedType.equals(unexpectedType));
+    }
+
+    @Test
+    public void wrapTypeAndReplaceTypeVariablesShouldReplaceTypeVariableInWildcardWithExtends() throws NoSuchFieldException {
+        final TypeMap typeMap = genericsHelper.mapTypeVariablesToActualTypes(TypeVariableBeanWithFanta.class);
+        final Type expectedType = new TypeLiteral<Set<Container<? extends Fanta>>>() {}.getGenericType();
+        final Type unexpectedType = new TypeLiteral<Set<Container<? extends Pepsi>>>() {}.getGenericType();
+
+        final Type fieldType = getTypeFromField("setOfContainersOfExtendsT");
+        assertFalse(expectedType.equals(fieldType));
+
+        final Type wrappedType = genericsHelper.wrapTypeAndReplaceTypeVariables(fieldType, typeMap);
+        assertEquals(expectedType, wrappedType);
+        assertEquals(wrappedType, expectedType);
+
+        assertFalse(unexpectedType.equals(wrappedType));
+        assertFalse(wrappedType.equals(unexpectedType));
+    }
+
+    @Test
+    public void wrapTypeAndReplaceTypeVariablesShouldReplaceTypeVariableInWildcardWithSuper() throws NoSuchFieldException {
+        final TypeMap typeMap = genericsHelper.mapTypeVariablesToActualTypes(TypeVariableBeanWithFanta.class);
+        final Type expectedType = new TypeLiteral<Set<Container<? super Fanta>>>() {}.getGenericType();
+        final Type unexpectedType = new TypeLiteral<Set<Container<? super Pepsi>>>() {}.getGenericType();
+
+        final Type fieldType = getTypeFromField("setOfContainersOfSuperT");
+        assertFalse(expectedType.equals(fieldType));
+
+        final Type wrappedType = genericsHelper.wrapTypeAndReplaceTypeVariables(fieldType, typeMap);
+        assertEquals(expectedType, wrappedType);
+        assertEquals(wrappedType, expectedType);
+
+        assertFalse(unexpectedType.equals(wrappedType));
+        assertFalse(wrappedType.equals(unexpectedType));
+    }
+
+    private Type getTypeFromField(final String fieldName) throws NoSuchFieldException {
+        final Field field = TypeVariableBean.class.getDeclaredField(fieldName);
+        return field.getGenericType();
     }
 
     private TypeVariable<?> getTypeVariable(final String name, final Class<?> ownerClass, final TypeMap typeMap) {

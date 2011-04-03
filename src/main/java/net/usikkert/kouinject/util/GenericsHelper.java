@@ -28,6 +28,8 @@ import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 
 import net.usikkert.kouinject.generics.TypeMap;
+import net.usikkert.kouinject.generics.WrappedParameterizedType;
+import net.usikkert.kouinject.generics.WrappedWildcardType;
 
 import org.apache.commons.lang.Validate;
 
@@ -279,7 +281,7 @@ public class GenericsHelper {
         return false;
     }
 
-    private boolean isTypeVariable(final Type type) {
+    public boolean isTypeVariable(final Type type) {
         return type instanceof TypeVariable<?>;
     }
 
@@ -394,11 +396,6 @@ public class GenericsHelper {
      * that they can be resolved later when it's necessary to match type parameters.
      *
      * TODO example
-     *
-     * TODO is it necessary to "rewind" the mapping? It's possible to have:
-     * S = SomeClass
-     * F = S
-     * F could be changed to point to SomeClass instead of S. But will F ever be needed?
      */
     private void mapTypeVariablesToActualTypes(final Type thatType, final Class<?> thatClass, final TypeMap typeMap) {
         final ParameterizedType thatParameterizedType = getAsParameterizedType(thatType);
@@ -411,5 +408,43 @@ public class GenericsHelper {
 
             typeMap.addActualType(typeParameter, actualTypeArgument);
         }
+    }
+
+    public Type wrapTypeAndReplaceTypeVariables(final Type type, final TypeMap typeMap) {
+        if (isParameterizedType(type)) {
+            final ParameterizedType parameterizedType = (ParameterizedType) type;
+            final Type[] wrappedArguments = wrapTypeParameters(parameterizedType.getActualTypeArguments(), typeMap);
+            final Class<?> asClass = getAsClass(type);
+
+            return new WrappedParameterizedType(asClass, wrappedArguments);
+        }
+
+        else if (isWildcard(type)) {
+            final WildcardType wildcardType = (WildcardType) type;
+            final Type[] wrappedUpperBounds = wrapTypeParameters(wildcardType.getUpperBounds(), typeMap);
+            final Type[] wrappedLowerBounds = wrapTypeParameters(wildcardType.getLowerBounds(), typeMap);
+
+            return new WrappedWildcardType(wrappedUpperBounds, wrappedLowerBounds);
+        }
+
+        else if (isTypeVariable(type)) {
+            final Type actualType = typeMap.getActualType((TypeVariable<?>) type);
+
+            if (actualType != null) {
+                return actualType;
+            }
+        }
+
+        return type;
+    }
+
+    private Type[] wrapTypeParameters(final Type[] parameters, final TypeMap typeMap) {
+        final Type[] wrappedParameters = new Type[parameters.length];
+
+        for (int i = 0; i < parameters.length; i++) {
+            wrappedParameters[i] = wrapTypeAndReplaceTypeVariables(parameters[i], typeMap);
+        }
+
+        return wrappedParameters;
     }
 }
