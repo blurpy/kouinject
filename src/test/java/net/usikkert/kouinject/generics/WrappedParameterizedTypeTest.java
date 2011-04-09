@@ -26,7 +26,6 @@ import static org.junit.Assert.*;
 
 import java.lang.reflect.Type;
 
-import net.usikkert.kouinject.TypeLiteral;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.AbstractDualVariableBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.DualVariableInterfaceBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.VariableOne;

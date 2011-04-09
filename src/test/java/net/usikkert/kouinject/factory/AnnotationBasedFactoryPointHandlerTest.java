@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import net.usikkert.kouinject.TypeLiteral;
+import net.usikkert.kouinject.generics.TypeLiteral;
 import net.usikkert.kouinject.beandata.BeanKey;
 import net.usikkert.kouinject.testbeans.notscanned.factory.InjectFactoryBean;
 import net.usikkert.kouinject.testbeans.notscanned.factory.StaticFactoryBean;

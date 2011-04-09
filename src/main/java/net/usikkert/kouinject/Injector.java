@@ -24,6 +24,8 @@ package net.usikkert.kouinject;
 
 import java.util.Collection;
 
+import net.usikkert.kouinject.generics.TypeLiteral;
+
 /**
  * Public interface for the KouInject injector, giving access to the available beans.
  *

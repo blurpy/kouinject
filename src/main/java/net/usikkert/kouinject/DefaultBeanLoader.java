@@ -39,6 +39,7 @@ import net.usikkert.kouinject.factory.FactoryContextImpl;
 import net.usikkert.kouinject.factory.FactoryPoint;
 import net.usikkert.kouinject.factory.FactoryPointHandler;
 import net.usikkert.kouinject.factory.FactoryPointMap;
+import net.usikkert.kouinject.generics.TypeLiteral;
 
 import org.apache.commons.lang.Validate;
 

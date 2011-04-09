@@ -22,7 +22,7 @@
 
 package net.usikkert.kouinject.beandata;
 
-import net.usikkert.kouinject.TypeLiteral;
+import net.usikkert.kouinject.generics.TypeLiteral;
 
 /**
  * A {@link BeanKey} for representing request for a {@link javax.inject.Provider}.

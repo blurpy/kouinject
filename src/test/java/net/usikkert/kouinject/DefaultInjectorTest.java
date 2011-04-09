@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import net.usikkert.kouinject.generics.TypeLiteral;
 import net.usikkert.kouinject.testbeans.BeanCount;
 import net.usikkert.kouinject.testbeans.notscanned.TheInterfaceUser;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;

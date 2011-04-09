@@ -28,6 +28,7 @@ import java.util.List;
 
 import net.usikkert.kouinject.factory.AnnotationBasedFactoryPointHandler;
 import net.usikkert.kouinject.factory.FactoryPointHandler;
+import net.usikkert.kouinject.generics.TypeLiteral;
 import net.usikkert.kouinject.profile.AnnotationBasedProfileHandler;
 import net.usikkert.kouinject.profile.InputBasedProfileLocator;
 import net.usikkert.kouinject.profile.ProfileHandler;

@@ -34,7 +34,7 @@ import java.util.Set;
 import javax.inject.Provider;
 
 import net.usikkert.kouinject.CollectionProvider;
-import net.usikkert.kouinject.TypeLiteral;
+import net.usikkert.kouinject.generics.TypeLiteral;
 import net.usikkert.kouinject.beandata.BeanKey;
 import net.usikkert.kouinject.generics.TypeMap;
 import net.usikkert.kouinject.generics.TypeVariableBean;

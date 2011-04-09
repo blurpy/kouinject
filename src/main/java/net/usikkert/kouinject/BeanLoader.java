@@ -24,6 +24,8 @@ package net.usikkert.kouinject;
 
 import java.util.Collection;
 
+import net.usikkert.kouinject.generics.TypeLiteral;
+
 /**
  * Interface for the main IoC component, the component that loads beans and autowires the
  * dependencies.

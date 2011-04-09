@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.usikkert.kouinject.TypeLiteral;
+import net.usikkert.kouinject.generics.TypeLiteral;
 import net.usikkert.kouinject.generics.TypeMap;
 import net.usikkert.kouinject.generics.TypeVariableBean;
 import net.usikkert.kouinject.generics.TypeVariableBeanWithFanta;

@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import net.usikkert.kouinject.generics.TypeLiteral;
 import net.usikkert.kouinject.testbeans.scanned.generics.Container;
 import net.usikkert.kouinject.testbeans.scanned.generics.collection.CollectionFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.collection.CollectionUsingBean;

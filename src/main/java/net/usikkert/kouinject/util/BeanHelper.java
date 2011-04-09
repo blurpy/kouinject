@@ -35,7 +35,7 @@ import javax.inject.Provider;
 
 import net.usikkert.kouinject.AnnotationBasedQualifierHandler;
 import net.usikkert.kouinject.CollectionProvider;
-import net.usikkert.kouinject.TypeLiteral;
+import net.usikkert.kouinject.generics.TypeLiteral;
 import net.usikkert.kouinject.beandata.BeanKey;
 import net.usikkert.kouinject.beandata.CollectionBeanKey;
 import net.usikkert.kouinject.beandata.CollectionProviderBeanKey;

@@ -27,7 +27,6 @@ import static org.junit.Assert.*;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import net.usikkert.kouinject.TypeLiteral;
 import net.usikkert.kouinject.util.GenericsHelper;
 
 import org.junit.Test;
