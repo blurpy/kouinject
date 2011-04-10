@@ -32,8 +32,6 @@ import org.apache.commons.lang.Validate;
 /**
  * Helper class for common operations on generics.
  *
- * TODO static?
- *
  * @author Christian Ihle
  */
 public class GenericsHelper {
@@ -46,7 +44,7 @@ public class GenericsHelper {
      * @param type The type to get the generic argument from. Supports only 1 generic argument.
      * @return The argument of the type, as a type.
      */
-    public Type getGenericArgumentAsType(final Type type) {
+    public static Type getGenericArgumentAsType(final Type type) {
         Validate.notNull(type, "Type can not be null");
 
         final ParameterizedType parameterizedType = getAsParameterizedType(type);
@@ -64,7 +62,7 @@ public class GenericsHelper {
      * @param type The type to get the generic argument from. Supports only 1 generic argument.
      * @return The argument of the type, as a class.
      */
-    public Class<?> getGenericArgumentAsClass(final Type type) {
+    public static Class<?> getGenericArgumentAsClass(final Type type) {
         Validate.notNull(type, "Type can not be null");
 
         final ParameterizedType parameterizedType = getAsParameterizedType(type);
@@ -82,7 +80,7 @@ public class GenericsHelper {
      * @return The type as a class.
      * @throws IllegalArgumentException If the class could not be determined.
      */
-    public Class<?> getAsClass(final Type type) {
+    public static Class<?> getAsClass(final Type type) {
         final Class<?> classOrNull = getAsClassOrNull(type);
 
         if (classOrNull == null) {
@@ -100,7 +98,7 @@ public class GenericsHelper {
      * @param type The type to get as a class.
      * @return The type as a class, or <code>null</code> if the class could not be determined.
      */
-    public Class<?> getAsClassOrNull(final Type type) {
+    public static Class<?> getAsClassOrNull(final Type type) {
         Validate.notNull(type, "Type can not be null");
 
         if (isClass(type)) {
@@ -123,7 +121,7 @@ public class GenericsHelper {
      * @param type The type to check.
      * @return If the type is a regular class.
      */
-    public boolean isClass(final Type type) {
+    public static boolean isClass(final Type type) {
         Validate.notNull(type, "Type can not be null");
 
         return type instanceof Class;
@@ -137,7 +135,7 @@ public class GenericsHelper {
      * @param type The type to check.
      * @return If the type is parameterized.
      */
-    public boolean isParameterizedType(final Type type) {
+    public static boolean isParameterizedType(final Type type) {
         Validate.notNull(type, "Type can not be null");
 
         return type instanceof ParameterizedType;
@@ -151,7 +149,7 @@ public class GenericsHelper {
      * @param type The type to check.
      * @return If the type is a type variable.
      */
-    public boolean isTypeVariable(final Type type) {
+    public static boolean isTypeVariable(final Type type) {
         return type instanceof TypeVariable<?>;
     }
 
@@ -163,7 +161,7 @@ public class GenericsHelper {
      * @param type The type to check.
      * @return If the type is a wildcard.
      */
-    public boolean isWildcard(final Type type) {
+    public static boolean isWildcard(final Type type) {
         return type instanceof WildcardType;
     }
 
@@ -188,7 +186,7 @@ public class GenericsHelper {
      * @param thatType
      * @return
      */
-    public boolean isAssignableFrom(final Type thisType, final Type thatType) {
+    public static boolean isAssignableFrom(final Type thisType, final Type thatType) {
         Validate.notNull(thisType, "This type can not be null");
         Validate.notNull(thatType, "That type can not be null");
 
@@ -217,7 +215,7 @@ public class GenericsHelper {
      * @param aClass The class to search for type variables on.
      * @return A map with the type variables and the actual types that was found on the specified class.
      */
-    public TypeMap mapTypeVariablesToActualTypes(final Class<?> aClass) {
+    public static TypeMap mapTypeVariablesToActualTypes(final Class<?> aClass) {
         final TypeMap typeMap = new TypeMap();
         mapTypeVariablesToActualTypes(aClass, typeMap);
 
@@ -241,7 +239,7 @@ public class GenericsHelper {
      * @return A wrapped type with type variables replaced with actual types from the map.
      * @see #mapTypeVariablesToActualTypes(Class)
      */
-    public Type wrapTypeAndReplaceTypeVariables(final Type type, final TypeMap typeMap) {
+    public static Type wrapTypeAndReplaceTypeVariables(final Type type, final TypeMap typeMap) {
         if (isParameterizedType(type)) {
             final ParameterizedType parameterizedType = getAsParameterizedType(type);
             final Type[] wrappedArguments = wrapTypeParameters(parameterizedType.getActualTypeArguments(), typeMap);
@@ -269,7 +267,7 @@ public class GenericsHelper {
         return type;
     }
 
-    private boolean isAssignableFromUsingMap(final Type thisType, final Type thatType, final TypeMap typeMap) {
+    private static boolean isAssignableFromUsingMap(final Type thisType, final Type thatType, final TypeMap typeMap) {
         if (thisType.equals(thatType)) {
             return true;
         }
@@ -312,12 +310,12 @@ public class GenericsHelper {
         return false;
     }
 
-    private boolean isAssignableFromSuperTypes(final Type thisType, final Class<?> thatClass, final TypeMap typeMap) {
+    private static boolean isAssignableFromSuperTypes(final Type thisType, final Class<?> thatClass, final TypeMap typeMap) {
         return isAssignableFromSuperInterfaces(thisType, thatClass, typeMap)
                 || isAssignableFromSuperClass(thisType, thatClass, typeMap);
     }
 
-    private boolean isAssignableFromSuperInterfaces(final Type thisType, final Class<?> thatClass, final TypeMap typeMap) {
+    private static boolean isAssignableFromSuperInterfaces(final Type thisType, final Class<?> thatClass, final TypeMap typeMap) {
         final Type[] genericInterfaces = thatClass.getGenericInterfaces();
 
         for (final Type genericInterface : genericInterfaces) {
@@ -329,12 +327,12 @@ public class GenericsHelper {
         return false;
     }
 
-    private boolean isAssignableFromSuperClass(final Type thisType, final Class<?> thatClass, final TypeMap typeMap) {
+    private static boolean isAssignableFromSuperClass(final Type thisType, final Class<?> thatClass, final TypeMap typeMap) {
         final Type genericSuperclass = thatClass.getGenericSuperclass();
         return genericSuperclass != null && isAssignableFromUsingMap(thisType, genericSuperclass, typeMap);
     }
 
-    private boolean typesHaveTheSameParameters(final Type thisType, final Type thatType, final TypeMap typeMap) {
+    private static boolean typesHaveTheSameParameters(final Type thisType, final Type thatType, final TypeMap typeMap) {
         final Type[] thisArguments = getGenericArgumentsAsType(thisType);
         final Type[] thatArguments = getGenericArgumentsAsType(thatType);
 
@@ -354,12 +352,12 @@ public class GenericsHelper {
         return true;
     }
 
-    private Type[] getGenericArgumentsAsType(final Type type) {
+    private static Type[] getGenericArgumentsAsType(final Type type) {
         final ParameterizedType parameterizedType = getAsParameterizedType(type);
         return parameterizedType.getActualTypeArguments();
     }
 
-    private boolean typesHaveTheSameParameter(final Type thisArgument, final Type thatArgument, final TypeMap typeMap) {
+    private static boolean typesHaveTheSameParameter(final Type thisArgument, final Type thatArgument, final TypeMap typeMap) {
         if (thisArgument.equals(thatArgument)) {
             return true;
         }
@@ -384,7 +382,7 @@ public class GenericsHelper {
         return false;
     }
 
-    private boolean isAssignableFromWildcard(final WildcardType thisWildcard, final Type thatType, final TypeMap typeMap) {
+    private static boolean isAssignableFromWildcard(final WildcardType thisWildcard, final Type thatType, final TypeMap typeMap) {
         final Type[] upperBounds = thisWildcard.getUpperBounds();
         final Type[] lowerBounds = thisWildcard.getLowerBounds();
 
@@ -403,7 +401,7 @@ public class GenericsHelper {
         return true;
     }
 
-    private boolean wildcardsAreAssignable(final WildcardType thisWildcard, final WildcardType thatWildcard,
+    private static boolean wildcardsAreAssignable(final WildcardType thisWildcard, final WildcardType thatWildcard,
                                            final TypeMap typeMap) {
         final Type[] thisWildcardUpperBounds = thisWildcard.getUpperBounds();
         final Type[] thisWildcardLowerBounds = thisWildcard.getLowerBounds();
@@ -437,7 +435,7 @@ public class GenericsHelper {
         return true;
     }
 
-    private ParameterizedType getAsParameterizedType(final Type type) {
+    private static ParameterizedType getAsParameterizedType(final Type type) {
         if (isClass(type)) {
             throw new IllegalArgumentException("Generic type <T> is required: " + type);
         }
@@ -449,7 +447,7 @@ public class GenericsHelper {
         throw new IllegalArgumentException("Unsupported generic type: " + type);
     }
 
-    private void mapTypeVariablesToActualTypes(final Type type, final TypeMap typeMap) {
+    private static void mapTypeVariablesToActualTypes(final Type type, final TypeMap typeMap) {
         final Class<?> asClass = getAsClass(type);
 
         if (isParameterizedType(type)) {
@@ -477,7 +475,7 @@ public class GenericsHelper {
      *
      * TODO example
      */
-    private void mapTypeVariablesToActualTypes(final Type thatType, final Class<?> thatClass, final TypeMap typeMap) {
+    private static void mapTypeVariablesToActualTypes(final Type thatType, final Class<?> thatClass, final TypeMap typeMap) {
         final ParameterizedType thatParameterizedType = getAsParameterizedType(thatType);
         final Type[] actualTypeArguments = thatParameterizedType.getActualTypeArguments();
         final TypeVariable<?>[] typeParameters = thatClass.getTypeParameters();
@@ -490,7 +488,7 @@ public class GenericsHelper {
         }
     }
 
-    private Type[] wrapTypeParameters(final Type[] parameters, final TypeMap typeMap) {
+    private static Type[] wrapTypeParameters(final Type[] parameters, final TypeMap typeMap) {
         final Type[] wrappedParameters = new Type[parameters.length];
 
         for (int i = 0; i < parameters.length; i++) {
