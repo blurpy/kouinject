@@ -35,11 +35,12 @@ import javax.inject.Provider;
 
 import net.usikkert.kouinject.AnnotationBasedQualifierHandler;
 import net.usikkert.kouinject.CollectionProvider;
-import net.usikkert.kouinject.generics.TypeLiteral;
 import net.usikkert.kouinject.beandata.BeanKey;
 import net.usikkert.kouinject.beandata.CollectionBeanKey;
 import net.usikkert.kouinject.beandata.CollectionProviderBeanKey;
 import net.usikkert.kouinject.beandata.ProviderBeanKey;
+import net.usikkert.kouinject.generics.InputBasedTypeLiteral;
+import net.usikkert.kouinject.generics.TypeLiteral;
 import net.usikkert.kouinject.generics.TypeMap;
 
 import org.apache.commons.lang.Validate;
@@ -74,7 +75,7 @@ public class BeanHelper {
         final Type wrappedType = genericsHelper.wrapTypeAndReplaceTypeVariables(genericReturnType, typeMap);
         final Annotation[] annotations = factoryMethod.getAnnotations();
         final String qualifier = qualifierHandler.getQualifier(factoryMethod, annotations);
-        final TypeLiteral<Object> beanType = new TypeLiteral<Object>(wrappedType) {};
+        final TypeLiteral<?> beanType = new InputBasedTypeLiteral(wrappedType);
 
         return new BeanKey(beanType, qualifier);
     }
@@ -161,7 +162,7 @@ public class BeanHelper {
         }
 
         else if (isCollection(parameterClass)) {
-            final TypeLiteral<?> actualBeanType = new TypeLiteral<Object>(parameterType) {};
+            final TypeLiteral<?> actualBeanType = new InputBasedTypeLiteral(parameterType);
             final TypeLiteral<?> beanTypeFromCollection = getBeanTypeFromGenericType(parameterOwner, parameterType);
             return new CollectionBeanKey(actualBeanType, beanTypeFromCollection, qualifier);
         }
@@ -172,7 +173,7 @@ public class BeanHelper {
         }
 
         else {
-            final TypeLiteral<?> beanType = new TypeLiteral<Object>(parameterType) {};
+            final TypeLiteral<?> beanType = new InputBasedTypeLiteral(parameterType);
             return new BeanKey(beanType, qualifier);
         }
     }
@@ -180,7 +181,7 @@ public class BeanHelper {
     private TypeLiteral<?> getBeanTypeFromGenericType(final Object parameterOwner, final Type genericParameterType) {
         if (genericsHelper.isParameterizedType(genericParameterType)) {
             final Type genericArgumentAsType = genericsHelper.getGenericArgumentAsType(genericParameterType);
-            return new TypeLiteral<Object>(genericArgumentAsType) {};
+            return new InputBasedTypeLiteral(genericArgumentAsType);
         }
 
         throw new IllegalArgumentException("Generic class used without type argument: " + parameterOwner);
