@@ -147,9 +147,6 @@ public class DefaultBeanLoader implements BeanLoader {
         return (T) getBean(new BeanKey(beanType, qualifier));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @SuppressWarnings("unchecked")
     private <T> T getBean(final BeanKey beanKey) {
         LOG.finer("Requesting: " + beanKey);

@@ -31,7 +31,7 @@ import org.apache.commons.lang.Validate;
 /**
  * This is an implementation of {@link WildcardType}.
  *
- * <p>Used when replacing type variabled with actual types. It does not do anything special,
+ * <p>Used when replacing type variables with actual types. It does not do anything special,
  * but is needed because there is no official way to create an instance of a type. It should be mostly
  * compatible with the official implementation.</p>
  *
@@ -39,9 +39,17 @@ import org.apache.commons.lang.Validate;
  */
 public class WrappedWildcardType implements WildcardType {
 
+    private static final int HASH_CODE_MULTIPLIER = 31;
+
     private final Type[] upperBounds;
     private final Type[] lowerBounds;
 
+    /**
+     * Creates a new wrapped wildcard type with the specified upper and lower bounds.
+     *
+     * @param upperBounds The upper bounds of the wildcard.
+     * @param lowerBounds The lowe bounds of the wildcard.
+     */
     public WrappedWildcardType(final Type[] upperBounds, final Type[] lowerBounds) {
         Validate.notNull(upperBounds, "Upper bounds can not be null");
         Validate.notNull(lowerBounds, "Lower bounds can not be null");
@@ -62,8 +70,13 @@ public class WrappedWildcardType implements WildcardType {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (!(o instanceof WildcardType)) { return false; }
+        if (this == o) {
+            return true;
+        }
+
+        if (!(o instanceof WildcardType)) {
+            return false;
+        }
 
         final WildcardType that = (WildcardType) o;
 
@@ -72,7 +85,7 @@ public class WrappedWildcardType implements WildcardType {
 
     @Override
     public int hashCode() {
-        return 31 * Arrays.hashCode(upperBounds) + Arrays.hashCode(lowerBounds);
+        return HASH_CODE_MULTIPLIER * Arrays.hashCode(upperBounds) + Arrays.hashCode(lowerBounds);
     }
 
     @Override

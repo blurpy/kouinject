@@ -31,7 +31,7 @@ import org.apache.commons.lang.Validate;
 /**
  * This is an implementation of {@link ParameterizedType}.
  *
- * <p>Used when replacing type variabled with actual types. It does not do anything special,
+ * <p>Used when replacing type variables with actual types. It does not do anything special,
  * but is needed because there is no official way to create an instance of a type. It should be mostly
  * compatible with the official implementation.</p>
  *
@@ -39,9 +39,17 @@ import org.apache.commons.lang.Validate;
  */
 public class WrappedParameterizedType implements ParameterizedType {
 
+    private static final int HASH_CODE_MULTIPLIER = 31;
+
     private final Class<?> rawType;
     private final Type[] actualTypeArguments;
 
+    /**
+     * Creates a new wrapped parameterized type with the specified raw type and type arguments.
+     *
+     * @param rawType The class this parameterized type represents.
+     * @param actualTypeArguments The generic arguments of the class.
+     */
     public WrappedParameterizedType(final Class<?> rawType, final Type[] actualTypeArguments) {
         Validate.notNull(rawType, "Raw type can not be null");
         Validate.notNull(actualTypeArguments, "Actual type arguments can not be null");
@@ -76,11 +84,13 @@ public class WrappedParameterizedType implements ParameterizedType {
 
             if (actualTypeArgument instanceof Class<?>) {
                 sb.append(((Class<?>) actualTypeArgument).getName());
-            } else {
+            }
+
+            else {
                 sb.append(actualTypeArgument);
             }
 
-            if (i < actualTypeArguments.length -1) {
+            if (i < actualTypeArguments.length - 1) {
                 sb.append(", ");
             }
         }
@@ -92,8 +102,13 @@ public class WrappedParameterizedType implements ParameterizedType {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ParameterizedType)) return false;
+        if (this == o) {
+            return true;
+        }
+
+        if (!(o instanceof ParameterizedType)) {
+            return false;
+        }
 
         final ParameterizedType that = (ParameterizedType) o;
 
@@ -102,6 +117,6 @@ public class WrappedParameterizedType implements ParameterizedType {
 
     @Override
     public int hashCode() {
-        return 31 * rawType.hashCode() + Arrays.hashCode(actualTypeArguments);
+        return HASH_CODE_MULTIPLIER * rawType.hashCode() + Arrays.hashCode(actualTypeArguments);
     }
 }
