@@ -46,7 +46,22 @@ public interface BeanLoader {
      */
     <T> T getBean(Class<T> beanClass);
 
-    // TODO
+    /**
+     * Gets a bean that matches the given type, with no qualifier.
+     *
+     * <p>The type literal is used when you need to get a bean using a generic type. Example:</p>
+     *
+     * <code>
+     * Basket&lt;Fruit&gt; bean = injector.getBean(new TypeLiteral&lt;Basket&lt;Fruit&gt;&gt;() {});
+     * </code>
+     *
+     * <p>A bean is considered a match if it's assignable from the generic type, and has no qualifier.</p>
+     *
+     * @param <T> The bean will be cast to the type specified.
+     * @param beanType The type to get a bean for.
+     * @return An object satisfying the specified type.
+     * @throws IllegalArgumentException If no bean is found.
+     */
     <T> T getBean(TypeLiteral<T> beanType);
 
     /**
@@ -65,7 +80,26 @@ public interface BeanLoader {
      */
     <T> T getBean(Class<T> beanClass, String qualifier);
 
-    // TODO
+    /**
+     * Gets a bean that matches the given type and qualifier.
+     *
+     * <p>The type literal is used when you need to get a bean using a generic type. Example:</p>
+     *
+     * <code>
+     * Basket&lt;Fruit&gt; bean = injector.getBean(new TypeLiteral&lt;Basket&lt;Fruit&gt;&gt;() {}, "fresh");
+     * </code>
+     *
+     * <p>A bean is considered a match if it's assignable from the bean type,
+     * and has the exact same qualifier. If the qualifier is <code>null</code>, then only beans
+     * with no qualifier will match. If the qualifier is <code>any</code> then
+     * the qualifier match is ignored.</p>
+     *
+     * @param <T> The bean will be cast to the type specified.
+     * @param beanType The type to get a bean for.
+     * @param qualifier The qualifier for the bean to get. Can be <code>null</code>.
+     * @return An object satisfying the specified type.
+     * @throws IllegalArgumentException If no bean is found.
+     */
     <T> T getBean(TypeLiteral<T> beanType, String qualifier);
 
     /**
@@ -80,7 +114,22 @@ public interface BeanLoader {
      */
     <T> Collection<T> getBeans(Class<T> beanClass);
 
-    // TODO
+    /**
+     * Gets a collection of all the beans that matches the bean type, with no qualifier.
+     *
+     * <p>The type literal is used when you need to get beans using a generic type. Example:</p>
+     *
+     * <code>
+     * Collection&lt;Basket&lt;Fruit&gt;&gt; beans = injector.getBeans(new TypeLiteral&lt;Basket&lt;Fruit&gt;&gt;() {});
+     * </code>
+     *
+     * <p>A bean is considered a match if it's assignable from the bean type, and has no qualifier.</p>
+     *
+     * @param <T> The beans will be cast to the type specified.
+     * @param beanType The type to get beans for.
+     * @return A collection of beans satisfying the bean type.
+     * @throws IllegalArgumentException If no beans are found.
+     */
     <T> Collection<T> getBeans(TypeLiteral<T> beanType);
 
     /**
@@ -93,12 +142,31 @@ public interface BeanLoader {
      *
      * @param <T> The beans will be cast to the type specified.
      * @param beanClass The class to get beans for.
-     * @param qualifier The qualifier for the bean to get. Can be <code>null</code>.
+     * @param qualifier The qualifier for the beans to get. Can be <code>null</code>.
      * @return A collection of beans satisfying the bean class and qualifier.
      * @throws IllegalArgumentException If no beans are found.
      */
     <T> Collection<T> getBeans(Class<T> beanClass, String qualifier);
 
-    // TODO
+    /**
+     * Gets a collection of all the beans that matches the bean type and qualifier.
+     *
+     * <p>The type literal is used when you need to get beans using a generic type. Example:</p>
+     *
+     * <code>
+     * Collection&lt;Basket&lt;Fruit&gt;&gt; beans = injector.getBeans(new TypeLiteral&lt;Basket&lt;Fruit&gt;&gt;() {}, "fresh");
+     * </code>
+     *
+     * <p>A bean is considered a match if it's assignable from the bean type,
+     * and has the exact same qualifier. If the qualifier is <code>null</code>, then only beans
+     * with no qualifier will match. If the qualifier is <code>any</code> then
+     * the qualifier match is ignored.</p>
+     *
+     * @param <T> The beans will be cast to the type specified.
+     * @param beanType The type to get beans for.
+     * @param qualifier The qualifier for the beans to get. Can be <code>null</code>.
+     * @return A collection of beans satisfying the bean type and qualifier.
+     * @throws IllegalArgumentException If no beans are found.
+     */
     <T> Collection<T> getBeans(TypeLiteral<T> beanType, String qualifier);
 }
