@@ -210,8 +210,8 @@ public class GenericsHelper {
     }
 
     private boolean isAssignableFromSuperTypes(final Type thisType, final Class<?> thatClass, final TypeMap typeMap) {
-        return isAssignableFromSuperInterfaces(thisType, thatClass, typeMap) ||
-               isAssignableFromSuperClass(thisType, thatClass, typeMap);
+        return isAssignableFromSuperInterfaces(thisType, thatClass, typeMap)
+                || isAssignableFromSuperClass(thisType, thatClass, typeMap);
     }
 
     private boolean isAssignableFromSuperInterfaces(final Type thisType, final Class<?> thatClass, final TypeMap typeMap) {
@@ -324,8 +324,8 @@ public class GenericsHelper {
         final Type[] thatWildcardUpperBounds = thatWildcard.getUpperBounds();
         final Type[] thatWildcardLowerBounds = thatWildcard.getLowerBounds();
 
-        if (thisWildcardLowerBounds.length != thatWildcardLowerBounds.length ||
-            thisWildcardUpperBounds.length != thatWildcardUpperBounds.length) {
+        if (thisWildcardLowerBounds.length != thatWildcardLowerBounds.length
+                || thisWildcardUpperBounds.length != thatWildcardUpperBounds.length) {
             return false;
         }
 
