@@ -144,6 +144,30 @@ public class GenericsHelper {
     }
 
     /**
+     * Checks if the type is a type variable, as opposed to an actual type.
+     *
+     * <p>Example: <code>T</code> would return true, <code>Number</code> would return false.
+     *
+     * @param type The type to check.
+     * @return If the type is a type variable.
+     */
+    public boolean isTypeVariable(final Type type) {
+        return type instanceof TypeVariable<?>;
+    }
+
+    /**
+     * Checks if the type is a wildcard, as opposed to a class or a type with generic parameters.
+     *
+     * <p>Example: <code>? extends Number</code> would return true, <code>Number</code> would return false.
+     *
+     * @param type The type to check.
+     * @return If the type is a wildcard.
+     */
+    public boolean isWildcard(final Type type) {
+        return type instanceof WildcardType;
+    }
+
+    /**
      * TODO
      *
      * Determines if the class or interface represented by this Class object is either the same as,
@@ -169,6 +193,80 @@ public class GenericsHelper {
         Validate.notNull(thatType, "That type can not be null");
 
         return isAssignableFromUsingMap(thisType, thatType, new TypeMap());
+    }
+
+    /**
+     * Creates a map with all the type variables used on the specified class as keys, and their actual types
+     * as values.
+     *
+     * <p>All super-classes and super-interfaces of the specified class are also searched. If no actual type is
+     * found for a type variable, then the value for that key will be <code>null</code>.</p>
+     *
+     * <p>Example:</p>
+     *
+     * <pre>
+     *   class Basket&lt;T&gt; {}
+     *   class FruitBasket extends Basket&lt;Fruit&gt; {}
+     * </pre>
+     *
+     * <p>If <code>FruitBasket.class</code> was the parameter, you would get a map with <code>T</code> as key,
+     * and <code>Fruit.class</code> as value. If <code>Basket.class</code> was the parameter then you would get
+     * a map with <code>T</code> as key, and <code>null</code> as value.
+     *
+     *
+     * @param aClass The class to search for type variables on.
+     * @return A map with the type variables and the actual types that was found on the specified class.
+     */
+    public TypeMap mapTypeVariablesToActualTypes(final Class<?> aClass) {
+        final TypeMap typeMap = new TypeMap();
+        mapTypeVariablesToActualTypes(aClass, typeMap);
+
+        return typeMap;
+    }
+
+    /**
+     * Takes a type, and replaces any type variables with an actual type from the type map.
+     *
+     * <p>Supports both parameterized types and wildcards. The replacement is recursive, so if the type
+     * variable is in a nested type then the whole hierarchy of types will be wrapped. If no actual type
+     * is found in the map, then the type variable is kept as is.</p>
+     *
+     * <p>Example:</p>
+     *
+     * <p>If type is <code>List&lt;Basket&lt;T&gt;&gt;</code>, and map contains key <code>T</code> and
+     * value <code>Fruit.class</code>, then the wrapped type will be <code>List&lt;Basket&lt;Fruit&gt;&gt;</code>.</p>
+     *
+     * @param type The type to wrap.
+     * @param typeMap The map containing the actual types to use when replacing type variables.
+     * @return A wrapped type with type variables replaced with actual types from the map.
+     * @see #mapTypeVariablesToActualTypes(Class)
+     */
+    public Type wrapTypeAndReplaceTypeVariables(final Type type, final TypeMap typeMap) {
+        if (isParameterizedType(type)) {
+            final ParameterizedType parameterizedType = getAsParameterizedType(type);
+            final Type[] wrappedArguments = wrapTypeParameters(parameterizedType.getActualTypeArguments(), typeMap);
+            final Class<?> asClass = getAsClass(type);
+
+            return new WrappedParameterizedType(asClass, wrappedArguments);
+        }
+
+        else if (isWildcard(type)) {
+            final WildcardType wildcardType = (WildcardType) type;
+            final Type[] wrappedUpperBounds = wrapTypeParameters(wildcardType.getUpperBounds(), typeMap);
+            final Type[] wrappedLowerBounds = wrapTypeParameters(wildcardType.getLowerBounds(), typeMap);
+
+            return new WrappedWildcardType(wrappedUpperBounds, wrappedLowerBounds);
+        }
+
+        else if (isTypeVariable(type)) {
+            final Type actualType = typeMap.getActualType((TypeVariable<?>) type);
+
+            if (actualType != null) {
+                return actualType;
+            }
+        }
+
+        return type;
     }
 
     private boolean isAssignableFromUsingMap(final Type thisType, final Type thatType, final TypeMap typeMap) {
@@ -286,30 +384,6 @@ public class GenericsHelper {
         return false;
     }
 
-    /**
-     * Checks if the type is a type variable, as opposed to an actual type.
-     *
-     * <p>Example: <code>T</code> would return true, <code>Number</code> would return false.
-     *
-     * @param type The type to check.
-     * @return If the type is a type variable.
-     */
-    public boolean isTypeVariable(final Type type) {
-        return type instanceof TypeVariable<?>;
-    }
-
-    /**
-     * Checks if the type is a wildcard, as opposed to a class or a type with generic parameters.
-     *
-     * <p>Example: <code>? extends Number</code> would return true, <code>Number</code> would return false.
-     *
-     * @param type The type to check.
-     * @return If the type is a wildcard.
-     */
-    public boolean isWildcard(final Type type) {
-        return type instanceof WildcardType;
-    }
-
     private boolean isAssignableFromWildcard(final WildcardType thisWildcard, final Type thatType, final TypeMap typeMap) {
         final Type[] upperBounds = thisWildcard.getUpperBounds();
         final Type[] lowerBounds = thisWildcard.getLowerBounds();
@@ -375,35 +449,6 @@ public class GenericsHelper {
         throw new IllegalArgumentException("Unsupported generic type: " + type);
     }
 
-    /**
-     * Creates a map with all the type variables used on the specified class as keys, and their actual types
-     * as values.
-     *
-     * <p>All super-classes and super-interfaces of the specified class are also searched. If no actual type is
-     * found for a type variable, then the value for that key will be <code>null</code>.</p>
-     *
-     * <p>Example:</p>
-     *
-     * <pre>
-     *   class Basket&lt;T&gt; {}
-     *   class FruitBasket extends Basket&lt;Fruit&gt; {}
-     * </pre>
-     *
-     * <p>If <code>FruitBasket.class</code> was the parameter, you would get a map with <code>T</code> as key,
-     * and <code>Fruit.class</code> as value. If <code>Basket.class</code> was the parameter then you would get
-     * a map with <code>T</code> as key, and <code>null</code> as value.
-     *
-     *
-     * @param aClass The class to search for type variables on.
-     * @return A map with the type variables and the actual types that was found on the specified class.
-     */
-    public TypeMap mapTypeVariablesToActualTypes(final Class<?> aClass) {
-        final TypeMap typeMap = new TypeMap();
-        mapTypeVariablesToActualTypes(aClass, typeMap);
-
-        return typeMap;
-    }
-
     private void mapTypeVariablesToActualTypes(final Type type, final TypeMap typeMap) {
         final Class<?> asClass = getAsClass(type);
 
@@ -443,51 +488,6 @@ public class GenericsHelper {
 
             typeMap.addActualType(typeParameter, actualTypeArgument);
         }
-    }
-
-    /**
-     * Takes a type, and replaces any type variables with an actual type from the type map.
-     *
-     * <p>Supports both parameterized types and wildcards. The replacement is recursive, so if the type
-     * variable is in a nested type then the whole hierarchy of types will be wrapped. If no actual type
-     * is found in the map, then the type variable is kept as is.</p>
-     *
-     * <p>Example:</p>
-     *
-     * <p>If type is <code>List&lt;Basket&lt;T&gt;&gt;</code>, and map contains key <code>T</code> and
-     * value <code>Fruit.class</code>, then the wrapped type will be <code>List&lt;Basket&lt;Fruit&gt;&gt;</code>.</p>
-     *
-     * @param type The type to wrap.
-     * @param typeMap The map containing the actual types to use when replacing type variables.
-     * @return A wrapped type with type variables replaced with actual types from the map.
-     * @see #mapTypeVariablesToActualTypes(Class)
-     */
-    public Type wrapTypeAndReplaceTypeVariables(final Type type, final TypeMap typeMap) {
-        if (isParameterizedType(type)) {
-            final ParameterizedType parameterizedType = getAsParameterizedType(type);
-            final Type[] wrappedArguments = wrapTypeParameters(parameterizedType.getActualTypeArguments(), typeMap);
-            final Class<?> asClass = getAsClass(type);
-
-            return new WrappedParameterizedType(asClass, wrappedArguments);
-        }
-
-        else if (isWildcard(type)) {
-            final WildcardType wildcardType = (WildcardType) type;
-            final Type[] wrappedUpperBounds = wrapTypeParameters(wildcardType.getUpperBounds(), typeMap);
-            final Type[] wrappedLowerBounds = wrapTypeParameters(wildcardType.getLowerBounds(), typeMap);
-
-            return new WrappedWildcardType(wrappedUpperBounds, wrappedLowerBounds);
-        }
-
-        else if (isTypeVariable(type)) {
-            final Type actualType = typeMap.getActualType((TypeVariable<?>) type);
-
-            if (actualType != null) {
-                return actualType;
-            }
-        }
-
-        return type;
     }
 
     private Type[] wrapTypeParameters(final Type[] parameters, final TypeMap typeMap) {
