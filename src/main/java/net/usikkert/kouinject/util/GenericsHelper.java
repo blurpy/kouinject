@@ -110,7 +110,7 @@ public class GenericsHelper {
         }
 
         else if (isParameterizedType(type)) {
-            final ParameterizedType parameterizedType = (ParameterizedType) type;
+            final ParameterizedType parameterizedType = getAsParameterizedType(type);
             return (Class<?>) parameterizedType.getRawType();
         }
 
@@ -412,7 +412,7 @@ public class GenericsHelper {
 
     public Type wrapTypeAndReplaceTypeVariables(final Type type, final TypeMap typeMap) {
         if (isParameterizedType(type)) {
-            final ParameterizedType parameterizedType = (ParameterizedType) type;
+            final ParameterizedType parameterizedType = getAsParameterizedType(type);
             final Type[] wrappedArguments = wrapTypeParameters(parameterizedType.getActualTypeArguments(), typeMap);
             final Class<?> asClass = getAsClass(type);
 

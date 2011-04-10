@@ -47,7 +47,7 @@ public class WrappedParameterizedType implements ParameterizedType {
         Validate.notNull(actualTypeArguments, "Actual type arguments can not be null");
 
         this.rawType = rawType;
-        this.actualTypeArguments = actualTypeArguments;
+        this.actualTypeArguments = actualTypeArguments.clone();
     }
 
     @Override
@@ -102,6 +102,6 @@ public class WrappedParameterizedType implements ParameterizedType {
 
     @Override
     public int hashCode() {
-        return 31 * rawType.hashCode() + actualTypeArguments.hashCode();
+        return 31 * rawType.hashCode() + Arrays.hashCode(actualTypeArguments);
     }
 }

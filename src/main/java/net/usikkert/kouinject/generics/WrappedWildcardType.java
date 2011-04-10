@@ -46,8 +46,8 @@ public class WrappedWildcardType implements WildcardType {
         Validate.notNull(upperBounds, "Upper bounds can not be null");
         Validate.notNull(lowerBounds, "Lower bounds can not be null");
 
-        this.upperBounds = upperBounds;
-        this.lowerBounds = lowerBounds;
+        this.upperBounds = upperBounds.clone();
+        this.lowerBounds = lowerBounds.clone();
     }
 
     @Override
