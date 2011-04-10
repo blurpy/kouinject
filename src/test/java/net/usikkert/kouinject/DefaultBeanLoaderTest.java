@@ -95,6 +95,7 @@ import net.usikkert.kouinject.testbeans.scanned.factory.TapeRecorderBean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder1.Folder1Bean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder2.Folder2Bean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder3.Folder3Bean;
+import net.usikkert.kouinject.testbeans.scanned.generics.stuff.OneStuffBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractBeanImpl;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.interfacebean.InterfaceBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.DevelopmentBean;
@@ -126,7 +127,6 @@ import net.usikkert.kouinject.testbeans.scanned.scope.inheritance.SecondLayerBea
 import net.usikkert.kouinject.testbeans.scanned.scope.inheritance.ThirdLayerBean;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -529,16 +529,32 @@ public class DefaultBeanLoaderTest {
         assertTrue(containsBean(SwingBean.class, beans));
     }
 
-    // TODO
     @Test
-    @Ignore("Need to find a way to compare generic type from object")
     public void getBeansWithObjectAndAnyQualifierShouldReturnGenericBeans() {
         final Collection<Object> beans = beanLoader.getBeans(Object.class, "any");
 
         assertNotNull(beans);
         assertEquals(BeanCount.SCANNED.getNumberOfBeans(), beans.size());
 
-//        assertTrue(containsBean(new TypeLiteral<List<OneStuffBean>>() {}, beans));
+        boolean foundListOfOneStuffBean = false;
+
+        // A bit more complicated than I had hoped for, but "bean instanceof List<OneStuffBean>" does not work.
+        for (final Object bean : beans) {
+            if (bean instanceof List<?>) {
+                final List<?> listBean = (List<?>) bean;
+
+                if (listBean.size() == 1) {
+                    final Object firstListBeanObject = listBean.get(0);
+
+                    if (firstListBeanObject instanceof OneStuffBean) {
+                        foundListOfOneStuffBean = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        assertTrue(foundListOfOneStuffBean);
     }
 
     @Test
