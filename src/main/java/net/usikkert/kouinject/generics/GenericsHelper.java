@@ -170,25 +170,30 @@ public final class GenericsHelper {
     }
 
     /**
-     * TODO
+     * Determines if "this" type is either the same as, or a supertype of, "that" type.
      *
-     * Determines if the class or interface represented by this Class object is either the same as,
-     * or is a superclass or superinterface of, the class or interface represented by the specified Class parameter.
+     * <p>The assignability logic is mostly based on the principle that if it compiles, it's assignable.
+     * Supports the following comparisons:</p>
      *
-     * A generic type A is a subtype of a generic type B if and only if the type parameters are identical
-     * and A's raw type is a subtype of B's raw type.
+     * <ul>
+     *   <li>Class vs class - Class 1 must be assignable from class 2.</li>
+     *   <li>Parameterized type vs parameterized type - The raw class of type 1 must be assignable from the raw
+     *      class of type 2, and all the parameters of both must be equal.</li>
+     *   <li>Wildcard vs wildcard - The bounds of each wildcard must be assignable from each other.</li>
+     *   <li>Wildcard vs class or parameterized type - The bounds of the wildcard must be assignable from the class or type.</li>
+     *   <li>Class vs parameterized type - Class 1 must be assignable from the raw class of type 2.</li>
+     * </ul>
      *
-     * wildcard,
-     * parameterized type
-     * type variable on that
-     * list = list<string>
-     * list<string> != list
-     * super class, super interface
+     * <p>Does not support parameterized type vs class.</p>
      *
+     * <p>Type variables in "that" will be automatically resolved to an actual type, if possible.
+     * "This" as a type variable is not automatically resolved, as it requires knowing the class the type belongs to.
+     * Can be solved with {@link #mapTypeVariablesToActualTypes(Class)} and
+     * {@link #wrapTypeAndReplaceTypeVariables(java.lang.reflect.Type, TypeMap)} before using this method.</p>
      *
-     * @param thisType
-     * @param thatType
-     * @return
+     * @param thisType The left hand side, usually an injection point.
+     * @param thatType The right hand side, usually a bean.
+     * @return If "this" is assignable from "that".
      */
     public static boolean isAssignableFrom(final Type thisType, final Type thatType) {
         Validate.notNull(thisType, "This type can not be null");
@@ -471,14 +476,6 @@ public final class GenericsHelper {
         }
     }
 
-    /**
-     * Type variables can be "passed on" between several layers of interfaces or superclasses,
-     * and that will lead to a type parameter being a type variable instead. This
-     * map will keep a reference to all the type variables and their actual types, so
-     * that they can be resolved later when it's necessary to match type parameters.
-     *
-     * TODO example
-     */
     private static void mapTypeVariablesToActualTypes(final Type thatType, final Class<?> thatClass, final TypeMap typeMap) {
         final ParameterizedType thatParameterizedType = getAsParameterizedType(thatType);
         final Type[] actualTypeArguments = thatParameterizedType.getActualTypeArguments();
