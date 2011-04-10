@@ -44,8 +44,6 @@ import org.junit.Test;
  */
 public class TypeLiteralTest {
 
-    private final GenericsHelper genericsHelper = new GenericsHelper();
-
     @Test(expected = IllegalArgumentException.class)
     public void shouldFailIfUsedWithoutGenericType() {
         new TypeLiteral() {};
@@ -195,8 +193,8 @@ public class TypeLiteralTest {
     @Test
     public void shouldReturnNullForClassWhenUsedWithWildcardType() {
         final TypeLiteral<Provider<? extends HelloBean>> wildcardProvider = new TypeLiteral<Provider<? extends HelloBean>>() {};
-        final Type wildcardType = genericsHelper.getGenericArgumentAsType(wildcardProvider.getGenericType());
-        assertTrue(genericsHelper.isWildcard(wildcardType));
+        final Type wildcardType = GenericsHelper.getGenericArgumentAsType(wildcardProvider.getGenericType());
+        assertTrue(GenericsHelper.isWildcard(wildcardType));
 
         final TypeLiteral<Object> typeLiteral = new TypeLiteral<Object>(wildcardType) {};
         assertEquals(wildcardType, typeLiteral.getGenericType());

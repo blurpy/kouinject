@@ -44,8 +44,6 @@ import org.apache.commons.lang.Validate;
  */
 public abstract class TypeLiteral<T> {
 
-    private final GenericsHelper genericsHelper = new GenericsHelper();
-
     private final Type genericType;
     private final Class<T> genericClass;
 
@@ -58,8 +56,8 @@ public abstract class TypeLiteral<T> {
     protected TypeLiteral() {
         final Type genericSuperclass = getClass().getGenericSuperclass();
 
-        this.genericType = genericsHelper.getGenericArgumentAsType(genericSuperclass);
-        this.genericClass = (Class<T>) genericsHelper.getGenericArgumentAsClass(genericSuperclass);
+        this.genericType = GenericsHelper.getGenericArgumentAsType(genericSuperclass);
+        this.genericClass = (Class<T>) GenericsHelper.getGenericArgumentAsClass(genericSuperclass);
     }
 
     /**
@@ -75,7 +73,7 @@ public abstract class TypeLiteral<T> {
         Validate.notNull(type, "Type can not be null");
 
         this.genericType = type;
-        this.genericClass = (Class<T>) genericsHelper.getAsClassOrNull(type);
+        this.genericClass = (Class<T>) GenericsHelper.getAsClassOrNull(type);
     }
 
     /**

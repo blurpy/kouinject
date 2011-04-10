@@ -67,7 +67,6 @@ import org.junit.Test;
  */
 public class BeanHelperTest {
 
-    private final GenericsHelper genericsHelper = new GenericsHelper();
     private final TypeMap typeMap = new TypeMap();
 
     private BeanHelper beanHelper;
@@ -603,9 +602,9 @@ public class BeanHelperTest {
     @Test
     public void findFieldKeyShouldReplaceTypeVariablesOfNormalBean() throws NoSuchFieldException {
         final Field field = TypeVariableBean.class.getDeclaredField("standaloneT");
-        assertTrue(genericsHelper.isTypeVariable(field.getGenericType()));
+        assertTrue(GenericsHelper.isTypeVariable(field.getGenericType()));
 
-        final TypeMap realTypeMap = genericsHelper.mapTypeVariablesToActualTypes(TypeVariableBeanWithFanta.class);
+        final TypeMap realTypeMap = GenericsHelper.mapTypeVariablesToActualTypes(TypeVariableBeanWithFanta.class);
         final BeanKey fieldKey = beanHelper.findFieldKey(field, realTypeMap);
 
         assertNotNull(fieldKey);
@@ -617,7 +616,7 @@ public class BeanHelperTest {
     public void findFieldKeyShouldReplaceTypeVariablesOfProviderBean() throws NoSuchFieldException {
         final Field field = TypeVariableBean.class.getDeclaredField("providerWithT");
 
-        final TypeMap realTypeMap = genericsHelper.mapTypeVariablesToActualTypes(TypeVariableBeanWithFanta.class);
+        final TypeMap realTypeMap = GenericsHelper.mapTypeVariablesToActualTypes(TypeVariableBeanWithFanta.class);
         final BeanKey fieldKey = beanHelper.findFieldKey(field, realTypeMap);
 
         assertNotNull(fieldKey);
@@ -629,7 +628,7 @@ public class BeanHelperTest {
     public void findFieldKeyShouldReplaceTypeVariablesOfCollectionProviderBean() throws NoSuchFieldException {
         final Field field = TypeVariableBean.class.getDeclaredField("collectionProviderWithT");
 
-        final TypeMap realTypeMap = genericsHelper.mapTypeVariablesToActualTypes(TypeVariableBeanWithFanta.class);
+        final TypeMap realTypeMap = GenericsHelper.mapTypeVariablesToActualTypes(TypeVariableBeanWithFanta.class);
         final BeanKey fieldKey = beanHelper.findFieldKey(field, realTypeMap);
 
         assertNotNull(fieldKey);
@@ -641,7 +640,7 @@ public class BeanHelperTest {
     public void findFieldKeyShouldReplaceTypeVariablesOfCollectionBean() throws NoSuchFieldException {
         final Field field = TypeVariableBean.class.getDeclaredField("collectionWithT");
 
-        final TypeMap realTypeMap = genericsHelper.mapTypeVariablesToActualTypes(TypeVariableBeanWithFanta.class);
+        final TypeMap realTypeMap = GenericsHelper.mapTypeVariablesToActualTypes(TypeVariableBeanWithFanta.class);
         final BeanKey fieldKey = beanHelper.findFieldKey(field, realTypeMap);
 
         assertNotNull(fieldKey);
@@ -653,7 +652,7 @@ public class BeanHelperTest {
     public void findParameterKeysForMethodShouldReplaceTypeVariables() throws NoSuchMethodException {
         final Method method = TypeVariableBean.class.getDeclaredMethod("methodWithT", Object.class);
 
-        final TypeMap realTypeMap = genericsHelper.mapTypeVariablesToActualTypes(TypeVariableBeanWithFanta.class);
+        final TypeMap realTypeMap = GenericsHelper.mapTypeVariablesToActualTypes(TypeVariableBeanWithFanta.class);
         final List<BeanKey> parameterKeys = beanHelper.findParameterKeys(method, realTypeMap);
 
         assertNotNull(parameterKeys);
@@ -667,7 +666,7 @@ public class BeanHelperTest {
     public void findParameterKeysForConstructorShouldReplaceTypeVariables() throws NoSuchMethodException {
         final Constructor<?> constructor = TypeVariableBean.class.getDeclaredConstructor(Object.class);
 
-        final TypeMap realTypeMap = genericsHelper.mapTypeVariablesToActualTypes(TypeVariableBeanWithFanta.class);
+        final TypeMap realTypeMap = GenericsHelper.mapTypeVariablesToActualTypes(TypeVariableBeanWithFanta.class);
         final List<BeanKey> parameterKeys = beanHelper.findParameterKeys(constructor, realTypeMap);
 
         assertNotNull(parameterKeys);
@@ -681,7 +680,7 @@ public class BeanHelperTest {
     public void findFactoryReturnTypeShouldReplaceTypeVariables() throws NoSuchMethodException {
         final Method method = TypeVariableBean.class.getDeclaredMethod("factoryWithT");
 
-        final TypeMap realTypeMap = genericsHelper.mapTypeVariablesToActualTypes(TypeVariableBeanWithFanta.class);
+        final TypeMap realTypeMap = GenericsHelper.mapTypeVariablesToActualTypes(TypeVariableBeanWithFanta.class);
         final BeanKey returnType = beanHelper.findFactoryReturnType(method, realTypeMap);
 
         assertNotNull(returnType);
@@ -767,8 +766,8 @@ public class BeanHelperTest {
         assertNull(beanKey.getBeanClass());
 
         final TypeLiteral<Provider<?>> typeWithWildcard = new TypeLiteral<Provider<?>>() {};
-        final Type wildcard = genericsHelper.getGenericArgumentAsType(typeWithWildcard.getGenericType());
-        assertTrue(genericsHelper.isWildcard(wildcard));
+        final Type wildcard = GenericsHelper.getGenericArgumentAsType(typeWithWildcard.getGenericType());
+        assertTrue(GenericsHelper.isWildcard(wildcard));
 
         assertEquals(wildcard, beanKey.getBeanType());
     }

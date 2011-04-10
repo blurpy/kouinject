@@ -56,7 +56,6 @@ public class AnnotationBasedFactoryPointHandler implements FactoryPointHandler {
     private final AnnotationBasedScopeHandler scopeHandler = new AnnotationBasedScopeHandler();
     private final ReflectionUtils reflectionUtils = new ReflectionUtils();
     private final BeanHelper beanHelper = new BeanHelper();
-    private final GenericsHelper genericsHelper = new GenericsHelper();
 
     /**
      * {@inheritDoc}
@@ -67,7 +66,7 @@ public class AnnotationBasedFactoryPointHandler implements FactoryPointHandler {
         final Class<?> beanClass = factoryBean.getBeanClass();
         Validate.notNull(beanClass, "Factory class can not be null");
 
-        final TypeMap typeMap = genericsHelper.mapTypeVariablesToActualTypes(beanClass);
+        final TypeMap typeMap = GenericsHelper.mapTypeVariablesToActualTypes(beanClass);
         final List<Method> allMethods = reflectionUtils.findAllMethods(beanClass);
         final List<Member> allMembers = reflectionUtils.findAllMembers(beanClass);
 

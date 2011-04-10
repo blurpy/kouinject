@@ -36,8 +36,6 @@ import org.junit.Test;
  */
 public class WrappedWildcardTypeTest {
 
-    private final GenericsHelper genericsHelper = new GenericsHelper();
-
     private final Type listOfWildcard = new TypeLiteral<List<?>>() {}.getGenericType();
     private final Type listOfWildcardWithExtends = new TypeLiteral<List<? extends Integer>>() {}.getGenericType();
     private final Type listOfWildcardWithSuper = new TypeLiteral<List<? super Long>>() {}.getGenericType();
@@ -51,20 +49,20 @@ public class WrappedWildcardTypeTest {
         final Type[] lowerBounds = new Type[0];
 
         final WrappedWildcardType wrappedWildcard = new WrappedWildcardType(upperBounds, lowerBounds);
-        final Type wildcard = genericsHelper.getGenericArgumentAsType(listOfWildcard);
+        final Type wildcard = GenericsHelper.getGenericArgumentAsType(listOfWildcard);
 
-        assertTrue(genericsHelper.isWildcard(wildcard));
-        assertTrue(genericsHelper.isWildcard(wrappedWildcard));
+        assertTrue(GenericsHelper.isWildcard(wildcard));
+        assertTrue(GenericsHelper.isWildcard(wrappedWildcard));
         assertTrue(wildcard.equals(wrappedWildcard));
         assertTrue(wrappedWildcard.equals(wildcard));
 
         assertEquals(wildcard.toString(), wrappedWildcard.toString());
         assertEquals("?", wrappedWildcard.toString());
 
-        assertFalse(wrappedWildcard.equals(genericsHelper.getGenericArgumentAsType(listOfWildcardWithExtends)));
-        assertFalse(wrappedWildcard.equals(genericsHelper.getGenericArgumentAsType(listOfWildcardWithOtherExtends)));
-        assertFalse(wrappedWildcard.equals(genericsHelper.getGenericArgumentAsType(listOfWildcardWithSuper)));
-        assertFalse(wrappedWildcard.equals(genericsHelper.getGenericArgumentAsType(listOfWildcardWithOtherSuper)));
+        assertFalse(wrappedWildcard.equals(GenericsHelper.getGenericArgumentAsType(listOfWildcardWithExtends)));
+        assertFalse(wrappedWildcard.equals(GenericsHelper.getGenericArgumentAsType(listOfWildcardWithOtherExtends)));
+        assertFalse(wrappedWildcard.equals(GenericsHelper.getGenericArgumentAsType(listOfWildcardWithSuper)));
+        assertFalse(wrappedWildcard.equals(GenericsHelper.getGenericArgumentAsType(listOfWildcardWithOtherSuper)));
     }
 
     @Test
@@ -73,19 +71,19 @@ public class WrappedWildcardTypeTest {
         final Type[] lowerBounds = new Type[0];
 
         final WrappedWildcardType wrappedWildcard = new WrappedWildcardType(upperBounds, lowerBounds);
-        final Type wildcard = genericsHelper.getGenericArgumentAsType(listOfWildcardWithExtends);
+        final Type wildcard = GenericsHelper.getGenericArgumentAsType(listOfWildcardWithExtends);
 
-        assertTrue(genericsHelper.isWildcard(wildcard));
+        assertTrue(GenericsHelper.isWildcard(wildcard));
         assertTrue(wildcard.equals(wrappedWildcard));
         assertTrue(wrappedWildcard.equals(wildcard));
 
         assertEquals(wildcard.toString(), wrappedWildcard.toString());
         assertEquals("? extends java.lang.Integer", wrappedWildcard.toString());
 
-        assertFalse(wrappedWildcard.equals(genericsHelper.getGenericArgumentAsType(listOfWildcard)));
-        assertFalse(wrappedWildcard.equals(genericsHelper.getGenericArgumentAsType(listOfWildcardWithOtherExtends)));
-        assertFalse(wrappedWildcard.equals(genericsHelper.getGenericArgumentAsType(listOfWildcardWithSuper)));
-        assertFalse(wrappedWildcard.equals(genericsHelper.getGenericArgumentAsType(listOfWildcardWithOtherSuper)));
+        assertFalse(wrappedWildcard.equals(GenericsHelper.getGenericArgumentAsType(listOfWildcard)));
+        assertFalse(wrappedWildcard.equals(GenericsHelper.getGenericArgumentAsType(listOfWildcardWithOtherExtends)));
+        assertFalse(wrappedWildcard.equals(GenericsHelper.getGenericArgumentAsType(listOfWildcardWithSuper)));
+        assertFalse(wrappedWildcard.equals(GenericsHelper.getGenericArgumentAsType(listOfWildcardWithOtherSuper)));
     }
 
     @Test
@@ -94,18 +92,18 @@ public class WrappedWildcardTypeTest {
         final Type[] lowerBounds = { Long.class };
 
         final WrappedWildcardType wrappedWildcard = new WrappedWildcardType(upperBounds, lowerBounds);
-        final Type wildcard = genericsHelper.getGenericArgumentAsType(listOfWildcardWithSuper);
+        final Type wildcard = GenericsHelper.getGenericArgumentAsType(listOfWildcardWithSuper);
 
-        assertTrue(genericsHelper.isWildcard(wildcard));
+        assertTrue(GenericsHelper.isWildcard(wildcard));
         assertTrue(wildcard.equals(wrappedWildcard));
         assertTrue(wrappedWildcard.equals(wildcard));
 
         assertEquals(wildcard.toString(), wrappedWildcard.toString());
         assertEquals("? super java.lang.Long", wrappedWildcard.toString());
 
-        assertFalse(wrappedWildcard.equals(genericsHelper.getGenericArgumentAsType(listOfWildcardWithExtends)));
-        assertFalse(wrappedWildcard.equals(genericsHelper.getGenericArgumentAsType(listOfWildcardWithOtherExtends)));
-        assertFalse(wrappedWildcard.equals(genericsHelper.getGenericArgumentAsType(listOfWildcard)));
-        assertFalse(wrappedWildcard.equals(genericsHelper.getGenericArgumentAsType(listOfWildcardWithOtherSuper)));
+        assertFalse(wrappedWildcard.equals(GenericsHelper.getGenericArgumentAsType(listOfWildcardWithExtends)));
+        assertFalse(wrappedWildcard.equals(GenericsHelper.getGenericArgumentAsType(listOfWildcardWithOtherExtends)));
+        assertFalse(wrappedWildcard.equals(GenericsHelper.getGenericArgumentAsType(listOfWildcard)));
+        assertFalse(wrappedWildcard.equals(GenericsHelper.getGenericArgumentAsType(listOfWildcardWithOtherSuper)));
     }
 }

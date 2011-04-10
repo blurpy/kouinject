@@ -61,7 +61,6 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
     private final AnnotationBasedScopeHandler scopeHandler = new AnnotationBasedScopeHandler();
     private final ReflectionUtils reflectionUtils = new ReflectionUtils();
     private final BeanHelper beanHelper = new BeanHelper();
-    private final GenericsHelper genericsHelper = new GenericsHelper();
 
     /**
      * {@inheritDoc}
@@ -72,7 +71,7 @@ public class AnnotationBasedBeanDataHandler implements BeanDataHandler {
         final Class<?> beanClass = beanKey.getBeanClass();
         Validate.notNull(beanClass, "Bean class can not be null");
 
-        final TypeMap typeMap = genericsHelper.mapTypeVariablesToActualTypes(beanClass);
+        final TypeMap typeMap = GenericsHelper.mapTypeVariablesToActualTypes(beanClass);
         final List<Method> allMethods = reflectionUtils.findAllMethods(beanClass);
         final List<Member> allMembers = reflectionUtils.findAllMembers(beanClass);
         final List<InjectionPoint> injectionPoints = findInjectionPoints(allMembers, allMethods, typeMap);

@@ -54,7 +54,6 @@ import org.apache.commons.lang.Validate;
 public class BeanHelper {
 
     private final AnnotationBasedQualifierHandler qualifierHandler = new AnnotationBasedQualifierHandler();
-    private final GenericsHelper genericsHelper = new GenericsHelper();
 
     /**
      * Finds the return type of the factory method. The return type includes the qualifier on the method.
@@ -73,7 +72,7 @@ public class BeanHelper {
             throw new UnsupportedOperationException("Can't return void from a factory method: " + factoryMethod);
         }
 
-        final Type wrappedType = genericsHelper.wrapTypeAndReplaceTypeVariables(genericReturnType, typeMap);
+        final Type wrappedType = GenericsHelper.wrapTypeAndReplaceTypeVariables(genericReturnType, typeMap);
         final Annotation[] annotations = factoryMethod.getAnnotations();
         final String qualifier = qualifierHandler.getQualifier(factoryMethod, annotations);
         final TypeLiteral<?> beanType = new InputBasedTypeLiteral(wrappedType);
@@ -130,7 +129,7 @@ public class BeanHelper {
 
         final Class<?> type = field.getType();
         final Type genericType = field.getGenericType();
-        final Type wrappedType = genericsHelper.wrapTypeAndReplaceTypeVariables(genericType, typeMap);
+        final Type wrappedType = GenericsHelper.wrapTypeAndReplaceTypeVariables(genericType, typeMap);
         final Annotation[] annotations = field.getAnnotations();
 
         return findParameterKey(field, type, wrappedType, annotations);
@@ -144,7 +143,7 @@ public class BeanHelper {
         for (int i = 0; i < parameterTypes.length; i++) {
             final Class<?> parameterClass = parameterTypes[i];
             final Type parameterType = genericParameterTypes[i];
-            final Type wrappedType = genericsHelper.wrapTypeAndReplaceTypeVariables(parameterType, typeMap);
+            final Type wrappedType = GenericsHelper.wrapTypeAndReplaceTypeVariables(parameterType, typeMap);
 
             final BeanKey parameter = findParameterKey(parameterOwner, parameterClass, wrappedType, annotations[i]);
             parameters.add(parameter);
@@ -180,8 +179,8 @@ public class BeanHelper {
     }
 
     private TypeLiteral<?> getBeanTypeFromGenericType(final Object parameterOwner, final Type genericParameterType) {
-        if (genericsHelper.isParameterizedType(genericParameterType)) {
-            final Type genericArgumentAsType = genericsHelper.getGenericArgumentAsType(genericParameterType);
+        if (GenericsHelper.isParameterizedType(genericParameterType)) {
+            final Type genericArgumentAsType = GenericsHelper.getGenericArgumentAsType(genericParameterType);
             return new InputBasedTypeLiteral(genericArgumentAsType);
         }
 

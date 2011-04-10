@@ -34,7 +34,11 @@ import org.apache.commons.lang.Validate;
  *
  * @author Christian Ihle
  */
-public class GenericsHelper {
+public final class GenericsHelper {
+
+    private GenericsHelper() {
+        // Static helpers only
+    }
 
     /**
      * Returns the generic argument used on the type, as a type.

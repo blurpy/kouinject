@@ -40,8 +40,6 @@ public class BeanKey {
     /** Value of qualifier used to mark that an injection point accepts beans with any or no qualifier. */
     private static final String ANY_QUALIFIER = "any";
 
-    private final GenericsHelper genericsHelper = new GenericsHelper();
-
     private final Class<?> beanClass;
 
     private final Type beanType;
@@ -201,7 +199,7 @@ public class BeanKey {
             return true;
         }
 
-        if (genericsHelper.isAssignableFrom(beanType, bean.getBeanType())) {
+        if (GenericsHelper.isAssignableFrom(beanType, bean.getBeanType())) {
             if (isTheSameQualifier(qualifier, bean.getQualifier())) {
                 return true;
             }
@@ -233,7 +231,7 @@ public class BeanKey {
             return true;
         }
 
-        return genericsHelper.isAssignableFrom(beanType, factoryCreatedBean.getBeanType())
+        return GenericsHelper.isAssignableFrom(beanType, factoryCreatedBean.getBeanType())
                 && factoryCreatedBean.hasTheAnyQualifier();
     }
 

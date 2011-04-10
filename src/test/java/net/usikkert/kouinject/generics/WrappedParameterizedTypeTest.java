@@ -42,8 +42,6 @@ import org.junit.Test;
  */
 public class WrappedParameterizedTypeTest {
 
-    private final GenericsHelper genericsHelper = new GenericsHelper();
-
     private final Type originalSingleType = new TypeLiteral<AbstractDualVariableBean<VariableOne>>() {}.getGenericType();
     private final Type originalDualType = new TypeLiteral<DualVariableInterfaceBean<VariableOne, VariableTwo>>() {}.getGenericType();
 
@@ -57,8 +55,8 @@ public class WrappedParameterizedTypeTest {
 
         final WrappedParameterizedType wrappedType = new WrappedParameterizedType(rawType, actualTypeArguments);
 
-        assertTrue(genericsHelper.isParameterizedType(originalSingleType));
-        assertTrue(genericsHelper.isParameterizedType(wrappedType));
+        assertTrue(GenericsHelper.isParameterizedType(originalSingleType));
+        assertTrue(GenericsHelper.isParameterizedType(wrappedType));
         assertTrue(originalSingleType.equals(wrappedType));
         assertTrue(wrappedType.equals(originalSingleType));
 
@@ -79,8 +77,8 @@ public class WrappedParameterizedTypeTest {
 
         final WrappedParameterizedType wrappedType = new WrappedParameterizedType(rawType, actualTypeArguments);
 
-        assertTrue(genericsHelper.isParameterizedType(originalDualType));
-        assertTrue(genericsHelper.isParameterizedType(wrappedType));
+        assertTrue(GenericsHelper.isParameterizedType(originalDualType));
+        assertTrue(GenericsHelper.isParameterizedType(wrappedType));
         assertTrue(originalDualType.equals(wrappedType));
         assertTrue(wrappedType.equals(originalDualType));
 
