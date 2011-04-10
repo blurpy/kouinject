@@ -20,7 +20,7 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.util;
+package net.usikkert.kouinject.generics;
 
 import static org.junit.Assert.*;
 
@@ -33,10 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.usikkert.kouinject.generics.TypeLiteral;
-import net.usikkert.kouinject.generics.TypeMap;
-import net.usikkert.kouinject.generics.TypeVariableBean;
-import net.usikkert.kouinject.generics.TypeVariableBeanWithFanta;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.Container;
 import net.usikkert.kouinject.testbeans.scanned.generics.thing.FirstStartThingListenerBean;

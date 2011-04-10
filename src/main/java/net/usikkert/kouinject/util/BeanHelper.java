@@ -39,6 +39,7 @@ import net.usikkert.kouinject.beandata.BeanKey;
 import net.usikkert.kouinject.beandata.CollectionBeanKey;
 import net.usikkert.kouinject.beandata.CollectionProviderBeanKey;
 import net.usikkert.kouinject.beandata.ProviderBeanKey;
+import net.usikkert.kouinject.generics.GenericsHelper;
 import net.usikkert.kouinject.generics.InputBasedTypeLiteral;
 import net.usikkert.kouinject.generics.TypeLiteral;
 import net.usikkert.kouinject.generics.TypeMap;

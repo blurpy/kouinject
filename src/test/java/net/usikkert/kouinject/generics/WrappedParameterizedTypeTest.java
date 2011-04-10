@@ -32,7 +32,6 @@ import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.VariableOn
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.VariableOnePointTwo;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.VariableTwo;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.VariableTwoPointTwo;
-import net.usikkert.kouinject.util.GenericsHelper;
 
 import org.junit.Test;
 

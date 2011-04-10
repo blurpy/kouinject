@@ -32,9 +32,9 @@ import javax.inject.Inject;
 import net.usikkert.kouinject.AnnotationBasedScopeHandler;
 import net.usikkert.kouinject.annotation.Produces;
 import net.usikkert.kouinject.beandata.BeanKey;
+import net.usikkert.kouinject.generics.GenericsHelper;
 import net.usikkert.kouinject.generics.TypeMap;
 import net.usikkert.kouinject.util.BeanHelper;
-import net.usikkert.kouinject.util.GenericsHelper;
 import net.usikkert.kouinject.util.ReflectionUtils;
 
 import org.apache.commons.lang.Validate;

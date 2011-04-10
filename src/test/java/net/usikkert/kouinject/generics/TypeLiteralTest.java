@@ -34,7 +34,6 @@ import java.util.Set;
 import javax.inject.Provider;
 
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
-import net.usikkert.kouinject.util.GenericsHelper;
 
 import org.junit.Test;
 

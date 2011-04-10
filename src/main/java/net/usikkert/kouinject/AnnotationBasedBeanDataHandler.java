@@ -37,9 +37,9 @@ import net.usikkert.kouinject.beandata.ConstructorData;
 import net.usikkert.kouinject.beandata.FieldData;
 import net.usikkert.kouinject.beandata.InjectionPoint;
 import net.usikkert.kouinject.beandata.MethodData;
+import net.usikkert.kouinject.generics.GenericsHelper;
 import net.usikkert.kouinject.generics.TypeMap;
 import net.usikkert.kouinject.util.BeanHelper;
-import net.usikkert.kouinject.util.GenericsHelper;
 import net.usikkert.kouinject.util.ReflectionUtils;
 
 import org.apache.commons.lang.Validate;

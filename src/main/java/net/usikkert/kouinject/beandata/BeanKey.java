@@ -24,8 +24,8 @@ package net.usikkert.kouinject.beandata;
 
 import java.lang.reflect.Type;
 
+import net.usikkert.kouinject.generics.GenericsHelper;
 import net.usikkert.kouinject.generics.TypeLiteral;
-import net.usikkert.kouinject.util.GenericsHelper;
 
 import org.apache.commons.lang.Validate;
 

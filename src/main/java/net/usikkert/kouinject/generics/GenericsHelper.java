@@ -20,21 +20,19 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.util;
+package net.usikkert.kouinject.generics;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 
-import net.usikkert.kouinject.generics.TypeMap;
-import net.usikkert.kouinject.generics.WrappedParameterizedType;
-import net.usikkert.kouinject.generics.WrappedWildcardType;
-
 import org.apache.commons.lang.Validate;
 
 /**
  * Helper class for common operations on generics.
+ *
+ * TODO static?
  *
  * @author Christian Ihle
  */
@@ -153,6 +151,13 @@ public class GenericsHelper {
      *
      * A generic type A is a subtype of a generic type B if and only if the type parameters are identical
      * and A's raw type is a subtype of B's raw type.
+     *
+     * wildcard,
+     * parameterized type
+     * type variable on that
+     * list = list<string>
+     * list<string> != list
+     * super class, super interface
      *
      *
      * @param thisType

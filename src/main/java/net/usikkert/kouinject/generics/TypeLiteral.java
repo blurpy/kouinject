@@ -24,8 +24,6 @@ package net.usikkert.kouinject.generics;
 
 import java.lang.reflect.Type;
 
-import net.usikkert.kouinject.util.GenericsHelper;
-
 import org.apache.commons.lang.Validate;
 
 /**
