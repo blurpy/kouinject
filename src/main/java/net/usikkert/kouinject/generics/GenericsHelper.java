@@ -281,12 +281,9 @@ public final class GenericsHelper {
             return true;
         }
 
+        // To support wildcards in providers and collections
         if (isWildcard(thisType)) {
             return isAssignableFromWildcard((WildcardType) thisType, thatType, typeMap);
-        }
-
-        if (isWildcard(thatType)) {
-            return false;
         }
 
         final Class<?> thisClass = getAsClassOrNull(thisType);
