@@ -29,6 +29,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Provider;
+
 import net.usikkert.kouinject.generics.TypeLiteral;
 import net.usikkert.kouinject.testbeans.scanned.generics.Container;
 import net.usikkert.kouinject.testbeans.scanned.generics.collection.CollectionFactoryBean;
@@ -432,6 +434,25 @@ public class GenericBeanInjectionTest {
 
         final Fanta t = fantaBottle.getT();
         assertNotNull(t);
+
+        final Provider<Fanta> providerT = fantaBottle.getProviderT();
+        assertNotNull(providerT);
+        final Fanta providerFanta = providerT.get();
+        assertNotNull(providerFanta);
+
+        final Collection<Fanta> collectionT = fantaBottle.getCollectionT();
+        assertNotNull(collectionT);
+        assertEquals(1, collectionT.size());
+        final Fanta collectionTFanta = collectionT.iterator().next();
+        assertNotNull(collectionTFanta);
+
+        final CollectionProvider<Fanta> collectionProviderT = fantaBottle.getCollectionProviderT();
+        assertNotNull(collectionProviderT);
+        final Collection<Fanta> collectionProviderTFantaCollection = collectionProviderT.get();
+        assertNotNull(collectionProviderTFantaCollection);
+        assertEquals(1, collectionProviderTFantaCollection.size());
+        final Fanta collectionProviderTFantaCollectionFanta = collectionProviderTFantaCollection.iterator().next();
+        assertNotNull(collectionProviderTFantaCollectionFanta);
 
         final Fanta methodT = fantaBottle.getMethodT();
         assertNotNull(methodT);

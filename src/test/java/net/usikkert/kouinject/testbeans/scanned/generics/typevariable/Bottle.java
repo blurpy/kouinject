@@ -22,8 +22,12 @@
 
 package net.usikkert.kouinject.testbeans.scanned.generics.typevariable;
 
-import javax.inject.Inject;
+import java.util.Collection;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
+
+import net.usikkert.kouinject.CollectionProvider;
 import net.usikkert.kouinject.annotation.Produces;
 import net.usikkert.kouinject.testbeans.scanned.generics.Container;
 
@@ -36,6 +40,15 @@ public class Bottle<T extends Liquid> {
 
     @Inject
     private T t;
+
+    @Inject
+    private Provider<T> providerT;
+
+    @Inject
+    private Collection<T> collectionT;
+
+    @Inject
+    private CollectionProvider<T> collectionProviderT;
 
     private T methodT;
 
@@ -64,5 +77,17 @@ public class Bottle<T extends Liquid> {
     @Produces
     public LiquidDualVariableBean<T> createDualVariableBean() {
         return new LiquidDualVariableBean<T>(t);
+    }
+
+    public Provider<T> getProviderT() {
+        return providerT;
+    }
+
+    public Collection<T> getCollectionT() {
+        return collectionT;
+    }
+
+    public CollectionProvider<T> getCollectionProviderT() {
+        return collectionProviderT;
     }
 }

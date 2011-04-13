@@ -523,15 +523,28 @@ public class AnnotationBasedBeanDataHandlerTest {
     }
 
     @Test
-    public void getBeanDataShouldReplaceTypeVariablesInFields() {
+    public void getBeanDataShouldReplaceTypeVariablesInFieldsForRegularAndProviderAndCollectionAndCollectionProvider() {
         final BeanData beanData = handler.getBeanData(new BeanKey(FantaBottle.class), true);
         assertNotNull(beanData);
 
         final List<FieldData> fields = beanData.getFields();
-        assertEquals(1, fields.size());
+        assertEquals(4, fields.size());
 
-        final FieldData fieldData = fields.get(0);
-        assertTrue(containsDependency(fieldData.getDependencies(), Fanta.class));
+        final FieldData fantaField = fields.get(0);
+        assertTrue(containsDependency(fantaField.getDependencies(), Fanta.class));
+        assertTrue(fantaField.getDependency().isBeanForCreation());
+
+        final FieldData fantaProviderField = fields.get(1);
+        assertTrue(containsDependency(fantaProviderField.getDependencies(), Fanta.class));
+        assertTrue(fantaProviderField.getDependency().isProvider());
+
+        final FieldData fantaCollectionField = fields.get(2);
+        assertTrue(containsDependency(fantaCollectionField.getDependencies(), Fanta.class));
+        assertTrue(fantaCollectionField.getDependency().isCollection());
+
+        final FieldData fantaCollectionProviderField = fields.get(3);
+        assertTrue(containsDependency(fantaCollectionProviderField.getDependencies(), Fanta.class));
+        assertTrue(fantaCollectionProviderField.getDependency().isCollectionProvider());
     }
 
     @Test
