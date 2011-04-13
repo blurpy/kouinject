@@ -43,10 +43,14 @@ import net.usikkert.kouinject.testbeans.scanned.generics.thing.StopThing;
 import net.usikkert.kouinject.testbeans.scanned.generics.thing.StopThingListenerBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.thing.ThingListenerBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.AbstractDualVariableBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Box;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.ConcreteDualVariableBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.DualVariableInterfaceBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Fanta;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Pepsi;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Pizza;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Shoe;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.ShoeBoxBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.VariableOne;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.VariableOnePointTwo;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.VariableTwo;
@@ -866,6 +870,32 @@ public class GenericsHelperTest {
 //        final Object thatBean = null;
 //        final List<?> thisBean = thatBean; // compiler error
         assertFalse(GenericsHelper.isAssignableFrom(thatType, Object.class));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeTrueWhenMatchingWildcardWithResolvedTypeVariableOfCorrectType() {
+        final Type thisType = new TypeLiteral<Box<? extends Shoe>>() {}.getGenericType();
+
+//        final ShoeBoxBean thatBean = null;
+//        final Box<? extends Shoe> thisBean = thatBean; // ok
+        assertTrue(GenericsHelper.isAssignableFrom(thisType, ShoeBoxBean.class));
+
+//        final Box<? extends Shoe> thatBean = null;
+//        final ShoeBoxBean thisBean = thatBean; // compile error
+        assertFalse(GenericsHelper.isAssignableFrom(ShoeBoxBean.class, thisType));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeFalseWhenMatchingWildcardWithResolvedTypeVariableOfWrongType() {
+        final Type thisType = new TypeLiteral<Box<? extends Pizza>>() {}.getGenericType();
+
+//        final ShoeBoxBean thatBean = null;
+//        final Box<? extends Pizza> thisBean = thatBean; // compiler error
+        assertFalse(GenericsHelper.isAssignableFrom(thisType, ShoeBoxBean.class));
+
+//        final Box<? extends Pizza> thatBean = null;
+//        final ShoeBoxBean thisBean = thatBean; // compile error
+        assertFalse(GenericsHelper.isAssignableFrom(ShoeBoxBean.class, thisType));
     }
 
     @Test

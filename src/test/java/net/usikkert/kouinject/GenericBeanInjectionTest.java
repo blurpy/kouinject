@@ -53,11 +53,18 @@ import net.usikkert.kouinject.testbeans.scanned.generics.thing.ThingListenerBean
 import net.usikkert.kouinject.testbeans.scanned.generics.thing.ThingManagerBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.AbstractDualVariableBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Bottle;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Box;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.CardboardBox;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.ClosetBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.ConcreteDualVariableBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.DualVariableInterfaceBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Fanta;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.FantaBottle;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.LiquidDualVariableBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Pizza;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.PizzaBoxBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Shoe;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.ShoeBoxBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.VariableOnePointTwo;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.VariableTwo;
 import net.usikkert.kouinject.testbeans.scanned.generics.wildcard.RubberWheel;
@@ -492,6 +499,47 @@ public class GenericBeanInjectionTest {
                  injector.getBean(new TypeLiteral<DualVariableInterfaceBean<Fanta, VariableTwo>>() {});
         assertNotNull(bean3);
         assertEquals(LiquidDualVariableBean.class, bean3.getClass());
+    }
+
+    @Test
+    public void checkClosetBean() {
+        final ClosetBean bean = injector.getBean(ClosetBean.class);
+
+        final Box<? extends Pizza> pizzaBox = bean.getPizzaBox();
+        assertNotNull(pizzaBox);
+        assertEquals(PizzaBoxBean.class, pizzaBox.getClass());
+
+        final Box<? extends Shoe> shoeBox = bean.getShoeBox();
+        assertNotNull(shoeBox);
+        assertEquals(ShoeBoxBean.class, shoeBox.getClass());
+    }
+
+    @Test
+    public void checkPizzaBoxBean() {
+        final PizzaBoxBean pizzaBoxBean = injector.getBean(PizzaBoxBean.class);
+        assertNotNull(pizzaBoxBean);
+
+        final CardboardBox<Pizza> cardboardBox = injector.getBean(new TypeLiteral<CardboardBox<Pizza>>() {});
+        assertNotNull(cardboardBox);
+        assertEquals(PizzaBoxBean.class, cardboardBox.getClass());
+
+        final Box<Pizza> box = injector.getBean(new TypeLiteral<Box<Pizza>>() {});
+        assertNotNull(box);
+        assertEquals(PizzaBoxBean.class, box.getClass());
+    }
+
+    @Test
+    public void checkShoeBoxBean() {
+        final ShoeBoxBean shoeBoxBean = injector.getBean(ShoeBoxBean.class);
+        assertNotNull(shoeBoxBean);
+
+        final CardboardBox<Shoe> cardboardBox = injector.getBean(new TypeLiteral<CardboardBox<Shoe>>() {});
+        assertNotNull(cardboardBox);
+        assertEquals(ShoeBoxBean.class, cardboardBox.getClass());
+
+        final Box<Shoe> box = injector.getBean(new TypeLiteral<Box<Shoe>>() {});
+        assertNotNull(box);
+        assertEquals(ShoeBoxBean.class, box.getClass());
     }
 
     private boolean containsBean(final Collection<?> beans, final Class<?> beanClass) {

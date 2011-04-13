@@ -20,34 +20,14 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.generics.typevariable;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * A box made of cardboard.
  *
  * @author Christian Ihle
+ * @param <T> The type of cardboard box this is.
  */
-public enum BeanCount {
+public abstract class CardboardBox<T> implements Box<T> {
 
-    // All components
-    ALL(131),
-
-    // All components and those created by factories
-    SCANNED(132),
-
-    // All components and those created by factories, without a qualifier
-    SCANNED_WITHOUT_QUALIFIER(103),
-
-    // All from SCANNED, plus those with profiles that can be activated at the same time
-    SCANNED_WITH_PROFILED(141);
-
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
-    }
-
-    public int getNumberOfBeans() {
-        return numberOfBeans;
-    }
 }

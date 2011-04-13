@@ -20,34 +20,31 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.generics.typevariable;
+
+import javax.inject.Inject;
+
+import net.usikkert.kouinject.annotation.Component;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * A closet, for storing boxes. Tests comparing wildcards with type variables.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+@Component
+public class ClosetBean {
 
-    // All components
-    ALL(131),
+    @Inject
+    private Box<? extends Shoe> shoeBox;
 
-    // All components and those created by factories
-    SCANNED(132),
+    @Inject
+    private Box<? extends Pizza> pizzaBox;
 
-    // All components and those created by factories, without a qualifier
-    SCANNED_WITHOUT_QUALIFIER(103),
-
-    // All from SCANNED, plus those with profiles that can be activated at the same time
-    SCANNED_WITH_PROFILED(141);
-
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
+    public Box<? extends Shoe> getShoeBox() {
+        return shoeBox;
     }
 
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    public Box<? extends Pizza> getPizzaBox() {
+        return pizzaBox;
     }
 }

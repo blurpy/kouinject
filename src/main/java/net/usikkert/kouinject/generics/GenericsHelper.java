@@ -289,8 +289,12 @@ public final class GenericsHelper {
             return false;
         }
 
-        final Class<?> thisClass = getAsClass(thisType);
-        final Class<?> thatClass = getAsClass(thatType);
+        final Class<?> thisClass = getAsClassOrNull(thisType);
+        final Class<?> thatClass = getAsClassOrNull(thatType);
+
+        if (thisClass == null || thatClass == null) {
+            return false;
+        }
 
         if (thisClass.isAssignableFrom(thatClass)) {
             if (isClass(thisType) && isClass(thatType)) {
