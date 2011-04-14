@@ -60,7 +60,9 @@ import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.ConcreteDu
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.DualVariableInterfaceBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Fanta;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.FantaBottle;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Liquid;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.LiquidDualVariableBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Pepsi;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Pizza;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.PizzaBoxBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Shoe;
@@ -70,6 +72,7 @@ import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.VariableTw
 import net.usikkert.kouinject.testbeans.scanned.generics.wildcard.RubberWheel;
 import net.usikkert.kouinject.testbeans.scanned.generics.wildcard.Wheel;
 import net.usikkert.kouinject.testbeans.scanned.generics.wildcard.WildcardFactoryBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.wildcard.WildcardInjectionBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.ChildBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.MiddleBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.SuperBean;
@@ -540,6 +543,30 @@ public class GenericBeanInjectionTest {
         final Box<Shoe> box = injector.getBean(new TypeLiteral<Box<Shoe>>() {});
         assertNotNull(box);
         assertEquals(ShoeBoxBean.class, box.getClass());
+    }
+
+    @Test
+    public void checkWildcardInjectionBean() {
+        final WildcardInjectionBean bean = injector.getBean(WildcardInjectionBean.class);
+
+        final Provider<? extends Fanta> fantaProvider = bean.getFantaProvider();
+        assertNotNull(fantaProvider);
+        final Fanta fanta = fantaProvider.get();
+        assertNotNull(fanta);
+
+        final Collection<? extends Liquid> liquidCollection = bean.getLiquidCollection();
+        assertNotNull(liquidCollection);
+        assertEquals(2, liquidCollection.size());
+        assertTrue(containsBean(liquidCollection, Fanta.class));
+        assertTrue(containsBean(liquidCollection, Pepsi.class));
+
+        final CollectionProvider<? extends Liquid> liquidCollectionProvider = bean.getLiquidCollectionProvider();
+        assertNotNull(liquidCollectionProvider);
+        final Collection<? extends Liquid> liquids = liquidCollectionProvider.get();
+        assertNotNull(liquids);
+        assertEquals(2, liquids.size());
+        assertTrue(containsBean(liquids, Fanta.class));
+        assertTrue(containsBean(liquids, Pepsi.class));
     }
 
     private boolean containsBean(final Collection<?> beans, final Class<?> beanClass) {

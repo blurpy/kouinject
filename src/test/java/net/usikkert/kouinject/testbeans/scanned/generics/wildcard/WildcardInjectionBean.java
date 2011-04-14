@@ -20,16 +20,44 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans.scanned.generics.typevariable;
+package net.usikkert.kouinject.testbeans.scanned.generics.wildcard;
 
+import java.util.Collection;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+
+import net.usikkert.kouinject.CollectionProvider;
 import net.usikkert.kouinject.annotation.Component;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Fanta;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Liquid;
 
 /**
- * The liquid Pepsi.
+ * Testing injections of providers and collections with wildcards.
  *
  * @author Christian Ihle
  */
 @Component
-public class Pepsi implements Liquid {
+public class WildcardInjectionBean {
 
+    @Inject
+    private Provider<? extends Fanta> fantaProvider;
+
+    @Inject
+    private Collection<? extends Liquid> liquidCollection;
+
+    @Inject
+    private CollectionProvider<? extends Liquid> liquidCollectionProvider;
+
+    public Provider<? extends Fanta> getFantaProvider() {
+        return fantaProvider;
+    }
+
+    public Collection<? extends Liquid> getLiquidCollection() {
+        return liquidCollection;
+    }
+
+    public CollectionProvider<? extends Liquid> getLiquidCollectionProvider() {
+        return liquidCollectionProvider;
+    }
 }
