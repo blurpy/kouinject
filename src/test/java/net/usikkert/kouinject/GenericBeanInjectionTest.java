@@ -36,6 +36,15 @@ import net.usikkert.kouinject.testbeans.scanned.generics.Container;
 import net.usikkert.kouinject.testbeans.scanned.generics.collection.CollectionFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.collection.CollectionUsingBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.collection.Stone;
+import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.BlogDaoBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.Dao;
+import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.DaoControllerBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.DatabaseDriver;
+import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.ItemDaoBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.MySqlDriver;
+import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.OracleDriver;
+import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.OrderDaoBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.PersonDaoBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.stuff.ListOfStuffBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.stuff.ListOfStuffFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.stuff.OneStuffBean;
@@ -567,6 +576,42 @@ public class GenericBeanInjectionTest {
         assertEquals(2, liquids.size());
         assertTrue(containsBean(liquids, Fanta.class));
         assertTrue(containsBean(liquids, Pepsi.class));
+    }
+
+    @Test
+    public void checkDaoControllerBean() {
+        final DaoControllerBean bean = injector.getBean(DaoControllerBean.class);
+
+        final Dao<OracleDriver> blogDao = bean.getBlogDao();
+        assertNotNull(blogDao);
+        assertEquals(BlogDaoBean.class, blogDao.getClass());
+
+        final Dao<MySqlDriver> itemDao = bean.getItemDao();
+        assertNotNull(itemDao);
+        assertEquals(ItemDaoBean.class, itemDao.getClass());
+
+        final Dao<MySqlDriver> orderDao = bean.getOrderDao();
+        assertNotNull(orderDao);
+        assertEquals(OrderDaoBean.class, orderDao.getClass());
+
+        final Dao<MySqlDriver> personDao = bean.getPersonDao();
+        assertNotNull(personDao);
+        assertEquals(PersonDaoBean.class, personDao.getClass());
+
+        final Collection<Dao<MySqlDriver>> mySqlDaos = bean.getMySqlDaos();
+        assertNotNull(mySqlDaos);
+        assertEquals(3, mySqlDaos.size());
+        assertTrue(containsBean(mySqlDaos, ItemDaoBean.class));
+        assertTrue(containsBean(mySqlDaos, OrderDaoBean.class));
+        assertTrue(containsBean(mySqlDaos, PersonDaoBean.class));
+
+        final Collection<Dao<? extends DatabaseDriver>> allDaos = bean.getAllDaos();
+        assertNotNull(allDaos);
+        assertEquals(4, allDaos.size());
+        assertTrue(containsBean(allDaos, ItemDaoBean.class));
+        assertTrue(containsBean(allDaos, OrderDaoBean.class));
+        assertTrue(containsBean(allDaos, PersonDaoBean.class));
+        assertTrue(containsBean(allDaos, BlogDaoBean.class));
     }
 
     private boolean containsBean(final Collection<?> beans, final Class<?> beanClass) {
