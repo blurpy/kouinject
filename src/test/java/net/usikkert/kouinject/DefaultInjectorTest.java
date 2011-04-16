@@ -35,6 +35,11 @@ import net.usikkert.kouinject.testbeans.notscanned.TheInterfaceUser;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.HungryBean;
 import net.usikkert.kouinject.testbeans.scanned.factory.SimpleFactoryCreatedBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.Dao;
+import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.ItemDaoBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.MySqlDriver;
+import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.OrderDaoBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.PersonDaoBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.stuff.OneStuffBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.ProfileABean;
 import net.usikkert.kouinject.testbeans.scanned.profile.ProfileACBean;
@@ -136,6 +141,13 @@ public class DefaultInjectorTest {
     }
 
     @Test
+    public void getBeanShouldFindGenericBeanWithQualifier() {
+        final Dao<MySqlDriver> bean = injector.getBean(new TypeLiteral<Dao<MySqlDriver>>() {}, "item");
+        assertNotNull(bean);
+        assertEquals(ItemDaoBean.class, bean.getClass());
+    }
+
+    @Test
     public void getBeansShouldFindGenericBean() {
         final Collection<List<OneStuffBean>> beans = injector.getBeans(new TypeLiteral<List<OneStuffBean>>() {});
         assertNotNull(beans);
@@ -147,6 +159,17 @@ public class DefaultInjectorTest {
 
         final OneStuffBean oneStuffBean = oneStuffBeans.get(0);
         assertNotNull(oneStuffBean);
+    }
+
+    @Test
+    public void getBeansShouldFindGenericBeansWithQualifier() {
+        final Collection<Dao<MySqlDriver>> beans = injector.getBeans(new TypeLiteral<Dao<MySqlDriver>>() {}, "any");
+        assertNotNull(beans);
+        assertEquals(3, beans.size());
+
+        assertTrue(containsBean(beans, ItemDaoBean.class));
+        assertTrue(containsBean(beans, PersonDaoBean.class));
+        assertTrue(containsBean(beans, OrderDaoBean.class));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -182,5 +205,15 @@ public class DefaultInjectorTest {
 
         assertNotNull(beans);
         assertEquals(BeanCount.SCANNED_WITH_PROFILED.getNumberOfBeans(), beans.size());
+    }
+
+    private boolean containsBean(final Collection<?> collection, final Class<?> beanClass) {
+        for (final Object object : collection) {
+            if (object.getClass().equals(beanClass)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
