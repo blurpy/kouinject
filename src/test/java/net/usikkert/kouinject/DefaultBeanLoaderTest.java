@@ -38,6 +38,7 @@ import javax.inject.Provider;
 import net.usikkert.kouinject.beandata.BeanKey;
 import net.usikkert.kouinject.factory.AnnotationBasedFactoryPointHandler;
 import net.usikkert.kouinject.factory.FactoryPointHandler;
+import net.usikkert.kouinject.generics.TypeLiteral;
 import net.usikkert.kouinject.profile.AnnotationBasedProfileHandler;
 import net.usikkert.kouinject.profile.InputBasedProfileLocator;
 import net.usikkert.kouinject.profile.ProfileHandler;
@@ -95,6 +96,10 @@ import net.usikkert.kouinject.testbeans.scanned.factory.TapeRecorderBean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder1.Folder1Bean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder2.Folder2Bean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder3.Folder3Bean;
+import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.Dao;
+import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.ItemDaoBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.MySqlDriver;
+import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.OrderDaoBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.stuff.OneStuffBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractBeanImpl;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.interfacebean.InterfaceBean;
@@ -1335,6 +1340,62 @@ public class DefaultBeanLoaderTest {
         final LocalArchiveBean localArchiveBean = loader.getBean(LocalArchiveBean.class);
         assertNotNull(localArchiveBean);
         assertEquals(RemoteArchiveBean.class, localArchiveBean.getClass());
+    }
+
+    @Test
+    public void getBeanWithGenericsShouldHandleSingletonScopeCorrect() {
+        final Dao<MySqlDriver> bean1 = beanLoader.getBean(new TypeLiteral<Dao<MySqlDriver>>() {}, "order");
+        assertNotNull(bean1);
+
+        final Dao<MySqlDriver> bean2 = beanLoader.getBean(new TypeLiteral<Dao<MySqlDriver>>() {}, "order");
+        assertNotNull(bean2);
+
+        assertSame(bean1, bean2);
+    }
+
+    @Test
+    public void getBeansWithGenericsShouldHandleSingletonScopeCorrect() {
+        final Collection<Dao<MySqlDriver>> collection1 = beanLoader.getBeans(new TypeLiteral<Dao<MySqlDriver>>() {}, "any");
+        assertNotNull(collection1);
+
+        final Collection<Dao<MySqlDriver>> collection2 = beanLoader.getBeans(new TypeLiteral<Dao<MySqlDriver>>() {}, "any");
+        assertNotNull(collection2);
+
+        final OrderDaoBean bean1 = getBean(OrderDaoBean.class, collection1);
+        assertNotNull(bean1);
+
+        final OrderDaoBean bean2 = getBean(OrderDaoBean.class, collection2);
+        assertNotNull(bean2);
+
+        assertSame(bean1, bean2);
+    }
+
+    @Test
+    public void getBeanWithGenericsShouldHandlePrototypeScopeCorrect() {
+        final Dao<MySqlDriver> bean1 = beanLoader.getBean(new TypeLiteral<Dao<MySqlDriver>>() {}, "item");
+        assertNotNull(bean1);
+
+        final Dao<MySqlDriver> bean2 = beanLoader.getBean(new TypeLiteral<Dao<MySqlDriver>>() {}, "item");
+        assertNotNull(bean2);
+
+        assertNotSame(bean1, bean2);
+    }
+
+    @Test
+    public void getBeansWithGenericsShouldHandlePrototypeScopeCorrect() {
+        final Collection<Dao<MySqlDriver>> collection1 = beanLoader.getBeans(new TypeLiteral<Dao<MySqlDriver>>() {}, "any");
+        assertNotNull(collection1);
+
+        final Collection<Dao<MySqlDriver>> collection2 = beanLoader.getBeans(new TypeLiteral<Dao<MySqlDriver>>() {}, "any");
+        assertNotNull(collection2);
+
+        final ItemDaoBean bean1 = getBean(ItemDaoBean.class, collection1);
+        assertNotNull(bean1);
+
+        final ItemDaoBean bean2 = getBean(ItemDaoBean.class, collection2);
+        assertNotNull(bean2);
+
+        assertNotSame(bean1, bean2);
     }
 
     private DefaultBeanLoader createBeanLoaderWithBasePackages(final String... basePackages) {
