@@ -97,9 +97,15 @@ import net.usikkert.kouinject.testbeans.scanned.folder.folder1.Folder1Bean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder2.Folder2Bean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder3.Folder3Bean;
 import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.Dao;
+import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.DaoControllerBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.DatabaseDriver;
 import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.ItemDaoBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.MySqlDriver;
 import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.OrderDaoBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.factory.Genre;
+import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.factory.Horror;
+import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.factory.Movie;
+import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.factory.MovieCollectionBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.stuff.OneStuffBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractBeanImpl;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.interfacebean.InterfaceBean;
@@ -1371,6 +1377,24 @@ public class DefaultBeanLoaderTest {
     }
 
     @Test
+    public void getBeanWithGenericsShouldHandleSingletonScopeCorrectWhenUsingBothQualifierAndAny() {
+        final DaoControllerBean bean = beanLoader.getBean(DaoControllerBean.class);
+        assertNotNull(bean);
+
+        final Dao<MySqlDriver> orderDao = bean.getOrderDao();
+        assertNotNull(orderDao);
+        assertEquals(OrderDaoBean.class, orderDao.getClass());
+
+        final Collection<Dao<? extends DatabaseDriver>> allDaos = bean.getAllDaos();
+        assertNotNull(allDaos);
+
+        final OrderDaoBean orderDaoFromCollection = getBean(OrderDaoBean.class, allDaos);
+        assertNotNull(orderDaoFromCollection);
+
+        assertSame(orderDao, orderDaoFromCollection);
+    }
+
+    @Test
     public void getBeanWithGenericsShouldHandlePrototypeScopeCorrect() {
         final Dao<MySqlDriver> bean1 = beanLoader.getBean(new TypeLiteral<Dao<MySqlDriver>>() {}, "item");
         assertNotNull(bean1);
@@ -1396,6 +1420,90 @@ public class DefaultBeanLoaderTest {
         assertNotNull(bean2);
 
         assertNotSame(bean1, bean2);
+    }
+
+    @Test
+    public void getBeanWithGenericsFromFactoryShouldHandleSingletonScopeCorrect() {
+        final Movie<Horror> bean1 = beanLoader.getBean(new TypeLiteral<Movie<Horror>>() {}, "ScaryMovie");
+        assertNotNull(bean1);
+
+        final Movie<Horror> bean2 = beanLoader.getBean(new TypeLiteral<Movie<Horror>>() {}, "ScaryMovie");
+        assertNotNull(bean2);
+
+        assertSame(bean1, bean2);
+    }
+
+    @Test
+    public void getBeansWithGenericsFromFactoryShouldHandleSingletonScopeCorrect() {
+        final Collection<Movie<Horror>> collection1 = beanLoader.getBeans(new TypeLiteral<Movie<Horror>>() {}, "any");
+        assertNotNull(collection1);
+
+        final Collection<Movie<Horror>> collection2 = beanLoader.getBeans(new TypeLiteral<Movie<Horror>>() {}, "any");
+        assertNotNull(collection2);
+
+        final Movie<?> bean1 = getMovie("Scary Movie", collection1);
+        assertNotNull(bean1);
+
+        final Movie<?> bean2 = getMovie("Scary Movie", collection2);
+        assertNotNull(bean2);
+
+        assertSame(bean1, bean2);
+    }
+
+    @Test
+    public void getBeanWithGenericsFromFactoryShouldHandleSingletonScopeCorrectWhenUsingBothQualifierAndAny() {
+        final MovieCollectionBean bean = beanLoader.getBean(MovieCollectionBean.class);
+        assertNotNull(bean);
+
+        final Movie<Horror> scaryMovie = bean.getScaryMovie();
+        assertNotNull(scaryMovie);
+        assertEquals("Scary Movie", scaryMovie.getTitle());
+
+        final Collection<Movie<? extends Genre>> allMovies = bean.getAllMovies();
+        assertNotNull(allMovies);
+
+        final Movie<?> scaryMovieFromCollection = getMovie("Scary Movie", allMovies);
+        assertNotNull(scaryMovieFromCollection);
+
+        assertSame(scaryMovie, scaryMovieFromCollection);
+    }
+
+    @Test
+    public void getBeanWithGenericsFromFactoryShouldHandlePrototypeScopeCorrect() {
+        final Movie<Horror> bean1 = beanLoader.getBean(new TypeLiteral<Movie<Horror>>() {}, "Scream");
+        assertNotNull(bean1);
+
+        final Movie<Horror> bean2 = beanLoader.getBean(new TypeLiteral<Movie<Horror>>() {}, "Scream");
+        assertNotNull(bean2);
+
+        assertNotSame(bean1, bean2);
+    }
+
+    @Test
+    public void getBeansWithGenericsFromFactoryShouldHandlePrototypeScopeCorrect() {
+        final Collection<Movie<Horror>> collection1 = beanLoader.getBeans(new TypeLiteral<Movie<Horror>>() {}, "any");
+        assertNotNull(collection1);
+
+        final Collection<Movie<Horror>> collection2 = beanLoader.getBeans(new TypeLiteral<Movie<Horror>>() {}, "any");
+        assertNotNull(collection2);
+
+        final Movie<?> bean1 = getMovie("Scream", collection1);
+        assertNotNull(bean1);
+
+        final Movie<?> bean2 = getMovie("Scream", collection2);
+        assertNotNull(bean2);
+
+        assertNotSame(bean1, bean2);
+    }
+
+    private Movie<?> getMovie(final String movieTitle, final Collection<? extends Movie<?>> movies) {
+        for (final Movie<?> movie : movies) {
+            if (movie.getTitle().equals(movieTitle)) {
+                return movie;
+            }
+        }
+
+        return null;
     }
 
     private DefaultBeanLoader createBeanLoaderWithBasePackages(final String... basePackages) {
