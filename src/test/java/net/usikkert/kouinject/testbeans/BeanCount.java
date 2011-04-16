@@ -30,16 +30,16 @@ package net.usikkert.kouinject.testbeans;
 public enum BeanCount {
 
     // All components
-    ALL(138),
+    ALL(140),
 
     // All components and those created by factories
-    SCANNED(139),
+    SCANNED(144),
 
     // All components and those created by factories, without a qualifier
-    SCANNED_WITHOUT_QUALIFIER(106),
+    SCANNED_WITHOUT_QUALIFIER(108),
 
     // All from SCANNED, plus those with profiles that can be activated at the same time
-    SCANNED_WITH_PROFILED(148);
+    SCANNED_WITH_PROFILED(153);
 
     private final int numberOfBeans;
 

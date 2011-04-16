@@ -235,16 +235,13 @@ public class DefaultBeanLoader implements BeanLoader {
         return createBean(dependency);
     }
 
-    private void addSingleton(final Object beanToAdd, final String qualifier) {
+    private void addSingleton(final Object beanToAdd, final BeanKey beanKey) {
         Validate.notNull(beanToAdd, "Bean can not be null");
+        Validate.notNull(beanKey, "Bean key can not be null");
 
-        final Class<?> beanClass = beanToAdd.getClass();
-        final BeanKey bean = new BeanKey(beanClass, qualifier);
-        LOG.finer("Adding singleton: " + bean);
-
-        singletonMap.addSingleton(bean, beanToAdd);
-
-        LOG.fine("Singleton added: " + bean);
+        LOG.finer("Adding singleton: " + beanKey);
+        singletonMap.addSingleton(beanKey, beanToAdd);
+        LOG.fine("Singleton added: " + beanKey);
     }
 
     private Object createBean(final BeanKey dependency) {
@@ -259,7 +256,7 @@ public class DefaultBeanLoader implements BeanLoader {
         final CreatedBean createdBean = createBeanUsingFactoryOrInjector(dependency);
 
         if (createdBean.isSingleton()) {
-            addSingleton(createdBean.getInstance(), createdBean.getQualifier());
+            addSingleton(createdBean.getInstance(), createdBean.getBeanKey());
         }
 
         beansInCreation.removeBean(dependency);
@@ -284,7 +281,7 @@ public class DefaultBeanLoader implements BeanLoader {
 
         final Object beanInstance = instantiateBean(beanData);
 
-        return new CreatedBean(beanInstance, beanData.isSingleton(), beanKeyForBeanData.getQualifier());
+        return new CreatedBean(beanInstance, beanData.isSingleton(), beanKeyForBeanData);
     }
 
     private CreatedBean createBeanUsingFactory(final BeanKey dependency) {
@@ -295,7 +292,7 @@ public class DefaultBeanLoader implements BeanLoader {
         final Object factoryInstance = getBean(factoryPoint.getFactoryKey());
         final Object beanInstance = invokeFactoryPoint(factoryPoint, factoryInstance, dependency);
 
-        return new CreatedBean(beanInstance, factoryPoint.isSingleton(), returnType.getQualifier());
+        return new CreatedBean(beanInstance, factoryPoint.isSingleton(), returnType);
     }
 
     private Object instantiateBean(final BeanData beanData) {

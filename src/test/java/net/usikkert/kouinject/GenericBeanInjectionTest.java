@@ -88,7 +88,6 @@ import net.usikkert.kouinject.testbeans.scanned.hierarchy.MiddleBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.SuperBean;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -617,9 +616,9 @@ public class GenericBeanInjectionTest {
     }
 
     @Test
-    @Ignore("singleton fails")
     public void checkMovieCollectionBean() {
         final MovieCollectionBean bean = injector.getBean(MovieCollectionBean.class);
+        // TODO
     }
 
     private boolean containsBean(final Collection<?> beans, final Class<?> beanClass) {

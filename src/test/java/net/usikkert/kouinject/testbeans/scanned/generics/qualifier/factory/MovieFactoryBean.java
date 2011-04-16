@@ -33,7 +33,7 @@ import net.usikkert.kouinject.annotation.Produces;
  *
  * @author Christian Ihle
  */
-//@Component
+@Component
 public class MovieFactoryBean {
 
     @Produces @Singleton @Named("ScaryMovie")
