@@ -45,7 +45,12 @@ import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.MySqlDriver;
 import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.OracleDriver;
 import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.OrderDaoBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.PersonDaoBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.factory.Comedy;
+import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.factory.Genre;
+import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.factory.Horror;
+import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.factory.Movie;
 import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.factory.MovieCollectionBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.factory.MovieFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.stuff.ListOfStuffBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.stuff.ListOfStuffFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.stuff.OneStuffBean;
@@ -616,9 +621,106 @@ public class GenericBeanInjectionTest {
     }
 
     @Test
+    public void checkBlogDaoBean() {
+        final Dao<OracleDriver> blogDao = injector.getBean(new TypeLiteral<Dao<OracleDriver>>() {}, "blog");
+        assertNotNull(blogDao);
+        assertEquals(BlogDaoBean.class, blogDao.getClass());
+    }
+
+    @Test
+    public void checkItemDaoBean() {
+        final Dao<MySqlDriver> itemDao = injector.getBean(new TypeLiteral<Dao<MySqlDriver>>() {}, "item");
+        assertNotNull(itemDao);
+        assertEquals(ItemDaoBean.class, itemDao.getClass());
+    }
+
+    @Test
+    public void checkOrderDaoBean() {
+        final Dao<MySqlDriver> orderDao = injector.getBean(new TypeLiteral<Dao<MySqlDriver>>() {}, "order");
+        assertNotNull(orderDao);
+        assertEquals(OrderDaoBean.class, orderDao.getClass());
+    }
+
+    @Test
+    public void checkPersonDaoBean() {
+        final Dao<MySqlDriver> personDao = injector.getBean(new TypeLiteral<Dao<MySqlDriver>>() {}, "person");
+        assertNotNull(personDao);
+        assertEquals(PersonDaoBean.class, personDao.getClass());
+    }
+
+    @Test
     public void checkMovieCollectionBean() {
         final MovieCollectionBean bean = injector.getBean(MovieCollectionBean.class);
-        // TODO
+        assertNotNull(bean);
+
+        final Movie<Comedy> fockersMovie = bean.getFockersMovie();
+        assertNotNull(fockersMovie);
+        assertEquals("Meet the Fockers", fockersMovie.getTitle());
+
+        final Movie<Horror> scaryMovie = bean.getScaryMovie();
+        assertNotNull(scaryMovie);
+        assertEquals("Scary Movie", scaryMovie.getTitle());
+
+        final Movie<Horror> screamMovie = bean.getScreamMovie();
+        assertNotNull(screamMovie);
+        assertEquals("Scream", screamMovie.getTitle());
+
+        final Collection<Movie<Horror>> horrorMovies = bean.getHorrorMovies();
+        assertNotNull(horrorMovies);
+        assertEquals(2, horrorMovies.size());
+        assertTrue(containsMovie(horrorMovies, "Scary Movie"));
+        assertTrue(containsMovie(horrorMovies, "Scream"));
+
+        final Collection<Movie<? extends Genre>> allMovies = bean.getAllMovies();
+        assertNotNull(allMovies);
+        assertEquals(3, allMovies.size());
+        assertTrue(containsMovie(allMovies, "Scary Movie"));
+        assertTrue(containsMovie(allMovies, "Scream"));
+        assertTrue(containsMovie(allMovies, "Meet the Fockers"));
+    }
+
+    @Test
+    public void checkMovieFactoryBean() {
+        final MovieFactoryBean bean = injector.getBean(MovieFactoryBean.class);
+        assertNotNull(bean);
+
+        assertNotNull(bean.createScream());
+        assertNotNull(bean.createScaryMovie());
+        assertNotNull(bean.createMeetTheFockers());
+    }
+
+    @Test
+    public void checkFockersMovie() {
+        final Movie<Comedy> fockersMovie = injector.getBean(new TypeLiteral<Movie<Comedy>>() {}, "MeetFockers");
+
+        assertNotNull(fockersMovie);
+        assertEquals("Meet the Fockers", fockersMovie.getTitle());
+    }
+
+    @Test
+    public void checkScreamMovie() {
+        final Movie<Horror> screamMovie = injector.getBean(new TypeLiteral<Movie<Horror>>() {}, "Scream");
+
+        assertNotNull(screamMovie);
+        assertEquals("Scream", screamMovie.getTitle());
+    }
+
+    @Test
+    public void checkScaryMovie() {
+        final Movie<Horror> scaryMovie = injector.getBean(new TypeLiteral<Movie<Horror>>() {}, "ScaryMovie");
+
+        assertNotNull(scaryMovie);
+        assertEquals("Scary Movie", scaryMovie.getTitle());
+    }
+
+    private boolean containsMovie(final Collection<? extends Movie<?>> movies, final String movieTitle) {
+        for (final Movie<?> movie : movies) {
+            if (movie.getTitle().equals(movieTitle)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private boolean containsBean(final Collection<?> beans, final Class<?> beanClass) {
@@ -631,9 +733,7 @@ public class GenericBeanInjectionTest {
         return false;
     }
 
-    private boolean containsContainerBeanOf(final Class<?> expectedClass, final Collection beans) {
-        final Collection<Container<?>> containers = beans;
-
+    private boolean containsContainerBeanOf(final Class<?> expectedClass, final Collection<? extends Container<?>> containers) {
         for (final Container<?> container : containers) {
             if (container.getContained().getClass().equals(expectedClass)) {
                 return true;

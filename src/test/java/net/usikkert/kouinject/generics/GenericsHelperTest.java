@@ -35,6 +35,9 @@ import java.util.Set;
 
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.Container;
+import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.factory.Comedy;
+import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.factory.Horror;
+import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.factory.Movie;
 import net.usikkert.kouinject.testbeans.scanned.generics.thing.FirstStartThingListenerBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.thing.MiddleThing;
 import net.usikkert.kouinject.testbeans.scanned.generics.thing.MiddleThingListenerBean;
@@ -896,6 +899,48 @@ public class GenericsHelperTest {
 //        final Box<? extends Pizza> thatBean = null;
 //        final ShoeBoxBean thisBean = thatBean; // compile error
         assertFalse(GenericsHelper.isAssignableFrom(ShoeBoxBean.class, thisType));
+    }
+
+    @Test
+    public void isAssignableFromShouldReturnTrueWhenUsingNestedWildcardsAndTypeMatches() {
+        final Type thatType = new TypeLiteral<Collection<Movie<Horror>>>() {}.getGenericType();
+        final Type thisType = new TypeLiteral<Collection<? extends Movie<? extends Horror>>>() {}.getGenericType();
+
+//        final Collection<Movie<Horror>> thatBean = null;
+//        final Collection<? extends Movie<? extends Horror>> thisBean = thatBean; // ok
+        assertTrue(GenericsHelper.isAssignableFrom(thisType, thatType));
+
+//        final Collection<? extends Movie<? extends Horror>> thatBean = null;
+//        final Collection<Movie<Horror>> thisBean = thatBean; // compiler error
+        assertFalse(GenericsHelper.isAssignableFrom(thatType, thisType));
+    }
+
+    @Test
+    public void isAssignableFromShouldReturnFalseWhenUsingNestedWildcardsAndNestedTypeDoesNotMatch() {
+        final Type thatType = new TypeLiteral<Collection<Movie<Comedy>>>() {}.getGenericType();
+        final Type thisType = new TypeLiteral<Collection<? extends Movie<? extends Horror>>>() {}.getGenericType();
+
+//        final Collection<Movie<Comedy>> thatBean = null;
+//        final Collection<? extends Movie<? extends Horror>> thisBean = thatBean; // compiler error
+        assertFalse(GenericsHelper.isAssignableFrom(thisType, thatType));
+
+//        final Collection<? extends Movie<? extends Horror>> thatBean = null;
+//        final Collection<Movie<Comedy>> thisBean = thatBean; // compiler error
+        assertFalse(GenericsHelper.isAssignableFrom(thatType, thisType));
+    }
+
+    @Test
+    public void isAssignableFromShouldReturnFalseWhenUsingWildcardAtLastLevelButNotPrevious() {
+        final Type thatType = new TypeLiteral<Collection<Movie<Horror>>>() {}.getGenericType();
+        final Type thisType = new TypeLiteral<Collection<Movie<? extends Horror>>>() {}.getGenericType();
+
+//        final Collection<Movie<Horror>> thatBean = null;
+//        final Collection<Movie<? extends Horror>> thisBean = thatBean; // compiler error
+        assertFalse(GenericsHelper.isAssignableFrom(thisType, thatType));
+
+//        final Collection<Movie<? extends Horror>> thatBean = null;
+//        final Collection<Movie<Horror>> thisBean = thatBean; // compiler error
+        assertFalse(GenericsHelper.isAssignableFrom(thatType, thisType));
     }
 
     @Test

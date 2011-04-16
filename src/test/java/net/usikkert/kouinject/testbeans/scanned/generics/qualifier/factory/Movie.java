@@ -30,4 +30,5 @@ package net.usikkert.kouinject.testbeans.scanned.generics.qualifier.factory;
  */
 public interface Movie<T extends Genre> {
 
+    String getTitle();
 }
