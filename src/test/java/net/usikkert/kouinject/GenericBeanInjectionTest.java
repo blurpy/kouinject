@@ -45,6 +45,7 @@ import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.MySqlDriver;
 import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.OracleDriver;
 import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.OrderDaoBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.PersonDaoBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.factory.MovieCollectionBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.stuff.ListOfStuffBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.stuff.ListOfStuffFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.stuff.OneStuffBean;
@@ -87,6 +88,7 @@ import net.usikkert.kouinject.testbeans.scanned.hierarchy.MiddleBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.SuperBean;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -612,6 +614,12 @@ public class GenericBeanInjectionTest {
         assertTrue(containsBean(allDaos, OrderDaoBean.class));
         assertTrue(containsBean(allDaos, PersonDaoBean.class));
         assertTrue(containsBean(allDaos, BlogDaoBean.class));
+    }
+
+    @Test
+    @Ignore("singleton fails")
+    public void checkMovieCollectionBean() {
+        final MovieCollectionBean bean = injector.getBean(MovieCollectionBean.class);
     }
 
     private boolean containsBean(final Collection<?> beans, final Class<?> beanClass) {
