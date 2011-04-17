@@ -298,6 +298,20 @@ public class GenericsHelperTest {
     }
 
     @Test
+    public void isAssignableFromShouldBeFalseForSubTypeWithInheritance() {
+        final Type thisType = new TypeLiteral<List<Object>>() {}.getGenericType();
+        final Type thatType = new TypeLiteral<List<String>>() {}.getGenericType();
+
+//        final List<String> thatList = null;
+//        final List<Object> thisList = thatList; // compile error
+        assertFalse(GenericsHelper.isAssignableFrom(thisType, thatType));
+
+//        final List<Object> thatList = null;
+//        final List<String> thisList = thatList; // compile error
+        assertFalse(GenericsHelper.isAssignableFrom(thatType, thisType));
+    }
+
+    @Test
     public void isAssignableFromShouldBeFalseForTheDifferentTypeAndSameSubType() {
         final Type thisType = new TypeLiteral<List<String>>() {}.getGenericType();
         final Type thatType = new TypeLiteral<Set<String>>() {}.getGenericType();
