@@ -33,8 +33,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.usikkert.kouinject.testbeans.notscanned.generics.typevariable.TypeVariableChild;
+import net.usikkert.kouinject.testbeans.notscanned.generics.typevariable.TypeVariableParent;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.Container;
+import net.usikkert.kouinject.testbeans.scanned.generics.circular.Square;
 import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.factory.Comedy;
 import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.factory.Horror;
 import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.factory.Movie;
@@ -978,6 +981,27 @@ public class GenericsHelperTest {
             final Type actualType = typeMap.getActualType(key);
             assertNull(actualType);
         }
+    }
+
+    @Test
+    public void mapTypeVariablesToActualTypesShouldNotMapTypeVariablesDeclaredLocallyOnMethods() throws NoSuchMethodException {
+        final TypeMap typeMap = GenericsHelper.mapTypeVariablesToActualTypes(TypeVariableChild.class);
+
+        assertNotNull(typeMap);
+        assertEquals(1, typeMap.size());
+
+        // Verifying expected type in the map
+        final TypeVariable<?> typeVariable = getTypeVariable("T", TypeVariableParent.class, typeMap);
+        assertNotNull(typeVariable);
+        assertEquals(Square.class, typeMap.getActualType(typeVariable));
+
+        // Method that uses it's own declaration of T - should map to null
+        final Type localT = TypeVariableParent.class.getDeclaredMethod("getLocallyDeclaredT").getGenericReturnType();
+        assertNull(typeMap.getActualType((TypeVariable<?>) localT));
+
+        // Method that uses the class declaration of T - should map to the actual type
+        final Type classT = TypeVariableParent.class.getDeclaredMethod("getClassDeclaredT").getGenericReturnType();
+        assertEquals(Square.class, typeMap.getActualType((TypeVariable<?>) classT));
     }
 
     @Test
