@@ -22,52 +22,11 @@
 
 package net.usikkert.kouinject.testbeans.scanned.generics.qualifier.factory;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
-
-import net.usikkert.kouinject.annotation.Any;
-import net.usikkert.kouinject.annotation.Component;
-import net.usikkert.kouinject.annotation.Produces;
-import net.usikkert.kouinject.factory.FactoryContext;
-
-import org.apache.commons.lang.Validate;
-
 /**
- * A factory for creating generic movie beans.
+ * Drama movie genre.
  *
  * @author Christian Ihle
  */
-@Component
-public class MovieFactoryBean {
+public class Drama implements Genre {
 
-    @Produces @Singleton @Named("ScaryMovie")
-    public Movie<Horror> createScaryMovie() {
-        return new BluRay<Horror>("Scary Movie");
-    }
-
-    @Produces @Named("Scream")
-    public Movie<Horror> createScream() {
-        return new Dvd<Horror>("Scream");
-    }
-
-    @Produces @Named("MeetFockers")
-    public Movie<Comedy> createMeetTheFockers() {
-        return new BluRay<Comedy>("Meet the Fockers");
-    }
-
-    @Produces @Any
-    public Movie<Action> createAnyActionMovie(final FactoryContext factoryContext) {
-        final String title = factoryContext.getQualifier();
-        Validate.notNull(title);
-
-        return new BluRay<Action>("Action: " + title);
-    }
-
-    @Produces @Any
-    public Movie<Drama> createAnyDramaMovie(final FactoryContext factoryContext) {
-        final String title = factoryContext.getQualifier();
-        Validate.notNull(title);
-
-        return new Dvd<Drama>("Drama: " + title);
-    }
 }

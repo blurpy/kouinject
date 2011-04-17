@@ -47,6 +47,15 @@ public class MovieCollectionBean {
     @Inject @Named("MeetFockers")
     private Movie<Comedy> fockersMovie;
 
+    @Inject @Named("DieHard")
+    private Movie<Action> dieHardMovie;
+
+    @Inject @Named("RoboCop")
+    private Movie<Action> roboCopMovie;
+
+    @Inject @Named("AmericanBeauty")
+    private Movie<Drama> americanBeautyMovie;
+
     @Inject @Any
     private Collection<Movie<Horror>> horrorMovies;
 
@@ -63,6 +72,18 @@ public class MovieCollectionBean {
 
     public Movie<Comedy> getFockersMovie() {
         return fockersMovie;
+    }
+
+    public Movie<Action> getDieHardMovie() {
+        return dieHardMovie;
+    }
+
+    public Movie<Action> getRoboCopMovie() {
+        return roboCopMovie;
+    }
+
+    public Movie<Drama> getAmericanBeautyMovie() {
+        return americanBeautyMovie;
     }
 
     public Collection<Movie<Horror>> getHorrorMovies() {

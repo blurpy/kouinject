@@ -53,7 +53,9 @@ import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.MySqlDriver;
 import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.OracleDriver;
 import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.OrderDaoBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.PersonDaoBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.factory.Action;
 import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.factory.Comedy;
+import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.factory.Drama;
 import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.factory.Genre;
 import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.factory.Horror;
 import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.factory.Movie;
@@ -672,6 +674,18 @@ public class GenericBeanInjectionTest {
         final Movie<Horror> screamMovie = bean.getScreamMovie();
         assertNotNull(screamMovie);
         assertEquals("Scream", screamMovie.getTitle());
+
+        final Movie<Action> dieHardMovie = bean.getDieHardMovie();
+        assertNotNull(dieHardMovie);
+        assertEquals("Action: DieHard", dieHardMovie.getTitle());
+
+        final Movie<Action> roboCopMovie = bean.getRoboCopMovie();
+        assertNotNull(roboCopMovie);
+        assertEquals("Action: RoboCop", roboCopMovie.getTitle());
+
+        final Movie<Drama> americanBeautyMovie = bean.getAmericanBeautyMovie();
+        assertNotNull(americanBeautyMovie);
+        assertEquals("Drama: AmericanBeauty", americanBeautyMovie.getTitle());
 
         final Collection<Movie<Horror>> horrorMovies = bean.getHorrorMovies();
         assertNotNull(horrorMovies);
