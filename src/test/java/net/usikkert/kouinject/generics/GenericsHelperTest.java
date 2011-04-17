@@ -1016,6 +1016,104 @@ public class GenericsHelperTest {
     }
 
     @Test
+    public void isAssignableFromShouldBeTrueForArrayOfTheSameClassAndOneDimension() {
+        assertTrue(GenericsHelper.isAssignableFrom(String[].class, String[].class));
+        assertTrue(String[].class.isAssignableFrom(String[].class));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeTrueForArrayOfTheSameClassAndTwoDimensions() {
+        assertTrue(GenericsHelper.isAssignableFrom(String[][].class, String[][].class));
+        assertTrue(String[][].class.isAssignableFrom(String[][].class));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeFalseForArrayOfTheSameClassAndDifferentDimensions() {
+        assertFalse(GenericsHelper.isAssignableFrom(String[].class, String[][].class));
+        assertFalse(String[].class.isAssignableFrom(String[][].class));
+
+        assertFalse(GenericsHelper.isAssignableFrom(String[][].class, String[].class));
+        assertFalse(String[][].class.isAssignableFrom(String[].class));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeFalseForAssignmentBetweenArrayAndRegularClassOfTheSameClass() {
+        assertFalse(GenericsHelper.isAssignableFrom(String.class, String[].class));
+        assertFalse(String.class.isAssignableFrom(String[].class));
+
+        assertFalse(GenericsHelper.isAssignableFrom(String[].class, String.class));
+        assertFalse(String[].class.isAssignableFrom(String.class));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeTrueForAssignmentBetweenArrayAndObject() {
+        assertTrue(GenericsHelper.isAssignableFrom(Object.class, String[].class));
+        assertTrue(Object.class.isAssignableFrom(String[].class));
+
+        assertFalse(GenericsHelper.isAssignableFrom(String[].class, Object.class));
+        assertFalse(String[].class.isAssignableFrom(Object.class));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeTrueForAssignmentBetweenArrayAndObjectArray() {
+        assertTrue(GenericsHelper.isAssignableFrom(Object[].class, String[].class));
+        assertTrue(Object[].class.isAssignableFrom(String[].class));
+
+        assertFalse(GenericsHelper.isAssignableFrom(String[].class, Object[].class));
+        assertFalse(String[].class.isAssignableFrom(Object[].class));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeTrueForAssignmentBetweenArrayAndObjectArrayOfDifferentDimensions() {
+        // True because any array is also an object - does not work with any other classes
+        assertTrue(GenericsHelper.isAssignableFrom(Object[].class, String[][].class));
+        assertTrue(Object[].class.isAssignableFrom(String[][].class));
+
+        assertFalse(GenericsHelper.isAssignableFrom(String[][].class, Object[].class));
+        assertFalse(String[][].class.isAssignableFrom(Object[].class));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeFalseForAssignmentBetweenArrayAndObjectArrayOfDifferentDimensionsWhenObjectHasMost() {
+        assertFalse(GenericsHelper.isAssignableFrom(Object[][].class, String[].class));
+        assertFalse(Object[][].class.isAssignableFrom(String[].class));
+
+        assertFalse(GenericsHelper.isAssignableFrom(String[].class, Object[][].class));
+        assertFalse(String[].class.isAssignableFrom(Object[][].class));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeFalseForAssignmentBetweenArrayAndRegularSuperclass() {
+        assertTrue(Number.class.isAssignableFrom(Integer.class)); // Verify non-array assignability
+
+        assertFalse(GenericsHelper.isAssignableFrom(Number.class, Integer[].class));
+        assertFalse(Number.class.isAssignableFrom(Integer[].class));
+
+        assertFalse(GenericsHelper.isAssignableFrom(Integer[].class, Number.class));
+        assertFalse(Integer[].class.isAssignableFrom(Number.class));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeFalseForAssignmentBetweenArraysWithCorrectInheritanceAndDifferentDimensions() {
+        assertTrue(Number.class.isAssignableFrom(Integer.class)); // Verify non-array assignability
+
+        assertFalse(GenericsHelper.isAssignableFrom(Number[].class, Integer[][].class));
+        assertFalse(Number[].class.isAssignableFrom(Integer[][].class));
+
+        assertFalse(GenericsHelper.isAssignableFrom(Integer[][].class, Number[].class));
+        assertFalse(Integer[][].class.isAssignableFrom(Number[].class));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeTrueForArraysOfCorrectInheritance() {
+        assertTrue(GenericsHelper.isAssignableFrom(MiddleBean[].class, ChildBean[].class));
+        assertTrue(MiddleBean[].class.isAssignableFrom(ChildBean[].class));
+
+        assertFalse(GenericsHelper.isAssignableFrom(ChildBean[].class, MiddleBean[].class));
+        assertFalse(ChildBean[].class.isAssignableFrom(MiddleBean[].class));
+    }
+
+    @Test
     public void mapTypeVariablesToActualTypesShouldHandleInheritance() {
         final TypeMap typeMap = GenericsHelper.mapTypeVariablesToActualTypes(ConcreteDualVariableBean.class);
         assertEquals(3, typeMap.size());
