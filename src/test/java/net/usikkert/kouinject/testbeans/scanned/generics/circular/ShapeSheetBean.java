@@ -20,34 +20,45 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.generics.circular;
+
+import javax.inject.Inject;
+
+import net.usikkert.kouinject.annotation.Component;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * A bean that injects the various generic beans that have circular dependencies.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+@Component
+public class ShapeSheetBean {
 
-    // All components
-    ALL(142),
+    @Inject
+    private Shape<Circle> circleShape;
 
-    // All components and those created by factories
-    SCANNED(150),
+    @Inject
+    private Shape<Square> squareShape;
 
-    // All components and those created by factories, without a qualifier
-    SCANNED_WITHOUT_QUALIFIER(114),
+    @Inject
+    private Shape<Triangle> triangleShape;
 
-    // All from SCANNED, plus those with profiles that can be activated at the same time
-    SCANNED_WITH_PROFILED(159);
+    @Inject
+    private Shape<Star> starShape;
 
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
+    public Shape<Circle> getCircleShape() {
+        return circleShape;
     }
 
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    public Shape<Square> getSquareShape() {
+        return squareShape;
+    }
+
+    public Shape<Triangle> getTriangleShape() {
+        return triangleShape;
+    }
+
+    public Shape<Star> getStarShape() {
+        return starShape;
     }
 }

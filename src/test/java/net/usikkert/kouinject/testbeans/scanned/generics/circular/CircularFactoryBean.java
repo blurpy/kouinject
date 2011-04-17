@@ -20,34 +20,38 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.generics.circular;
+
+import javax.inject.Provider;
+
+import net.usikkert.kouinject.annotation.Component;
+import net.usikkert.kouinject.annotation.Produces;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * A factory for testing injection of generic circular dependencies.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+@Component
+public class CircularFactoryBean {
 
-    // All components
-    ALL(142),
-
-    // All components and those created by factories
-    SCANNED(150),
-
-    // All components and those created by factories, without a qualifier
-    SCANNED_WITHOUT_QUALIFIER(114),
-
-    // All from SCANNED, plus those with profiles that can be activated at the same time
-    SCANNED_WITH_PROFILED(159);
-
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
+    @Produces
+    public Shape<Circle> createCircleShape() {
+        return new ShapeImpl<Circle>(Circle.class, (Shape<?>) null);
     }
 
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    @Produces
+    public Shape<Square> createSquareShape(final Shape<Circle> circleShape) {
+        return new ShapeImpl<Square>(Square.class, circleShape);
+    }
+
+    @Produces
+    public Shape<Triangle> createTriangleShape(final Shape<Star> starShape) {
+        return new ShapeImpl<Triangle>(Triangle.class, starShape);
+    }
+
+    @Produces
+    public Shape<Star> createStarShape(final Provider<Shape<Triangle>> triangleShapeProvider) {
+        return new ShapeImpl<Star>(Star.class, triangleShapeProvider);
     }
 }

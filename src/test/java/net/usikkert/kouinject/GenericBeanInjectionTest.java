@@ -33,6 +33,13 @@ import javax.inject.Provider;
 
 import net.usikkert.kouinject.generics.TypeLiteral;
 import net.usikkert.kouinject.testbeans.scanned.generics.Container;
+import net.usikkert.kouinject.testbeans.scanned.generics.circular.Circle;
+import net.usikkert.kouinject.testbeans.scanned.generics.circular.CircularFactoryBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.circular.Shape;
+import net.usikkert.kouinject.testbeans.scanned.generics.circular.ShapeSheetBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.circular.Square;
+import net.usikkert.kouinject.testbeans.scanned.generics.circular.Star;
+import net.usikkert.kouinject.testbeans.scanned.generics.circular.Triangle;
 import net.usikkert.kouinject.testbeans.scanned.generics.collection.CollectionFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.collection.CollectionUsingBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.collection.Stone;
@@ -711,6 +718,89 @@ public class GenericBeanInjectionTest {
 
         assertNotNull(scaryMovie);
         assertEquals("Scary Movie", scaryMovie.getTitle());
+    }
+
+    @Test
+    public void checkShapeSheetBean() {
+        final ShapeSheetBean bean = injector.getBean(ShapeSheetBean.class);
+
+        // Circle has no contained shape - not circular
+        final Shape<Circle> circleShape = bean.getCircleShape();
+        assertNotNull(circleShape);
+        assertEquals(Circle.class, circleShape.getShapeClass());
+        assertNull(circleShape.getContainedShape());
+
+        // Square has circle as contained shape - not circular,
+        // but would give false alert without support for generics in circular detection
+        final Shape<Square> squareShape = bean.getSquareShape();
+        assertNotNull(squareShape);
+        assertEquals(Square.class, squareShape.getShapeClass());
+        assertNotNull(squareShape.getContainedShape());
+        assertEquals(Circle.class, squareShape.getContainedShape().getShapeClass());
+
+        // Star has triangle as contained shape - circular, solved using a provider on the triangle injection
+        final Shape<Star> starShape = bean.getStarShape();
+        assertNotNull(starShape);
+        assertEquals(Star.class, starShape.getShapeClass());
+        assertNotNull(starShape.getContainedShape());
+        assertEquals(Triangle.class, starShape.getContainedShape().getShapeClass());
+
+        // Triangle has star as contained shape - circular
+        final Shape<Triangle> triangleShape = bean.getTriangleShape();
+        assertNotNull(triangleShape);
+        assertEquals(Triangle.class, triangleShape.getShapeClass());
+        assertNotNull(triangleShape.getContainedShape());
+        assertEquals(Star.class, triangleShape.getContainedShape().getShapeClass());
+    }
+
+    @Test
+    public void checkCircularFactoryBean() {
+        final CircularFactoryBean bean = injector.getBean(CircularFactoryBean.class);
+        assertNotNull(bean);
+
+        assertNotNull(bean.createCircleShape());
+        assertNotNull(bean.createSquareShape(null));
+        assertNotNull(bean.createStarShape(null));
+        assertNotNull(bean.createTriangleShape(null));
+    }
+
+    @Test
+    public void checkCircleShape() {
+        final Shape<Circle> circleShape = injector.getBean(new TypeLiteral<Shape<Circle>>() {});
+
+        assertNotNull(circleShape);
+        assertEquals(Circle.class, circleShape.getShapeClass());
+        assertNull(circleShape.getContainedShape());
+    }
+
+    @Test
+    public void checkSquareShape() {
+        final Shape<Square> squareShape = injector.getBean(new TypeLiteral<Shape<Square>>() {});
+
+        assertNotNull(squareShape);
+        assertEquals(Square.class, squareShape.getShapeClass());
+        assertNotNull(squareShape.getContainedShape());
+        assertEquals(Circle.class, squareShape.getContainedShape().getShapeClass());
+    }
+
+    @Test
+    public void checkStarShape() {
+        final Shape<Star> starShape = injector.getBean(new TypeLiteral<Shape<Star>>() {});
+
+        assertNotNull(starShape);
+        assertEquals(Star.class, starShape.getShapeClass());
+        assertNotNull(starShape.getContainedShape());
+        assertEquals(Triangle.class, starShape.getContainedShape().getShapeClass());
+    }
+
+    @Test
+    public void checkTriangleShape() {
+        final Shape<Triangle> triangleShape = injector.getBean(new TypeLiteral<Shape<Triangle>>() {});
+
+        assertNotNull(triangleShape);
+        assertEquals(Triangle.class, triangleShape.getShapeClass());
+        assertNotNull(triangleShape.getContainedShape());
+        assertEquals(Star.class, triangleShape.getContainedShape().getShapeClass());
     }
 
     private boolean containsMovie(final Collection<? extends Movie<?>> movies, final String movieTitle) {

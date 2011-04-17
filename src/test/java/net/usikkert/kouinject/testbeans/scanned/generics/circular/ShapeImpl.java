@@ -20,34 +20,44 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.generics.circular;
+
+import javax.inject.Provider;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * An implementation of the generic Shape interface.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+public class ShapeImpl<T> implements Shape<T> {
 
-    // All components
-    ALL(142),
+    private final Class<T> shapeClass;
+    private Shape<?> containedShape;
+    private Provider<? extends Shape<?>> containedShapeProvider;
 
-    // All components and those created by factories
-    SCANNED(150),
-
-    // All components and those created by factories, without a qualifier
-    SCANNED_WITHOUT_QUALIFIER(114),
-
-    // All from SCANNED, plus those with profiles that can be activated at the same time
-    SCANNED_WITH_PROFILED(159);
-
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
+    public ShapeImpl(final Class<T> shapeClass, final Shape<?> containedShape) {
+        this.shapeClass = shapeClass;
+        this.containedShape = containedShape;
     }
 
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    public ShapeImpl(final Class<T> shapeClass, final Provider<? extends Shape<?>> containedShapeProvider) {
+        this.shapeClass = shapeClass;
+        this.containedShapeProvider = containedShapeProvider;
+    }
+
+    @Override
+    public Class<T> getShapeClass() {
+        return shapeClass;
+    }
+
+    @Override
+    public Shape<?> getContainedShape() {
+        if (containedShapeProvider != null) {
+            return containedShapeProvider.get();
+        }
+
+        else {
+            return containedShape;
+        }
     }
 }
