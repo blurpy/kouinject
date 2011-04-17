@@ -59,6 +59,7 @@ import net.usikkert.kouinject.testbeans.notscanned.collection.SetInjection;
 import net.usikkert.kouinject.testbeans.notscanned.collectionprovider.CollectionProviderInjectionWithNoMatchingBeans;
 import net.usikkert.kouinject.testbeans.notscanned.collectionprovider.CollectionProviderInjectionWithWildcard;
 import net.usikkert.kouinject.testbeans.notscanned.collectionprovider.CollectionProviderInjectionWithoutTypeArgument;
+import net.usikkert.kouinject.testbeans.notscanned.generics.circular.ActualCircularFactoryBean;
 import net.usikkert.kouinject.testbeans.notscanned.instance.Instance1Bean;
 import net.usikkert.kouinject.testbeans.notscanned.instance.Instance2Bean;
 import net.usikkert.kouinject.testbeans.notscanned.instance.Instance3Bean;
@@ -96,6 +97,11 @@ import net.usikkert.kouinject.testbeans.scanned.factory.TapeRecorderBean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder1.Folder1Bean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder2.Folder2Bean;
 import net.usikkert.kouinject.testbeans.scanned.folder.folder3.Folder3Bean;
+import net.usikkert.kouinject.testbeans.scanned.generics.circular.Pentagon;
+import net.usikkert.kouinject.testbeans.scanned.generics.circular.Shape;
+import net.usikkert.kouinject.testbeans.scanned.generics.circular.Square;
+import net.usikkert.kouinject.testbeans.scanned.generics.circular.Star;
+import net.usikkert.kouinject.testbeans.scanned.generics.circular.Triangle;
 import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.Dao;
 import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.DaoControllerBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.DatabaseDriver;
@@ -1494,6 +1500,66 @@ public class DefaultBeanLoaderTest {
         assertNotNull(bean2);
 
         assertNotSame(bean1, bean2);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void circularDependencyShouldBeDetectedWithGenericBeanInjectingItselfInFactory() {
+        final HashSet<BeanKey> beans = new HashSet<BeanKey>();
+        beans.add(new BeanKey(ActualCircularFactoryBean.class));
+
+        final DefaultBeanLoader loader = createBeanLoaderWithBeans(beans);
+
+        loader.getBean(new TypeLiteral<Shape<Square>>() {});
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void circularDependencyShouldBeDetectedWithGenericBeansInjectingEachOtherInFactory1() {
+        final HashSet<BeanKey> beans = new HashSet<BeanKey>();
+        beans.add(new BeanKey(ActualCircularFactoryBean.class));
+
+        final DefaultBeanLoader loader = createBeanLoaderWithBeans(beans);
+
+        loader.getBean(new TypeLiteral<Shape<Triangle>>() {});
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void circularDependencyShouldBeDetectedWithGenericBeansInjectingEachOtherInFactory2() {
+        final HashSet<BeanKey> beans = new HashSet<BeanKey>();
+        beans.add(new BeanKey(ActualCircularFactoryBean.class));
+
+        final DefaultBeanLoader loader = createBeanLoaderWithBeans(beans);
+
+        loader.getBean(new TypeLiteral<Shape<Star>>() {});
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void circularDependencyShouldBeDetectedWithGenericBeansWithQualifiersInjectingEachOtherInFactory1() {
+        final HashSet<BeanKey> beans = new HashSet<BeanKey>();
+        beans.add(new BeanKey(ActualCircularFactoryBean.class));
+
+        final DefaultBeanLoader loader = createBeanLoaderWithBeans(beans);
+
+        loader.getBean(new TypeLiteral<Shape<Pentagon>>() {}, "FirstPentagon");
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void circularDependencyShouldBeDetectedWithGenericBeansWithQualifiersInjectingEachOtherInFactory2() {
+        final HashSet<BeanKey> beans = new HashSet<BeanKey>();
+        beans.add(new BeanKey(ActualCircularFactoryBean.class));
+
+        final DefaultBeanLoader loader = createBeanLoaderWithBeans(beans);
+
+        loader.getBean(new TypeLiteral<Shape<Pentagon>>() {}, "SecondPentagon");
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void circularDependencyShouldBeDetectedWithGenericBeansWithQualifiersInjectingEachOtherInFactoryInACollection() {
+        final HashSet<BeanKey> beans = new HashSet<BeanKey>();
+        beans.add(new BeanKey(ActualCircularFactoryBean.class));
+
+        final DefaultBeanLoader loader = createBeanLoaderWithBeans(beans);
+
+        loader.getBeans(new TypeLiteral<Shape<Pentagon>>() {}, "any");
     }
 
     private Movie<?> getMovie(final String movieTitle, final Collection<? extends Movie<?>> movies) {
