@@ -20,34 +20,31 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.array;
+
+import javax.inject.Inject;
+
+import net.usikkert.kouinject.annotation.Component;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * A bean for testing injection of arrays.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+@Component
+public class ArrayUsingBean {
 
-    // All components
-    ALL(144),
+    @Inject
+    private ArrayClass[] arrayClasses;
 
-    // All components and those created by factories
-    SCANNED(155),
+    @Inject
+    private ArrayInterface[] arrayInterfaces;
 
-    // All components and those created by factories, without a qualifier
-    SCANNED_WITHOUT_QUALIFIER(117),
-
-    // All from SCANNED, plus those with profiles that can be activated at the same time
-    SCANNED_WITH_PROFILED(164);
-
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
+    public ArrayClass[] getArrayClasses() {
+        return arrayClasses;
     }
 
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    public ArrayInterface[] getArrayInterfaces() {
+        return arrayInterfaces;
     }
 }

@@ -20,34 +20,22 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.array;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * An implementation for testing arrays.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+public class ArrayClass implements ArrayInterface {
 
-    // All components
-    ALL(144),
+    private final String name;
 
-    // All components and those created by factories
-    SCANNED(155),
-
-    // All components and those created by factories, without a qualifier
-    SCANNED_WITHOUT_QUALIFIER(117),
-
-    // All from SCANNED, plus those with profiles that can be activated at the same time
-    SCANNED_WITH_PROFILED(164);
-
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
+    public ArrayClass(final String name) {
+        this.name = name;
     }
 
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    public String getName() {
+        return name;
     }
 }

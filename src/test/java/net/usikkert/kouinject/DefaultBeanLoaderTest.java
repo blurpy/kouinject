@@ -73,6 +73,7 @@ import net.usikkert.kouinject.testbeans.scanned.FieldBean;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.ProviderBean;
 import net.usikkert.kouinject.testbeans.scanned.RainbowBean;
+import net.usikkert.kouinject.testbeans.scanned.array.ArrayClass;
 import net.usikkert.kouinject.testbeans.scanned.collection.AppleBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.BananaBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.CheeseBean;
@@ -507,6 +508,16 @@ public class DefaultBeanLoaderTest {
 
         assertTrue(containsBean(BlueBean.class, beans)); // Bean with qualifier
         assertTrue(containsBean(HelloBean.class, beans)); // Bean without qualifier
+    }
+
+    @Test
+    public void getBeansWithObjectAndAnyQualifierShouldReturnArrayBeans() {
+        final Collection<Object> beans = beanLoader.getBeans(Object.class, "any");
+
+        assertNotNull(beans);
+        assertEquals(BeanCount.SCANNED.getNumberOfBeans(), beans.size());
+
+        assertTrue(containsBean(ArrayClass[].class, beans));
     }
 
     @Test

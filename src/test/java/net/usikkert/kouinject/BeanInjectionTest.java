@@ -50,6 +50,10 @@ import net.usikkert.kouinject.testbeans.scanned.SecondCircularDependencyBean;
 import net.usikkert.kouinject.testbeans.scanned.SetterBean;
 import net.usikkert.kouinject.testbeans.scanned.StaticBean;
 import net.usikkert.kouinject.testbeans.scanned.any.AnyBean;
+import net.usikkert.kouinject.testbeans.scanned.array.ArrayClass;
+import net.usikkert.kouinject.testbeans.scanned.array.ArrayFactoryBean;
+import net.usikkert.kouinject.testbeans.scanned.array.ArrayInterface;
+import net.usikkert.kouinject.testbeans.scanned.array.ArrayUsingBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.AppleBean;
@@ -287,6 +291,43 @@ public class BeanInjectionTest {
         final Food appleBean4 = injector.getBean(Food.class, "RoundFood");
         assertNotNull(appleBean4);
         assertTrue(appleBean4 instanceof AppleBean);
+    }
+
+    @Test
+    public void checkArrayFactoryBean() {
+        final ArrayFactoryBean bean = injector.getBean(ArrayFactoryBean.class);
+
+        assertNotNull(bean);
+        assertNotNull(bean.createArray());
+    }
+
+    @Test
+    public void checkArrayUsingBean() {
+        final ArrayUsingBean bean = injector.getBean(ArrayUsingBean.class);
+        assertNotNull(bean);
+
+        final ArrayClass[] arrayClasses = bean.getArrayClasses();
+        assertNotNull(arrayClasses);
+        assertEquals(2, arrayClasses.length);
+        assertEquals("Array 1", arrayClasses[0].getName());
+        assertEquals("Array 2", arrayClasses[1].getName());
+
+        final ArrayInterface[] arrayInterfaces = bean.getArrayInterfaces();
+        assertNotNull(arrayInterfaces);
+        assertTrue(arrayInterfaces instanceof ArrayClass[]);
+        assertEquals(2, arrayInterfaces.length);
+        assertEquals("Array 1", arrayInterfaces[0].getName());
+        assertEquals("Array 2", arrayInterfaces[1].getName());
+    }
+
+    @Test
+    public void checkArrayClass() {
+        final ArrayClass[] bean = injector.getBean(ArrayClass[].class);
+
+        assertNotNull(bean);
+        assertEquals(2, bean.length);
+        assertEquals("Array 1", bean[0].getName());
+        assertEquals("Array 2", bean[1].getName());
     }
 
     @Test
