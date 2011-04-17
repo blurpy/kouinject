@@ -35,6 +35,8 @@ import java.util.Set;
 
 import net.usikkert.kouinject.testbeans.notscanned.generics.typevariable.TypeVariableChild;
 import net.usikkert.kouinject.testbeans.notscanned.generics.typevariable.TypeVariableParent;
+import net.usikkert.kouinject.testbeans.notscanned.generics.typevariable.TypeVariableWithNestedWildcard;
+import net.usikkert.kouinject.testbeans.notscanned.generics.typevariable.TypeVariableWithNestedWildcardImpl;
 import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.Container;
 import net.usikkert.kouinject.testbeans.scanned.generics.circular.Square;
@@ -53,6 +55,7 @@ import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Box;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.ConcreteDualVariableBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.DualVariableInterfaceBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Fanta;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Liquid;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Pepsi;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Pizza;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Shoe;
@@ -944,6 +947,58 @@ public class GenericsHelperTest {
 //        final Collection<Movie<? extends Horror>> thatBean = null;
 //        final Collection<Movie<Horror>> thisBean = thatBean; // compiler error
         assertFalse(GenericsHelper.isAssignableFrom(thatType, thisType));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeTrueWhenUsingNestedWildcardInTypeVariableOfClassAndTypeMatches() {
+        final Type thisType = new TypeLiteral<TypeVariableWithNestedWildcard<Container<Fanta>>>() {}.getGenericType();
+
+//        final TypeVariableWithNestedWildcardImpl thatBean = null;
+//        final TypeVariableWithNestedWildcard<Container<Fanta>> thisBean = thatBean; // ok
+        assertTrue(GenericsHelper.isAssignableFrom(thisType, TypeVariableWithNestedWildcardImpl.class));
+
+//        final TypeVariableWithNestedWildcard<Container<Fanta>> thatBean = null;
+//        final TypeVariableWithNestedWildcardImpl thisBean = thatBean; // compiler error
+        assertFalse(GenericsHelper.isAssignableFrom(TypeVariableWithNestedWildcardImpl.class, thisType));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeTrueWhenUsingNestedWildcardInTypeVariableOfClassAndTypeMatchesWildcard() {
+        final Type thisType = new TypeLiteral<TypeVariableWithNestedWildcard<? extends Container<? extends Liquid>>>() {}.getGenericType();
+
+//        final TypeVariableWithNestedWildcardImpl thatBean = null;
+//        final TypeVariableWithNestedWildcard<? extends Container<? extends Liquid>> thisBean = thatBean; // ok
+        assertTrue(GenericsHelper.isAssignableFrom(thisType, TypeVariableWithNestedWildcardImpl.class));
+
+//        final TypeVariableWithNestedWildcard<? extends Container<? extends Liquid>> thatBean = null;
+//        final TypeVariableWithNestedWildcardImpl thisBean = thatBean; // compiler error
+        assertFalse(GenericsHelper.isAssignableFrom(TypeVariableWithNestedWildcardImpl.class, thisType));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeFalseWhenUsingNestedWildcardInTypeVariableOfClassAndNestedTypeDoesNotMatch() {
+        final Type thisType = new TypeLiteral<TypeVariableWithNestedWildcard<Container<Pepsi>>>() {}.getGenericType();
+
+//        final TypeVariableWithNestedWildcardImpl thatBean = null;
+//        final TypeVariableWithNestedWildcard<Container<Pepsi>> thisBean = thatBean; // compiler error
+        assertFalse(GenericsHelper.isAssignableFrom(thisType, TypeVariableWithNestedWildcardImpl.class));
+
+//        final TypeVariableWithNestedWildcard<Container<Pepsi>> thatBean = null;
+//        final TypeVariableWithNestedWildcardImpl thisBean = thatBean; // compiler error
+        assertFalse(GenericsHelper.isAssignableFrom(TypeVariableWithNestedWildcardImpl.class, thisType));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeFalseWhenUsingNestedWildcardInTypeVariableOfClassAndNestedTypeIsSubclass() {
+        final Type thisType = new TypeLiteral<TypeVariableWithNestedWildcard<Container<Liquid>>>() {}.getGenericType();
+
+//        final TypeVariableWithNestedWildcardImpl thatBean = null;
+//        final TypeVariableWithNestedWildcard<Container<Liquid>> thisBean = thatBean; // compiler error
+        assertFalse(GenericsHelper.isAssignableFrom(thisType, TypeVariableWithNestedWildcardImpl.class));
+
+//        final TypeVariableWithNestedWildcard<Container<Liquid>> thatBean = null;
+//        final TypeVariableWithNestedWildcardImpl thisBean = thatBean; // compiler error
+        assertFalse(GenericsHelper.isAssignableFrom(TypeVariableWithNestedWildcardImpl.class, thisType));
     }
 
     @Test
