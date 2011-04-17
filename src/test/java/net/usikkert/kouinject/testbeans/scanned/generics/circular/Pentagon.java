@@ -20,34 +20,13 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.generics.circular;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * The pentagon shape.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+public interface Pentagon {
 
-    // All components
-    ALL(142),
-
-    // All components and those created by factories
-    SCANNED(152),
-
-    // All components and those created by factories, without a qualifier
-    SCANNED_WITHOUT_QUALIFIER(114),
-
-    // All from SCANNED, plus those with profiles that can be activated at the same time
-    SCANNED_WITH_PROFILED(161);
-
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
-    }
-
-    public int getNumberOfBeans() {
-        return numberOfBeans;
-    }
 }

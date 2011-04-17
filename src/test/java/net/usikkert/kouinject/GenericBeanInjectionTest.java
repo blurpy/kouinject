@@ -35,6 +35,7 @@ import net.usikkert.kouinject.generics.TypeLiteral;
 import net.usikkert.kouinject.testbeans.scanned.generics.Container;
 import net.usikkert.kouinject.testbeans.scanned.generics.circular.Circle;
 import net.usikkert.kouinject.testbeans.scanned.generics.circular.CircularFactoryBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.circular.Pentagon;
 import net.usikkert.kouinject.testbeans.scanned.generics.circular.Shape;
 import net.usikkert.kouinject.testbeans.scanned.generics.circular.ShapeSheetBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.circular.Square;
@@ -751,6 +752,21 @@ public class GenericBeanInjectionTest {
         assertEquals(Triangle.class, triangleShape.getShapeClass());
         assertNotNull(triangleShape.getContainedShape());
         assertEquals(Star.class, triangleShape.getContainedShape().getShapeClass());
+
+        // First pentagon has second pentagon as contained shape - circular, with different qualifiers
+        final Shape<Pentagon> firstPentagonShape = bean.getFirstPentagonShape();
+        assertNotNull(firstPentagonShape);
+        assertEquals(Pentagon.class, firstPentagonShape.getShapeClass());
+        assertNotNull(firstPentagonShape.getContainedShape());
+        assertEquals(Pentagon.class, firstPentagonShape.getContainedShape().getShapeClass());
+
+        // Second pentagon has first pentagon as contained shape - circular, with different qualifiers,
+        // solved using a provider on the first pentagon
+        final Shape<Pentagon> secondPentagonShape = bean.getSecondPentagonShape();
+        assertNotNull(secondPentagonShape);
+        assertEquals(Pentagon.class, secondPentagonShape.getShapeClass());
+        assertNotNull(secondPentagonShape.getContainedShape());
+        assertEquals(Pentagon.class, secondPentagonShape.getContainedShape().getShapeClass());
     }
 
     @Test
@@ -762,6 +778,8 @@ public class GenericBeanInjectionTest {
         assertNotNull(bean.createSquareShape(null));
         assertNotNull(bean.createStarShape(null));
         assertNotNull(bean.createTriangleShape(null));
+        assertNotNull(bean.createFirstPentagonShape(null));
+        assertNotNull(bean.createSecondPentagonShape(null));
     }
 
     @Test
@@ -801,6 +819,26 @@ public class GenericBeanInjectionTest {
         assertEquals(Triangle.class, triangleShape.getShapeClass());
         assertNotNull(triangleShape.getContainedShape());
         assertEquals(Star.class, triangleShape.getContainedShape().getShapeClass());
+    }
+
+    @Test
+    public void checkFirstPentagonShape() {
+        final Shape<Pentagon> firstPentagonShape = injector.getBean(new TypeLiteral<Shape<Pentagon>>() {}, "FirstPentagon");
+
+        assertNotNull(firstPentagonShape);
+        assertEquals(Pentagon.class, firstPentagonShape.getShapeClass());
+        assertNotNull(firstPentagonShape.getContainedShape());
+        assertEquals(Pentagon.class, firstPentagonShape.getContainedShape().getShapeClass());
+    }
+
+    @Test
+    public void checkSecondPentagonShape() {
+        final Shape<Pentagon> secondPentagonShape = injector.getBean(new TypeLiteral<Shape<Pentagon>>() {}, "SecondPentagon");
+
+        assertNotNull(secondPentagonShape);
+        assertEquals(Pentagon.class, secondPentagonShape.getShapeClass());
+        assertNotNull(secondPentagonShape.getContainedShape());
+        assertEquals(Pentagon.class, secondPentagonShape.getContainedShape().getShapeClass());
     }
 
     private boolean containsMovie(final Collection<? extends Movie<?>> movies, final String movieTitle) {

@@ -23,6 +23,7 @@
 package net.usikkert.kouinject.testbeans.scanned.generics.circular;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import net.usikkert.kouinject.annotation.Component;
 
@@ -46,6 +47,12 @@ public class ShapeSheetBean {
     @Inject
     private Shape<Star> starShape;
 
+    @Inject @Named("FirstPentagon")
+    private Shape<Pentagon> firstPentagonShape;
+
+    @Inject @Named("SecondPentagon")
+    private Shape<Pentagon> secondPentagonShape;
+
     public Shape<Circle> getCircleShape() {
         return circleShape;
     }
@@ -60,5 +67,13 @@ public class ShapeSheetBean {
 
     public Shape<Star> getStarShape() {
         return starShape;
+    }
+
+    public Shape<Pentagon> getFirstPentagonShape() {
+        return firstPentagonShape;
+    }
+
+    public Shape<Pentagon> getSecondPentagonShape() {
+        return secondPentagonShape;
     }
 }

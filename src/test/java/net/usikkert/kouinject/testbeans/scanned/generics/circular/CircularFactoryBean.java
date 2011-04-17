@@ -22,6 +22,7 @@
 
 package net.usikkert.kouinject.testbeans.scanned.generics.circular;
 
+import javax.inject.Named;
 import javax.inject.Provider;
 
 import net.usikkert.kouinject.annotation.Component;
@@ -53,5 +54,15 @@ public class CircularFactoryBean {
     @Produces
     public Shape<Star> createStarShape(final Provider<Shape<Triangle>> triangleShapeProvider) {
         return new ShapeImpl<Star>(Star.class, triangleShapeProvider);
+    }
+
+    @Produces @Named("FirstPentagon")
+    public Shape<Pentagon> createFirstPentagonShape(@Named("SecondPentagon") final Shape<Pentagon> pentagonShape) {
+        return new ShapeImpl<Pentagon>(Pentagon.class, pentagonShape);
+    }
+
+    @Produces @Named("SecondPentagon")
+    public Shape<Pentagon> createSecondPentagonShape(@Named("FirstPentagon") final Provider<Shape<Pentagon>> pentagonShapeProvider) {
+        return new ShapeImpl<Pentagon>(Pentagon.class, pentagonShapeProvider);
     }
 }
