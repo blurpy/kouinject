@@ -160,8 +160,6 @@ public final class GenericsHelper {
      * @return If the type is a regular class.
      */
     public static boolean isClass(final Type type) {
-        Validate.notNull(type, "Type can not be null");
-
         return type instanceof Class;
     }
 
@@ -174,8 +172,6 @@ public final class GenericsHelper {
      * @return If the type is parameterized.
      */
     public static boolean isParameterizedType(final Type type) {
-        Validate.notNull(type, "Type can not be null");
-
         return type instanceof ParameterizedType;
     }
 
