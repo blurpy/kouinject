@@ -22,10 +22,13 @@
 
 package net.usikkert.kouinject.testbeans.scanned.array;
 
+import java.util.Collection;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 
+import net.usikkert.kouinject.annotation.Any;
 import net.usikkert.kouinject.annotation.Component;
 
 /**
@@ -48,6 +51,9 @@ public class ArrayUsingBean {
     @Inject @Named("SecondSimpleArray")
     private Provider<ArrayClass[]> secondSimpleArrayProvider;
 
+    @Inject @Any
+    private Collection<ArrayClass[]> allArrayClasses;
+
     public ArrayClass[] getFirstSimpleArray() {
         return firstSimpleArray;
     }
@@ -62,5 +68,9 @@ public class ArrayUsingBean {
 
     public Provider<ArrayClass[]> getSecondSimpleArrayProvider() {
         return secondSimpleArrayProvider;
+    }
+
+    public Collection<ArrayClass[]> getAllArrayClasses() {
+        return allArrayClasses;
     }
 }

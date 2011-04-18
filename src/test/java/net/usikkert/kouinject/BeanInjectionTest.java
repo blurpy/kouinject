@@ -335,6 +335,15 @@ public class BeanInjectionTest {
         assertEquals(2, arrayClasses.length);
         assertEquals("Second array 1", arrayClasses[0].getName());
         assertEquals("Second array 2", arrayClasses[1].getName());
+
+        final Collection<ArrayClass[]> allArrayClasses = bean.getAllArrayClasses();
+        assertNotNull(allArrayClasses);
+        assertEquals(2, allArrayClasses.size());
+
+        for (final ArrayClass[] classes : allArrayClasses) {
+            assertNotNull(classes);
+            assertEquals(2, classes.length);
+        }
     }
 
     @Test
