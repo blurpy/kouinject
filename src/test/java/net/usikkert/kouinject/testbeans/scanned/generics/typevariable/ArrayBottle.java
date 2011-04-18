@@ -20,34 +20,37 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.generics.typevariable;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+
+import net.usikkert.kouinject.annotation.Produces;
+import net.usikkert.kouinject.testbeans.scanned.generics.Container;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * A bottle for testing injecting and producing beans with type variable arrays.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+public class ArrayBottle<T extends Liquid> {
 
-    // All components
-    ALL(146),
+    @Inject
+    private T[] arrayT;
 
-    // All components and those created by factories
-    SCANNED(161),
+    @Inject
+    private Provider<T[]> providerArrayT;
 
-    // All components and those created by factories, without a qualifier
-    SCANNED_WITHOUT_QUALIFIER(121),
-
-    // All from SCANNED, plus those with profiles that can be activated at the same time
-    SCANNED_WITH_PROFILED(170);
-
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
+    @Produces
+    public Container<T[]> createContainerOfArrayT() {
+        return new Container<T[]>(arrayT);
     }
 
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    public T[] getArrayT() {
+        return arrayT;
+    }
+
+    public Provider<T[]> getProviderArrayT() {
+        return providerArrayT;
     }
 }

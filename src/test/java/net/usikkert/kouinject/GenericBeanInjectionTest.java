@@ -77,6 +77,7 @@ import net.usikkert.kouinject.testbeans.scanned.generics.thing.StopThingListener
 import net.usikkert.kouinject.testbeans.scanned.generics.thing.ThingListenerBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.thing.ThingManagerBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.AbstractDualVariableBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.ArrayBottle;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Bottle;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Box;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.CardboardBox;
@@ -86,8 +87,10 @@ import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.DualVariab
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Fanta;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.FantaBottle;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Liquid;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.LiquidArrayFactory;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.LiquidDualVariableBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Pepsi;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.PepsiArrayBottle;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Pizza;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.PizzaBoxBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Shoe;
@@ -223,13 +226,14 @@ public class GenericBeanInjectionTest {
     public void checkAllContainerBeans() {
         final Collection<Container<?>> beans = injector.getBeans(new TypeLiteral<Container<?>>() {});
         assertNotNull(beans);
-        assertEquals(5, beans.size());
+        assertEquals(6, beans.size());
 
         assertTrue(containsContainerBeanOf(ChildBean.class, beans));
         assertTrue(containsContainerBeanOf(MiddleBean.class, beans));
         assertTrue(containsContainerBeanOf(SuperBean.class, beans));
         assertTrue(containsContainerBeanOf(RubberWheel.class, beans));
         assertTrue(containsContainerBeanOf(Fanta.class, beans));
+        assertTrue(containsContainerBeanOf(Pepsi[].class, beans));
     }
 
     @Test
@@ -853,6 +857,61 @@ public class GenericBeanInjectionTest {
         assertEquals(Pentagon.class, secondPentagonShape.getShapeClass());
         assertNotNull(secondPentagonShape.getContainedShape());
         assertEquals(Pentagon.class, secondPentagonShape.getContainedShape().getShapeClass());
+    }
+
+    @Test
+    public void checkPepsiArrayBottle() {
+        final PepsiArrayBottle bean = injector.getBean(PepsiArrayBottle.class);
+        assertNotNull(bean);
+
+        final Pepsi[] arrayT = bean.getArrayT();
+        assertNotNull(arrayT);
+        assertEquals(1, arrayT.length);
+        assertNotNull(arrayT[0]);
+
+        final Provider<Pepsi[]> providerArrayT = bean.getProviderArrayT();
+        assertNotNull(providerArrayT);
+
+        final Pepsi[] pepsiArray = providerArrayT.get();
+        assertNotNull(pepsiArray);
+        assertEquals(1, pepsiArray.length);
+        assertNotNull(pepsiArray[0]);
+
+        assertNotNull(bean.createContainerOfArrayT());
+
+        final ArrayBottle<Pepsi> pepsiArrayBottle = injector.getBean(new TypeLiteral<ArrayBottle<Pepsi>>() {});
+        assertNotNull(pepsiArrayBottle);
+        assertEquals(PepsiArrayBottle.class, pepsiArrayBottle.getClass());
+    }
+
+    @Test
+    public void checkContainerOfPepsiArray() {
+        final Container<Pepsi[]> bean = injector.getBean(new TypeLiteral<Container<Pepsi[]>>() {});
+        assertNotNull(bean);
+
+        final Pepsi[] contained = bean.getContained();
+        assertNotNull(contained);
+        assertEquals(1, contained.length);
+        assertNotNull(contained[0]);
+    }
+
+    @Test
+    public void checkPepsiArray() {
+        final Pepsi[] bean = injector.getBean(Pepsi[].class);
+
+        assertNotNull(bean);
+        assertEquals(1, bean.length);
+
+        final Pepsi pepsi = bean[0];
+        assertNotNull(pepsi);
+    }
+
+    @Test
+    public void checkLiquidArrayFactory() {
+        final LiquidArrayFactory bean = injector.getBean(LiquidArrayFactory.class);
+        assertNotNull(bean);
+
+        assertNotNull(bean.createPepsiArray(null));
     }
 
     private boolean containsMovie(final Collection<? extends Movie<?>> movies, final String movieTitle) {
