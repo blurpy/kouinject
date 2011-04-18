@@ -1392,6 +1392,40 @@ public class GenericsHelperTest {
         assertFalse(wrappedType.equals(unexpectedType));
     }
 
+    @Test
+    public void wrapTypeAndReplaceTypeVariablesShouldReplaceTypeVariablesInArrays() throws NoSuchFieldException {
+        final TypeMap typeMap = GenericsHelper.mapTypeVariablesToActualTypes(TypeVariableBeanWithFanta.class);
+        final Type expectedType = new TypeLiteral<Fanta[]>() {}.getGenericType();
+        final Type unexpectedType = new TypeLiteral<Pepsi[]>() {}.getGenericType();
+
+        final Type fieldType = getTypeFromField("arrayT");
+        assertFalse(expectedType.equals(fieldType));
+
+        final Type wrappedType = GenericsHelper.wrapTypeAndReplaceTypeVariables(fieldType, typeMap);
+        assertEquals(expectedType, wrappedType);
+        assertEquals(wrappedType, expectedType);
+
+        assertFalse(unexpectedType.equals(wrappedType));
+        assertFalse(wrappedType.equals(unexpectedType));
+    }
+
+    @Test
+    public void wrapTypeAndReplaceTypeVariablesShouldReplaceTypeVariablesInNestedArrays() throws NoSuchFieldException {
+        final TypeMap typeMap = GenericsHelper.mapTypeVariablesToActualTypes(TypeVariableBeanWithFanta.class);
+        final Type expectedType = new TypeLiteral<Set<Container<Fanta[]>>>() {}.getGenericType();
+        final Type unexpectedType = new TypeLiteral<Set<Container<Pepsi[]>>>() {}.getGenericType();
+
+        final Type fieldType = getTypeFromField("setOfContainersOfArrayT");
+        assertFalse(expectedType.equals(fieldType));
+
+        final Type wrappedType = GenericsHelper.wrapTypeAndReplaceTypeVariables(fieldType, typeMap);
+        assertEquals(expectedType, wrappedType);
+        assertEquals(wrappedType, expectedType);
+
+        assertFalse(unexpectedType.equals(wrappedType));
+        assertFalse(wrappedType.equals(unexpectedType));
+    }
+
     private Type getTypeFromField(final String fieldName) throws NoSuchFieldException {
         final Field field = TypeVariableBean.class.getDeclaredField(fieldName);
         return field.getGenericType();

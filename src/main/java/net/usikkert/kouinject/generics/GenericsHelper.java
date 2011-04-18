@@ -282,7 +282,7 @@ public final class GenericsHelper {
     /**
      * Takes a type, and replaces any type variables with an actual type from the type map.
      *
-     * <p>Supports both parameterized types and wildcards. The replacement is recursive, so if the type
+     * <p>Supports parameterized types, wildcards and generic array types. The replacement is recursive, so if the type
      * variable is in a nested type then the whole hierarchy of types will be wrapped. If no actual type
      * is found in the map, then the type variable is kept as is.</p>
      *
@@ -311,6 +311,13 @@ public final class GenericsHelper {
             final Type[] wrappedLowerBounds = wrapTypeParameters(wildcardType.getLowerBounds(), typeMap);
 
             return new WrappedWildcardType(wrappedUpperBounds, wrappedLowerBounds);
+        }
+
+        else if (isGenericArrayType(type)) {
+            final GenericArrayType genericArrayType = (GenericArrayType) type;
+            final Type wrappedType = wrapTypeAndReplaceTypeVariables(genericArrayType.getGenericComponentType(), typeMap);
+
+            return new WrappedGenericArrayType(wrappedType);
         }
 
         else if (isTypeVariable(type)) {

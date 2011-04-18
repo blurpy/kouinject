@@ -50,6 +50,8 @@ public abstract class TypeVariableBean<T> {
     @Named("collectionProviderT")
     private CollectionProvider<T> collectionProviderWithT;
 
+    private T[] arrayT;
+    private Set<Container<T[]>> setOfContainersOfArrayT;
     private Container<T> containerOfT;
     private Set<Container<T>> setOfContainersOfT;
     private Set<Container<? extends T>> setOfContainersOfExtendsT;
