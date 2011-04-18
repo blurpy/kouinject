@@ -177,6 +177,7 @@ public final class GenericsHelper {
      *
      * <ul>
      *   <li>Class vs class - Class 1 must be assignable from class 2.</li>
+     *   <li>Array class vs array class - Array class 1 must be assignable from array class 2, and have the same dimensions.</li>
      *   <li>Parameterized type vs parameterized type - The raw class of type 1 must be assignable from the raw
      *      class of type 2, and all the parameters of both must be equal.</li>
      *   <li>Wildcard vs wildcard - The bounds of each wildcard must be assignable from each other.</li>
