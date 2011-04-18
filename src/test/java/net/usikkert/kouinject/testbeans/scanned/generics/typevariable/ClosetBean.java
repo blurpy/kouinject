@@ -22,6 +22,8 @@
 
 package net.usikkert.kouinject.testbeans.scanned.generics.typevariable;
 
+import java.util.Collection;
+
 import javax.inject.Inject;
 
 import net.usikkert.kouinject.annotation.Component;
@@ -40,11 +42,18 @@ public class ClosetBean {
     @Inject
     private Box<? extends Pizza> pizzaBox;
 
+    @Inject
+    private Collection<GenericBox<Liquid[]>> boxesOfLiquid;
+
     public Box<? extends Shoe> getShoeBox() {
         return shoeBox;
     }
 
     public Box<? extends Pizza> getPizzaBox() {
         return pizzaBox;
+    }
+
+    public Collection<GenericBox<Liquid[]>> getBoxesOfLiquid() {
+        return boxesOfLiquid;
     }
 }

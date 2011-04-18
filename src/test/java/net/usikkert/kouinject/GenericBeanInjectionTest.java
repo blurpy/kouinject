@@ -545,6 +545,29 @@ public class GenericBeanInjectionTest {
         final Box<? extends Shoe> shoeBox = bean.getShoeBox();
         assertNotNull(shoeBox);
         assertEquals(ShoeBoxBean.class, shoeBox.getClass());
+
+        final Collection<GenericBox<Liquid[]>> boxesOfLiquid = bean.getBoxesOfLiquid();
+        assertNotNull(boxesOfLiquid);
+        assertEquals(2, boxesOfLiquid.size());
+
+        boolean foundFanta = false;
+        boolean foundPepsi = false;
+
+        for (final GenericBox<Liquid[]> genericBox : boxesOfLiquid) {
+            assertNotNull(genericBox);
+            final Liquid[] content = genericBox.getContent();
+            assertEquals(1, content.length);
+            final Liquid liquid = content[0];
+
+            if (liquid.getClass().equals(Fanta.class)) {
+                foundFanta = true;
+            } else if (liquid.getClass().equals(Pepsi.class)) {
+                foundPepsi = true;
+            }
+        }
+
+        assertTrue(foundFanta);
+        assertTrue(foundPepsi);
     }
 
     @Test
