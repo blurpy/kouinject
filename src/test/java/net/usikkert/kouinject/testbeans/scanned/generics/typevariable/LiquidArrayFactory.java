@@ -22,6 +22,9 @@
 
 package net.usikkert.kouinject.testbeans.scanned.generics.typevariable;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import net.usikkert.kouinject.annotation.Component;
 import net.usikkert.kouinject.annotation.Produces;
 
@@ -36,5 +39,20 @@ public class LiquidArrayFactory {
     @Produces
     public Pepsi[] createPepsiArray(final Pepsi pepsi) {
         return new Pepsi[] { pepsi };
+    }
+
+    @Produces
+    public Fanta[] createFantaArray(final Fanta fanta) {
+        return new Fanta[] { fanta };
+    }
+
+    @Produces @Singleton @Named("PepsiArray")
+    public GenericBox<Liquid[]> createBoxOfPepsiArray(final Pepsi[] pepsiArray) {
+        return new GenericBox<Liquid[]>(pepsiArray);
+    }
+
+    @Produces @Named("FantaArray")
+    public GenericBox<Liquid[]> createBoxOfFantaArray(final Fanta[] fantaArray) {
+        return new GenericBox<Liquid[]>(fantaArray);
     }
 }

@@ -115,6 +115,8 @@ import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.factory.Horro
 import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.factory.Movie;
 import net.usikkert.kouinject.testbeans.scanned.generics.qualifier.factory.MovieCollectionBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.stuff.OneStuffBean;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.GenericBox;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Liquid;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.abstractbean.AbstractBeanImpl;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.interfacebean.InterfaceBean;
 import net.usikkert.kouinject.testbeans.scanned.profile.DevelopmentBean;
@@ -1517,7 +1519,10 @@ public class DefaultBeanLoaderTest {
     @Test
     public void getBeanWithArrayShouldHandlePrototypeScopeCorrect() {
         final ArrayClass[] simpleArrays1 = beanLoader.getBean(ArrayClass[].class, "FirstSimpleArray");
+        assertNotNull(simpleArrays1);
+
         final ArrayClass[] simpleArrays2 = beanLoader.getBean(ArrayClass[].class, "FirstSimpleArray");
+        assertNotNull(simpleArrays2);
 
         assertNotSame(simpleArrays1, simpleArrays2);
     }
@@ -1525,9 +1530,34 @@ public class DefaultBeanLoaderTest {
     @Test
     public void getBeanWithArrayShouldHandleSingletonScopeCorrect() {
         final SingletonArray[] singletonArrays1 = beanLoader.getBean(SingletonArray[].class);
+        assertNotNull(singletonArrays1);
+
         final SingletonArray[] singletonArrays2 = beanLoader.getBean(SingletonArray[].class);
+        assertNotNull(singletonArrays2);
 
         assertSame(singletonArrays1, singletonArrays2);
+    }
+
+    @Test
+    public void getBeanWithGenericArrayShouldHandlePrototypeScopeCorrect() {
+        final GenericBox<Liquid[]> box1 = beanLoader.getBean(new TypeLiteral<GenericBox<Liquid[]>>() {}, "FantaArray");
+        assertNotNull(box1);
+
+        final GenericBox<Liquid[]> box2 = beanLoader.getBean(new TypeLiteral<GenericBox<Liquid[]>>() {}, "FantaArray");
+        assertNotNull(box2);
+
+        assertNotSame(box1, box2);
+    }
+
+    @Test
+    public void getBeanWithGenericArrayShouldHandleSingletonScopeCorrect() {
+        final GenericBox<Liquid[]> box1 = beanLoader.getBean(new TypeLiteral<GenericBox<Liquid[]>>() {}, "PepsiArray");
+        assertNotNull(box1);
+
+        final GenericBox<Liquid[]> box2 = beanLoader.getBean(new TypeLiteral<GenericBox<Liquid[]>>() {}, "PepsiArray");
+        assertNotNull(box2);
+
+        assertSame(box1, box2);
     }
 
     @Test(expected = IllegalStateException.class)

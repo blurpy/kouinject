@@ -86,6 +86,7 @@ import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.ConcreteDu
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.DualVariableInterfaceBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Fanta;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.FantaBottle;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.GenericBox;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Liquid;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.LiquidArrayFactory;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.LiquidDualVariableBean;
@@ -907,11 +908,53 @@ public class GenericBeanInjectionTest {
     }
 
     @Test
+    public void checkFantaArray() {
+        final Fanta[] bean = injector.getBean(Fanta[].class);
+
+        assertNotNull(bean);
+        assertEquals(1, bean.length);
+
+        final Fanta fanta = bean[0];
+        assertNotNull(fanta);
+    }
+
+    @Test
     public void checkLiquidArrayFactory() {
         final LiquidArrayFactory bean = injector.getBean(LiquidArrayFactory.class);
         assertNotNull(bean);
 
         assertNotNull(bean.createPepsiArray(null));
+        assertNotNull(bean.createFantaArray(null));
+        assertNotNull(bean.createBoxOfFantaArray(null));
+        assertNotNull(bean.createBoxOfPepsiArray(null));
+    }
+
+    @Test
+    public void checkBoxOfFantaArray() {
+        final GenericBox<Liquid[]> bean = injector.getBean(new TypeLiteral<GenericBox<Liquid[]>>() {}, "FantaArray");
+        assertNotNull(bean);
+
+        final Liquid[] content = bean.getContent();
+        assertNotNull(content);
+        assertEquals(1, content.length);
+
+        final Liquid liquid = content[0];
+        assertNotNull(liquid);
+        assertEquals(Fanta.class, liquid.getClass());
+    }
+
+    @Test
+    public void checkBoxOfPepsiArray() {
+        final GenericBox<Liquid[]> bean = injector.getBean(new TypeLiteral<GenericBox<Liquid[]>>() {}, "PepsiArray");
+        assertNotNull(bean);
+
+        final Liquid[] content = bean.getContent();
+        assertNotNull(content);
+        assertEquals(1, content.length);
+
+        final Liquid liquid = content[0];
+        assertNotNull(liquid);
+        assertEquals(Pepsi.class, liquid.getClass());
     }
 
     private boolean containsMovie(final Collection<? extends Movie<?>> movies, final String movieTitle) {

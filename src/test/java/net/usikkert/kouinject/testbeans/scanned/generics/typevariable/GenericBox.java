@@ -20,34 +20,23 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.generics.typevariable;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * A generic box for anything.
  *
  * @author Christian Ihle
+ * @param <T> The type of content in this box.
  */
-public enum BeanCount {
+public class GenericBox<T> implements Box<T> {
 
-    // All components
-    ALL(146),
+    private final T content;
 
-    // All components and those created by factories
-    SCANNED(164),
-
-    // All components and those created by factories, without a qualifier
-    SCANNED_WITHOUT_QUALIFIER(122),
-
-    // All from SCANNED, plus those with profiles that can be activated at the same time
-    SCANNED_WITH_PROFILED(173);
-
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
+    public GenericBox(final T content) {
+        this.content = content;
     }
 
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    public T getContent() {
+        return content;
     }
 }
