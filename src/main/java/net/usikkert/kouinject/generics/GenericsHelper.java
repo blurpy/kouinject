@@ -359,6 +359,12 @@ public final class GenericsHelper {
                 return true;
             }
 
+            // To support arrays in providers and collections - the assignment check on the classes
+            // above makes sure that both are compatible arrays
+            else if (isGenericArrayType(thisType) && isClass(thatType)) {
+                return true;
+            }
+
             // Assigning from a class that implements a generic interface or class to a generic type
             if (isAssignableFromSuperTypes(thisType, thatClass, typeMap)) {
                 return true;

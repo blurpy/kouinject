@@ -328,14 +328,13 @@ public class BeanInjectionTest {
         assertEquals("Singleton array 1", singletonArray[0].getName());
         assertEquals("Singleton array 2", singletonArray[1].getName());
 
-        // TODO activate when arrays in generics are supported
-//        final Provider<ArrayClass[]> secondSimpleArrayProvider = bean.getSecondSimpleArrayProvider();
-//        assertNotNull(secondSimpleArrayProvider);
-//        final ArrayClass[] arrayClasses = secondSimpleArrayProvider.get();
-//        assertNotNull(arrayClasses);
-//        assertEquals(2, arrayClasses.length);
-//        assertEquals("Second array 1", arrayClasses[0].getName());
-//        assertEquals("Second array 2", arrayClasses[1].getName());
+        final Provider<ArrayClass[]> secondSimpleArrayProvider = bean.getSecondSimpleArrayProvider();
+        assertNotNull(secondSimpleArrayProvider);
+        final ArrayClass[] arrayClasses = secondSimpleArrayProvider.get();
+        assertNotNull(arrayClasses);
+        assertEquals(2, arrayClasses.length);
+        assertEquals("Second array 1", arrayClasses[0].getName());
+        assertEquals("Second array 2", arrayClasses[1].getName());
     }
 
     @Test

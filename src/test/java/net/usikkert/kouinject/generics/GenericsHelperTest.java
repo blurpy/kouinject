@@ -1177,6 +1177,59 @@ public class GenericsHelperTest {
     }
 
     @Test
+    public void isAssignableFromShouldBeTrueForGenericTypeWithArrayThatMatches() {
+        final Type thisType = new TypeLiteral<Provider<String[]>>() {}.getGenericType();
+        final Type thatType = new TypeLiteral<Provider<String[]>>() {}.getGenericType();
+
+        assertTrue(GenericsHelper.isAssignableFrom(thisType, thatType));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeFalseForGenericTypeWithArrayOfWrongType() {
+        final Type thisType = new TypeLiteral<Provider<Number[]>>() {}.getGenericType();
+        final Type thatType = new TypeLiteral<Provider<Integer[]>>() {}.getGenericType();
+
+        assertFalse(GenericsHelper.isAssignableFrom(thisType, thatType));
+        assertFalse(GenericsHelper.isAssignableFrom(thatType, thisType));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeTrueForArrayFromGenericTypeThatMatchesRegularArrayOfCorrectType() {
+        final Type thisProvider = new TypeLiteral<Provider<String[]>>() {}.getGenericType();
+        final Type thisType = GenericsHelper.getGenericArgumentAsType(thisProvider);
+
+        assertTrue(GenericsHelper.isAssignableFrom(thisType, String[].class));
+        assertFalse(GenericsHelper.isAssignableFrom(String[].class, thisType));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeFalseForArrayFromGenericTypeWithLessDimensionsThanRegularArrayOfCorrectType() {
+        final Type thisProvider = new TypeLiteral<Provider<String[]>>() {}.getGenericType();
+        final Type thisType = GenericsHelper.getGenericArgumentAsType(thisProvider);
+
+        assertFalse(GenericsHelper.isAssignableFrom(thisType, String[][].class));
+        assertFalse(GenericsHelper.isAssignableFrom(String[][].class, thisType));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeFalseForArrayFromGenericTypeWithMoreDimensionsThanRegularArrayOfCorrectType() {
+        final Type thisProvider = new TypeLiteral<Provider<String[][]>>() {}.getGenericType();
+        final Type thisType = GenericsHelper.getGenericArgumentAsType(thisProvider);
+
+        assertFalse(GenericsHelper.isAssignableFrom(thisType, String[].class));
+        assertFalse(GenericsHelper.isAssignableFrom(String[].class, thisType));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeTrueForArrayFromGenericTypeThatMatchesRegularArrayOfCorrectInheritance() {
+        final Type thisProvider = new TypeLiteral<Provider<Number[]>>() {}.getGenericType();
+        final Type thisType = GenericsHelper.getGenericArgumentAsType(thisProvider);
+
+        assertTrue(GenericsHelper.isAssignableFrom(thisType, Integer[].class));
+        assertFalse(GenericsHelper.isAssignableFrom(Integer[].class, thisType));
+    }
+
+    @Test
     public void mapTypeVariablesToActualTypesShouldHandleInheritance() {
         final TypeMap typeMap = GenericsHelper.mapTypeVariablesToActualTypes(ConcreteDualVariableBean.class);
         assertEquals(3, typeMap.size());
