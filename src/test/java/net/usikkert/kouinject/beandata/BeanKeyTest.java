@@ -391,6 +391,57 @@ public class BeanKeyTest {
     }
 
     @Test
+    public void canInjectEqualArrays() {
+        final BeanKey bean1 = new BeanKey(HelloBean[].class);
+        final BeanKey bean2 = new BeanKey(HelloBean[].class);
+
+        assertTrue(bean1.canInject(bean2));
+        assertTrue(bean1.canInjectFromFactory(bean2));
+    }
+
+    @Test
+    public void canInjectSubclassArray() {
+        final BeanKey theGreenBean = new BeanKey(GreenBean[].class);
+        final BeanKey theColorField = new BeanKey(ColorBean[].class);
+
+        assertTrue(theColorField.canInject(theGreenBean));
+        assertTrue(theColorField.canInjectFromFactory(theGreenBean));
+
+        assertFalse(theGreenBean.canInject(theColorField));
+        assertFalse(theGreenBean.canInjectFromFactory(theColorField));
+    }
+
+    @Test
+    public void cantInjectDifferentArrays() {
+        final BeanKey bean1 = new BeanKey(HelloBean[].class);
+        final BeanKey bean2 = new BeanKey(GreenBean[].class);
+
+        assertFalse(bean1.canInject(bean2));
+        assertFalse(bean1.canInjectFromFactory(bean2));
+
+        assertFalse(bean2.canInject(bean1));
+        assertFalse(bean2.canInjectFromFactory(bean1));
+    }
+
+    @Test
+    public void canInjectMatchingArraysWithEqualQualifier() {
+        final BeanKey theGreenBean = new BeanKey(GreenBean[].class, "green");
+        final BeanKey theColorField = new BeanKey(ColorBean[].class, "green");
+
+        assertTrue(theColorField.canInject(theGreenBean));
+        assertTrue(theColorField.canInjectFromFactory(theGreenBean));
+    }
+
+    @Test
+    public void cantInjectMatchingArraysWithWrongQualifier() {
+        final BeanKey theGreenBean = new BeanKey(GreenBean[].class, "green");
+        final BeanKey theColorField = new BeanKey(ColorBean[].class, "red");
+
+        assertFalse(theColorField.canInject(theGreenBean));
+        assertFalse(theColorField.canInjectFromFactory(theGreenBean));
+    }
+
+    @Test
     public void canInjectShouldReturnTrueForEqualTypes() {
         final BeanKey helloBeanKey1 = new BeanKey(new TypeLiteral<List<HelloBean>>() {});
         final BeanKey helloBeanKey2 = new BeanKey(new TypeLiteral<List<HelloBean>>() {});
