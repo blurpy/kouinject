@@ -1230,6 +1230,34 @@ public class GenericsHelperTest {
     }
 
     @Test
+    public void isAssignableFromShouldBeTrueFromGenericArrayToWildcardOfCorrectType() {
+        final Type thatType = new TypeLiteral<Box<String[]>>() {}.getGenericType();
+        final Type thisType = new TypeLiteral<Box<? extends String[]>>() {}.getGenericType();
+
+//        final Box<String[]> thatBean = null;
+//        final Box<? extends String[]> thisBean = thatBean; // ok
+        assertTrue(GenericsHelper.isAssignableFrom(thisType, thatType));
+
+//        final Box<? extends String[]> thatBean = null;
+//        final Box<String[]> thisBean = thatBean; // compiler error
+        assertFalse(GenericsHelper.isAssignableFrom(thatType, thisType));
+    }
+
+    @Test
+    public void isAssignableFromShouldBeTrueFromArrayToWildcardOfCorrectType() {
+        final Type thisType = new TypeLiteral<Provider<? extends String[]>>() {}.getGenericType();
+        final Type thisWildcard = GenericsHelper.getGenericArgumentAsType(thisType);
+
+//        final String[] thatBean = null;
+//        final ? extends String[] thisBean = thatBean; // ok, but not possible to write, must come from a generic type
+        assertTrue(GenericsHelper.isAssignableFrom(thisWildcard, String[].class));
+
+//        final ? extends String[] thatBean = null;
+//        final String[] thisBean = thatBean; // compiler error
+        assertFalse(GenericsHelper.isAssignableFrom(String[].class, thisWildcard));
+    }
+
+    @Test
     public void mapTypeVariablesToActualTypesShouldHandleInheritance() {
         final TypeMap typeMap = GenericsHelper.mapTypeVariablesToActualTypes(ConcreteDualVariableBean.class);
         assertEquals(3, typeMap.size());
