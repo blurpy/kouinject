@@ -74,6 +74,7 @@ import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 import net.usikkert.kouinject.testbeans.scanned.ProviderBean;
 import net.usikkert.kouinject.testbeans.scanned.RainbowBean;
 import net.usikkert.kouinject.testbeans.scanned.array.ArrayClass;
+import net.usikkert.kouinject.testbeans.scanned.array.SingletonArray;
 import net.usikkert.kouinject.testbeans.scanned.collection.AppleBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.BananaBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.CheeseBean;
@@ -1511,6 +1512,22 @@ public class DefaultBeanLoaderTest {
         assertNotNull(bean2);
 
         assertNotSame(bean1, bean2);
+    }
+
+    @Test
+    public void getBeanWithArrayShouldHandlePrototypeScopeCorrect() {
+        final ArrayClass[] simpleArrays1 = beanLoader.getBean(ArrayClass[].class, "FirstSimpleArray");
+        final ArrayClass[] simpleArrays2 = beanLoader.getBean(ArrayClass[].class, "FirstSimpleArray");
+
+        assertNotSame(simpleArrays1, simpleArrays2);
+    }
+
+    @Test
+    public void getBeanWithArrayShouldHandleSingletonScopeCorrect() {
+        final SingletonArray[] singletonArrays1 = beanLoader.getBean(SingletonArray[].class);
+        final SingletonArray[] singletonArrays2 = beanLoader.getBean(SingletonArray[].class);
+
+        assertSame(singletonArrays1, singletonArrays2);
     }
 
     @Test(expected = IllegalStateException.class)

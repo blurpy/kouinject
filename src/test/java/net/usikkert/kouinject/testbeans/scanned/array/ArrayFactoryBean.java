@@ -22,6 +22,9 @@
 
 package net.usikkert.kouinject.testbeans.scanned.array;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import net.usikkert.kouinject.annotation.Component;
 import net.usikkert.kouinject.annotation.Produces;
 
@@ -33,11 +36,27 @@ import net.usikkert.kouinject.annotation.Produces;
 @Component
 public class ArrayFactoryBean {
 
-    @Produces
-    public ArrayClass[] createArray() {
+    @Produces @Named("FirstSimpleArray")
+    public ArrayClass[] createFirstSimpleArray() {
         return new ArrayClass[] {
-                new ArrayClass("Array 1"),
-                new ArrayClass("Array 2")
+                new ArrayClass("First array 1"),
+                new ArrayClass("First array 2")
+        };
+    }
+
+    @Produces @Named("SecondSimpleArray")
+    public ArrayClass[] createSecondSimpleArray() {
+        return new ArrayClass[] {
+                new ArrayClass("Second array 1"),
+                new ArrayClass("Second array 2")
+        };
+    }
+
+    @Produces @Singleton
+    public SingletonArray[] createSingletonArray() {
+        return new SingletonArray[] {
+                new SingletonArray("Singleton array 1"),
+                new SingletonArray("Singleton array 2")
         };
     }
 }

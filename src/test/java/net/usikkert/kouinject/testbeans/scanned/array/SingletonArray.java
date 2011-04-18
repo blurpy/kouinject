@@ -22,37 +22,20 @@
 
 package net.usikkert.kouinject.testbeans.scanned.array;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import net.usikkert.kouinject.annotation.Component;
-
 /**
- * A bean for testing injection of arrays.
+ * A class for testing singleton scope of arrays.
  *
  * @author Christian Ihle
  */
-@Component
-public class ArrayUsingBean {
+public class SingletonArray implements ArrayInterface {
 
-    @Inject @Named("FirstSimpleArray")
-    private ArrayClass[] arrayClasses;
+    private final String name;
 
-    @Inject @Named("SecondSimpleArray")
-    private ArrayInterface[] arrayInterfaces;
-
-    @Inject
-    private SingletonArray[] singletonArrays;
-
-    public ArrayClass[] getArrayClasses() {
-        return arrayClasses;
+    public SingletonArray(final String name) {
+        this.name = name;
     }
 
-    public ArrayInterface[] getArrayInterfaces() {
-        return arrayInterfaces;
-    }
-
-    public SingletonArray[] getSingletonArrays() {
-        return singletonArrays;
+    public String getName() {
+        return name;
     }
 }

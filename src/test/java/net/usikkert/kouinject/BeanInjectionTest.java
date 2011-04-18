@@ -54,6 +54,7 @@ import net.usikkert.kouinject.testbeans.scanned.array.ArrayClass;
 import net.usikkert.kouinject.testbeans.scanned.array.ArrayFactoryBean;
 import net.usikkert.kouinject.testbeans.scanned.array.ArrayInterface;
 import net.usikkert.kouinject.testbeans.scanned.array.ArrayUsingBean;
+import net.usikkert.kouinject.testbeans.scanned.array.SingletonArray;
 import net.usikkert.kouinject.testbeans.scanned.coffee.CoffeeBean;
 import net.usikkert.kouinject.testbeans.scanned.coffee.JavaBean;
 import net.usikkert.kouinject.testbeans.scanned.collection.AppleBean;
@@ -298,7 +299,9 @@ public class BeanInjectionTest {
         final ArrayFactoryBean bean = injector.getBean(ArrayFactoryBean.class);
 
         assertNotNull(bean);
-        assertNotNull(bean.createArray());
+        assertNotNull(bean.createFirstSimpleArray());
+        assertNotNull(bean.createSecondSimpleArray());
+        assertNotNull(bean.createSingletonArray());
     }
 
     @Test
@@ -309,25 +312,51 @@ public class BeanInjectionTest {
         final ArrayClass[] arrayClasses = bean.getArrayClasses();
         assertNotNull(arrayClasses);
         assertEquals(2, arrayClasses.length);
-        assertEquals("Array 1", arrayClasses[0].getName());
-        assertEquals("Array 2", arrayClasses[1].getName());
+        assertEquals("First array 1", arrayClasses[0].getName());
+        assertEquals("First array 2", arrayClasses[1].getName());
 
         final ArrayInterface[] arrayInterfaces = bean.getArrayInterfaces();
         assertNotNull(arrayInterfaces);
         assertTrue(arrayInterfaces instanceof ArrayClass[]);
         assertEquals(2, arrayInterfaces.length);
-        assertEquals("Array 1", arrayInterfaces[0].getName());
-        assertEquals("Array 2", arrayInterfaces[1].getName());
+        assertEquals("Second array 1", arrayInterfaces[0].getName());
+        assertEquals("Second array 2", arrayInterfaces[1].getName());
+
+        final SingletonArray[] singletonArrays = bean.getSingletonArrays();
+        assertNotNull(singletonArrays);
+        assertEquals(2, singletonArrays.length);
+        assertEquals("Singleton array 1", singletonArrays[0].getName());
+        assertEquals("Singleton array 2", singletonArrays[1].getName());
     }
 
     @Test
-    public void checkArrayClass() {
-        final ArrayClass[] bean = injector.getBean(ArrayClass[].class);
+    public void checkFirstSimpleArray() {
+        final ArrayClass[] bean = injector.getBean(ArrayClass[].class, "FirstSimpleArray");
 
         assertNotNull(bean);
         assertEquals(2, bean.length);
-        assertEquals("Array 1", bean[0].getName());
-        assertEquals("Array 2", bean[1].getName());
+        assertEquals("First array 1", bean[0].getName());
+        assertEquals("First array 2", bean[1].getName());
+    }
+
+    @Test
+    public void checkSecondSimpleArray() {
+        final ArrayClass[] bean = injector.getBean(ArrayClass[].class, "SecondSimpleArray");
+
+        assertNotNull(bean);
+        assertEquals(2, bean.length);
+        assertEquals("Second array 1", bean[0].getName());
+        assertEquals("Second array 2", bean[1].getName());
+    }
+
+    @Test
+    public void checkSingletonArray() {
+        final SingletonArray[] bean = injector.getBean(SingletonArray[].class);
+
+        assertNotNull(bean);
+        assertEquals(2, bean.length);
+        assertEquals("Singleton array 1", bean[0].getName());
+        assertEquals("Singleton array 2", bean[1].getName());
     }
 
     @Test

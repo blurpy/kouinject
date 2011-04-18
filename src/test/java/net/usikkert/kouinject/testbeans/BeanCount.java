@@ -33,13 +33,13 @@ public enum BeanCount {
     ALL(144),
 
     // All components and those created by factories
-    SCANNED(155),
+    SCANNED(157),
 
     // All components and those created by factories, without a qualifier
     SCANNED_WITHOUT_QUALIFIER(117),
 
     // All from SCANNED, plus those with profiles that can be activated at the same time
-    SCANNED_WITH_PROFILED(164);
+    SCANNED_WITH_PROFILED(166);
 
     private final int numberOfBeans;
 
