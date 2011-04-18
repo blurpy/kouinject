@@ -25,6 +25,7 @@ package net.usikkert.kouinject.generics;
 import static org.junit.Assert.*;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
@@ -32,6 +33,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.inject.Provider;
 
 import net.usikkert.kouinject.testbeans.notscanned.generics.typevariable.TypeVariableChild;
 import net.usikkert.kouinject.testbeans.notscanned.generics.typevariable.TypeVariableParent;
@@ -122,11 +125,44 @@ public class GenericsHelperTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void getAsClassShouldFailIfArray() {
-        final TypeLiteral<Container<String[]>> arrayContainer = new TypeLiteral<Container<String[]>>() {};
+    public void getAsClassShouldFailIfArrayIsGeneric() {
+        // Creating generic arrays are forbidden by the jvm, so wont bother adding support for getting the class
+        // final Container<String>[] anArrayContainer = new Container<String>[0]; // does not compile
+
+        final TypeLiteral<Container<String>[]> arrayContainer = new TypeLiteral<Container<String>[]>() {};
         final Type arrayType = GenericsHelper.getGenericArgumentAsType(arrayContainer.getGenericType());
 
         GenericsHelper.getAsClass(arrayType);
+    }
+
+    @Test
+    public void getAsClassShouldGetCorrectOneDimensionalArrayClass() {
+        final TypeLiteral<Provider<String[]>> providerWithArray = new TypeLiteral<Provider<String[]>>() {};
+        final Type array = GenericsHelper.getGenericArgumentAsType(providerWithArray.getGenericType());
+        assertTrue(GenericsHelper.isGenericArrayType(array));
+
+        final Class<?> asClass = GenericsHelper.getAsClass(array);
+        assertEquals(String[].class, asClass);
+    }
+
+    @Test
+    public void getAsClassShouldGetCorrectTwoDimensionalArrayClass() {
+        final TypeLiteral<Provider<String[][]>> providerWithArray = new TypeLiteral<Provider<String[][]>>() {};
+        final Type array = GenericsHelper.getGenericArgumentAsType(providerWithArray.getGenericType());
+        assertTrue(GenericsHelper.isGenericArrayType(array));
+
+        final Class<?> asClass = GenericsHelper.getAsClass(array);
+        assertEquals(String[][].class, asClass);
+    }
+
+    @Test
+    public void getAsClassShouldGetCorrectThreeDimensionalArrayClass() {
+        final TypeLiteral<Provider<String[][][]>> providerWithArray = new TypeLiteral<Provider<String[][][]>>() {};
+        final Type array = GenericsHelper.getGenericArgumentAsType(providerWithArray.getGenericType());
+        assertTrue(GenericsHelper.isGenericArrayType(array));
+
+        final Class<?> asClass = GenericsHelper.getAsClass(array);
+        assertEquals(String[][][].class, asClass);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -148,21 +184,36 @@ public class GenericsHelperTest {
     }
 
     @Test
-    public void getAsClassOrNullShouldReturnNullForArrays() {
-        final TypeLiteral<Container<String[]>> arrayContainer = new TypeLiteral<Container<String[]>>() {};
-        final Type arrayType = GenericsHelper.getGenericArgumentAsType(arrayContainer.getGenericType());
-
-        final Class<?> classOrNull = GenericsHelper.getAsClassOrNull(arrayType);
-        assertNull(classOrNull);
-    }
-
-    @Test
     public void getAsClassOrNullShouldReturnNullForWildcards() {
         final TypeLiteral<Container<?>> wildcardContainer = new TypeLiteral<Container<?>>() {};
         final Type wildcardType = GenericsHelper.getGenericArgumentAsType(wildcardContainer.getGenericType());
 
         final Class<?> classOrNull = GenericsHelper.getAsClassOrNull(wildcardType);
         assertNull(classOrNull);
+    }
+
+    @Test
+    public void getClassFromGenericArrayShouldHandleOneDimension() {
+        final Type genericType = new TypeLiteral<String[]>() {}.getGenericType();
+        assertTrue(GenericsHelper.isGenericArrayType(genericType));
+
+        assertEquals(String[].class, GenericsHelper.getArrayClassFromGenericArray((GenericArrayType) genericType));
+    }
+
+    @Test
+    public void getClassFromGenericArrayShouldHandleTwoDimensions() {
+        final Type genericType = new TypeLiteral<String[][]>() {}.getGenericType();
+        assertTrue(GenericsHelper.isGenericArrayType(genericType));
+
+        assertEquals(String[][].class, GenericsHelper.getArrayClassFromGenericArray((GenericArrayType) genericType));
+    }
+
+    @Test
+    public void getClassFromGenericArrayShouldHandleThreeDimensions() {
+        final Type genericType = new TypeLiteral<String[][][]>() {}.getGenericType();
+        assertTrue(GenericsHelper.isGenericArrayType(genericType));
+
+        assertEquals(String[][][].class, GenericsHelper.getArrayClassFromGenericArray((GenericArrayType) genericType));
     }
 
     @Test
@@ -201,6 +252,18 @@ public class GenericsHelperTest {
 
         final Type wildcardType = GenericsHelper.getGenericArgumentAsType(wildcardContainer.getGenericType());
         assertTrue(GenericsHelper.isWildcard(wildcardType));
+    }
+
+    @Test
+    public void isGenericArrayType() {
+        assertFalse(GenericsHelper.isGenericArrayType(HelloBean.class));
+
+        final TypeLiteral<Container<String[]>> arrayContainer = new TypeLiteral<Container<String[]>>() {};
+        assertFalse(GenericsHelper.isGenericArrayType(arrayContainer.getGenericType()));
+        assertFalse(GenericsHelper.isGenericArrayType(arrayContainer.getGenericClass()));
+
+        final Type arrayType = GenericsHelper.getGenericArgumentAsType(arrayContainer.getGenericType());
+        assertTrue(GenericsHelper.isGenericArrayType(arrayType));
     }
 
     @Test

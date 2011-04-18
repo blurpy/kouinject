@@ -22,6 +22,8 @@
 
 package net.usikkert.kouinject.generics;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
@@ -114,13 +116,45 @@ public final class GenericsHelper {
             return (Class<?>) parameterizedType.getRawType();
         }
 
+        else if (isGenericArrayType(type)) {
+            return getArrayClassFromGenericArray((GenericArrayType) type);
+        }
+
         return null;
+    }
+
+    /**
+     * Gets the actual array class representing the generic array type.
+     *
+     * <p>Example: a generic array type for <code>String</code> would return <code>String[]</code>.
+     * A generic array type with a nested generic array type with a <code>String</code> would
+     * return <code>String[][]</code>.</p>
+     *
+     * <p>Returns <code>null</code> when the generic array type does not hold a class or another
+     * generic array type, like a <code>List&lt;String&gt;[]</code>.</p>
+     *
+     * @param genericArrayType The generic array type to get the array class from.
+     * @return The array class, or <code>null</code> if not found.
+     */
+    public static Class<?> getArrayClassFromGenericArray(final GenericArrayType genericArrayType) {
+        Validate.notNull(genericArrayType, "Generic array type can not be null");
+
+        final Class<?> classFromGenericArray = getClassFromGenericArray(genericArrayType);
+
+        if (classFromGenericArray == null) {
+            return null;
+        }
+
+        final int dimensions = getArrayDimensions(genericArrayType);
+
+        // Can also use Class.forName(), but support for array classes seems to be ClassLoader dependent
+        return Array.newInstance(classFromGenericArray, new int[dimensions]).getClass();
     }
 
     /**
      * Checks if the type is a class, as opposed to a type with generic parameters.
      *
-     * <p>Example: <code>String</code> would return true, <code>List&lt;String&gt;</code> would return false.
+     * <p>Example: <code>String</code> would return true, <code>List&lt;String&gt;</code> would return false.</p>
      *
      * @param type The type to check.
      * @return If the type is a regular class.
@@ -134,7 +168,7 @@ public final class GenericsHelper {
     /**
      * Checks if the type has generic parameters, as opposed to a regular class.
      *
-     * <p>Example: <code>String</code> would return false, <code>List&lt;String&gt;</code> would return true.
+     * <p>Example: <code>String</code> would return false, <code>List&lt;String&gt;</code> would return true.</p>
      *
      * @param type The type to check.
      * @return If the type is parameterized.
@@ -148,7 +182,7 @@ public final class GenericsHelper {
     /**
      * Checks if the type is a type variable, as opposed to an actual type.
      *
-     * <p>Example: <code>T</code> would return true, <code>Number</code> would return false.
+     * <p>Example: <code>T</code> would return true, <code>Number</code> would return false.</p>
      *
      * @param type The type to check.
      * @return If the type is a type variable.
@@ -160,13 +194,26 @@ public final class GenericsHelper {
     /**
      * Checks if the type is a wildcard, as opposed to a class or a type with generic parameters.
      *
-     * <p>Example: <code>? extends Number</code> would return true, <code>Number</code> would return false.
+     * <p>Example: <code>? extends Number</code> would return true, <code>Number</code> would return false.</p>
      *
      * @param type The type to check.
      * @return If the type is a wildcard.
      */
     public static boolean isWildcard(final Type type) {
         return type instanceof WildcardType;
+    }
+
+    /**
+     * Checks if the type is a generic array type.
+     *
+     * <p>Generic array types appear when using arrays inside a generic type, or when the
+     * generic type itself is an array.</p>
+     *
+     * @param type The type to check.
+     * @return If the type is a generic array type.
+     */
+    public static boolean isGenericArrayType(final Type type) {
+        return type instanceof GenericArrayType;
     }
 
     /**
@@ -499,5 +546,34 @@ public final class GenericsHelper {
         }
 
         return wrappedParameters;
+    }
+
+    private static int getArrayDimensions(final GenericArrayType genericArrayType) {
+        int dimensions = 1;
+        Type innerType = genericArrayType.getGenericComponentType();
+
+        while (isGenericArrayType(innerType)) {
+            final GenericArrayType innerArray = (GenericArrayType) innerType;
+            innerType = innerArray.getGenericComponentType();
+
+            dimensions++;
+        }
+
+        return dimensions;
+    }
+
+    private static Class<?> getClassFromGenericArray(final GenericArrayType genericArrayType) {
+        Type innerType = genericArrayType.getGenericComponentType();
+
+        while (isGenericArrayType(innerType)) {
+            final GenericArrayType innerArray = (GenericArrayType) innerType;
+            innerType = innerArray.getGenericComponentType();
+        }
+
+        if (isClass(innerType)) {
+            return (Class<?>) innerType;
+        }
+
+        return null;
     }
 }

@@ -309,24 +309,33 @@ public class BeanInjectionTest {
         final ArrayUsingBean bean = injector.getBean(ArrayUsingBean.class);
         assertNotNull(bean);
 
-        final ArrayClass[] arrayClasses = bean.getArrayClasses();
-        assertNotNull(arrayClasses);
-        assertEquals(2, arrayClasses.length);
-        assertEquals("First array 1", arrayClasses[0].getName());
-        assertEquals("First array 2", arrayClasses[1].getName());
+        final ArrayClass[] firstSimpleArray = bean.getFirstSimpleArray();
+        assertNotNull(firstSimpleArray);
+        assertEquals(2, firstSimpleArray.length);
+        assertEquals("First array 1", firstSimpleArray[0].getName());
+        assertEquals("First array 2", firstSimpleArray[1].getName());
 
-        final ArrayInterface[] arrayInterfaces = bean.getArrayInterfaces();
-        assertNotNull(arrayInterfaces);
-        assertTrue(arrayInterfaces instanceof ArrayClass[]);
-        assertEquals(2, arrayInterfaces.length);
-        assertEquals("Second array 1", arrayInterfaces[0].getName());
-        assertEquals("Second array 2", arrayInterfaces[1].getName());
+        final ArrayInterface[] secondSimpleArray = bean.getSecondSimpleArray();
+        assertNotNull(secondSimpleArray);
+        assertTrue(secondSimpleArray instanceof ArrayClass[]);
+        assertEquals(2, secondSimpleArray.length);
+        assertEquals("Second array 1", secondSimpleArray[0].getName());
+        assertEquals("Second array 2", secondSimpleArray[1].getName());
 
-        final SingletonArray[] singletonArrays = bean.getSingletonArrays();
-        assertNotNull(singletonArrays);
-        assertEquals(2, singletonArrays.length);
-        assertEquals("Singleton array 1", singletonArrays[0].getName());
-        assertEquals("Singleton array 2", singletonArrays[1].getName());
+        final SingletonArray[] singletonArray = bean.getSingletonArray();
+        assertNotNull(singletonArray);
+        assertEquals(2, singletonArray.length);
+        assertEquals("Singleton array 1", singletonArray[0].getName());
+        assertEquals("Singleton array 2", singletonArray[1].getName());
+
+        // TODO activate when arrays in generics are supported
+//        final Provider<ArrayClass[]> secondSimpleArrayProvider = bean.getSecondSimpleArrayProvider();
+//        assertNotNull(secondSimpleArrayProvider);
+//        final ArrayClass[] arrayClasses = secondSimpleArrayProvider.get();
+//        assertNotNull(arrayClasses);
+//        assertEquals(2, arrayClasses.length);
+//        assertEquals("Second array 1", arrayClasses[0].getName());
+//        assertEquals("Second array 2", arrayClasses[1].getName());
     }
 
     @Test

@@ -24,6 +24,7 @@ package net.usikkert.kouinject.generics;
 
 import static org.junit.Assert.*;
 
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -50,8 +51,8 @@ public class TypeLiteralTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void shouldFailWithArrays() {
-        new TypeLiteral<String[]>() {};
+    public void shouldFailWithGenericArrays() {
+        new TypeLiteral<List<String>[]>() {};
     }
 
     @Test
@@ -60,6 +61,18 @@ public class TypeLiteralTest {
 
         assertEquals(String.class, typeLiteral.getGenericType());
         assertEquals(String.class, typeLiteral.getGenericClass());
+    }
+
+    @Test
+    public void getTypeShouldReturnArrayClassWhenUsedWithArray() {
+        final TypeLiteral<String[]> typeLiteral = new TypeLiteral<String[]>() {};
+
+        final Type genericType = typeLiteral.getGenericType();
+        assertTrue(genericType instanceof GenericArrayType);
+        final GenericArrayType genericArrayType = (GenericArrayType) genericType;
+
+        assertEquals(String[].class, GenericsHelper.getArrayClassFromGenericArray(genericArrayType));
+        assertEquals(String[].class, typeLiteral.getGenericClass());
     }
 
     @Test

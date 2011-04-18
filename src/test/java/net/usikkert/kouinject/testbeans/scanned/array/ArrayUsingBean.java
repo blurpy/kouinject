@@ -24,6 +24,7 @@ package net.usikkert.kouinject.testbeans.scanned.array;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 
 import net.usikkert.kouinject.annotation.Component;
 
@@ -36,23 +37,30 @@ import net.usikkert.kouinject.annotation.Component;
 public class ArrayUsingBean {
 
     @Inject @Named("FirstSimpleArray")
-    private ArrayClass[] arrayClasses;
+    private ArrayClass[] firstSimpleArray;
 
     @Inject @Named("SecondSimpleArray")
-    private ArrayInterface[] arrayInterfaces;
+    private ArrayInterface[] secondSimpleArray;
 
     @Inject
-    private SingletonArray[] singletonArrays;
+    private SingletonArray[] singletonArray;
 
-    public ArrayClass[] getArrayClasses() {
-        return arrayClasses;
+    @Inject @Named("SecondSimpleArray")
+    private Provider<ArrayClass[]> secondSimpleArrayProvider;
+
+    public ArrayClass[] getFirstSimpleArray() {
+        return firstSimpleArray;
     }
 
-    public ArrayInterface[] getArrayInterfaces() {
-        return arrayInterfaces;
+    public ArrayInterface[] getSecondSimpleArray() {
+        return secondSimpleArray;
     }
 
-    public SingletonArray[] getSingletonArrays() {
-        return singletonArrays;
+    public SingletonArray[] getSingletonArray() {
+        return singletonArray;
+    }
+
+    public Provider<ArrayClass[]> getSecondSimpleArrayProvider() {
+        return secondSimpleArrayProvider;
     }
 }
