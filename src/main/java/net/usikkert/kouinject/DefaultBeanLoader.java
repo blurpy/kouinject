@@ -247,10 +247,6 @@ public class DefaultBeanLoader implements BeanLoader {
     private Object createBean(final BeanKey dependency) {
         LOG.finer("Checking bean before creation: " + dependency);
 
-        if (singletonMap.containsSingleton(dependency)) {
-            throw new UnsupportedOperationException("This singleton has already been created: " + dependency);
-        }
-
         beansInCreation.addBean(dependency);
 
         final CreatedBean createdBean = createBeanUsingFactoryOrInjector(dependency);
