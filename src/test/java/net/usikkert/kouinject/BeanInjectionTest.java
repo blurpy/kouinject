@@ -132,6 +132,7 @@ import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding2.AnimalBean
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding2.OrganismBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding2.PetBean;
 import net.usikkert.kouinject.testbeans.scanned.hierarchy.overriding2.pets.CatBean;
+import net.usikkert.kouinject.testbeans.scanned.misc.PrivateBean;
 import net.usikkert.kouinject.testbeans.scanned.notloaded.NoBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.BlueBean;
 import net.usikkert.kouinject.testbeans.scanned.qualifier.ColorBean;
@@ -1291,6 +1292,21 @@ public class BeanInjectionTest {
     public void checkPinkSingletonBean() {
         final PinkSingletonBean pinkSingletonBean = injector.getBean(PinkSingletonBean.class);
         assertNotNull(pinkSingletonBean);
+    }
+
+    @Test
+    public void checkPrivateBean() {
+        final PrivateBean bean = injector.getBean(PrivateBean.class);
+        assertNotNull(bean);
+
+        final HelloBean helloBeanFromConstructor = bean.getHelloBeanFromConstructor();
+        assertNotNull(helloBeanFromConstructor);
+
+        final HelloBean helloBeanFromField = bean.getHelloBeanFromField();
+        assertNotNull(helloBeanFromField);
+
+        final HelloBean helloBeanFromSetter = bean.getHelloBeanFromSetter();
+        assertNotNull(helloBeanFromSetter);
     }
 
     @Test

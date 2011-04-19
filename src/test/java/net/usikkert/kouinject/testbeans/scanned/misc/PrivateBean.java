@@ -20,34 +20,46 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.misc;
+
+import javax.inject.Inject;
+
+import net.usikkert.kouinject.annotation.Component;
+import net.usikkert.kouinject.testbeans.scanned.HelloBean;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * A bean for testing injections in private members.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+@Component
+public class PrivateBean {
 
-    // All components
-    ALL(147),
+    @Inject
+    private HelloBean helloBeanFromField;
 
-    // All components and those created by factories
-    SCANNED(165),
+    private HelloBean helloBeanFromSetter;
+    private final HelloBean helloBeanFromConstructor;
 
-    // All components and those created by factories, without a qualifier
-    SCANNED_WITHOUT_QUALIFIER(123),
-
-    // All from SCANNED, plus those with profiles that can be activated at the same time
-    SCANNED_WITH_PROFILED(174);
-
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
+    @Inject
+    private PrivateBean(final HelloBean helloBeanFromConstructor) {
+        this.helloBeanFromConstructor = helloBeanFromConstructor;
     }
 
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    @Inject
+    private void setHelloBeanFromSetter(final HelloBean helloBeanFromSetter) {
+        this.helloBeanFromSetter = helloBeanFromSetter;
+    }
+
+    public HelloBean getHelloBeanFromField() {
+        return helloBeanFromField;
+    }
+
+    public HelloBean getHelloBeanFromSetter() {
+        return helloBeanFromSetter;
+    }
+
+    public HelloBean getHelloBeanFromConstructor() {
+        return helloBeanFromConstructor;
     }
 }
