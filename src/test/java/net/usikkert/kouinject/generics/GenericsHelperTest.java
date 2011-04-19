@@ -81,13 +81,32 @@ import org.junit.Test;
 public class GenericsHelperTest {
 
     @Test
-    public void getGenericArgumentAsType() {
+    public void getGenericArgumentAsTypeShouldGetFirstArgument() {
         final TypeLiteral<Set<List<String>>> inputType = new TypeLiteral<Set<List<String>>>() {};
         final TypeLiteral<List<String>> expectedType = new TypeLiteral<List<String>>() {};
 
         final Type argumentAsType = GenericsHelper.getGenericArgumentAsType(inputType.getGenericType());
 
         assertEquals(expectedType.getGenericType(), argumentAsType);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getGenericArgumentAsTypeShouldFailIfWrongNumberOfArguments() {
+        final TypeLiteral<Map<String, Integer>> inputType = new TypeLiteral<Map<String, Integer>>() {};
+
+        GenericsHelper.getGenericArgumentAsType(inputType.getGenericType());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getGenericArgumentAsTypeShouldFailIfWrongType() {
+        final TypeLiteral<String[]> inputType = new TypeLiteral<String[]>() {};
+
+        GenericsHelper.getGenericArgumentAsType(inputType.getGenericType());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getGenericArgumentAsTypeShouldFailIfClass() {
+        GenericsHelper.getGenericArgumentAsType(String.class);
     }
 
     @Test
