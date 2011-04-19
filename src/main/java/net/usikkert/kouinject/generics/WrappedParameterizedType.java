@@ -39,7 +39,7 @@ import org.apache.commons.lang.Validate;
  */
 public class WrappedParameterizedType implements ParameterizedType {
 
-    private static final int HASH_CODE_MULTIPLIER = 31;
+    private static final int HASH_CODE_MULTIPLIER = 41;
 
     private final Class<?> rawType;
     private final Type[] actualTypeArguments;

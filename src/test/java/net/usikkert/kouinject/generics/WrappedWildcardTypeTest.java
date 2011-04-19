@@ -106,4 +106,14 @@ public class WrappedWildcardTypeTest {
         assertFalse(wrappedWildcard.equals(GenericsHelper.getGenericArgumentAsType(listOfWildcard)));
         assertFalse(wrappedWildcard.equals(GenericsHelper.getGenericArgumentAsType(listOfWildcardWithOtherSuper)));
     }
+
+    @Test
+    public void sameInstanceShouldBeEqual() {
+        final Type[] upperBounds = { Object.class };
+        final Type[] lowerBounds = { Long.class };
+
+        final WrappedWildcardType wrappedWildcard = new WrappedWildcardType(upperBounds, lowerBounds);
+
+        assertTrue(wrappedWildcard.equals(wrappedWildcard));
+    }
 }

@@ -44,6 +44,8 @@ import org.apache.commons.lang.Validate;
  */
 public abstract class TypeLiteral<T> {
 
+    private static final int HASH_CODE_MULTIPLIER = 21;
+
     private final Type genericType;
     private final Class<T> genericClass;
 
@@ -100,8 +102,13 @@ public abstract class TypeLiteral<T> {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) { return true; }
-        if (!(o instanceof TypeLiteral)) { return false; }
+        if (this == o) {
+            return true;
+        }
+
+        if (!(o instanceof TypeLiteral)) {
+            return false;
+        }
 
         final TypeLiteral<?> that = (TypeLiteral<?>) o;
 
@@ -110,7 +117,7 @@ public abstract class TypeLiteral<T> {
 
     @Override
     public int hashCode() {
-        return genericType.hashCode();
+        return HASH_CODE_MULTIPLIER * genericType.hashCode();
     }
 
     @Override

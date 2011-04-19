@@ -118,11 +118,20 @@ public class TypeLiteralTest {
     }
 
     @Test
+    public void equalsShouldReturnTrueForSameInstance() {
+        final TypeLiteral<String> stringTypeLiteral = new TypeLiteral<String>() {};
+
+        assertTrue(stringTypeLiteral.equals(stringTypeLiteral));
+        assertEquals(stringTypeLiteral.hashCode(), stringTypeLiteral.hashCode());
+    }
+
+    @Test
     public void equalsShouldReturnTrueForSameClassArgument() {
         final TypeLiteral<String> stringTypeLiteral1 = new TypeLiteral<String>() {};
         final TypeLiteral<String> stringTypeLiteral2 = new TypeLiteral<String>() {};
 
         assertTrue(stringTypeLiteral1.equals(stringTypeLiteral2));
+        assertEquals(stringTypeLiteral1.hashCode(), stringTypeLiteral2.hashCode());
     }
 
     @Test
@@ -131,6 +140,7 @@ public class TypeLiteralTest {
         final TypeLiteral<Integer> integerTypeLiteral = new TypeLiteral<Integer>() {};
 
         assertFalse(stringTypeLiteral.equals(integerTypeLiteral));
+        assertFalse(stringTypeLiteral.hashCode() == integerTypeLiteral.hashCode());
     }
 
     @Test
@@ -139,6 +149,7 @@ public class TypeLiteralTest {
         final TypeLiteral<Collection<Integer>> integerTypeLiteral2 = new TypeLiteral<Collection<Integer>>() {};
 
         assertTrue(integerTypeLiteral1.equals(integerTypeLiteral2));
+        assertEquals(integerTypeLiteral1.hashCode(), integerTypeLiteral2.hashCode());
     }
 
     @Test
@@ -147,6 +158,7 @@ public class TypeLiteralTest {
         final TypeLiteral<Collection<Integer>> integerTypeLiteral = new TypeLiteral<Collection<Integer>>() {};
 
         assertFalse(stringTypeLiteral.equals(integerTypeLiteral));
+        assertFalse(stringTypeLiteral.hashCode() == integerTypeLiteral.hashCode());
     }
 
     @Test
@@ -212,5 +224,13 @@ public class TypeLiteralTest {
         final TypeLiteral<Object> typeLiteral = new TypeLiteral<Object>(wildcardType) {};
         assertEquals(wildcardType, typeLiteral.getGenericType());
         assertNull(typeLiteral.getGenericClass());
+    }
+
+    @Test
+    public void toStringShouldBeEqualToType() {
+        final TypeLiteral<Collection<Date>> dateTypeLiteral = new TypeLiteral<Collection<Date>>() {};
+        final Type genericType = dateTypeLiteral.getGenericType();
+
+        assertEquals(dateTypeLiteral.toString(), genericType.toString());
     }
 }

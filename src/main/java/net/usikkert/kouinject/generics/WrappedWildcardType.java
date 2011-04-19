@@ -39,7 +39,7 @@ import org.apache.commons.lang.Validate;
  */
 public class WrappedWildcardType implements WildcardType {
 
-    private static final int HASH_CODE_MULTIPLIER = 31;
+    private static final int HASH_CODE_MULTIPLIER = 51;
 
     private final Type[] upperBounds;
     private final Type[] lowerBounds;

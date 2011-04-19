@@ -92,4 +92,14 @@ public class WrappedParameterizedTypeTest {
         assertFalse(wrappedType.equals(otherOriginalSingleType));
         assertFalse(wrappedType.equals(otherOriginalDualType));
     }
+
+    @Test
+    public void sameInstanceShouldBeEqual() {
+        final Class<?> rawType = AbstractDualVariableBean.class;
+        final Type[] actualTypeArguments = new Type[] { VariableOne.class };
+
+        final WrappedParameterizedType wrappedType = new WrappedParameterizedType(rawType, actualTypeArguments);
+
+        assertTrue(wrappedType.equals(wrappedType));
+    }
 }

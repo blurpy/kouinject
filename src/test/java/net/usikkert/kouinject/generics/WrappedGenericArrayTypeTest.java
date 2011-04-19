@@ -81,4 +81,11 @@ public class WrappedGenericArrayTypeTest {
         assertFalse(wrappedStringArrayDimension1.equals(wrappedStringArrayDimension2));
         assertFalse(wrappedStringArrayDimension2.equals(wrappedStringArrayDimension1));
     }
+
+    @Test
+    public void sameInstanceShouldBeEqual() {
+        final WrappedGenericArrayType wrappedStringArray = new WrappedGenericArrayType(String.class);
+
+        assertTrue(wrappedStringArray.equals(wrappedStringArray));
+    }
 }
