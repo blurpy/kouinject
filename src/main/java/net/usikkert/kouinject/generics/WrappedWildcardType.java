@@ -100,7 +100,7 @@ public class WrappedWildcardType implements WildcardType {
             }
 
             else {
-                sb.append(lowerBound.toString());
+                sb.append("? super ").append(lowerBound.toString());
             }
         }
 
@@ -116,7 +116,7 @@ public class WrappedWildcardType implements WildcardType {
             }
 
             else {
-                sb.append(upperBound.toString());
+                sb.append("? extends ").append(upperBound.toString());
             }
         }
 
