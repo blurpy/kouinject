@@ -22,6 +22,8 @@
 
 package net.usikkert.kouinject;
 
+import static org.junit.Assert.*;
+
 import net.usikkert.kouinject.testbeans.notscanned.TheInterfaceUser;
 import net.usikkert.kouinject.testbeans.scanned.CarBean;
 import net.usikkert.kouinject.testbeans.scanned.LastBean;
@@ -35,10 +37,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.lang.reflect.Modifier;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Set;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Test of {@link ClassPathScanner}.
@@ -190,5 +191,78 @@ public class ClassPathScannerTest {
         for (final Class<?> class1 : classes) {
             assertFalse(Modifier.isAbstract(class1.getModifiers()));
         }
+    }
+
+    @Test
+    public void findClassesShouldUseClassLoaderFromClassIfContextClassLoaderIsNull() {
+        final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+
+        // Setting the default ClassLoader to null
+        Thread.currentThread().setContextClassLoader(null);
+
+        final ClassPathScanner classPathScanner = new ClassPathScanner();
+        final Set<Class<?>> classes = classPathScanner.findClasses(SCANNED);
+
+        assertTrue(classes.contains(LastBean.class));
+        assertFalse(classes.contains(TheInterfaceUser.class));
+
+        // Cleanup
+        Thread.currentThread().setContextClassLoader(contextClassLoader);
+    }
+
+    @Test
+    public void findClassesShouldFindClassesInJarFiles() {
+        final URL jarFileUrl = getClass().getClassLoader().getResource("test-beans.jar");
+        assertNotNull(jarFileUrl);
+
+        final URLClassLoader jarClassLoader = new URLClassLoader(new URL[] { jarFileUrl });
+        final ClassPathScanner classPathScanner = new ClassPathScanner(jarClassLoader);
+
+        final Set<Class<?>> classes = classPathScanner.findClasses("net.usikkert.kouinject.testbeans.jar");
+        assertNotNull(classes);
+        assertEquals(8, classes.size());
+
+        assertTrue(containsClass(classes, "net.usikkert.kouinject.testbeans.jar.FirstLevel1JarBean"));
+        assertTrue(containsClass(classes, "net.usikkert.kouinject.testbeans.jar.SecondLevel1JarBean"));
+
+        assertTrue(containsClass(classes, "net.usikkert.kouinject.testbeans.jar.level2.FirstLevel2JarBean"));
+        assertTrue(containsClass(classes, "net.usikkert.kouinject.testbeans.jar.level2.SecondLevel2JarBean"));
+
+        assertTrue(containsClass(classes, "net.usikkert.kouinject.testbeans.jar.level2point2.ThirdLevel2JarBean"));
+        assertTrue(containsClass(classes, "net.usikkert.kouinject.testbeans.jar.level2point2.FourthLevel2JarBean"));
+
+        assertTrue(containsClass(classes, "net.usikkert.kouinject.testbeans.jar.level2point2.level3.FirstLevel3JarBean"));
+        assertTrue(containsClass(classes, "net.usikkert.kouinject.testbeans.jar.level2point2.level3.SecondLevel3JarBean"));
+
+        // Just to be sure containsClass() doesn't always return true
+        assertFalse(containsClass(classes, "net.usikkert.kouinject.testbeans.jar.ThirdLevel1JarBean"));
+    }
+
+    @Test
+    public void findClassesShouldFindClassesInJarFilesThatCanBeInstantiated() throws IllegalAccessException, InstantiationException {
+        final URL jarFileUrl = getClass().getClassLoader().getResource("test-beans.jar");
+        assertNotNull(jarFileUrl);
+
+        final URLClassLoader jarClassLoader = new URLClassLoader(new URL[] { jarFileUrl });
+        final ClassPathScanner classPathScanner = new ClassPathScanner(jarClassLoader);
+
+        final Set<Class<?>> classes = classPathScanner.findClasses("net.usikkert.kouinject.testbeans.jar");
+        assertNotNull(classes);
+        assertEquals(8, classes.size());
+
+        for (final Class<?> aClass : classes) {
+            final Object instance = aClass.newInstance();
+            assertNotNull(instance);
+        }
+    }
+
+    private boolean containsClass(final Set<Class<?>> classes, final String className) {
+        for (final Class<?> aClass : classes) {
+            if (aClass.getName().equals(className)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

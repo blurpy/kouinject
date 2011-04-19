@@ -52,15 +52,34 @@ public class ClassPathScanner implements ClassLocator {
 
     private final ReflectionUtils reflectionUtils = new ReflectionUtils();
 
+    private final ClassLoader classLoader;
+
+    /**
+     * Creates a new classpath scanner using the threads context classloader, or the classloader for this class.
+     */
+    public ClassPathScanner() {
+        this.classLoader = getClassLoader();
+    }
+
+    /**
+     * Creates a new classpath scanner using the specified classloader.
+     *
+     * @param classLoader The classloader to use to scan for classes, and load the classes.
+     */
+    public ClassPathScanner(final ClassLoader classLoader) {
+        Validate.notNull(classLoader, "Class loader can not be null");
+        this.classLoader = classLoader;
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
     public Set<Class<?>> findClasses(final String... basePackages) {
-        final ClassLoader loader = getClassLoader();
+        Validate.notNull(basePackages, "Base packages can not be null");
 
         final long start = System.currentTimeMillis();
-        final Set<Class<?>> classes = findClassesFromSetOfBasePackages(loader, basePackages);
+        final Set<Class<?>> classes = findClassesFromSetOfBasePackages(basePackages);
         final long stop = System.currentTimeMillis();
 
         LOG.fine("Time spent scanning classpath: " + (stop - start) + " ms");
@@ -69,12 +88,12 @@ public class ClassPathScanner implements ClassLocator {
         return classes;
     }
 
-    private Set<Class<?>> findClassesFromSetOfBasePackages(final ClassLoader loader, final String... basePackages) {
+    private Set<Class<?>> findClassesFromSetOfBasePackages(final String... basePackages) {
         final Set<Class<?>> classes = new HashSet<Class<?>>();
         final Set<String> basePackageSet = convertBasePackagesToSet(basePackages);
 
         for (final String basePackage : basePackageSet) {
-            classes.addAll(findClasses(loader, basePackage));
+            classes.addAll(findClassesFromBasePackage(basePackage));
         }
 
         return classes;
@@ -93,12 +112,12 @@ public class ClassPathScanner implements ClassLocator {
         return basePackageSet;
     }
 
-    private Set<Class<?>> findClasses(final ClassLoader loader, final String basePackage) {
+    private Set<Class<?>> findClassesFromBasePackage(final String basePackage) {
         final Set<Class<?>> classes = new HashSet<Class<?>>();
         final String path = basePackage.replace('.', '/');
 
         try {
-            final Enumeration<URL> resources = loader.getResources(path);
+            final Enumeration<URL> resources = classLoader.getResources(path);
 
             if (resources != null) {
                 AccessController.doPrivileged(new PrivilegedAction<Object>() {
@@ -288,7 +307,7 @@ public class ClassPathScanner implements ClassLocator {
 
     private Class<?> loadClass(final String className) {
         try {
-            return Class.forName(className);
+            return Class.forName(className, false, classLoader);
         }
 
         catch (final ClassNotFoundException e) {
