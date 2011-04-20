@@ -44,6 +44,8 @@ import org.apache.commons.lang.Validate;
  * Finds classes by scanning the classpath. Classes are searched for in the file system and in
  * jar-files.
  *
+ * TODO: refactor into smaller pieces.
+ *
  * @author Christian Ihle
  */
 public class ClassPathScanner implements ClassLocator {
