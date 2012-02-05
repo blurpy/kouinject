@@ -76,9 +76,8 @@
   </developers>
 
   <scm>
-    <connection>scm:svn:http://kouinject.googlecode.com/svn/trunk/</connection>
-    <developerConnection>scm:svn:https://kouinject.googlecode.com/svn/trunk/</developerConnection>
-    <url>http://kouinject.googlecode.com/svn/</url>
+    <connection>scm:git:file://${basedir}/</connection>
+    <url>https://github.com/blurpy/kouinject/</url>
   </scm>
 
   <distributionManagement>
