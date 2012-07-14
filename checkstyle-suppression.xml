@@ -7,4 +7,6 @@
   <suppress checks="JavadocPackage" files="[/\\]test[/\\]java[/\\]"/>
   <suppress checks="HideUtilityClassConstructor" files="[/\\]test[/\\]java[/\\]"/>
   <suppress checks="VisibilityModifier" files="[/\\]test[/\\]java[/\\]"/>
+  <suppress checks="AvoidStarImport" files="[/\\]test[/\\]java[/\\]"/>
+  <suppress checks="WhitespaceAround" files="[/\\]test[/\\]java[/\\]"/>
 </suppressions>
