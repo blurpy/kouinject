@@ -1,6 +1,6 @@
 
 /***************************************************************************
- *   Copyright 2009-2011 by Christian Ihle                                 *
+ *   Copyright 2009-2012 by Christian Ihle                                 *
  *   kontakt@usikkert.net                                                  *
  *                                                                         *
  *   This file is part of KouInject.                                       *
