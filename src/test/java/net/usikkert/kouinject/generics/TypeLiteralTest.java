@@ -68,10 +68,17 @@ public class TypeLiteralTest {
         final TypeLiteral<String[]> typeLiteral = new TypeLiteral<String[]>() {};
 
         final Type genericType = typeLiteral.getGenericType();
-        assertTrue(genericType instanceof GenericArrayType);
-        final GenericArrayType genericArrayType = (GenericArrayType) genericType;
 
-        assertEquals(String[].class, GenericsHelper.getArrayClassFromGenericArray(genericArrayType));
+        // Java 6
+        if (GenericsHelper.isGenericArrayType(genericType)) {
+            assertEquals(String[].class, GenericsHelper.getArrayClassFromGenericArray((GenericArrayType) genericType));
+        }
+
+        // Java 7
+        else {
+            assertEquals(String[].class, genericType);
+        }
+
         assertEquals(String[].class, typeLiteral.getGenericClass());
     }
 
