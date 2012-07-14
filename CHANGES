@@ -2,6 +2,11 @@
 - KouInject CHANGES
 
 
+* Version 1.3 (xx.xx.2012):
+ - Updated copyright to include 2012
+ - TODO fixed java 7 generic array issue
+
+
 * Version 1.2 (20.04.2011):
  - Added @Profile for defining profile annotations for beans
  - Added new constructor in DefaultInjector for setting active profiles
