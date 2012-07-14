@@ -446,6 +446,13 @@ public final class GenericsHelper {
             return typesHaveTheSameParameter(thisArgument, thatResolvedType, typeMap);
         }
 
+        // This only happens with Java 7.
+        // In Java 6 you will always get two GenericArrayTypes, and the match will happen on an earlier equals.
+        else if (isClass(thisArgument) && isGenericArrayType(thatArgument)) {
+            final Class<?> arrayClassFromGenericArray = getArrayClassFromGenericArray((GenericArrayType) thatArgument);
+            return thisArgument.equals(arrayClassFromGenericArray);
+        }
+
         return false;
     }
 

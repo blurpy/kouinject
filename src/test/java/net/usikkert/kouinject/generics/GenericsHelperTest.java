@@ -1210,6 +1210,22 @@ public class GenericsHelperTest {
     }
 
     @Test
+    public void isAssignableFromShouldBeTrueInJava7WithConcreteArrayInsteadOfGenericArray() {
+        // Tests an injection point with a concrete array (like Container<Fanta[]>, not Container<T[]>).
+        // In Java 6 both the factory point and the injection point will be GenericArrayTypes, and matches on equals.
+        // In Java 7 however, the injection point will be a real array, so special handling is needed to compare
+        // the array to a GenericArrayType.
+        // Since using a TypeLiteral gives different results (GenericArrayType vs real array) in Java 6 and 7
+        // then this test needs to use wrappers to simulate the same effect in both versions.
+        final Type thisConcreteArray = new WrappedParameterizedType(Container.class, new Type[] {Fanta[].class});
+        final Type thatGenericArray =
+                new WrappedParameterizedType(Container.class, new Type[] {new WrappedGenericArrayType(Fanta.class)});
+
+        assertTrue(GenericsHelper.isAssignableFrom(thisConcreteArray, thatGenericArray));
+        assertFalse(GenericsHelper.isAssignableFrom(thatGenericArray, thisConcreteArray));
+    }
+
+    @Test
     public void isAssignableFromShouldBeTrueForArrayFromGenericTypeThatMatchesRegularArrayOfCorrectType() {
         final Type thisProvider = new TypeLiteral<Provider<String[]>>() {}.getGenericType();
         final Type thisType = GenericsHelper.getGenericArgumentAsType(thisProvider);
