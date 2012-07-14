@@ -158,7 +158,6 @@ public class GenericsHelperTest {
     public void getAsClassShouldGetCorrectOneDimensionalArrayClass() {
         final TypeLiteral<Provider<String[]>> providerWithArray = new TypeLiteral<Provider<String[]>>() {};
         final Type array = GenericsHelper.getGenericArgumentAsType(providerWithArray.getGenericType());
-        assertTrue(GenericsHelper.isGenericArrayType(array));
 
         final Class<?> asClass = GenericsHelper.getAsClass(array);
         assertEquals(String[].class, asClass);
@@ -168,7 +167,6 @@ public class GenericsHelperTest {
     public void getAsClassShouldGetCorrectTwoDimensionalArrayClass() {
         final TypeLiteral<Provider<String[][]>> providerWithArray = new TypeLiteral<Provider<String[][]>>() {};
         final Type array = GenericsHelper.getGenericArgumentAsType(providerWithArray.getGenericType());
-        assertTrue(GenericsHelper.isGenericArrayType(array));
 
         final Class<?> asClass = GenericsHelper.getAsClass(array);
         assertEquals(String[][].class, asClass);
@@ -178,7 +176,6 @@ public class GenericsHelperTest {
     public void getAsClassShouldGetCorrectThreeDimensionalArrayClass() {
         final TypeLiteral<Provider<String[][][]>> providerWithArray = new TypeLiteral<Provider<String[][][]>>() {};
         final Type array = GenericsHelper.getGenericArgumentAsType(providerWithArray.getGenericType());
-        assertTrue(GenericsHelper.isGenericArrayType(array));
 
         final Class<?> asClass = GenericsHelper.getAsClass(array);
         assertEquals(String[][][].class, asClass);
