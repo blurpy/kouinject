@@ -1,6 +1,6 @@
 
 /***************************************************************************
- *   Copyright 2009-2011 by Christian Ihle                                 *
+ *   Copyright 2009-2012 by Christian Ihle                                 *
  *   kontakt@usikkert.net                                                  *
  *                                                                         *
  *   This file is part of KouInject.                                       *
@@ -78,6 +78,7 @@ import net.usikkert.kouinject.testbeans.scanned.generics.thing.ThingListenerBean
 import net.usikkert.kouinject.testbeans.scanned.generics.thing.ThingManagerBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.AbstractDualVariableBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.ArrayBottle;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.ArrayContainer;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Bottle;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Box;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.CardboardBox;
@@ -92,6 +93,7 @@ import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.LiquidArra
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.LiquidDualVariableBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Pepsi;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.PepsiArrayBottle;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.PepsiArrayContainer;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Pizza;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.PizzaBoxBean;
 import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Shoe;
@@ -415,7 +417,8 @@ public class GenericBeanInjectionTest {
         assertNotNull(bean2);
         assertEquals(MiddleThingListenerBean.class, bean2.getClass());
 
-        final AbstractMiddleThingListenerBean<MiddleThing> bean3 = injector.getBean(new TypeLiteral<AbstractMiddleThingListenerBean<MiddleThing>>() {});
+        final AbstractMiddleThingListenerBean<MiddleThing> bean3 =
+                injector.getBean(new TypeLiteral<AbstractMiddleThingListenerBean<MiddleThing>>() {});
         assertNotNull(bean3);
         assertEquals(MiddleThingListenerBean.class, bean3.getClass());
     }
@@ -561,7 +564,9 @@ public class GenericBeanInjectionTest {
 
             if (liquid.getClass().equals(Fanta.class)) {
                 foundFanta = true;
-            } else if (liquid.getClass().equals(Pepsi.class)) {
+            }
+
+            else if (liquid.getClass().equals(Pepsi.class)) {
                 foundPepsi = true;
             }
         }
@@ -906,6 +911,25 @@ public class GenericBeanInjectionTest {
         final ArrayBottle<Pepsi> pepsiArrayBottle = injector.getBean(new TypeLiteral<ArrayBottle<Pepsi>>() {});
         assertNotNull(pepsiArrayBottle);
         assertEquals(PepsiArrayBottle.class, pepsiArrayBottle.getClass());
+    }
+
+    @Test
+    public void checkPepsiArrayContainer() {
+        final PepsiArrayContainer bean = injector.getBean(PepsiArrayContainer.class);
+
+        final Container<Pepsi[]> pepsiArrayContainer = bean.getPepsiArrayContainer();
+        final Pepsi[] containedInPepsiArrayContainer = pepsiArrayContainer.getContained();
+        assertEquals(1, containedInPepsiArrayContainer.length);
+        assertNotNull(containedInPepsiArrayContainer[0]);
+
+        final Container<Pepsi[]> arrayContainer = bean.getArrayContainer();
+        final Pepsi[] containedInArrayContainer = arrayContainer.getContained();
+        assertEquals(1, containedInArrayContainer.length);
+        assertNotNull(containedInArrayContainer[0]);
+
+        final ArrayContainer<Pepsi> beanWithPepsi = injector.getBean(new TypeLiteral<ArrayContainer<Pepsi>>() {});
+        assertNotNull(beanWithPepsi);
+        assertEquals(PepsiArrayContainer.class, beanWithPepsi.getClass());
     }
 
     @Test

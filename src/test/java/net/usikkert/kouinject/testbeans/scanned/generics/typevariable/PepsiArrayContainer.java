@@ -20,34 +20,25 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans;
+package net.usikkert.kouinject.testbeans.scanned.generics.typevariable;
+
+import javax.inject.Inject;
+
+import net.usikkert.kouinject.annotation.Component;
+import net.usikkert.kouinject.testbeans.scanned.generics.Container;
 
 /**
- * Enum with information about the number of test beans of different kinds.
+ * Bean for testing injection of both generic arrays with a type variable and a concrete array.
  *
  * @author Christian Ihle
  */
-public enum BeanCount {
+@Component
+public class PepsiArrayContainer extends ArrayContainer<Pepsi> {
 
-    // All components
-    ALL(148),
+    @Inject
+    private Container<Pepsi[]> pepsiArrayContainer;
 
-    // All components and those created by factories
-    SCANNED(166),
-
-    // All components and those created by factories, without a qualifier
-    SCANNED_WITHOUT_QUALIFIER(124),
-
-    // All from SCANNED, plus those with profiles that can be activated at the same time
-    SCANNED_WITH_PROFILED(175);
-
-    private final int numberOfBeans;
-
-    private BeanCount(final int numberOfBeans) {
-        this.numberOfBeans = numberOfBeans;
-    }
-
-    public int getNumberOfBeans() {
-        return numberOfBeans;
+    public Container<Pepsi[]> getPepsiArrayContainer() {
+        return pepsiArrayContainer;
     }
 }
