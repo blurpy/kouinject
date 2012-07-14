@@ -922,10 +922,18 @@ public class GenericBeanInjectionTest {
         assertEquals(1, containedInPepsiArrayContainer.length);
         assertNotNull(containedInPepsiArrayContainer[0]);
 
+        final Pepsi[] pepsiArray = bean.getPepsiArray();
+        assertEquals(1, pepsiArray.length);
+        assertNotNull(pepsiArray[0]);
+
         final Container<Pepsi[]> arrayContainer = bean.getArrayContainer();
         final Pepsi[] containedInArrayContainer = arrayContainer.getContained();
         assertEquals(1, containedInArrayContainer.length);
         assertNotNull(containedInArrayContainer[0]);
+
+        final Pepsi[] array = bean.getArray();
+        assertEquals(1, array.length);
+        assertNotNull(array[0]);
 
         final ArrayContainer<Pepsi> beanWithPepsi = injector.getBean(new TypeLiteral<ArrayContainer<Pepsi>>() {});
         assertNotNull(beanWithPepsi);

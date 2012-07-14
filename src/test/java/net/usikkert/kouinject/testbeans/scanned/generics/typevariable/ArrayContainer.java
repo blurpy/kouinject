@@ -35,7 +35,14 @@ import net.usikkert.kouinject.testbeans.scanned.generics.Container;
 public class ArrayContainer<T> {
 
     @Inject
+    private T[] array;
+
+    @Inject
     private Container<T[]> arrayContainer;
+
+    public T[] getArray() {
+        return array;
+    }
 
     public Container<T[]> getArrayContainer() {
         return arrayContainer;

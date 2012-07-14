@@ -36,7 +36,14 @@ import net.usikkert.kouinject.testbeans.scanned.generics.Container;
 public class PepsiArrayContainer extends ArrayContainer<Pepsi> {
 
     @Inject
+    private Pepsi[] pepsiArray;
+
+    @Inject
     private Container<Pepsi[]> pepsiArrayContainer;
+
+    public Pepsi[] getPepsiArray() {
+        return pepsiArray;
+    }
 
     public Container<Pepsi[]> getPepsiArrayContainer() {
         return pepsiArrayContainer;
