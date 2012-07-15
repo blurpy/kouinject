@@ -20,39 +20,17 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans.scanned.generics.typevariable;
-
-import javax.inject.Named;
-import javax.inject.Singleton;
+package net.usikkert.kouinject.testbeans.scanned.generics.array;
 
 import net.usikkert.kouinject.annotation.Component;
-import net.usikkert.kouinject.annotation.Produces;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Pepsi;
 
 /**
- * A factory for creating arrays with liquids.
+ * An array bottle with Pepsi, for testing type variables and arrays.
  *
  * @author Christian Ihle
  */
 @Component
-public class LiquidArrayFactory {
+public class PepsiArrayBottle extends ArrayBottle<Pepsi> {
 
-    @Produces
-    public Pepsi[] createPepsiArray(final Pepsi pepsi) {
-        return new Pepsi[] { pepsi };
-    }
-
-    @Produces
-    public Fanta[] createFantaArray(final Fanta fanta) {
-        return new Fanta[] { fanta };
-    }
-
-    @Produces @Singleton @Named("PepsiArray")
-    public GenericBox<Liquid[]> createBoxOfPepsiArray(final Pepsi[] pepsiArray) {
-        return new GenericBox<Liquid[]>(pepsiArray);
-    }
-
-    @Produces @Named("FantaArray")
-    public GenericBox<Liquid[]> createBoxOfFantaArray(final Fanta[] fantaArray) {
-        return new GenericBox<Liquid[]>(fantaArray);
-    }
 }

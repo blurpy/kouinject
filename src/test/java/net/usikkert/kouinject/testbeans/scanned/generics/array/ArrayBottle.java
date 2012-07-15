@@ -20,13 +20,14 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans.scanned.generics.typevariable;
+package net.usikkert.kouinject.testbeans.scanned.generics.array;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 
 import net.usikkert.kouinject.annotation.Produces;
 import net.usikkert.kouinject.testbeans.scanned.generics.Container;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Liquid;
 
 /**
  * A bottle for testing injecting and producing beans with type variable arrays.

@@ -20,31 +20,33 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans.scanned.generics.typevariable;
+package net.usikkert.kouinject.testbeans.scanned.generics.array;
 
 import javax.inject.Inject;
 
+import net.usikkert.kouinject.annotation.Component;
 import net.usikkert.kouinject.testbeans.scanned.generics.Container;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Pepsi;
 
 /**
- * Bean for testing injection of generic arrays.
+ * Bean for testing injection of both generic arrays with a type variable and a concrete array.
  *
  * @author Christian Ihle
- * @param <T> The type to create a container for.
  */
-public class ArrayContainer<T> {
+@Component
+public class PepsiArrayContainer extends ArrayContainer<Pepsi> {
 
     @Inject
-    private T[] array;
+    private Pepsi[] pepsiArray;
 
     @Inject
-    private Container<T[]> arrayContainer;
+    private Container<Pepsi[]> pepsiArrayContainer;
 
-    public T[] getArray() {
-        return array;
+    public Pepsi[] getPepsiArray() {
+        return pepsiArray;
     }
 
-    public Container<T[]> getArrayContainer() {
-        return arrayContainer;
+    public Container<Pepsi[]> getPepsiArrayContainer() {
+        return pepsiArrayContainer;
     }
 }

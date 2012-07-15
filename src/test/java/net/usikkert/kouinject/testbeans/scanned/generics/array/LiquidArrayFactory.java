@@ -20,32 +20,43 @@
  *   If not, see <http://www.gnu.org/licenses/>.                           *
  ***************************************************************************/
 
-package net.usikkert.kouinject.testbeans.scanned.generics.typevariable;
+package net.usikkert.kouinject.testbeans.scanned.generics.array;
 
-import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
 import net.usikkert.kouinject.annotation.Component;
-import net.usikkert.kouinject.testbeans.scanned.generics.Container;
+import net.usikkert.kouinject.annotation.Produces;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Fanta;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.GenericBox;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Liquid;
+import net.usikkert.kouinject.testbeans.scanned.generics.typevariable.Pepsi;
 
 /**
- * Bean for testing injection of both generic arrays with a type variable and a concrete array.
+ * A factory for creating arrays with liquids.
  *
  * @author Christian Ihle
  */
 @Component
-public class PepsiArrayContainer extends ArrayContainer<Pepsi> {
+public class LiquidArrayFactory {
 
-    @Inject
-    private Pepsi[] pepsiArray;
-
-    @Inject
-    private Container<Pepsi[]> pepsiArrayContainer;
-
-    public Pepsi[] getPepsiArray() {
-        return pepsiArray;
+    @Produces
+    public Pepsi[] createPepsiArray(final Pepsi pepsi) {
+        return new Pepsi[] { pepsi };
     }
 
-    public Container<Pepsi[]> getPepsiArrayContainer() {
-        return pepsiArrayContainer;
+    @Produces
+    public Fanta[] createFantaArray(final Fanta fanta) {
+        return new Fanta[] { fanta };
+    }
+
+    @Produces @Singleton @Named("PepsiArray")
+    public GenericBox<Liquid[]> createBoxOfPepsiArray(final Pepsi[] pepsiArray) {
+        return new GenericBox<Liquid[]>(pepsiArray);
+    }
+
+    @Produces @Named("FantaArray")
+    public GenericBox<Liquid[]> createBoxOfFantaArray(final Fanta[] fantaArray) {
+        return new GenericBox<Liquid[]>(fantaArray);
     }
 }
