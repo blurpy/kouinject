@@ -6,7 +6,7 @@ Run 'mvn package' to build. The generated .jar file can be found in the target f
 
 
 Copyright 2009-2012 Christian Ihle
-http://kouinject.googlecode.com/
+https://github.com/blurpy/kouinject
 
 Source available under the GNU LGPLv3.
 See COPYING and COPYING.LESSER for details.
